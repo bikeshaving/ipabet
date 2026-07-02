@@ -57,6 +57,14 @@ class InputController: IMKInputController {
     private var pendingMark = ""
     private var bracketOpen = false
 
+    // Pin the underlying layout to US so the engine always receives the ASCII
+    // key values its tables are keyed on, regardless of the user's selected
+    // physical layout (Dvorak, Colemak, a non-US QWERTY, …). IMK requires this
+    // to be reasserted every time the input method is activated.
+    override func activateServer(_ sender: Any!) {
+        (sender as? IMKTextInput)?.overrideKeyboard(withKeyboardNamed: "com.apple.keylayout.US")
+    }
+
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         guard event.type == .keyDown,
               let client = sender as? IMKTextInput else { return false }
