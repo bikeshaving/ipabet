@@ -17,6 +17,19 @@ First install needs a logout (TIS registration). After that: `./build.sh install
 - `Sources/InputController.swift` — the transformation engine. Loads `ipakey.json`, rewrites the character before the cursor on modifier keys. Only state is the Option-prefix dead-key mark.
 - `ipakey.json` — mapping (copy of `spec/ipakey.json`).
 - `Info.plist` — bundle ID must contain `.inputmethod.`; claims `und-fonipa`.
+- `IPAbet.keylayout` — cosmetic layout used only to give the on-screen **Keyboard
+  Viewer** an IPA base-layer preview. `InputController` overrides to it (by name,
+  from the app bundle) on `activateServer:`. It is display-only: the engine
+  decodes keys via `USLayout` (`UCKeyTranslate` against `com.apple.keylayout.US`),
+  so it never reads this layout's output. If the in-bundle override ever fails,
+  typing is unaffected — only the preview is lost. Regenerate with
+  `swift tools/genkeylayout.swift > IPAbet.keylayout`.
+
+## Key decoding
+
+Keys are decoded from the physical `keyCode` through a fixed US layout, so the
+ASCII-keyed tables work regardless of the user's selected layout (Dvorak, a
+non-US QWERTY, …) and regardless of the cosmetic override above.
 
 ## Modifier layers
 
@@ -24,3 +37,13 @@ First install needs a logout (TIS registration). After that: `./build.sh install
 - Shift — transform previous glyph
 - Option — dead-key diacritics + literal digits
 - Option-Shift — raw macOS passthrough (the escape hatch)
+
+## Keyboard Viewer preview
+
+With IPAKey active, open **Keyboard Viewer** (Input-menu → Show Keyboard Viewer,
+or System Settings → Keyboard → enable it) to see the base layer: the number row
+shows `ɨ ʔ ʕ ɾ ə ɐ ħ`, letters map to themselves, and Shift shows the `ǃ`/`ǀ`
+clicks on `1`/`\`. Only the base/Shift layers can be shown this way — the full
+transform and diacritic layers live in `web/keyboard.html`. This is Keyboard
+Viewer, not the System Settings preview panel, which macOS reserves for static
+keyboard-layout sources and never shows for input methods.

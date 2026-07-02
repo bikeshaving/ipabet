@@ -18,6 +18,8 @@ if [ -d IPAKey.iconset ] && command -v iconutil >/dev/null; then
 fi
 cp Info.plist "$APP/Contents/"
 cp ipakey.json ipakey.png ipakey@2x.png "$APP/Contents/Resources/"
+# Cosmetic Keyboard Viewer layout, referenced by name via overrideKeyboard.
+cp IPAbet.keylayout "$APP/Contents/Resources/"
 
 # Ad-hoc sign (required on Apple Silicon)
 codesign --force --deep --sign - "$APP"

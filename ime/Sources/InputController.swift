@@ -1,5 +1,38 @@
 import Cocoa
 import InputMethodKit
+import Carbon
+
+// Decodes a physical key (virtual keyCode) through a fixed US layout, so the
+// engine's ASCII-keyed tables work regardless of the active keyboard layout —
+// including the cosmetic IPAbet layout we override to for Keyboard Viewer. The
+// active layout's delivered characters are therefore never consulted for logic.
+enum USLayout {
+    private static let uchr: Data? = {
+        let filter = [kTISPropertyInputSourceID as String: "com.apple.keylayout.US"] as CFDictionary
+        guard let cf = TISCreateInputSourceList(filter, true)?.takeRetainedValue(),
+              let list = cf as? [TISInputSource], let src = list.first,
+              let ptr = TISGetInputSourceProperty(src, kTISPropertyUnicodeKeyLayoutData)
+        else { return nil }
+        return Unmanaged<CFData>.fromOpaque(ptr).takeUnretainedValue() as Data
+    }()
+
+    /// The character US would produce for `keyCode` (optionally with Shift),
+    /// with dead keys resolved to their spacing form. Empty for non-typing keys.
+    static func char(_ keyCode: UInt16, shift: Bool) -> String {
+        guard let data = uchr else { return "" }
+        return data.withUnsafeBytes { raw in
+            let layout = raw.baseAddress!.assumingMemoryBound(to: UCKeyboardLayout.self)
+            let mod = shift ? (UInt32(shiftKey) >> 8) & 0xFF : 0
+            var dead: UInt32 = 0
+            var buf = [UniChar](repeating: 0, count: 8)
+            var len = 0
+            UCKeyTranslate(layout, keyCode, UInt16(kUCKeyActionDown), mod,
+                           UInt32(LMGetKbdType()), OptionBits(kUCKeyTranslateNoDeadKeysBit),
+                           &dead, buf.count, &len, &buf)
+            return String(utf16CodeUnits: buf, count: len)
+        }
+    }
+}
 
 struct Tables {
     let letters: [String: String]
@@ -57,22 +90,26 @@ class InputController: IMKInputController {
     private var pendingMark = ""
     private var bracketOpen = false
 
-    // Pin the underlying layout to US so the engine always receives the ASCII
-    // key values its tables are keyed on, regardless of the user's selected
-    // physical layout (Dvorak, Colemak, a non-US QWERTY, …). IMK requires this
-    // to be reasserted every time the input method is activated.
+    // Override to the bundled cosmetic IPAbet layout so the on-screen Keyboard
+    // Viewer shows the IPA base layer. The engine decodes keys via USLayout, so
+    // this override is display-only: if the in-bundle lookup fails on some macOS
+    // release, typing is unaffected — only the Keyboard Viewer preview is lost.
+    // IMK requires the override to be reasserted on every activation.
     override func activateServer(_ sender: Any!) {
-        (sender as? IMKTextInput)?.overrideKeyboard(withKeyboardNamed: "com.apple.keylayout.US")
+        (sender as? IMKTextInput)?.overrideKeyboard(withKeyboardNamed: "IPAbet")
     }
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         guard event.type == .keyDown,
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
-        let opt = event.modifierFlags.contains(.option)
-        let s = (opt ? event.charactersIgnoringModifiers : event.characters) ?? ""
-        guard s.count == 1, !event.modifierFlags.contains(.command) else { return false }
+        if event.modifierFlags.contains(.command) { return false }
         if event.keyCode == 51 { pendingMark = ""; return false }  // backspace: native
+        let opt = event.modifierFlags.contains(.option)
+        // Decode the physical key through US, independent of the active layout.
+        // Option historically read charactersIgnoringModifiers (Shift ignored).
+        let s = USLayout.char(event.keyCode, shift: opt ? false : event.modifierFlags.contains(.shift))
+        guard s.count == 1 else { return false }
 
         if opt {
             if event.modifierFlags.contains(.shift) { return false }  // Option-Shift: passthrough
