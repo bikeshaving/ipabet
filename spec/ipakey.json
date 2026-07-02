@@ -1,0 +1,1083 @@
+{
+ "modifiers": {
+  "H": "lenite toward /h/ — spirantize, open, lax",
+  "R": "retroflex (coronals); trill (elsewhere)",
+  "J": "palatalize (consonants only)",
+  "W": "labialize / round-flip",
+  "L": "lateralize",
+  "G": "dorsal deepening — velar/uvular place",
+  "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
+  "V": "labiodental",
+  "U": "velarize/dark (consonants); centralize (oU)",
+  "O": "drag toward o (vowels)",
+  "A": "drag toward a (vowels)",
+  "E": "ligature with e",
+  "@": "glottalic — voiced → implosive, voiceless → ejective",
+  "B": "bilabial place"
+ },
+ "letters": [
+  {
+   "key": "!",
+   "glyph": "ǃ",
+   "cp": "U+01C3",
+   "name": "LATIN LETTER RETROFLEX CLICK"
+  },
+  {
+   "key": "1",
+   "glyph": "ɨ",
+   "cp": "U+0268",
+   "name": "LATIN SMALL LETTER I WITH STROKE"
+  },
+  {
+   "key": "2",
+   "glyph": "ʔ",
+   "cp": "U+0294",
+   "name": "LATIN LETTER GLOTTAL STOP"
+  },
+  {
+   "key": "3",
+   "glyph": "ʕ",
+   "cp": "U+0295",
+   "name": "LATIN LETTER PHARYNGEAL VOICED FRICATIVE"
+  },
+  {
+   "key": "4",
+   "glyph": "ɾ",
+   "cp": "U+027E",
+   "name": "LATIN SMALL LETTER R WITH FISHHOOK"
+  },
+  {
+   "key": "5",
+   "glyph": "ə",
+   "cp": "U+0259",
+   "name": "LATIN SMALL LETTER SCHWA"
+  },
+  {
+   "key": "6",
+   "glyph": "ɐ",
+   "cp": "U+0250",
+   "name": "LATIN SMALL LETTER TURNED A"
+  },
+  {
+   "key": "7",
+   "glyph": "ħ",
+   "cp": "U+0127",
+   "name": "LATIN SMALL LETTER H WITH STROKE"
+  },
+  {
+   "key": "8",
+   "glyph": "/",
+   "cp": "U+002F",
+   "name": "SOLIDUS"
+  },
+  {
+   "key": "a",
+   "glyph": "a",
+   "cp": "U+0061",
+   "name": "LATIN SMALL LETTER A"
+  },
+  {
+   "key": "b",
+   "glyph": "b",
+   "cp": "U+0062",
+   "name": "LATIN SMALL LETTER B"
+  },
+  {
+   "key": "c",
+   "glyph": "c",
+   "cp": "U+0063",
+   "name": "LATIN SMALL LETTER C"
+  },
+  {
+   "key": "d",
+   "glyph": "d",
+   "cp": "U+0064",
+   "name": "LATIN SMALL LETTER D"
+  },
+  {
+   "key": "e",
+   "glyph": "e",
+   "cp": "U+0065",
+   "name": "LATIN SMALL LETTER E"
+  },
+  {
+   "key": "f",
+   "glyph": "f",
+   "cp": "U+0066",
+   "name": "LATIN SMALL LETTER F"
+  },
+  {
+   "key": "g",
+   "glyph": "g",
+   "cp": "U+0067",
+   "name": "LATIN SMALL LETTER G"
+  },
+  {
+   "key": "h",
+   "glyph": "h",
+   "cp": "U+0068",
+   "name": "LATIN SMALL LETTER H"
+  },
+  {
+   "key": "i",
+   "glyph": "i",
+   "cp": "U+0069",
+   "name": "LATIN SMALL LETTER I"
+  },
+  {
+   "key": "j",
+   "glyph": "j",
+   "cp": "U+006A",
+   "name": "LATIN SMALL LETTER J"
+  },
+  {
+   "key": "k",
+   "glyph": "k",
+   "cp": "U+006B",
+   "name": "LATIN SMALL LETTER K"
+  },
+  {
+   "key": "l",
+   "glyph": "l",
+   "cp": "U+006C",
+   "name": "LATIN SMALL LETTER L"
+  },
+  {
+   "key": "m",
+   "glyph": "m",
+   "cp": "U+006D",
+   "name": "LATIN SMALL LETTER M"
+  },
+  {
+   "key": "n",
+   "glyph": "n",
+   "cp": "U+006E",
+   "name": "LATIN SMALL LETTER N"
+  },
+  {
+   "key": "o",
+   "glyph": "o",
+   "cp": "U+006F",
+   "name": "LATIN SMALL LETTER O"
+  },
+  {
+   "key": "p",
+   "glyph": "p",
+   "cp": "U+0070",
+   "name": "LATIN SMALL LETTER P"
+  },
+  {
+   "key": "q",
+   "glyph": "q",
+   "cp": "U+0071",
+   "name": "LATIN SMALL LETTER Q"
+  },
+  {
+   "key": "r",
+   "glyph": "r",
+   "cp": "U+0072",
+   "name": "LATIN SMALL LETTER R"
+  },
+  {
+   "key": "s",
+   "glyph": "s",
+   "cp": "U+0073",
+   "name": "LATIN SMALL LETTER S"
+  },
+  {
+   "key": "t",
+   "glyph": "t",
+   "cp": "U+0074",
+   "name": "LATIN SMALL LETTER T"
+  },
+  {
+   "key": "u",
+   "glyph": "u",
+   "cp": "U+0075",
+   "name": "LATIN SMALL LETTER U"
+  },
+  {
+   "key": "v",
+   "glyph": "v",
+   "cp": "U+0076",
+   "name": "LATIN SMALL LETTER V"
+  },
+  {
+   "key": "w",
+   "glyph": "w",
+   "cp": "U+0077",
+   "name": "LATIN SMALL LETTER W"
+  },
+  {
+   "key": "x",
+   "glyph": "x",
+   "cp": "U+0078",
+   "name": "LATIN SMALL LETTER X"
+  },
+  {
+   "key": "y",
+   "glyph": "y",
+   "cp": "U+0079",
+   "name": "LATIN SMALL LETTER Y"
+  },
+  {
+   "key": "z",
+   "glyph": "z",
+   "cp": "U+007A",
+   "name": "LATIN SMALL LETTER Z"
+  },
+  {
+   "key": "|",
+   "glyph": "ǀ",
+   "cp": "U+01C0",
+   "name": "LATIN LETTER DENTAL CLICK"
+  },
+  {
+   "key": "1H",
+   "glyph": "ɘ",
+   "cp": "U+0258",
+   "name": "LATIN SMALL LETTER REVERSED E"
+  },
+  {
+   "key": "1W",
+   "glyph": "ʉ",
+   "cp": "U+0289",
+   "name": "LATIN SMALL LETTER U BAR"
+  },
+  {
+   "key": "2Q",
+   "glyph": "ʡ",
+   "cp": "U+02A1",
+   "name": "LATIN LETTER GLOTTAL STOP WITH STROKE"
+  },
+  {
+   "key": "3Q",
+   "glyph": "ʢ",
+   "cp": "U+02A2",
+   "name": "LATIN LETTER REVERSED GLOTTAL STOP WITH STROKE"
+  },
+  {
+   "key": "4L",
+   "glyph": "ɺ",
+   "cp": "U+027A",
+   "name": "LATIN SMALL LETTER TURNED R WITH LONG LEG"
+  },
+  {
+   "key": "4R",
+   "glyph": "ɽ",
+   "cp": "U+027D",
+   "name": "LATIN SMALL LETTER R WITH TAIL"
+  },
+  {
+   "key": "4V",
+   "glyph": "ⱱ",
+   "cp": "U+2C71",
+   "name": "LATIN SMALL LETTER V WITH RIGHT HOOK"
+  },
+  {
+   "key": "5H",
+   "glyph": "ɜ",
+   "cp": "U+025C",
+   "name": "LATIN SMALL LETTER REVERSED OPEN E"
+  },
+  {
+   "key": "5R",
+   "glyph": "ɚ",
+   "cp": "U+025A",
+   "name": "LATIN SMALL LETTER SCHWA WITH HOOK"
+  },
+  {
+   "key": "5W",
+   "glyph": "ɞ",
+   "cp": "U+025E",
+   "name": "LATIN SMALL LETTER CLOSED REVERSED OPEN E"
+  },
+  {
+   "key": "7Q",
+   "glyph": "ʜ",
+   "cp": "U+029C",
+   "name": "LATIN LETTER SMALL CAPITAL H"
+  },
+  {
+   "key": "aE",
+   "glyph": "æ",
+   "cp": "U+00E6",
+   "name": "LATIN SMALL LETTER AE"
+  },
+  {
+   "key": "aH",
+   "glyph": "ʌ",
+   "cp": "U+028C",
+   "name": "LATIN SMALL LETTER TURNED V"
+  },
+  {
+   "key": "aO",
+   "glyph": "ɑ",
+   "cp": "U+0251",
+   "name": "LATIN SMALL LETTER ALPHA"
+  },
+  {
+   "key": "aW",
+   "glyph": "ɶ",
+   "cp": "U+0276",
+   "name": "LATIN LETTER SMALL CAPITAL OE"
+  },
+  {
+   "key": "b@",
+   "glyph": "ɓ",
+   "cp": "U+0253",
+   "name": "LATIN SMALL LETTER B WITH HOOK"
+  },
+  {
+   "key": "bH",
+   "glyph": "β",
+   "cp": "U+03B2",
+   "name": "GREEK SMALL LETTER BETA"
+  },
+  {
+   "key": "cH",
+   "glyph": "ç",
+   "cp": "U+00E7",
+   "name": "LATIN SMALL LETTER C WITH CEDILLA"
+  },
+  {
+   "key": "d@",
+   "glyph": "ɗ",
+   "cp": "U+0257",
+   "name": "LATIN SMALL LETTER D WITH HOOK"
+  },
+  {
+   "key": "dH",
+   "glyph": "ð",
+   "cp": "U+00F0",
+   "name": "LATIN SMALL LETTER ETH"
+  },
+  {
+   "key": "dJ",
+   "glyph": "ɟ",
+   "cp": "U+025F",
+   "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE"
+  },
+  {
+   "key": "dR",
+   "glyph": "ɖ",
+   "cp": "U+0256",
+   "name": "LATIN SMALL LETTER D WITH TAIL"
+  },
+  {
+   "key": "eH",
+   "glyph": "ɛ",
+   "cp": "U+025B",
+   "name": "LATIN SMALL LETTER OPEN E"
+  },
+  {
+   "key": "eR",
+   "glyph": "ɝ",
+   "cp": "U+025D",
+   "name": "LATIN SMALL LETTER REVERSED OPEN E WITH HOOK"
+  },
+  {
+   "key": "eW",
+   "glyph": "ø",
+   "cp": "U+00F8",
+   "name": "LATIN SMALL LETTER O WITH STROKE"
+  },
+  {
+   "key": "g@",
+   "glyph": "ɠ",
+   "cp": "U+0260",
+   "name": "LATIN SMALL LETTER G WITH HOOK"
+  },
+  {
+   "key": "gG",
+   "glyph": "ʛ",
+   "cp": "U+029B",
+   "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"
+  },
+  {
+   "key": "gH",
+   "glyph": "ɣ",
+   "cp": "U+0263",
+   "name": "LATIN SMALL LETTER GAMMA"
+  },
+  {
+   "key": "gJ",
+   "glyph": "ʝ",
+   "cp": "U+029D",
+   "name": "LATIN SMALL LETTER J WITH CROSSED-TAIL"
+  },
+  {
+   "key": "gQ",
+   "glyph": "ɢ",
+   "cp": "U+0262",
+   "name": "LATIN LETTER SMALL CAPITAL G"
+  },
+  {
+   "key": "hH",
+   "glyph": "ɦ",
+   "cp": "U+0266",
+   "name": "LATIN SMALL LETTER H WITH HOOK"
+  },
+  {
+   "key": "iH",
+   "glyph": "ɪ",
+   "cp": "U+026A",
+   "name": "LATIN LETTER SMALL CAPITAL I"
+  },
+  {
+   "key": "j@",
+   "glyph": "ʄ",
+   "cp": "U+0284",
+   "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK"
+  },
+  {
+   "key": "k@",
+   "glyph": "kʼ",
+   "cp": "U+006B U+02BC",
+   "name": "LATIN SMALL LETTER K; MODIFIER LETTER APOSTROPHE"
+  },
+  {
+   "key": "lG",
+   "glyph": "ʟ",
+   "cp": "U+029F",
+   "name": "LATIN LETTER SMALL CAPITAL L"
+  },
+  {
+   "key": "lJ",
+   "glyph": "ʎ",
+   "cp": "U+028E",
+   "name": "LATIN SMALL LETTER TURNED Y"
+  },
+  {
+   "key": "lR",
+   "glyph": "ɭ",
+   "cp": "U+026D",
+   "name": "LATIN SMALL LETTER L WITH RETROFLEX HOOK"
+  },
+  {
+   "key": "lU",
+   "glyph": "ɫ",
+   "cp": "U+026B",
+   "name": "LATIN SMALL LETTER L WITH MIDDLE TILDE"
+  },
+  {
+   "key": "mV",
+   "glyph": "ɱ",
+   "cp": "U+0271",
+   "name": "LATIN SMALL LETTER M WITH HOOK"
+  },
+  {
+   "key": "nG",
+   "glyph": "ŋ",
+   "cp": "U+014B",
+   "name": "LATIN SMALL LETTER ENG"
+  },
+  {
+   "key": "nJ",
+   "glyph": "ɲ",
+   "cp": "U+0272",
+   "name": "LATIN SMALL LETTER N WITH LEFT HOOK"
+  },
+  {
+   "key": "nQ",
+   "glyph": "ɴ",
+   "cp": "U+0274",
+   "name": "LATIN LETTER SMALL CAPITAL N"
+  },
+  {
+   "key": "nR",
+   "glyph": "ɳ",
+   "cp": "U+0273",
+   "name": "LATIN SMALL LETTER N WITH RETROFLEX HOOK"
+  },
+  {
+   "key": "oA",
+   "glyph": "ɒ",
+   "cp": "U+0252",
+   "name": "LATIN SMALL LETTER TURNED ALPHA"
+  },
+  {
+   "key": "oE",
+   "glyph": "œ",
+   "cp": "U+0153",
+   "name": "LATIN SMALL LIGATURE OE"
+  },
+  {
+   "key": "oH",
+   "glyph": "ɔ",
+   "cp": "U+0254",
+   "name": "LATIN SMALL LETTER OPEN O"
+  },
+  {
+   "key": "oU",
+   "glyph": "ɵ",
+   "cp": "U+0275",
+   "name": "LATIN SMALL LETTER BARRED O"
+  },
+  {
+   "key": "oW",
+   "glyph": "ɤ",
+   "cp": "U+0264",
+   "name": "LATIN SMALL LETTER RAMS HORN"
+  },
+  {
+   "key": "p@",
+   "glyph": "pʼ",
+   "cp": "U+0070 U+02BC",
+   "name": "LATIN SMALL LETTER P; MODIFIER LETTER APOSTROPHE"
+  },
+  {
+   "key": "pH",
+   "glyph": "ɸ",
+   "cp": "U+0278",
+   "name": "LATIN SMALL LETTER PHI"
+  },
+  {
+   "key": "q@",
+   "glyph": "qʼ",
+   "cp": "U+0071 U+02BC",
+   "name": "LATIN SMALL LETTER Q; MODIFIER LETTER APOSTROPHE"
+  },
+  {
+   "key": "qH",
+   "glyph": "χ",
+   "cp": "U+03C7",
+   "name": "GREEK SMALL LETTER CHI"
+  },
+  {
+   "key": "rB",
+   "glyph": "ʙ",
+   "cp": "U+0299",
+   "name": "LATIN LETTER SMALL CAPITAL B"
+  },
+  {
+   "key": "rG",
+   "glyph": "ʀ",
+   "cp": "U+0280",
+   "name": "LATIN LETTER SMALL CAPITAL R"
+  },
+  {
+   "key": "rH",
+   "glyph": "ɹ",
+   "cp": "U+0279",
+   "name": "LATIN SMALL LETTER TURNED R"
+  },
+  {
+   "key": "rQ",
+   "glyph": "ʁ",
+   "cp": "U+0281",
+   "name": "LATIN LETTER SMALL CAPITAL INVERTED R"
+  },
+  {
+   "key": "rR",
+   "glyph": "ɻ",
+   "cp": "U+027B",
+   "name": "LATIN SMALL LETTER TURNED R WITH HOOK"
+  },
+  {
+   "key": "s@",
+   "glyph": "sʼ",
+   "cp": "U+0073 U+02BC",
+   "name": "LATIN SMALL LETTER S; MODIFIER LETTER APOSTROPHE"
+  },
+  {
+   "key": "sH",
+   "glyph": "ʃ",
+   "cp": "U+0283",
+   "name": "LATIN SMALL LETTER ESH"
+  },
+  {
+   "key": "sJ",
+   "glyph": "ɕ",
+   "cp": "U+0255",
+   "name": "LATIN SMALL LETTER C WITH CURL"
+  },
+  {
+   "key": "sL",
+   "glyph": "ɬ",
+   "cp": "U+026C",
+   "name": "LATIN SMALL LETTER L WITH BELT"
+  },
+  {
+   "key": "sR",
+   "glyph": "ʂ",
+   "cp": "U+0282",
+   "name": "LATIN SMALL LETTER S WITH HOOK"
+  },
+  {
+   "key": "t@",
+   "glyph": "tʼ",
+   "cp": "U+0074 U+02BC",
+   "name": "LATIN SMALL LETTER T; MODIFIER LETTER APOSTROPHE"
+  },
+  {
+   "key": "tH",
+   "glyph": "θ",
+   "cp": "U+03B8",
+   "name": "GREEK SMALL LETTER THETA"
+  },
+  {
+   "key": "tR",
+   "glyph": "ʈ",
+   "cp": "U+0288",
+   "name": "LATIN SMALL LETTER T WITH RETROFLEX HOOK"
+  },
+  {
+   "key": "uH",
+   "glyph": "ʊ",
+   "cp": "U+028A",
+   "name": "LATIN SMALL LETTER UPSILON"
+  },
+  {
+   "key": "uW",
+   "glyph": "ɯ",
+   "cp": "U+026F",
+   "name": "LATIN SMALL LETTER TURNED M"
+  },
+  {
+   "key": "vH",
+   "glyph": "ʋ",
+   "cp": "U+028B",
+   "name": "LATIN SMALL LETTER V WITH HOOK"
+  },
+  {
+   "key": "wH",
+   "glyph": "ʍ",
+   "cp": "U+028D",
+   "name": "LATIN SMALL LETTER TURNED W"
+  },
+  {
+   "key": "wJ",
+   "glyph": "ɥ",
+   "cp": "U+0265",
+   "name": "LATIN SMALL LETTER TURNED H"
+  },
+  {
+   "key": "wW",
+   "glyph": "ɰ",
+   "cp": "U+0270",
+   "name": "LATIN SMALL LETTER TURNED M WITH LONG LEG"
+  },
+  {
+   "key": "yH",
+   "glyph": "ʏ",
+   "cp": "U+028F",
+   "name": "LATIN LETTER SMALL CAPITAL Y"
+  },
+  {
+   "key": "zH",
+   "glyph": "ʒ",
+   "cp": "U+0292",
+   "name": "LATIN SMALL LETTER EZH"
+  },
+  {
+   "key": "zJ",
+   "glyph": "ʑ",
+   "cp": "U+0291",
+   "name": "LATIN SMALL LETTER Z WITH CURL"
+  },
+  {
+   "key": "zL",
+   "glyph": "ɮ",
+   "cp": "U+026E",
+   "name": "LATIN SMALL LETTER LEZH"
+  },
+  {
+   "key": "zR",
+   "glyph": "ʐ",
+   "cp": "U+0290",
+   "name": "LATIN SMALL LETTER Z WITH RETROFLEX HOOK"
+  },
+  {
+   "key": "|B",
+   "glyph": "ʘ",
+   "cp": "U+0298",
+   "name": "LATIN LETTER BILABIAL CLICK"
+  },
+  {
+   "key": "|J",
+   "glyph": "ǂ",
+   "cp": "U+01C2",
+   "name": "LATIN LETTER ALVEOLAR CLICK"
+  },
+  {
+   "key": "|L",
+   "glyph": "ǁ",
+   "cp": "U+01C1",
+   "name": "LATIN LETTER LATERAL CLICK"
+  }
+ ],
+ "marks": [
+  {
+   "key": ":",
+   "mark": "ː",
+   "group": "Length",
+   "cp": "U+02D0",
+   "name": "MODIFIER LETTER TRIANGULAR COLON"
+  },
+  {
+   "key": ";",
+   "mark": "ˑ",
+   "group": "Length",
+   "cp": "U+02D1",
+   "name": "MODIFIER LETTER HALF TRIANGULAR COLON"
+  },
+  {
+   "key": "/",
+   "mark": "́",
+   "group": "Tone & intonation",
+   "cp": "U+0301",
+   "name": "COMBINING ACUTE ACCENT"
+  },
+  {
+   "key": "//",
+   "mark": "̋",
+   "group": "Tone & intonation",
+   "cp": "U+030B",
+   "name": "COMBINING DOUBLE ACUTE ACCENT"
+  },
+  {
+   "key": "\\",
+   "mark": "̀",
+   "group": "Tone & intonation",
+   "cp": "U+0300",
+   "name": "COMBINING GRAVE ACCENT"
+  },
+  {
+   "key": "\\\\",
+   "mark": "̏",
+   "group": "Tone & intonation",
+   "cp": "U+030F",
+   "name": "COMBINING DOUBLE GRAVE ACCENT"
+  },
+  {
+   "key": "^",
+   "mark": "̂",
+   "group": "Tone & intonation",
+   "cp": "U+0302",
+   "name": "COMBINING CIRCUMFLEX ACCENT"
+  },
+  {
+   "key": "%",
+   "mark": "̌",
+   "group": "Tone & intonation",
+   "cp": "U+030C",
+   "name": "COMBINING CARON"
+  },
+  {
+   "key": "-",
+   "mark": "̄",
+   "group": "Tone & intonation",
+   "cp": "U+0304",
+   "name": "COMBINING MACRON"
+  },
+  {
+   "key": "<<",
+   "mark": "ꜜ",
+   "group": "Tone & intonation",
+   "cp": "U+A71C",
+   "name": "MODIFIER LETTER RAISED DOWN ARROW"
+  },
+  {
+   "key": ">>",
+   "mark": "ꜛ",
+   "group": "Tone & intonation",
+   "cp": "U+A71B",
+   "name": "MODIFIER LETTER RAISED UP ARROW"
+  },
+  {
+   "key": "%%",
+   "mark": "↗",
+   "group": "Tone & intonation",
+   "cp": "U+2197",
+   "name": "NORTH EAST ARROW"
+  },
+  {
+   "key": "^^",
+   "mark": "↘",
+   "group": "Tone & intonation",
+   "cp": "U+2198",
+   "name": "SOUTH EAST ARROW"
+  },
+  {
+   "key": "0",
+   "mark": "̥",
+   "group": "Phonation",
+   "cp": "U+0325",
+   "name": "COMBINING RING BELOW"
+  },
+  {
+   "key": "+",
+   "mark": "̬",
+   "group": "Phonation",
+   "cp": "U+032C",
+   "name": "COMBINING CARON BELOW"
+  },
+  {
+   "key": "?",
+   "mark": "̰",
+   "group": "Phonation",
+   "cp": "U+0330",
+   "name": "COMBINING TILDE BELOW"
+  },
+  {
+   "key": "##",
+   "mark": "̤",
+   "group": "Phonation",
+   "cp": "U+0324",
+   "name": "COMBINING DIAERESIS BELOW"
+  },
+  {
+   "key": "#",
+   "mark": "ʰ",
+   "group": "Phonation",
+   "cp": "U+02B0",
+   "name": "MODIFIER LETTER SMALL H"
+  },
+  {
+   "key": "~",
+   "mark": "̃",
+   "group": "Nasalization",
+   "cp": "U+0303",
+   "name": "COMBINING TILDE"
+  },
+  {
+   "key": "[",
+   "mark": "̪",
+   "group": "Articulation",
+   "cp": "U+032A",
+   "name": "COMBINING BRIDGE BELOW"
+  },
+  {
+   "key": "]",
+   "mark": "̺",
+   "group": "Articulation",
+   "cp": "U+033A",
+   "name": "COMBINING INVERTED BRIDGE BELOW"
+  },
+  {
+   "key": "[[",
+   "mark": "̼",
+   "group": "Articulation",
+   "cp": "U+033C",
+   "name": "COMBINING SEAGULL BELOW"
+  },
+  {
+   "key": "]]",
+   "mark": "̻",
+   "group": "Articulation",
+   "cp": "U+033B",
+   "name": "COMBINING SQUARE BELOW"
+  },
+  {
+   "key": "{",
+   "mark": "̟",
+   "group": "Articulation",
+   "cp": "U+031F",
+   "name": "COMBINING PLUS SIGN BELOW"
+  },
+  {
+   "key": "}",
+   "mark": "̠",
+   "group": "Articulation",
+   "cp": "U+0320",
+   "name": "COMBINING MINUS SIGN BELOW"
+  },
+  {
+   "key": "{{",
+   "mark": "̘",
+   "group": "Articulation",
+   "cp": "U+0318",
+   "name": "COMBINING LEFT TACK BELOW"
+  },
+  {
+   "key": "}}",
+   "mark": "̙",
+   "group": "Articulation",
+   "cp": "U+0319",
+   "name": "COMBINING RIGHT TACK BELOW"
+  },
+  {
+   "key": "<",
+   "mark": "̞",
+   "group": "Articulation",
+   "cp": "U+031E",
+   "name": "COMBINING DOWN TACK BELOW"
+  },
+  {
+   "key": ">",
+   "mark": "̝",
+   "group": "Articulation",
+   "cp": "U+031D",
+   "name": "COMBINING UP TACK BELOW"
+  },
+  {
+   "key": "(",
+   "mark": "̜",
+   "group": "Articulation",
+   "cp": "U+031C",
+   "name": "COMBINING LEFT HALF RING BELOW"
+  },
+  {
+   "key": ")",
+   "mark": "̹",
+   "group": "Articulation",
+   "cp": "U+0339",
+   "name": "COMBINING RIGHT HALF RING BELOW"
+  },
+  {
+   "key": "\"",
+   "mark": "̈",
+   "group": "Articulation",
+   "cp": "U+0308",
+   "name": "COMBINING DIAERESIS"
+  },
+  {
+   "key": "\"\"",
+   "mark": "̽",
+   "group": "Articulation",
+   "cp": "U+033D",
+   "name": "COMBINING X ABOVE"
+  },
+  {
+   "key": "=",
+   "mark": "̩",
+   "group": "Syllabicity & release",
+   "cp": "U+0329",
+   "name": "COMBINING VERTICAL LINE BELOW"
+  },
+  {
+   "key": "**",
+   "mark": "̯",
+   "group": "Syllabicity & release",
+   "cp": "U+032F",
+   "name": "COMBINING INVERTED BREVE BELOW"
+  },
+  {
+   "key": "*",
+   "mark": "̆",
+   "group": "Syllabicity & release",
+   "cp": "U+0306",
+   "name": "COMBINING BREVE"
+  },
+  {
+   "key": "`",
+   "mark": "̚",
+   "group": "Syllabicity & release",
+   "cp": "U+031A",
+   "name": "COMBINING LEFT ANGLE ABOVE"
+  },
+  {
+   "key": "'",
+   "mark": "ˈ",
+   "group": "Prosody & linking",
+   "cp": "U+02C8",
+   "name": "MODIFIER LETTER VERTICAL LINE"
+  },
+  {
+   "key": ",",
+   "mark": "ˌ",
+   "group": "Prosody & linking",
+   "cp": "U+02CC",
+   "name": "MODIFIER LETTER LOW VERTICAL LINE"
+  },
+  {
+   "key": ".",
+   "mark": ".",
+   "group": "Prosody & linking",
+   "cp": "U+002E",
+   "name": "FULL STOP"
+  },
+  {
+   "key": "_",
+   "mark": "‿",
+   "group": "Prosody & linking",
+   "cp": "U+203F",
+   "name": "UNDERTIE"
+  },
+  {
+   "key": "&",
+   "mark": "͡",
+   "group": "Prosody & linking",
+   "cp": "U+0361",
+   "name": "COMBINING DOUBLE INVERTED BREVE"
+  }
+ ],
+ "superscripts": {
+  "operator": "$",
+  "table": [
+   {
+    "base": "h",
+    "sup": "ʰ"
+   },
+   {
+    "base": "j",
+    "sup": "ʲ"
+   },
+   {
+    "base": "w",
+    "sup": "ʷ"
+   },
+   {
+    "base": "g",
+    "sup": "ˠ"
+   },
+   {
+    "base": "l",
+    "sup": "ˡ"
+   },
+   {
+    "base": "n",
+    "sup": "ⁿ"
+   },
+   {
+    "base": "s",
+    "sup": "ˢ"
+   },
+   {
+    "base": "x",
+    "sup": "ˣ"
+   },
+   {
+    "base": "m",
+    "sup": "ᵐ"
+   },
+   {
+    "base": "β",
+    "sup": "ᵝ"
+   },
+   {
+    "base": "d",
+    "sup": "ᵈ"
+   },
+   {
+    "base": "t",
+    "sup": "ᵗ"
+   },
+   {
+    "base": "k",
+    "sup": "ᵏ"
+   },
+   {
+    "base": "r",
+    "sup": "ʳ"
+   },
+   {
+    "base": "ʕ",
+    "sup": "ˤ"
+   },
+   {
+    "base": "ʔ",
+    "sup": "ˀ"
+   },
+   {
+    "base": "ɦ",
+    "sup": "ʱ"
+   },
+   {
+    "base": "ɣ",
+    "sup": "ˠ"
+   }
+  ]
+ }
+}

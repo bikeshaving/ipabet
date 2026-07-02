@@ -1,0 +1,4 @@
+build/
+*.icns
+.DS_Store
+node_modules/

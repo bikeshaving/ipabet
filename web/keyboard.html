@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IPAbet — visual keyboard</title>
+<meta name="description" content="IPAbet: type the full IPA chart from a Latin keyboard." />
+<meta property="og:title" content="IPAbet — a Latin keyboard for the IPA" />
+<meta property="og:description" content="Every IPA sound in one or two keystrokes." />
+<style>
+  :root {
+    --ink:#1d1c19; --ink2:#6b6960; --ink3:#a3a096; --bg:#faf9f6;
+    --cap:#fdfcfa; --cap2:#efece5; --edge:#cdc9bd; --edge2:#b3ae9f;
+    --hi:#2f5d8a; --hi-bg:#e8f0f8; --gold:#b8863b; --blue:#2f5d8a;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.5;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 18px 70px; }
+  h1 { font-size:22px; font-weight:600; margin:0 0 3px; letter-spacing:-0.01em; }
+  .sub { color:var(--ink2); font-size:14px; margin:0 0 16px; }
+  .bar { display:flex; gap:14px; align-items:center; margin-bottom:16px; font-size:13px; }
+  .toggle { display:inline-flex; border:1px solid var(--edge); border-radius:8px; overflow:hidden; }
+  .toggle button { border:0; background:var(--cap); padding:6px 12px; font-size:12px; cursor:pointer; color:var(--ink2); }
+  .toggle button.on { background:var(--hi); color:#fff; }
+  .ed { background:#fff; border:1px solid var(--cap2); border-radius:12px; padding:14px 16px; margin-bottom:20px; }
+  .ed input { width:100%; font-family:var(--mono); font-size:16px; padding:8px 10px;
+    border:1px solid var(--edge); border-radius:8px; background:var(--bg); color:var(--ink); outline:none; }
+  .ed input:focus { border-color:var(--hi); }
+  .ed .out { font-size:28px; min-height:40px; padding:8px 2px 0; }
+
+  .deck { background:linear-gradient(#e7e3d9,#dcd7cb); border:1px solid var(--edge2);
+    border-radius:16px; padding:11px; box-shadow:0 2px 0 #c9c4b6, 0 10px 26px rgba(0,0,0,.10); }
+  .krow { display:flex; gap:7px; margin-bottom:7px; }
+  .krow:last-child { margin-bottom:0; }
+  .cap { flex:1 1 0; min-width:0; height:54px; border-radius:9px;
+    background:linear-gradient(var(--cap),var(--cap2));
+    border:1px solid var(--edge); box-shadow:0 1.5px 0 var(--edge2), inset 0 1px 0 #fff;
+    position:relative; display:flex; align-items:center; justify-content:center; }
+  .cap.lit { background:linear-gradient(var(--hi-bg),#dae6f3); border-color:var(--hi); box-shadow:0 1.5px 0 var(--hi), inset 0 1px 0 #fff; }
+  .cap .base { font-size:19px; line-height:1; }
+  .cap.mono .base, .cap.punct .base { font-family:inherit; }
+  .cap .mod { position:absolute; top:3px; right:5px; font-size:11px; color:var(--gold); font-weight:700; }
+  .cap .num { position:absolute; top:3px; left:5px; font-family:var(--mono); font-size:9px; color:var(--ink3); }
+  .cap.punct .base { color:var(--blue); font-size:16px; }
+  .cap.punct .num { color:var(--gold); }
+  .cap.dbl::after { content:"×2"; position:absolute; bottom:3px; right:5px; font-size:8px; color:var(--ink3); font-family:var(--mono); }
+  .cap.spec { background:linear-gradient(#ece9e1,#e1dcd1); color:var(--ink2); font-size:11px; font-family:var(--mono); }
+  .spec.u15 { flex:1.6 1 0; } .spec.u18 { flex:1.9 1 0; } .spec.u20 { flex:2.2 1 0; } .spec.u25 { flex:2.6 1 0; } .spec.u60 { flex:6.5 1 0; }
+  .legend { display:flex; gap:20px; flex-wrap:wrap; margin-top:16px; font-size:12px; color:var(--ink2); }
+  .legend b { color:var(--gold); } .legend .bl { color:var(--blue); } .legend .k2 { font-family:var(--mono); color:var(--ink3); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import {jsx, renderer} from "https://cdn.jsdelivr.net/npm/@b9g/crank@0.7.8/standalone.js";
+
+const DATA = {"letters": {"!": "ǃ", "1": "ɨ", "2": "ʔ", "3": "ʕ", "4": "ɾ", "5": "ə", "6": "ɐ", "7": "ħ", "8": "/", "a": "a", "b": "b", "c": "c", "d": "d", "e": "e", "f": "f", "g": "g", "h": "h", "i": "i", "j": "j", "k": "k", "l": "l", "m": "m", "n": "n", "o": "o", "p": "p", "q": "q", "r": "r", "s": "s", "t": "t", "u": "u", "v": "v", "w": "w", "x": "x", "y": "y", "z": "z", "|": "ǀ", "1H": "ɘ", "1W": "ʉ", "2Q": "ʡ", "3Q": "ʢ", "4L": "ɺ", "4R": "ɽ", "4V": "ⱱ", "5H": "ɜ", "5R": "ɚ", "5W": "ɞ", "7Q": "ʜ", "aE": "æ", "aH": "ʌ", "aO": "ɑ", "aW": "ɶ", "b@": "ɓ", "bH": "β", "cH": "ç", "d@": "ɗ", "dH": "ð", "dJ": "ɟ", "dR": "ɖ", "eH": "ɛ", "eR": "ɝ", "eW": "ø", "g@": "ɠ", "gG": "ʛ", "gH": "ɣ", "gJ": "ʝ", "gQ": "ɢ", "hH": "ɦ", "iH": "ɪ", "j@": "ʄ", "k@": "kʼ", "lG": "ʟ", "lJ": "ʎ", "lR": "ɭ", "lU": "ɫ", "mV": "ɱ", "nG": "ŋ", "nJ": "ɲ", "nQ": "ɴ", "nR": "ɳ", "oA": "ɒ", "oE": "œ", "oH": "ɔ", "oU": "ɵ", "oW": "ɤ", "p@": "pʼ", "pH": "ɸ", "q@": "qʼ", "qH": "χ", "rB": "ʙ", "rG": "ʀ", "rH": "ɹ", "rQ": "ʁ", "rR": "ɻ", "s@": "sʼ", "sH": "ʃ", "sJ": "ɕ", "sL": "ɬ", "sR": "ʂ", "t@": "tʼ", "tH": "θ", "tR": "ʈ", "uH": "ʊ", "uW": "ɯ", "vH": "ʋ", "wH": "ʍ", "wJ": "ɥ", "wW": "ɰ", "yH": "ʏ", "zH": "ʒ", "zJ": "ʑ", "zL": "ɮ", "zR": "ʐ", "|B": "ʘ", "|J": "ǂ", "|L": "ǁ"}, "modifiers": {"H": "lenite toward /h/ — spirantize, open, lax", "R": "retroflex (coronals); trill (elsewhere)", "J": "palatalize (consonants only)", "W": "labialize / round-flip", "L": "lateralize", "G": "dorsal deepening — velar/uvular place", "Q": "guttural — uvular-pharyngeal-epiglottal throat region", "V": "labiodental", "U": "velarize/dark (consonants); centralize (oU)", "O": "drag toward o (vowels)", "A": "drag toward a (vowels)", "E": "ligature with e", "@": "glottalic — voiced → implosive, voiceless → ejective", "B": "bilabial place"}};
+const MARKS = {":": "ː", ";": "ˑ", "/": "́", "//": "̋", "\\": "̀", "\\\\": "̏", "^": "̂", "%": "̌", "-": "̄", "<<": "ꜜ", ">>": "ꜛ", "%%": "↗", "^^": "↘", "0": "̥", "+": "̬", "?": "̰", "##": "̤", "#": "ʰ", "~": "̃", "[": "̪", "]": "̺", "[[": "̼", "]]": "̻", "{": "̟", "}": "̠", "{{": "̘", "}}": "̙", "<": "̞", ">": "̝", "(": "̜", ")": "̹", "\"": "̈", "\"\"": "̽", "=": "̩", "**": "̯", "*": "̆", "`": "̚", "'": "ˈ", ",": "ˌ", ".": ".", "_": "‿", "&": "͡"};
+const L = DATA.letters, MODS = DATA.modifiers;
+const MOD_GLYPH = { H:"ʰ", J:"ʲ", W:"ʷ", U:"ˠ", Q:"ˤ", R:"˞", L:"ˡ", "@":"ˀ",
+                    G:"G", V:"ᵥ", B:"B", E:"E", A:"A", O:"O" };
+// physical US keycap → [unshifted char, shifted char]
+const PUNCT = {
+  "-":["-","_"], "=":["=","+"], "[":["[","{"], "]":["]","}"], "\\":["\\","|"],
+  ";":[";",":"], "'":["'","\""], ",":[",","<"], ".":[".",">"], "/":["/","?"], "`":["`","~"],
+};
+
+const TRANSFORMS = {};
+for (const [k, g] of Object.entries(L)) if (k.length === 2 && L[k[0]]) TRANSFORMS[L[k[0]] + k[1]] = g;
+const DBL = {};
+for (const k of Object.keys(MARKS)) if (k.length===2 && k[0]===k[1]) DBL[k[0]] = MARKS[k];
+
+function transcode(input) {
+  let out = "", bo = false;
+  for (const s of input) {
+    const p = [...out].pop();
+    if (p && TRANSFORMS[p + s] !== undefined) { out = [...out].slice(0,-1).join("") + TRANSFORMS[p+s]; continue; }
+    if (s === "9") { out += bo ? "]" : "["; bo = !bo; continue; }
+    if (MARKS[s] !== undefined && L[s] === undefined) { out += MARKS[s]; continue; }
+    if (L[s] !== undefined) { out += L[s]; continue; }
+    out += s;
+  }
+  return out;
+}
+
+const comb = (m) => m && m.charCodeAt(0) >= 0x300 && m.charCodeAt(0) < 0x370;
+const show = (m) => m == null ? "" : (comb(m) ? " "+m : m);
+
+function Cap({ch, lit}) {
+  const up = ch.toUpperCase();
+  const mono = /[0-9]/.test(ch);
+  const base = ch === "8" ? "/" : ch === "9" ? "[ ]" : (L[ch] ?? ch);
+  const g = MOD_GLYPH[up];
+  const mod = MODS[up] ? (g && g !== up ? g : up) : (ch === "2" ? "ˀ" : null);
+  return jsx`
+    <div class="cap ${mono?"mono":""} ${lit?"lit":""}">
+      ${mono ? jsx`<span class="num">${ch}</span>` : null}
+      <span class="base">${base}</span>
+      ${mod ? jsx`<span class="mod">${mod}</span>` : null}
+    </div>`;
+}
+
+function Punct({ch, shift}) {
+  const [u, s] = PUNCT[ch];
+  const key = shift ? s : u;
+  const mk = MARKS[key];
+  return jsx`
+    <div class="cap punct ${DBL[key]?"dbl":""}">
+      <span class="num">${key}</span>
+      <span class="base">${show(mk) || key}</span>
+    </div>`;
+}
+
+function *App() {
+  let typed = "", shift = false;
+  const oninput = (e) => this.refresh(() => typed = e.target.value);
+  const setShift = (v) => this.refresh(() => shift = v);
+  for ({} of this) {
+    const out = transcode(typed), last = typed.slice(-1).toLowerCase();
+    yield jsx`
+      <div class="wrap">
+        <h1>IPAbet keyboard</h1>
+        <p class="sub">Letters are IPA values (gold corner = Shift-modifier). Punctuation carries the diacritics & suprasegmentals.</p>
+        <div class="bar">
+          <div class="toggle">
+            <button class="${shift?"":"on"}" onclick=${()=>setShift(false)}>marks</button>
+            <button class="${shift?"on":""}" onclick=${()=>setShift(true)}>shifted marks</button>
+          </div>
+          <span style="color:var(--ink3)">×2 = doubling upgrades the mark</span>
+        </div>
+        <div class="ed">
+          <input placeholder="sHip · tRip · 3arabi · f5nEtIks · 8bad8" value=${typed}
+            oninput=${oninput} spellcheck="false" autocomplete="off" />
+          <div class="out">${out || " "}</div>
+        </div>
+        <div class="deck">
+          <div class="krow">
+            <${Punct} ch=${String.fromCharCode(96)} shift=${shift}/>
+            ${"1234567890".split("").map((c) => jsx`<${Cap} ch=${c} lit=${c===last}/>`)}
+            <${Punct} ch="-" shift=${shift}/><${Punct} ch="=" shift=${shift}/>
+            <div class="cap spec u15">⌫</div>
+          </div>
+          <div class="krow">
+            <div class="cap spec u15">⇥</div>
+            ${"qwertyuiop".split("").map((c) => jsx`<${Cap} ch=${c} lit=${c===last}/>`)}
+            <${Punct} ch="[" shift=${shift}/><${Punct} ch="]" shift=${shift}/><${Punct} ch=${String.fromCharCode(92)} shift=${shift}/>
+          </div>
+          <div class="krow">
+            <div class="cap spec u18">⇪</div>
+            ${"asdfghjkl".split("").map((c) => jsx`<${Cap} ch=${c} lit=${c===last}/>`)}
+${[";","APOS"].map((c) => jsx`<${Punct} ch=${c==="APOS"?String.fromCharCode(39):c} shift=${shift}/>`)}
+            <div class="cap spec u18">⏎</div>
+          </div>
+          <div class="krow">
+            <div class="cap spec u25">⇧</div>
+            ${"zxcvbnm".split("").map((c) => jsx`<${Cap} ch=${c} lit=${c===last}/>`)}
+            <${Punct} ch="," shift=${shift}/><${Punct} ch="." shift=${shift}/><${Punct} ch="/" shift=${shift}/>
+            <div class="cap spec u25">⇧</div>
+          </div>
+          <div class="krow">
+            <div class="cap spec u18">⌥</div>
+            <div class="cap spec u60">space</div>
+            <div class="cap spec u18">⌥</div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><b>gold</b> = Shift-modifier on letters</span>
+          <span><span class="bl">blue</span> = mark on ◌ · toggle for shifted punctuation</span>
+          <span><span class="k2">8</span> /broad/ · <span class="k2">9</span> [narrow]</span>
+        </div>
+      </div>`;
+  }
+}
+renderer.render(jsx`<${App} />`, document.getElementById("app"));
+</script>
+</body>
+</html>
