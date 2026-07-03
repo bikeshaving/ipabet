@@ -12,7 +12,7 @@
   "O": "drag toward o (vowels)",
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
-  "@": "glottalic — voiced → implosive, voiceless → ejective",
+  "X": "glottalic — voiced → implosive, voiceless → ejective",
   "B": "bilabial place"
  },
  "letters": [
@@ -323,7 +323,7 @@
    "name": "LATIN LETTER SMALL CAPITAL OE"
   },
   {
-   "key": "b@",
+   "key": "bX",
    "glyph": "ɓ",
    "cp": "U+0253",
    "name": "LATIN SMALL LETTER B WITH HOOK"
@@ -341,7 +341,7 @@
    "name": "LATIN SMALL LETTER C WITH CEDILLA"
   },
   {
-   "key": "d@",
+   "key": "dX",
    "glyph": "ɗ",
    "cp": "U+0257",
    "name": "LATIN SMALL LETTER D WITH HOOK"
@@ -383,7 +383,7 @@
    "name": "LATIN SMALL LETTER O WITH STROKE"
   },
   {
-   "key": "g@",
+   "key": "gX",
    "glyph": "ɠ",
    "cp": "U+0260",
    "name": "LATIN SMALL LETTER G WITH HOOK"
@@ -425,13 +425,13 @@
    "name": "LATIN LETTER SMALL CAPITAL I"
   },
   {
-   "key": "j@",
+   "key": "jX",
    "glyph": "ʄ",
    "cp": "U+0284",
    "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK"
   },
   {
-   "key": "k@",
+   "key": "kX",
    "glyph": "kʼ",
    "cp": "U+006B U+02BC",
    "name": "LATIN SMALL LETTER K; MODIFIER LETTER APOSTROPHE"
@@ -521,7 +521,7 @@
    "name": "LATIN SMALL LETTER RAMS HORN"
   },
   {
-   "key": "p@",
+   "key": "pX",
    "glyph": "pʼ",
    "cp": "U+0070 U+02BC",
    "name": "LATIN SMALL LETTER P; MODIFIER LETTER APOSTROPHE"
@@ -533,7 +533,7 @@
    "name": "LATIN SMALL LETTER PHI"
   },
   {
-   "key": "q@",
+   "key": "qX",
    "glyph": "qʼ",
    "cp": "U+0071 U+02BC",
    "name": "LATIN SMALL LETTER Q; MODIFIER LETTER APOSTROPHE"
@@ -575,7 +575,7 @@
    "name": "LATIN SMALL LETTER TURNED R WITH HOOK"
   },
   {
-   "key": "s@",
+   "key": "sX",
    "glyph": "sʼ",
    "cp": "U+0073 U+02BC",
    "name": "LATIN SMALL LETTER S; MODIFIER LETTER APOSTROPHE"
@@ -605,7 +605,7 @@
    "name": "LATIN SMALL LETTER S WITH HOOK"
   },
   {
-   "key": "t@",
+   "key": "tX",
    "glyph": "tʼ",
    "cp": "U+0074 U+02BC",
    "name": "LATIN SMALL LETTER T; MODIFIER LETTER APOSTROPHE"
