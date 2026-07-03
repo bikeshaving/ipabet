@@ -34,54 +34,55 @@ enum USLayout {
     }
 }
 
+// A diacritic on the Option layer. `spacing` marks insert in place (ˈ ː …);
+// combining marks decorate the previous glyph. `double` is the second-press
+// "other form"; `cycle` steps through variants (dental → apical → …).
+struct Mark {
+    let mark: String
+    let spacing: Bool
+    let double: String?
+    let cycle: [String]
+}
+
 struct Tables {
     let letters: [String: String]
-    let marks: [String: String]
+    // Option-layer diacritics, keyed by the Option key's unshifted US character.
+    let optMarks: [String: Mark]
     let sups: [String: String]
     // transformation index: (previous output glyph + keystroke) → combined glyph
     let transforms: [String: String]
 
     static let shared: Tables = {
-        guard let url = Bundle.main.url(forResource: "ipakey", withExtension: "json"),
+        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-        else { fatalError("ipakey.json missing") }
-        func rows(_ key: String, _ vk: String) -> [String: String] {
-            var out: [String: String] = [:]
-            for r in root[key] as? [[String: Any]] ?? [] {
-                out[r["key"] as? String ?? ""] = r[vk] as? String
-            }
-            return out
+        else { fatalError("ipabet.json missing") }
+        var letters: [String: String] = [:]
+        for r in root["letters"] as? [[String: Any]] ?? [] {
+            if let k = r["key"] as? String, let g = r["glyph"] as? String { letters[k] = g }
+        }
+        var optMarks: [String: Mark] = [:]
+        for r in root["marks"] as? [[String: Any]] ?? [] {
+            guard let opt = r["opt"] as? String, let mark = r["mark"] as? String else { continue }
+            optMarks[opt] = Mark(mark: mark,
+                                 spacing: (r["type"] as? String) == "spacing",
+                                 double: r["double"] as? String,
+                                 cycle: r["cycle"] as? [String] ?? [])
         }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
             for r in s["table"] as? [[String: Any]] ?? [] {
-                sups[r["base"] as? String ?? ""] = r["sup"] as? String
+                if let b = r["base"] as? String, let sp = r["sup"] as? String { sups[b] = sp }
             }
         }
-        let letters = rows("letters", "glyph")
         var transforms: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
-            if let prev = letters[base] {
-                transforms[prev + mod] = glyph
-            }
+            if let prev = letters[base] { transforms[prev + mod] = glyph }
         }
-        return Tables(letters: letters, marks: rows("marks", "mark"),
-                      sups: sups, transforms: transforms)
+        return Tables(letters: letters, optMarks: optMarks, sups: sups, transforms: transforms)
     }()
 }
-
-// doubled-mark upgrades: emitted single mark + same key → doubled mark
-let upgrades: [String: String] = {
-    var u: [String: String] = [:]
-    for (k, v) in Tables.shared.marks where k.count == 2 && k.first == k.last {
-        if let single = Tables.shared.marks[String(k.prefix(1))] {
-            u[single + String(k.prefix(1))] = v
-        }
-    }
-    return u
-}()
 
 // The engine mimics Apple's Korean (2-Set) input method, whose exact client
 // protocol we captured with tools/probe.swift: NO marked text, ever. Each
@@ -105,10 +106,8 @@ let upgrades: [String: String] = {
 @objc(InputController)
 class InputController: IMKInputController {
 
-    // An Option-prefixed dead-key mark, applied to the next glyph.
-    private var pendingMark = ""
-    // Narrow-bracket toggle for the 9 key.
-    private var bracketOpen = false
+    // Stateless: no pending marks, no modes, nothing to desync. Every keystroke
+    // reads the document and acts. (Number mode, when added, reads Caps Lock.)
 
     override func activateServer(_ sender: Any!) {
         // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
@@ -116,106 +115,128 @@ class InputController: IMKInputController {
         // bare in-bundle name was a misrouting suspect on macOS 15.
     }
 
-    override func commitComposition(_ sender: Any!) {
-        pendingMark = ""   // nothing else: there is never an open composition
-    }
+    override func commitComposition(_ sender: Any!) {}   // no composition to flush
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         guard event.type == .keyDown,
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
-
-        if event.modifierFlags.contains(.command) || event.modifierFlags.contains(.control) {
-            pendingMark = ""
-            return false
-        }
+        let flags = event.modifierFlags
+        if flags.contains(.command) || flags.contains(.control) { return false }
         if event.keyCode == 51 { return handleBackspace(client) }
 
-        let opt = event.modifierFlags.contains(.option)
-        // Decode the physical key through US, independent of the active layout.
-        let s = USLayout.char(event.keyCode, shift: opt ? false : event.modifierFlags.contains(.shift))
-        guard s.count == 1 else { return false }
+        let opt = flags.contains(.option)
+        let shift = flags.contains(.shift)
 
+        // Option-Shift: single-key raw-US passthrough (the key's shifted char).
+        // This is how you type a symbol the Option layer claims — ⌥⇧4 → $, ⌥⇧1 → !.
+        if opt && shift {
+            let raw = USLayout.char(event.keyCode, shift: true)
+            guard !raw.isEmpty else { return false }
+            insert(raw, client)
+            return true
+        }
+
+        // Option: the postfix diacritic layer, keyed by the key's unshifted US
+        // character (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥4 → superscript).
         if opt {
-            if event.modifierFlags.contains(.shift) {
-                // Option-Shift: escape hatch. Insert the plain US character for
-                // this key WITH Shift — e.g. Option-Shift-/ → "?". The mark
-                // layer claims many shifted-symbol keys, so this is how you
-                // type a literal ? ! : ~ ( ) etc.
-                let raw = USLayout.char(event.keyCode, shift: true)
-                guard !raw.isEmpty else { return false }
-                pendingMark = ""
-                insert(raw, client)
-                return true
-            }
-            if s.first!.isNumber { insert(s, client); return true }    // literal numeral
-            if let mark = t.marks[s], isCombining(mark) {
-                pendingMark = mark                                     // dead-key, invisible
-                return true
-            }
+            let oc = USLayout.char(event.keyCode, shift: false)
+            guard oc.count == 1 else { return false }
+            if oc == "4" { return superscriptize(client) }
+            if let m = t.optMarks[oc] { applyMark(m, client); return true }
+            if oc.first!.isNumber { insert(oc, client); return true }   // ⌥3/5/7/8 → digit
             return false
         }
 
-        // All previous-glyph rules operate on the DECOMPOSED view of the
-        // cluster: NFC on write means diacritics sometimes fuse into the base
-        // (é is one codepoint, n̥ is two), and matching against the written
-        // form makes every rule behave differently for the two classes. So:
-        // split into base + combining marks, match on the relevant part,
-        // preserve the rest, recompose on write. On any miss, fall through —
-        // a keystroke must always emit something, never dead-end.
+        // Number row: bare → decline (native passthrough), so a digit key is a
+        // real digit key — usable as a tmux/vim/app command, not just text.
+        // Shift → the IPA glyph (Shift-5 → ə, Shift-2 → ʔ …). Shifted symbols
+        // (! @ # …) live on ⌥⇧.
+        let bareKey = USLayout.char(event.keyCode, shift: false)
+        if bareKey.count == 1, bareKey.first!.isNumber {
+            if shift, let glyph = t.letters[bareKey] { insert(glyph, client); return true }
+            return false
+        }
+
+        // Decode the physical key through US for the ASCII-keyed tables.
+        let s = USLayout.char(event.keyCode, shift: shift)
+        guard s.count == 1 else { return false }
+
+        // Shift-letter modifiers transform the previous glyph in place; any
+        // combining marks already on it survive the swap (decomposed view).
         if let (p, r) = lastCluster(client) {
             let (base, marks) = decompose(p)
-            // modifier keys transform the base glyph, diacritics survive
             if let combo = t.transforms[base + s] {
                 replace(r, with: recompose(combo, marks), client); return true
             }
-            // doubled mark upgrades the trailing single mark
-            if let m = marks.last, let up = upgrades[String(m) + s] {
-                replace(r, with: recompose(base, marks.dropLast() + Array(up.unicodeScalars)), client)
-                return true
-            }
-            // already at the doubled mark: no further IPA meaning, so the key
-            // reverts to its literal US character (decline → host types it)
-            if let m = marks.last, let single = t.marks[s], upgrades[single + s] == String(m) {
-                return false
-            }
-            // generic vowel rhoticization: R after any vowel appends the hook
+            // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
+            // rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞,
+            // which has no fused form in Unicode.
             if s == "R", let b = base.first, "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ".contains(b) {
-                replace(r, with: recompose(base, marks) + "\u{02DE}", client); return true
+                let out: String
+                switch base {
+                case "ə": out = recompose("ɚ", marks)
+                case "ɜ": out = recompose("ɝ", marks)
+                default:  out = recompose(base, marks) + "\u{02DE}"
+                }
+                replace(r, with: out, client); return true
             }
-            // superscriptize (miss falls through: Shift-4 types "$" natively)
-            if s == "$", let sup = t.sups[base] {
+        }
+        // letter / click base glyph
+        if let glyph = t.letters[s] { insert(glyph, client); return true }
+        // capitals with no transform, punctuation, digits 8/9/0: type literally
+        return false
+    }
+
+    // MARK: - Option diacritic layer (postfix)
+
+    private func applyMark(_ m: Mark, _ client: IMKTextInput) {
+        m.spacing ? applySpacing(m, client) : applyCombining(m, client)
+    }
+
+    /// Combining mark: decorate the previous glyph. Same mark again upgrades to
+    /// its "other form" (double / positional twin); a cycle steps through its
+    /// variants. With no glyph to decorate, the mark is emitted on its own —
+    /// never a dead keystroke.
+    private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
+        guard let (p, r) = lastCluster(client) else { insert(m.mark, client); return }
+        let (base, marks) = decompose(p)
+        let scalar = m.mark.unicodeScalars.first!
+        if let last = marks.last {
+            if last == scalar, let dbl = m.double {
+                replace(r, with: recompose(base, Array(marks.dropLast()) + Array(dbl.unicodeScalars)), client)
+                return
+            }
+            if !m.cycle.isEmpty {
+                let ring = ([m.mark] + m.cycle).map { $0.unicodeScalars.first! }
+                if let i = ring.firstIndex(of: last) {
+                    replace(r, with: recompose(base, Array(marks.dropLast()) + [ring[(i + 1) % ring.count]]), client)
+                    return
+                }
+            }
+        }
+        replace(r, with: recompose(base, marks + [scalar]), client)
+    }
+
+    /// Spacing mark: insert in place. Same mark again upgrades it (read back the
+    /// just-inserted glyph and replace).
+    private func applySpacing(_ m: Mark, _ client: IMKTextInput) {
+        if let dbl = m.double, let (p, r) = lastCluster(client), String(p) == m.mark {
+            replace(r, with: dbl, client); return
+        }
+        insert(m.mark, client)
+    }
+
+    /// ⌥4: superscriptize the previous glyph (`t` `h` ⌥4 → tʰ). No
+    /// superscriptable base → the literal digit 4 (never a dead keystroke).
+    private func superscriptize(_ client: IMKTextInput) -> Bool {
+        if let (p, r) = lastCluster(client) {
+            let (base, marks) = decompose(p)
+            if let sup = Tables.shared.sups[base] {
                 replace(r, with: recompose(sup, marks), client); return true
             }
         }
-        // 9 alternates narrow-transcription brackets
-        if s == "9" {
-            insert(bracketOpen ? "]" : "[", client)
-            bracketOpen.toggle()
-            return true
-        }
-        // postfix combining mark: merge into the previous cluster atomically,
-        // so a bare combining scalar is never inserted on its own. Where the
-        // mark has no IPA meaning — no glyph before the cursor, or the mark is
-        // already on the glyph — the key reverts to its literal US character.
-        if let mark = t.marks[s] {
-            if isCombining(mark) {
-                guard let (p, r) = lastCluster(client) else { return false }
-                let (b, ms) = decompose(p)
-                // marks decorate letters only — after punctuation, digits, or
-                // whitespace the key is its literal US character
-                guard b.first?.isLetter == true else { return false }
-                if ms.contains(where: { String($0) == mark }) { return false }
-                replace(r, with: (String(p) + mark).precomposedStringWithCanonicalMapping, client)
-            } else {
-                insert(mark, client)
-            }
-            return true
-        }
-        // letter / digit / click base
-        if let glyph = t.letters[s] { insert(glyph, client); return true }
-        // capitals with no transform, prose punctuation: type normally
-        return false
+        insert("4", client); return true
     }
 
     // MARK: - backspace
@@ -226,7 +247,6 @@ class InputController: IMKInputController {
     /// glyph is declined so the host deletes it natively — Korean's
     /// jamo-peel-then-native pattern.
     private func handleBackspace(_ client: IMKTextInput) -> Bool {
-        pendingMark = ""
         guard let (p, r) = lastCluster(client) else { return false }
         let (base, marks) = decompose(p)
         guard !marks.isEmpty else { return false }   // bare glyph: native delete
@@ -250,12 +270,7 @@ class InputController: IMKInputController {
     }
 
     private func insert(_ text: String, _ client: IMKTextInput) {
-        var out = text
-        if !pendingMark.isEmpty {
-            out = (text + pendingMark).precomposedStringWithCanonicalMapping
-            pendingMark = ""
-        }
-        client.insertText(out, replacementRange: NSRange(location: NSNotFound, length: 0))
+        client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
     }
 
     private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
@@ -282,9 +297,5 @@ class InputController: IMKInputController {
         var s = base
         s.unicodeScalars.append(contentsOf: marks)
         return s.precomposedStringWithCanonicalMapping
-    }
-
-    private func isCombining(_ s: String) -> Bool {
-        s.unicodeScalars.first.map { $0.value >= 0x300 && $0.value < 0x370 } == true
     }
 }

@@ -1,4 +1,4 @@
-// IME probe: instrumented text clients for debugging IPAKey against real hosts.
+// IME probe: instrumented text clients for debugging IPAbet against real hosts.
 // Two panes accept input — an AppKit NSTextView that logs every NSTextInputClient
 // call the IME makes (with ranges and codepoints), and a WKWebView <input> that
 // logs DOM key/composition events (what Safari's engine believes is happening).

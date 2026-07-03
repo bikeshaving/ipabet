@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key>
-    <string>org.bikeshaving.inputmethod.IPAKey</string>
+    <string>org.bikeshaving.inputmethod.IPAbet</string>
     <key>CFBundleName</key>
     <string>IPA</string>
     <key>CFBundleDisplayName</key>
@@ -11,13 +11,13 @@
     <key>NSHumanReadableCopyright</key>
     <string>© 2026 Brian Kim. MIT License.</string>
     <key>CFBundleIconFile</key>
-    <string>IPAKey</string>
+    <string>IPAbet</string>
     <key>tsInputMethodIconFileKey</key>
-    <string>ipakey.png</string>
+    <string>ipabet.png</string>
     <key>TISIconIsTemplate</key>
     <true/>
     <key>CFBundleExecutable</key>
-    <string>IPAKey</string>
+    <string>IPAbet</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -41,7 +41,7 @@
     <key>TICapsLockLanguageSwitchCapable</key>
     <true/>
     <key>InputMethodConnectionName</key>
-    <string>IPAKey_Connection</string>
+    <string>IPAbet_Connection</string>
     <key>InputMethodServerControllerClass</key>
     <string>InputController</string>
     <key>InputMethodServerDelegateClass</key>
@@ -51,7 +51,7 @@
         <string>Latn</string>
     </array>
     <key>TISInputSourceID</key>
-    <string>org.bikeshaving.inputmethod.IPAKey</string>
+    <string>org.bikeshaving.inputmethod.IPAbet</string>
     <key>TISIntendedLanguage</key>
     <string>und-fonipa</string>
 </dict>

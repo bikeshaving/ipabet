@@ -1,16 +1,16 @@
-# IPAKey
+# IPAbet
 
 The macOS input method for IPAbet. Faceless InputMethodKit app, no Xcode required.
 
 ## Build
 
 ```sh
-./build.sh          # builds build/IPAKey.app
+./build.sh          # builds build/IPAbet.app
 ./build.sh install  # builds + installs to ~/Library/Input Methods/
 ```
 
 First install needs a logout (TIS registration). After that:
-`./build.sh install` kills nothing by itself — follow with `pkill IPAKey`, then
+`./build.sh install` kills nothing by itself — follow with `pkill IPAbet`, then
 **quit and relaunch the app you're testing in** (or toggle the input source):
 apps hold a session to the old process and behave erratically against a stale
 one.
@@ -40,8 +40,8 @@ jamo-peel-then-native pattern.
 
 - `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation policy.
 - `Sources/InputController.swift` — the engine described above. State: the
-  Option-prefix dead-key mark and the `9` bracket toggle. Loads `ipakey.json`.
-- `ipakey.json` — mapping (copy of `spec/ipakey.json`).
+  Option-prefix dead-key mark and the `9` bracket toggle. Loads `ipabet.json`.
+- `ipabet.json` — mapping (copy of `spec/ipabet.json`).
 - `Info.plist` — bundle ID must contain `.inputmethod.`; claims `und-fonipa`.
   See the macOS 15 rules below before touching the launch keys.
 - `tools/probe.swift` — instrumented test host: an AppKit `NSTextView` that
@@ -94,9 +94,18 @@ work regardless of the user's selected layout (Dvorak, a non-US QWERTY, …).
 
 ## Modifier layers
 
-- bare — IPA value
-- Shift — transform previous glyph
-- Option — dead-key diacritics + literal digits
-- Option-Shift — escape hatch: inserts the plain US character for that key
-  (e.g. Option-Shift-/ → `?`, Option-Shift-1 → `!`), for literal punctuation the
-  mark layer would otherwise claim
+IPAbet is a **normal US keyboard** with IPA added on the shifted layers; a bare
+key is always its plain US self (letters, digits, punctuation — untouched, so
+tmux prefixes, vim counts, and shortcuts pass through natively).
+
+- **bare** — plain US. IPA base letters that are Latin letters (a, s, t…) are
+  typed directly; digits and punctuation are native.
+- **Shift** — US shift, overridden where IPA needs it: **number keys → the IPA
+  glyph with no Latin home** (⇧5 → ə, ⇧2 → ʔ…); a letter right after a glyph →
+  an IPA modifier transform (`t` `⇧H` → θ).
+- **Option** — postfix diacritics (Apple's ABC Extended layout: `a` `⌥e` → á),
+  plus IPA-only marks; `⌥4` superscriptizes the previous glyph (`t` `h` `⌥4` → tʰ).
+- **Option-Shift** — the raw US shifted character, for a symbol an IPA layer
+  claims (`⌥⇧4` → `$`, `⌥⇧1` → `!`).
+
+See `spec/diacritics.md` for the full diacritic layout and rationale.

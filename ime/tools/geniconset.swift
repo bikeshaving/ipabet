@@ -1,4 +1,4 @@
-// geniconset.swift — generates the IPAKey input-source icons.
+// geniconset.swift — generates the IPAbet input-source icons.
 //
 // Produces a "badge with knockout" template image that matches the macOS
 // system input-source icons (A, 한, 拼): a filled rounded-square badge with
@@ -7,8 +7,8 @@
 // the knocked-out glyph shows the row background through it.
 //
 // Usage: swift geniconset.swift <out.png> <pixelSize>
-//   swift geniconset.swift ipakey.png    16
-//   swift geniconset.swift ipakey@2x.png 32
+//   swift geniconset.swift ipabet.png    16
+//   swift geniconset.swift ipabet@2x.png 32
 
 import Cocoa
 import CoreText

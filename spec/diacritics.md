@@ -4,9 +4,22 @@ Status: **Active Specification**
 
 ## Principle
 
-The keyboard is **Mac US** unless an IPA interpretation genuinely applies. A user who has ever typed `é` or `ā` on a Mac can type IPA diacritics with no new learning, because the diacritic layer *is* Apple's ABC Extended keyboard, dumped verbatim from macOS (`com.apple.keylayout.USExtended`).
+IPAbet is a **normal US keyboard** with IPA layered onto its shifted positions.
+Type unshifted and you get exactly US — every letter, digit, and punctuation
+mark is native and untouched, so the layout is a flawless daily driver: prose,
+shell, tmux prefixes, vim counts, and app shortcuts all behave as if no IME
+were running. The IPA is purely **additive**, one modifier away:
 
-Crucially, **all standard punctuation remains on the bare layer.** This prevents ergonomic collisions during linguistic glossing (e.g., typing `[ˈbu.o]` 'owl'), ensuring the user never has to fight the keyboard to type standard quotes, commas, hyphens, or colons in prose. This allows the layout to function flawlessly as a daily driver.
+- IPA base letters that *are* Latin letters (a, s, t, m…) → just the bare key.
+- IPA base glyphs with *no* Latin key (ə, ʔ, ɾ, ɨ…) → **Shift + number**.
+- IPA modifications (digraph transforms like `tH`→θ) → **Shift + letter** after
+  a glyph.
+- diacritics → **Option** (Apple's ABC Extended layout — familiar to any Mac
+  user who has typed `é` or `ā`).
+- the raw US character an IPA layer would otherwise claim → **Option-Shift**.
+
+Nothing US is ever lost; you never fight the keyboard to type a quote, comma,
+digit, or bracket.
 
 **Every keystroke emits something — no silent no-ops, ever.** A key that finds
 no applicable IPA interpretation falls through until something is produced: the
@@ -15,14 +28,16 @@ nicety — a dead keystroke is always a bug.
 
 ## Four layers, one meaning each
 
-| Layer | Meaning |
+| Layer | Behavior |
 |---|---|
-| **bare** | US punctuation + IPA letter glyphs (number row 1–7, letters) |
-| **Shift** | letter transforms (`tH`→θ); US punctuation on punctuation keys |
-| **Option** | diacritics & suprasegmentals — ABC Extended dead keys + IPA-only pictograms |
-| **Option-Shift** | the raw US character for letters/numbers; standard Mac typography for punctuation |
+| **bare** | plain US — letters, digits, punctuation, native and untouched |
+| **Shift** | US shift (capitals, symbols), overridden where IPA needs it: **number keys → IPA base glyphs**; a letter right after a glyph → IPA modifier (`tH`→θ) |
+| **Option** | IPA diacritics, postfix — ABC Extended + IPA-only pictograms |
+| **Option-Shift** | the raw US shifted character — the escape for anything an IPA layer claims |
 
-**Option-Shift is the "Raw US" escape hatch ONLY for letters and numbers:** `⌥⇧H`→`H`, `⌥⇧2`→`@`, and **`⌥⇧1`–`⌥⇧7`→the literal digits** (since bare `1`–`7` are IPA glyphs). Two modifiers for a plain digit is the layout's one real awkwardness, freeing bare `⌥`+digit for marks.
+**Option-Shift is the "Raw US" escape hatch:** `⌥⇧H`→`H`, `⌥⇧2`→`@`, `⌥⇧4`→`$`
+— the raw shifted character of any key, for a symbol an IPA layer claims. Plain
+digits need no escape: they're the bare number keys.
 
 **Typography principle:** *Preserve prose typography (quotes, dashes, ellipsis)
 for academic writing; sacrifice obscure math/ligature glyphs (≠, ß, æ) to
@@ -33,11 +48,26 @@ are kept or rescued.
 **Option-Shift for punctuation keys preserves standard Mac typography:** Keys like `[` and `]` retain their standard Mac shortcuts for smart quotes (`⌥[` → `“`, `⌥⇧[` → `”`). The dash set (`⌥-` en-dash, `⌥⇧-` em-dash) is entirely untouched.
 *   *Rescued Typography:* Because long `ː` overwrites `⌥;`, its default Mac typographic mark is moved to Option-Shift: **`⌥⇧;` → `…` (ellipsis)**.
 
-Number row: `1`–`7` are IPA glyphs; `8 9 0` are literal digits; slash and bracket are typed on the real `/` `[` keys.
+### Number row
+
+Bare number keys are **native US digits** — the IME declines them entirely, so
+they pass through as real digit keys (tmux prefixes, vim counts, app shortcuts,
+not just text). **Shift + number** yields the IPA glyph with no Latin home:
+
+`⇧1`→ɨ, `⇧2`→ʔ, `⇧3`→ʕ, `⇧4`→ɾ, `⇧5`→ə, `⇧6`→ɐ, `⇧7`→ħ, `⇧8`→/ (solidus).
+
+Where a number key has no IPA glyph (`9`, `0`), Shift falls through to the
+native US symbol — so `(` and `)` stay one keystroke away on `⇧9`/`⇧0`. The
+other shifted symbols (`! @ # $ % ^ & *`) live on `⌥⇧`.
+
+*(This supersedes the earlier "Caps Lock number mode" idea, now removed: with
+bare = native digit, digits are always available and no mode is needed.)*
 
 ## The doubling rule (morphology)
 
-**Pressing a dead key a second time yields the mark's other form.** This works without collision because marks with a doubled form have no positional twin and vice versa.
+**Pressing a mark key a second time yields the mark's other form** (postfix: it
+re-reads the just-decorated glyph and upgrades in place). This works without
+collision because marks with a doubled form have no positional twin and vice versa.
 
 - above ↔ below (e.g., tilde above = nasalized, tilde below = creaky)
 - single ↔ double (e.g., acute = high tone, double acute = extra-high)
@@ -64,10 +94,14 @@ This is the one uniform rule; ABC's prefix order is not preserved.
 | `b` | ̆ breve | extra-short | ̯ inverted breve below (non-syllabic) |
 | `k` | ̥/̊ ring | voiceless (engine positions above/below by base) | — |
 
-**Preserved Transliteration Keys:** ABC's other dead keys keep their assignment
-(for transliteration and Americanist linguistics) but are also postfix: **`w`**
+**Preserved Transliteration Keys:** three of ABC's other dead keys keep their
+assignment (for transliteration and Americanist linguistics), postfix: **`w`**
 (dot above `̇`, e.g. `n`→ṅ), **`c`** (cedilla `̧`, `c`→ç), **`m`** (ogonek `̨`,
-`a`→ą).
+`a`→ą). *Not* preserved — three ABC dead keys are repurposed because their marks
+are obscure: **`h`** (low line → retracted, Tier 2), **`x`** (dot below →
+mid-centralized, with dot-below rescued on `⌥x`×2), **`l`** (stroke →
+velarized). So "verbatim" is precise about the nine IPA tone/diacritic keys and
+`w`/`c`/`m`; `h`/`x`/`l` are deliberate overrides.
 
 ## Tier 2 — IPA-only marks & Suprasegmentals
 
@@ -97,7 +131,10 @@ Absorbed by the doubling rule from Tier 1 and 2, requiring no base key of their 
 
 ## Handled outside the mark layer
 
-- **ʰ and all superscripts** via the existing `$` superscriptizer (`h$`→ʰ).
+- **ʰ and all superscripts** via the superscript operator on **`⌥4`** (`h`
+  then `⌥4` → ʰ) — a postfix transform of the previous glyph, like any Option
+  mark. Moved off `$` (Shift-4), which is now a **literal dollar sign** always;
+  `⌥4` keeps the operator on the same physical key it used to occupy.
 - **rhotic hook** ˞ via vowel + `R` (unchanged).
 - **syllable break** `.` is a literal period on the bare layer.
 

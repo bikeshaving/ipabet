@@ -1,23 +1,23 @@
 #!/bin/bash
-# Build IPAKey.app without Xcode. Run on macOS: ./build.sh [install]
+# Build IPAbet.app without Xcode. Run on macOS: ./build.sh [install]
 set -euo pipefail
 cd "$(dirname "$0")"
 
-APP=build/IPAKey.app
+APP=build/IPAbet.app
 rm -rf build
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 swiftc Sources/*.swift \
-  -o "$APP/Contents/MacOS/IPAKey" \
+  -o "$APP/Contents/MacOS/IPAbet" \
   -framework Cocoa -framework InputMethodKit \
   -O
 
 # compile app icon if iconset present and iconutil available
-if [ -d IPAKey.iconset ] && command -v iconutil >/dev/null; then
-  iconutil -c icns IPAKey.iconset -o "$APP/Contents/Resources/IPAKey.icns"
+if [ -d IPAbet.iconset ] && command -v iconutil >/dev/null; then
+  iconutil -c icns IPAbet.iconset -o "$APP/Contents/Resources/IPAbet.icns"
 fi
 cp Info.plist "$APP/Contents/"
-cp ipakey.json ipakey.png ipakey@2x.png "$APP/Contents/Resources/"
+cp ipabet.json ipabet.png ipabet@2x.png "$APP/Contents/Resources/"
 # Cosmetic Keyboard Viewer layout, referenced by name via overrideKeyboard.
 cp IPAbet.keylayout "$APP/Contents/Resources/"
 
@@ -27,7 +27,7 @@ codesign --force --deep --sign - "$APP"
 echo "built $APP"
 
 if [[ "${1:-}" == "install" ]]; then
-  rm -rf ~/Library/Input\ Methods/IPAKey.app
+  rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
   echo "installed. Log out/in (or: killall -HUP TextInputMenuAgent),"
   echo "then add it under System Settings → Keyboard → Input Sources → + → English."
