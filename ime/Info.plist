@@ -5,9 +5,9 @@
     <key>CFBundleIdentifier</key>
     <string>org.bikeshaving.inputmethod.IPAKey</string>
     <key>CFBundleName</key>
-    <string>IPAKey</string>
+    <string>IPA</string>
     <key>CFBundleDisplayName</key>
-    <string>IPAKey — IPA Transcription</string>
+    <string>IPAbet — IPA Transcription</string>
     <key>NSHumanReadableCopyright</key>
     <string>© 2026 Brian Kim. MIT License.</string>
     <key>CFBundleIconFile</key>
@@ -23,7 +23,7 @@
     <key>CFBundleShortVersionString</key>
     <string>1.0.0</string>
     <key>CFBundleVersion</key>
-    <string>2</string>
+    <string>3</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>LSBackgroundOnly</key>
