@@ -112,7 +112,17 @@ class InputController: IMKInputController {
         guard s.count == 1 else { return false }
 
         if opt {
-            if event.modifierFlags.contains(.shift) { return false }  // Option-Shift: passthrough
+            if event.modifierFlags.contains(.shift) {
+                // Option-Shift: escape hatch. Insert the plain US character for this
+                // key WITH Shift — e.g. Option-Shift-/ → "?". The mark layer claims
+                // many shifted-symbol keys, so this is how you type a literal
+                // ? ! : ~ ( ) etc. that would otherwise become diacritics.
+                let raw = USLayout.char(event.keyCode, shift: true)
+                guard !raw.isEmpty else { return false }
+                pendingMark = ""
+                client.insertText(raw, replacementRange: NSRange(location: NSNotFound, length: 0))
+                return true
+            }
             if s.first!.isNumber { insert(s, client); return true }   // literal numeral
             if let mark = t.marks[s], isCombining(mark) {
                 pendingMark = mark                                     // dead-key, invisible

@@ -39,7 +39,9 @@ non-US QWERTY, …) and regardless of the cosmetic override above.
 - bare — IPA value
 - Shift — transform previous glyph
 - Option — dead-key diacritics + literal digits
-- Option-Shift — raw macOS passthrough (the escape hatch)
+- Option-Shift — escape hatch: inserts the plain US character for that key
+  (e.g. Option-Shift-/ → `?`, Option-Shift-1 → `!`), for literal punctuation the
+  mark layer would otherwise claim
 
 ## Keyboard Viewer preview
 
