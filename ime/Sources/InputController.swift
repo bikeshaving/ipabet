@@ -174,6 +174,11 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(base, marks.dropLast() + Array(up.unicodeScalars)), client)
                 return true
             }
+            // already at the doubled mark: no further IPA meaning, so the key
+            // reverts to its literal US character (decline → host types it)
+            if let m = marks.last, let single = t.marks[s], upgrades[single + s] == String(m) {
+                return false
+            }
             // generic vowel rhoticization: R after any vowel appends the hook
             if s == "R", let b = base.first, "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ".contains(b) {
                 replace(r, with: recompose(base, marks) + "\u{02DE}", client); return true
@@ -190,9 +195,17 @@ class InputController: IMKInputController {
             return true
         }
         // postfix combining mark: merge into the previous cluster atomically,
-        // so a bare combining scalar is never inserted on its own
+        // so a bare combining scalar is never inserted on its own. Where the
+        // mark has no IPA meaning — no glyph before the cursor, or the mark is
+        // already on the glyph — the key reverts to its literal US character.
         if let mark = t.marks[s] {
-            if isCombining(mark), let (p, r) = lastCluster(client) {
+            if isCombining(mark) {
+                guard let (p, r) = lastCluster(client) else { return false }
+                let (b, ms) = decompose(p)
+                // marks decorate letters only — after punctuation, digits, or
+                // whitespace the key is its literal US character
+                guard b.first?.isLetter == true else { return false }
+                if ms.contains(where: { String($0) == mark }) { return false }
                 replace(r, with: (String(p) + mark).precomposedStringWithCanonicalMapping, client)
             } else {
                 insert(mark, client)
