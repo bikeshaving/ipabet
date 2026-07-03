@@ -9,38 +9,88 @@ The macOS input method for IPAbet. Faceless InputMethodKit app, no Xcode require
 ./build.sh install  # builds + installs to ~/Library/Input Methods/
 ```
 
-First install needs a logout (TIS registration). After that: `./build.sh install && pkill IPAKey`.
+First install needs a logout (TIS registration). After that:
+`./build.sh install` kills nothing by itself — follow with `pkill IPAKey`, then
+**quit and relaunch the app you're testing in** (or toggle the input source):
+apps hold a session to the old process and behave erratically against a stale
+one.
+
+## Architecture
+
+The engine mimics Apple's Korean (2-Set) input method, whose exact client
+protocol we captured with `tools/probe.swift`: **no marked text, ever**. Each
+keystroke either inserts text at the cursor or rewrites the previous grapheme
+cluster in place via `insertText(_:replacementRange:)` — the call pattern every
+Mac app must support or Hangul typing would break in it. There is no
+composition session: no underline, no state to flush on clicks/focus
+changes/input-source switches, and nothing for a host to desync.
+
+All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
+`R`, superscript `$`, postfix marks, backspace) operate on the **decomposed
+view** of the cluster — base glyph + combining marks split via NFD — and
+recompose to NFC on write. NFC fusion (é is one codepoint, n̥ is two) therefore
+never changes rule behavior. On any rule miss the keystroke falls through until
+something emits; no key ever dead-ends.
+
+Backspace peels the last combining mark off the previous cluster (é → e,
+n̥ → n); a bare glyph is declined so the host deletes it natively — Korean's
+jamo-peel-then-native pattern.
 
 ## Files
 
-- `Sources/main.swift` — IMKServer boot.
-- `Sources/InputController.swift` — the transformation engine. Loads
-  `ipakey.json` and assembles each glyph in an IMK **composition** (marked
-  text): modifier keys, postfix marks, and backspace all edit the composing
-  glyph inside the IME, and the finished cluster is committed to the app as a
-  single precomposed `insertText`. The engine never reads or edits the client's
-  committed text (no `selectedRange`, `string(from:)`, or `replacementRange`
-  reach-back — the calls whose support varies per app), so behavior is
-  identical in every input field. State: the composing glyph, the
-  Option-prefix dead-key mark, and the `9` bracket toggle.
+- `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation policy.
+- `Sources/InputController.swift` — the engine described above. State: the
+  Option-prefix dead-key mark and the `9` bracket toggle. Loads `ipakey.json`.
 - `ipakey.json` — mapping (copy of `spec/ipakey.json`).
 - `Info.plist` — bundle ID must contain `.inputmethod.`; claims `und-fonipa`.
-- `IPAbet.keylayout` — cosmetic layout used only to give the on-screen **Keyboard
-  Viewer** an IPA base-layer preview. `InputController` overrides to it (by name,
-  from the app bundle) on `activateServer:`. It is display-only: the engine
-  decodes keys via `USLayout` (`UCKeyTranslate` against `com.apple.keylayout.US`),
-  so it never reads this layout's output. If the in-bundle override ever fails,
-  typing is unaffected — only the preview is lost. It faithfully mirrors US on
-  every modifier layer, **including US's Option dead keys** (Option+e → acute,
-  etc., reproduced as a real `<actions>`/`<terminators>` state machine), so the
-  Option passthrough still composes accents. Regenerate with
-  `swift tools/genkeylayout.swift > IPAbet.keylayout`.
+  See the macOS 15 rules below before touching the launch keys.
+- `tools/probe.swift` — instrumented test host: an AppKit `NSTextView` that
+  logs every NSTextInputClient call (strings, codepoints, ranges) plus a
+  `WKWebView` input that logs DOM composition events; both stream to the
+  window, stdout, and `/tmp/imeprobe.log`. Build:
+  `swiftc tools/probe.swift -o /tmp/imeprobe -framework Cocoa -framework WebKit`.
+  This is the ground truth for any input bug — beware terminal scrollback
+  from earlier runs; trust `/tmp/imeprobe.log` (truncated per launch).
+- `IPAbet.keylayout` — cosmetic layout for a Keyboard Viewer preview,
+  **currently unused**: the `overrideKeyboard(withKeyboardNamed:)` call was
+  removed while debugging macOS 15 event routing (reference IMEs only pass
+  full system TIS layout IDs there). Regenerate with
+  `swift tools/genkeylayout.swift > IPAbet.keylayout` if revived.
+
+## Hard-won macOS 15 rules (probe- and crash-verified; do not relearn)
+
+macOS 15 runs a half-modernized IMK stack (`IMKClient_Modern` client,
+`_IMKServerLegacy` server, XPC in between). Empirically established with
+matched client/IME transcripts:
+
+1. **Never call `updateComposition()`/`composedString()`** — IMK passes
+   `composedString` a dangling sender and the process segfaults in the objc
+   bridge. Squirrel and vChewing also avoid it; the XIME project reimplements
+   `updateComposition` for the same reason.
+2. **Never `insertText` an empty string** — the transport silently drops it,
+   real `replacementRange` or not. Delete by replacing a range with shorter
+   text, or decline and let the host delete.
+3. **Bundle/launch config is load-bearing**: declare
+   `NSPrincipalClass = NSApplication`, `LSUIElement = true` (not
+   `LSBackgroundOnly = true`), and call
+   `NSApplication.shared.setActivationPolicy(.accessory)` before `run()`.
+   Misconfigured, the client *discards key events the IME declines* (backspace
+   returned `false` never reaches the app) once any marked text has been shown
+   in that window — the bug that originally motivated the marked-text-free
+   architecture above.
+4. The `IMKCFRunLoopWakeUpReliable` mach-port error in host apps is ubiquitous
+   Sequoia log noise (Electron, Python, JDK all emit it); Apple DTS calls it
+   non-actionable. Don't chase it.
+5. Reference implementations worth consulting before fighting a client quirk:
+   Squirrel and vChewing (per-client mitigation registries, WeChat/Office/
+   iTerm2 workarounds), macSKK (documented `setMarkedText` flush idiom from
+   AquaSKK), azooKey-Desktop (minimal modern Swift IME).
 
 ## Key decoding
 
-Keys are decoded from the physical `keyCode` through a fixed US layout, so the
-ASCII-keyed tables work regardless of the user's selected layout (Dvorak, a
-non-US QWERTY, …) and regardless of the cosmetic override above.
+Keys are decoded from the physical `keyCode` through a fixed US layout
+(`UCKeyTranslate` against `com.apple.keylayout.US`), so the ASCII-keyed tables
+work regardless of the user's selected layout (Dvorak, a non-US QWERTY, …).
 
 ## Modifier layers
 
@@ -50,13 +100,3 @@ non-US QWERTY, …) and regardless of the cosmetic override above.
 - Option-Shift — escape hatch: inserts the plain US character for that key
   (e.g. Option-Shift-/ → `?`, Option-Shift-1 → `!`), for literal punctuation the
   mark layer would otherwise claim
-
-## Keyboard Viewer preview
-
-With IPAKey active, open **Keyboard Viewer** (Input-menu → Show Keyboard Viewer,
-or System Settings → Keyboard → enable it) to see the base layer: the number row
-shows `ɨ ʔ ʕ ɾ ə ɐ ħ`, letters map to themselves, and Shift shows the `ǃ`/`ǀ`
-clicks on `1`/`\`. Only the base/Shift layers can be shown this way — the full
-transform and diacritic layers live in `web/keyboard.html`. This is Keyboard
-Viewer, not the System Settings preview panel, which macOS reserves for static
-keyboard-layout sources and never shows for input methods.

@@ -26,11 +26,25 @@
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
+    <!-- LSUIElement, NOT LSBackgroundOnly: the modern IMK stack hosts input
+         methods via ViewBridge, and background-only processes lose the event
+         reply channel (dropped keys, IMKCFRunLoopWakeUpReliable errors).
+         Squirrel sets LSBackgroundOnly=false explicitly; vChewing likewise. -->
+    <key>LSUIElement</key>
+    <true/>
     <key>LSBackgroundOnly</key>
+    <false/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>TICapsLockLanguageSwitchCapable</key>
     <true/>
     <key>InputMethodConnectionName</key>
     <string>IPAKey_Connection</string>
     <key>InputMethodServerControllerClass</key>
+    <string>InputController</string>
+    <key>InputMethodServerDelegateClass</key>
     <string>InputController</string>
     <key>tsInputMethodCharacterRepertoireKey</key>
     <array>

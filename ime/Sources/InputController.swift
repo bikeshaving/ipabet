@@ -83,40 +83,41 @@ let upgrades: [String: String] = {
     return u
 }()
 
-// The controller is built on IMK's composition contract and nothing else.
-// The glyph currently being assembled lives in `composing` and is shown to the
-// client as marked text; it reaches the document only through a single
-// insertText commit of the complete, precomposed cluster. The engine never
-// reads the client's text (no selectedRange / string(from:)) and never edits
-// committed text (no replacementRange reach-back) — those calls are exactly
-// where host support diverges. While a glyph is composing, backspace, digraph
-// merges, and mark stacking are resolved inside the IME, so behavior is
-// identical in every app; once committed, text is ordinary text.
+// The engine mimics Apple's Korean (2-Set) input method, whose exact client
+// protocol we captured with tools/probe.swift: NO marked text, ever. Each
+// keystroke either inserts text at the cursor or rewrites the previous
+// grapheme cluster in place via insertText(_:replacementRange:) — the same
+// call pattern every Mac app must support or Hangul typing would break in it.
+// There is no composition session: no underline, no state to flush on clicks,
+// focus changes, or input-source switches, and nothing for a host to desync.
+//
+// Backspace: stacked combining marks peel off one scalar at a time (rewriting
+// the cluster in place); single-codepoint glyphs are declined so the host
+// performs its native delete — exactly Korean's jamo-peel-then-native pattern.
+//
+// Hard-won macOS 15 rules (probe- and crash-verified this session; see README):
+//  - never call updateComposition()/composedString() — segfaults in the bridge
+//  - never insertText an empty string — the IMK transport silently drops it
+//  - the bundle must declare NSPrincipalClass, LSUIElement (not
+//    LSBackgroundOnly), and set an explicit .accessory activation policy,
+//    or the client discards key events the IME declines
+
 @objc(InputController)
 class InputController: IMKInputController {
 
-    // The uncommitted glyph cluster shown as marked text ("" = not composing).
-    private var composing = ""
     // An Option-prefixed dead-key mark, applied to the next glyph.
     private var pendingMark = ""
     // Narrow-bracket toggle for the 9 key.
     private var bracketOpen = false
 
-    // Override to the bundled cosmetic IPAbet layout so the on-screen Keyboard
-    // Viewer shows the IPA base layer. Display-only: the engine decodes keys
-    // via USLayout, so if this lookup fails on some macOS release, typing is
-    // unaffected. IMK requires the override on every activation.
     override func activateServer(_ sender: Any!) {
-        (sender as? IMKTextInput)?.overrideKeyboard(withKeyboardNamed: "IPAbet")
+        // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
+        // reference IMEs only pass full system TIS layout IDs here, and the
+        // bare in-bundle name was a misrouting suspect on macOS 15.
     }
 
-    // The system calls this when composition must end (mouse click, focus
-    // change, input-source switch). Flushing here is what keeps the composed
-    // glyph from being lost or left dangling as marked text.
     override func commitComposition(_ sender: Any!) {
-        pendingMark = ""
-        guard let client = sender as? IMKTextInput else { composing = ""; return }
-        commit(client)
+        pendingMark = ""   // nothing else: there is never an open composition
     }
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
@@ -124,39 +125,16 @@ class InputController: IMKInputController {
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
 
-        // Chorded shortcuts are never ours: flush and let the app see the event.
         if event.modifierFlags.contains(.command) || event.modifierFlags.contains(.control) {
             pendingMark = ""
-            commit(client)
             return false
         }
-
-        // Backspace edits the composition one scalar at a time (mark, then
-        // base) — deletion of anything the user is mid-glyph on is decided
-        // here, not by the host. With nothing composing it stays native.
-        if event.keyCode == 51 {
-            pendingMark = ""
-            guard !composing.isEmpty else { return false }
-            composing = String(String.UnicodeScalarView(composing.unicodeScalars.dropLast()))
-            showComposition(client)
-            return true
-        }
-
-        // Editing/navigation keys end the glyph and pass through.
-        // return, keypad-enter, tab, escape, forward-delete, home/end, page up/down, arrows
-        switch event.keyCode {
-        case 36, 76, 48, 53, 117, 115, 119, 116, 121, 123, 124, 125, 126:
-            pendingMark = ""
-            commit(client)
-            return false
-        default:
-            break
-        }
+        if event.keyCode == 51 { return handleBackspace(client) }
 
         let opt = event.modifierFlags.contains(.option)
         // Decode the physical key through US, independent of the active layout.
         let s = USLayout.char(event.keyCode, shift: opt ? false : event.modifierFlags.contains(.shift))
-        guard s.count == 1 else { commit(client); return false }
+        guard s.count == 1 else { return false }
 
         if opt {
             if event.modifierFlags.contains(.shift) {
@@ -167,93 +145,130 @@ class InputController: IMKInputController {
                 let raw = USLayout.char(event.keyCode, shift: true)
                 guard !raw.isEmpty else { return false }
                 pendingMark = ""
-                commit(client)
-                client.insertText(raw, replacementRange: NSRange(location: NSNotFound, length: 0))
+                insert(raw, client)
                 return true
             }
-            if s.first!.isNumber { compose(s, client); return true }   // literal numeral
+            if s.first!.isNumber { insert(s, client); return true }    // literal numeral
             if let mark = t.marks[s], isCombining(mark) {
                 pendingMark = mark                                     // dead-key, invisible
                 return true
             }
-            commit(client)
             return false
         }
 
-        // modifier keys transform the composing glyph in place
-        if let p = composing.last, let combo = t.transforms[String(p) + s] {
-            replaceLast(String(p), with: combo, client); return true
-        }
-        // doubled mark upgrades the one just appended
-        if let m = composing.unicodeScalars.last, let up = upgrades[String(m) + s] {
-            replaceLast(String(m), with: up, client); return true
-        }
-        // generic vowel rhoticization: R after any vowel glyph appends the hook
-        if s == "R", let p = composing.last, "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ".contains(p) {
-            replaceLast(String(p), with: String(p) + "\u{02DE}", client); return true
-        }
-        // superscriptize
-        if s == "$" {
-            if let p = composing.last, let sup = t.sups[String(p)] {
-                replaceLast(String(p), with: sup, client)
+        // All previous-glyph rules operate on the DECOMPOSED view of the
+        // cluster: NFC on write means diacritics sometimes fuse into the base
+        // (é is one codepoint, n̥ is two), and matching against the written
+        // form makes every rule behave differently for the two classes. So:
+        // split into base + combining marks, match on the relevant part,
+        // preserve the rest, recompose on write. On any miss, fall through —
+        // a keystroke must always emit something, never dead-end.
+        if let (p, r) = lastCluster(client) {
+            let (base, marks) = decompose(p)
+            // modifier keys transform the base glyph, diacritics survive
+            if let combo = t.transforms[base + s] {
+                replace(r, with: recompose(combo, marks), client); return true
             }
-            return true
+            // doubled mark upgrades the trailing single mark
+            if let m = marks.last, let up = upgrades[String(m) + s] {
+                replace(r, with: recompose(base, marks.dropLast() + Array(up.unicodeScalars)), client)
+                return true
+            }
+            // generic vowel rhoticization: R after any vowel appends the hook
+            if s == "R", let b = base.first, "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ".contains(b) {
+                replace(r, with: recompose(base, marks) + "\u{02DE}", client); return true
+            }
+            // superscriptize (miss falls through: Shift-4 types "$" natively)
+            if s == "$", let sup = t.sups[base] {
+                replace(r, with: recompose(sup, marks), client); return true
+            }
         }
         // 9 alternates narrow-transcription brackets
         if s == "9" {
-            commit(client)
-            client.insertText(bracketOpen ? "]" : "[",
-                              replacementRange: NSRange(location: NSNotFound, length: 0))
+            insert(bracketOpen ? "]" : "[", client)
             bracketOpen.toggle()
             return true
         }
-        // postfix mark: extends the composing glyph
-        if let mark = t.marks[s] { append(mark, client); return true }
-        // letter / digit / click base: previous glyph is done, start a new one
-        if let glyph = t.letters[s] { compose(glyph, client); return true }
-        // capitals with no transform, prose punctuation: flush, type normally
-        commit(client)
+        // postfix combining mark: merge into the previous cluster atomically,
+        // so a bare combining scalar is never inserted on its own
+        if let mark = t.marks[s] {
+            if isCombining(mark), let (p, r) = lastCluster(client) {
+                replace(r, with: (String(p) + mark).precomposedStringWithCanonicalMapping, client)
+            } else {
+                insert(mark, client)
+            }
+            return true
+        }
+        // letter / digit / click base
+        if let glyph = t.letters[s] { insert(glyph, client); return true }
+        // capitals with no transform, prose punctuation: type normally
         return false
     }
 
-    // MARK: - composition
+    // MARK: - backspace
 
-    /// Commit the previous glyph and start composing a new one.
-    private func compose(_ glyph: String, _ client: IMKTextInput) {
-        commit(client)
-        composing = (glyph + pendingMark).precomposedStringWithCanonicalMapping
+    /// Diacritic peel: a cluster carrying combining marks loses its last mark
+    /// (rewritten in place, through decomposition — so é peels to e just like
+    /// n̥ peels to n, regardless of whether Unicode fused the pair); a bare
+    /// glyph is declined so the host deletes it natively — Korean's
+    /// jamo-peel-then-native pattern.
+    private func handleBackspace(_ client: IMKTextInput) -> Bool {
         pendingMark = ""
-        showComposition(client)
+        guard let (p, r) = lastCluster(client) else { return false }
+        let (base, marks) = decompose(p)
+        guard !marks.isEmpty else { return false }   // bare glyph: native delete
+        replace(r, with: recompose(base, marks.dropLast()), client)
+        return true
     }
 
-    /// Extend the composing glyph (postfix marks).
-    private func append(_ text: String, _ client: IMKTextInput) {
-        composing = (composing + text + pendingMark).precomposedStringWithCanonicalMapping
-        pendingMark = ""
-        showComposition(client)
+    // MARK: - client document access (the Korean-IME call pattern)
+
+    /// The grapheme cluster before the cursor and its UTF-16 range.
+    private func lastCluster(_ client: IMKTextInput) -> (Character, NSRange)? {
+        let sel = client.selectedRange()
+        guard sel.location != NSNotFound, sel.location > 0, sel.length == 0 else { return nil }
+        let start = max(0, sel.location - 16)
+        var actual = NSRange()
+        guard let s = client.string(from: NSRange(location: start, length: sel.location - start),
+                                    actualRange: &actual),
+              let last = s.last else { return nil }
+        return (last, NSRange(location: sel.location - (String(last) as NSString).length,
+                              length: (String(last) as NSString).length))
     }
 
-    /// Rewrite the tail of the composing glyph (digraph merges, upgrades).
-    /// Drops by scalar count: `old` may be a lone combining mark inside the
-    /// final grapheme cluster, which Character-based dropLast would overshoot.
-    private func replaceLast(_ old: String, with new: String, _ client: IMKTextInput) {
-        let scalars = composing.unicodeScalars.dropLast(old.unicodeScalars.count)
-        composing = String(String.UnicodeScalarView(scalars)) + new
-        showComposition(client)
+    private func insert(_ text: String, _ client: IMKTextInput) {
+        var out = text
+        if !pendingMark.isEmpty {
+            out = (text + pendingMark).precomposedStringWithCanonicalMapping
+            pendingMark = ""
+        }
+        client.insertText(out, replacementRange: NSRange(location: NSNotFound, length: 0))
     }
 
-    /// Push the composition to the client as marked text (or clear it).
-    private func showComposition(_ client: IMKTextInput) {
-        client.setMarkedText(composing,
-                             selectionRange: NSRange(location: (composing as NSString).length, length: 0),
-                             replacementRange: NSRange(location: NSNotFound, length: 0))
+    private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
+        client.insertText(new, replacementRange: range)
     }
 
-    /// Commit the composing glyph as one atomic, precomposed insertion.
-    private func commit(_ client: IMKTextInput) {
-        guard !composing.isEmpty else { return }
-        client.insertText(composing, replacementRange: NSRange(location: NSNotFound, length: 0))
-        composing = ""
+    /// A cluster's canonical decomposition, split into the base glyph and its
+    /// trailing combining marks. The pair of views every previous-glyph rule
+    /// matches against, so NFC fusion (é vs n̥) never changes rule behavior.
+    private func decompose(_ c: Character) -> (base: String, marks: [Unicode.Scalar]) {
+        var base = "", marks: [Unicode.Scalar] = []
+        for sc in String(c).decomposedStringWithCanonicalMapping.unicodeScalars {
+            if marks.isEmpty && sc.properties.canonicalCombiningClass == .notReordered {
+                base.unicodeScalars.append(sc)
+            } else {
+                marks.append(sc)
+            }
+        }
+        return (base, marks)
+    }
+
+    private func recompose<S: Sequence>(_ base: String, _ marks: S) -> String
+    where S.Element == Unicode.Scalar {
+        var s = base
+        s.unicodeScalars.append(contentsOf: marks)
+        return s.precomposedStringWithCanonicalMapping
     }
 
     private func isCombining(_ s: String) -> Bool {
