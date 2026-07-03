@@ -22,7 +22,10 @@ First install needs a logout (TIS registration). After that: `./build.sh install
   from the app bundle) on `activateServer:`. It is display-only: the engine
   decodes keys via `USLayout` (`UCKeyTranslate` against `com.apple.keylayout.US`),
   so it never reads this layout's output. If the in-bundle override ever fails,
-  typing is unaffected — only the preview is lost. Regenerate with
+  typing is unaffected — only the preview is lost. It faithfully mirrors US on
+  every modifier layer, **including US's Option dead keys** (Option+e → acute,
+  etc., reproduced as a real `<actions>`/`<terminators>` state machine), so the
+  Option passthrough still composes accents. Regenerate with
   `swift tools/genkeylayout.swift > IPAbet.keylayout`.
 
 ## Key decoding

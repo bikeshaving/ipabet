@@ -13,7 +13,7 @@
   </modifierMap>
   <keyMapSet id="ipabet">
     <keyMap index="0">
-      <key code="0" output="a"/>
+      <key code="0" action="a0_0"/>
       <key code="1" output="s"/>
       <key code="2" output="d"/>
       <key code="3" output="f"/>
@@ -27,9 +27,9 @@
       <key code="11" output="b"/>
       <key code="12" output="q"/>
       <key code="13" output="w"/>
-      <key code="14" output="e"/>
+      <key code="14" action="a0_14"/>
       <key code="15" output="r"/>
-      <key code="16" output="y"/>
+      <key code="16" action="a0_16"/>
       <key code="17" output="t"/>
       <key code="18" output="&#x0268;"/>
       <key code="19" output="&#x0294;"/>
@@ -44,56 +44,56 @@
       <key code="28" output="8"/>
       <key code="29" output="0"/>
       <key code="30" output="]"/>
-      <key code="31" output="o"/>
-      <key code="32" output="u"/>
+      <key code="31" action="a0_31"/>
+      <key code="32" action="a0_32"/>
       <key code="33" output="["/>
-      <key code="34" output="i"/>
+      <key code="34" action="a0_34"/>
       <key code="35" output="p"/>
       <key code="36" output="&#x000D;"/>
       <key code="37" output="l"/>
-      <key code="38" output="j"/>
+      <key code="38" action="a0_38"/>
       <key code="39" output="'"/>
       <key code="40" output="k"/>
       <key code="41" output=";"/>
       <key code="42" output="\"/>
       <key code="43" output=","/>
       <key code="44" output="/"/>
-      <key code="45" output="n"/>
+      <key code="45" action="a0_45"/>
       <key code="46" output="m"/>
       <key code="47" output="."/>
       <key code="48" output="&#x0009;"/>
-      <key code="49" output=" "/>
+      <key code="49" action="a0_49"/>
       <key code="50" output="`"/>
       <key code="51" output=""/>
       <key code="52" output=""/>
       <key code="53" output=""/>
-      <key code="54" output=""/>
-      <key code="55" output=""/>
-      <key code="56" output=""/>
-      <key code="57" output=""/>
-      <key code="58" output=""/>
-      <key code="59" output=""/>
-      <key code="60" output=""/>
-      <key code="61" output=""/>
-      <key code="62" output=""/>
-      <key code="63" output=""/>
-      <key code="64" output=""/>
+      <key code="54" action="a0_54"/>
+      <key code="55" action="a0_55"/>
+      <key code="56" action="a0_56"/>
+      <key code="57" action="a0_57"/>
+      <key code="58" action="a0_58"/>
+      <key code="59" action="a0_59"/>
+      <key code="60" action="a0_60"/>
+      <key code="61" action="a0_61"/>
+      <key code="62" action="a0_62"/>
+      <key code="63" action="a0_63"/>
+      <key code="64" action="a0_64"/>
       <key code="65" output="."/>
       <key code="66" output=""/>
       <key code="67" output="*"/>
-      <key code="68" output=""/>
+      <key code="68" action="a0_68"/>
       <key code="69" output="+"/>
       <key code="70" output=""/>
       <key code="71" output=""/>
       <key code="72" output=""/>
-      <key code="73" output=""/>
-      <key code="74" output=""/>
+      <key code="73" action="a0_73"/>
+      <key code="74" action="a0_74"/>
       <key code="75" output="/"/>
       <key code="76" output=""/>
       <key code="77" output=""/>
       <key code="78" output="-"/>
-      <key code="79" output=""/>
-      <key code="80" output=""/>
+      <key code="79" action="a0_79"/>
+      <key code="80" action="a0_80"/>
       <key code="81" output="="/>
       <key code="82" output="0"/>
       <key code="83" output="1"/>
@@ -103,12 +103,12 @@
       <key code="87" output="5"/>
       <key code="88" output="6"/>
       <key code="89" output="7"/>
-      <key code="90" output=""/>
+      <key code="90" action="a0_90"/>
       <key code="91" output="8"/>
       <key code="92" output="9"/>
-      <key code="93" output=""/>
-      <key code="94" output=""/>
-      <key code="95" output=""/>
+      <key code="93" action="a0_93"/>
+      <key code="94" action="a0_94"/>
+      <key code="95" action="a0_95"/>
       <key code="96" output=""/>
       <key code="97" output=""/>
       <key code="98" output=""/>
@@ -140,10 +140,10 @@
       <key code="124" output=""/>
       <key code="125" output=""/>
       <key code="126" output=""/>
-      <key code="127" output=""/>
+      <key code="127" action="a0_127"/>
     </keyMap>
     <keyMap index="1">
-      <key code="0" output="A"/>
+      <key code="0" action="a1_0"/>
       <key code="1" output="S"/>
       <key code="2" output="D"/>
       <key code="3" output="F"/>
@@ -157,9 +157,9 @@
       <key code="11" output="B"/>
       <key code="12" output="Q"/>
       <key code="13" output="W"/>
-      <key code="14" output="E"/>
+      <key code="14" action="a1_14"/>
       <key code="15" output="R"/>
-      <key code="16" output="Y"/>
+      <key code="16" action="a1_16"/>
       <key code="17" output="T"/>
       <key code="18" output="&#x01C3;"/>
       <key code="19" output="@"/>
@@ -174,56 +174,56 @@
       <key code="28" output="*"/>
       <key code="29" output=")"/>
       <key code="30" output="}"/>
-      <key code="31" output="O"/>
-      <key code="32" output="U"/>
+      <key code="31" action="a1_31"/>
+      <key code="32" action="a1_32"/>
       <key code="33" output="{"/>
-      <key code="34" output="I"/>
+      <key code="34" action="a1_34"/>
       <key code="35" output="P"/>
       <key code="36" output="&#x000D;"/>
       <key code="37" output="L"/>
-      <key code="38" output="J"/>
+      <key code="38" action="a1_38"/>
       <key code="39" output="&#x0022;"/>
       <key code="40" output="K"/>
       <key code="41" output=":"/>
       <key code="42" output="&#x01C0;"/>
       <key code="43" output="&#x003C;"/>
       <key code="44" output="?"/>
-      <key code="45" output="N"/>
+      <key code="45" action="a1_45"/>
       <key code="46" output="M"/>
       <key code="47" output="&#x003E;"/>
       <key code="48" output="&#x0009;"/>
-      <key code="49" output=" "/>
+      <key code="49" action="a1_49"/>
       <key code="50" output="~"/>
       <key code="51" output=""/>
       <key code="52" output=""/>
       <key code="53" output=""/>
-      <key code="54" output=""/>
-      <key code="55" output=""/>
-      <key code="56" output=""/>
-      <key code="57" output=""/>
-      <key code="58" output=""/>
-      <key code="59" output=""/>
-      <key code="60" output=""/>
-      <key code="61" output=""/>
-      <key code="62" output=""/>
-      <key code="63" output=""/>
-      <key code="64" output=""/>
+      <key code="54" action="a1_54"/>
+      <key code="55" action="a1_55"/>
+      <key code="56" action="a1_56"/>
+      <key code="57" action="a1_57"/>
+      <key code="58" action="a1_58"/>
+      <key code="59" action="a1_59"/>
+      <key code="60" action="a1_60"/>
+      <key code="61" action="a1_61"/>
+      <key code="62" action="a1_62"/>
+      <key code="63" action="a1_63"/>
+      <key code="64" action="a1_64"/>
       <key code="65" output="."/>
       <key code="66" output="*"/>
       <key code="67" output="*"/>
-      <key code="68" output=""/>
+      <key code="68" action="a1_68"/>
       <key code="69" output="+"/>
       <key code="70" output="+"/>
       <key code="71" output=""/>
       <key code="72" output="="/>
-      <key code="73" output=""/>
-      <key code="74" output=""/>
+      <key code="73" action="a1_73"/>
+      <key code="74" action="a1_74"/>
       <key code="75" output="/"/>
       <key code="76" output=""/>
       <key code="77" output="/"/>
       <key code="78" output="-"/>
-      <key code="79" output=""/>
-      <key code="80" output=""/>
+      <key code="79" action="a1_79"/>
+      <key code="80" action="a1_80"/>
       <key code="81" output="="/>
       <key code="82" output="0"/>
       <key code="83" output="1"/>
@@ -233,12 +233,12 @@
       <key code="87" output="5"/>
       <key code="88" output="6"/>
       <key code="89" output="7"/>
-      <key code="90" output=""/>
+      <key code="90" action="a1_90"/>
       <key code="91" output="8"/>
       <key code="92" output="9"/>
-      <key code="93" output=""/>
-      <key code="94" output=""/>
-      <key code="95" output=""/>
+      <key code="93" action="a1_93"/>
+      <key code="94" action="a1_94"/>
+      <key code="95" action="a1_95"/>
       <key code="96" output=""/>
       <key code="97" output=""/>
       <key code="98" output=""/>
@@ -270,7 +270,7 @@
       <key code="124" output=""/>
       <key code="125" output=""/>
       <key code="126" output=""/>
-      <key code="127" output=""/>
+      <key code="127" action="a1_127"/>
     </keyMap>
     <keyMap index="2">
       <key code="0" output="&#x00E5;"/>
@@ -287,7 +287,7 @@
       <key code="11" output="&#x222B;"/>
       <key code="12" output="&#x0153;"/>
       <key code="13" output="&#x2211;"/>
-      <key code="14" output=""/>
+      <key code="14" action="a2_14"/>
       <key code="15" output="&#x00AE;"/>
       <key code="16" output="&#x00A5;"/>
       <key code="17" output="&#x2020;"/>
@@ -305,9 +305,9 @@
       <key code="29" output="&#x00BA;"/>
       <key code="30" output="&#x2018;"/>
       <key code="31" output="&#x00F8;"/>
-      <key code="32" output=""/>
+      <key code="32" action="a2_32"/>
       <key code="33" output="&#x201C;"/>
-      <key code="34" output=""/>
+      <key code="34" action="a2_34"/>
       <key code="35" output="&#x03C0;"/>
       <key code="36" output="&#x000D;"/>
       <key code="37" output="&#x00AC;"/>
@@ -318,42 +318,42 @@
       <key code="42" output="&#x00AB;"/>
       <key code="43" output="&#x2264;"/>
       <key code="44" output="&#x00F7;"/>
-      <key code="45" output=""/>
+      <key code="45" action="a2_45"/>
       <key code="46" output="&#x00B5;"/>
       <key code="47" output="&#x2265;"/>
       <key code="48" output="&#x0009;"/>
       <key code="49" output="&#x00A0;"/>
-      <key code="50" output=""/>
+      <key code="50" action="a2_50"/>
       <key code="51" output=""/>
       <key code="52" output=""/>
       <key code="53" output=""/>
-      <key code="54" output=""/>
-      <key code="55" output=""/>
-      <key code="56" output=""/>
-      <key code="57" output=""/>
-      <key code="58" output=""/>
-      <key code="59" output=""/>
-      <key code="60" output=""/>
-      <key code="61" output=""/>
-      <key code="62" output=""/>
-      <key code="63" output=""/>
-      <key code="64" output=""/>
+      <key code="54" action="a2_54"/>
+      <key code="55" action="a2_55"/>
+      <key code="56" action="a2_56"/>
+      <key code="57" action="a2_57"/>
+      <key code="58" action="a2_58"/>
+      <key code="59" action="a2_59"/>
+      <key code="60" action="a2_60"/>
+      <key code="61" action="a2_61"/>
+      <key code="62" action="a2_62"/>
+      <key code="63" action="a2_63"/>
+      <key code="64" action="a2_64"/>
       <key code="65" output="."/>
       <key code="66" output=""/>
       <key code="67" output="*"/>
-      <key code="68" output=""/>
+      <key code="68" action="a2_68"/>
       <key code="69" output="+"/>
       <key code="70" output=""/>
       <key code="71" output=""/>
       <key code="72" output=""/>
-      <key code="73" output=""/>
-      <key code="74" output=""/>
+      <key code="73" action="a2_73"/>
+      <key code="74" action="a2_74"/>
       <key code="75" output="/"/>
       <key code="76" output=""/>
       <key code="77" output=""/>
       <key code="78" output="-"/>
-      <key code="79" output=""/>
-      <key code="80" output=""/>
+      <key code="79" action="a2_79"/>
+      <key code="80" action="a2_80"/>
       <key code="81" output="="/>
       <key code="82" output="0"/>
       <key code="83" output="1"/>
@@ -363,12 +363,12 @@
       <key code="87" output="5"/>
       <key code="88" output="6"/>
       <key code="89" output="7"/>
-      <key code="90" output=""/>
+      <key code="90" action="a2_90"/>
       <key code="91" output="8"/>
       <key code="92" output="9"/>
-      <key code="93" output=""/>
-      <key code="94" output=""/>
-      <key code="95" output=""/>
+      <key code="93" action="a2_93"/>
+      <key code="94" action="a2_94"/>
+      <key code="95" action="a2_95"/>
       <key code="96" output=""/>
       <key code="97" output=""/>
       <key code="98" output=""/>
@@ -400,7 +400,7 @@
       <key code="124" output=""/>
       <key code="125" output=""/>
       <key code="126" output=""/>
-      <key code="127" output=""/>
+      <key code="127" action="a2_127"/>
     </keyMap>
     <keyMap index="3">
       <key code="0" output="&#x00C5;"/>
@@ -457,33 +457,33 @@
       <key code="51" output=""/>
       <key code="52" output=""/>
       <key code="53" output=""/>
-      <key code="54" output=""/>
-      <key code="55" output=""/>
-      <key code="56" output=""/>
-      <key code="57" output=""/>
-      <key code="58" output=""/>
-      <key code="59" output=""/>
-      <key code="60" output=""/>
-      <key code="61" output=""/>
-      <key code="62" output=""/>
-      <key code="63" output=""/>
-      <key code="64" output=""/>
+      <key code="54" action="a3_54"/>
+      <key code="55" action="a3_55"/>
+      <key code="56" action="a3_56"/>
+      <key code="57" action="a3_57"/>
+      <key code="58" action="a3_58"/>
+      <key code="59" action="a3_59"/>
+      <key code="60" action="a3_60"/>
+      <key code="61" action="a3_61"/>
+      <key code="62" action="a3_62"/>
+      <key code="63" action="a3_63"/>
+      <key code="64" action="a3_64"/>
       <key code="65" output="."/>
       <key code="66" output="*"/>
       <key code="67" output="*"/>
-      <key code="68" output=""/>
+      <key code="68" action="a3_68"/>
       <key code="69" output="+"/>
       <key code="70" output="+"/>
       <key code="71" output=""/>
       <key code="72" output="="/>
-      <key code="73" output=""/>
-      <key code="74" output=""/>
+      <key code="73" action="a3_73"/>
+      <key code="74" action="a3_74"/>
       <key code="75" output="/"/>
       <key code="76" output=""/>
       <key code="77" output="/"/>
       <key code="78" output="-"/>
-      <key code="79" output=""/>
-      <key code="80" output=""/>
+      <key code="79" action="a3_79"/>
+      <key code="80" action="a3_80"/>
       <key code="81" output="="/>
       <key code="82" output="0"/>
       <key code="83" output="1"/>
@@ -493,12 +493,12 @@
       <key code="87" output="5"/>
       <key code="88" output="6"/>
       <key code="89" output="7"/>
-      <key code="90" output=""/>
+      <key code="90" action="a3_90"/>
       <key code="91" output="8"/>
       <key code="92" output="9"/>
-      <key code="93" output=""/>
-      <key code="94" output=""/>
-      <key code="95" output=""/>
+      <key code="93" action="a3_93"/>
+      <key code="94" action="a3_94"/>
+      <key code="95" action="a3_95"/>
       <key code="96" output=""/>
       <key code="97" output=""/>
       <key code="98" output=""/>
@@ -530,7 +530,123 @@
       <key code="124" output=""/>
       <key code="125" output=""/>
       <key code="126" output=""/>
-      <key code="127" output=""/>
+      <key code="127" action="a3_127"/>
     </keyMap>
   </keyMapSet>
+  <actions>
+    <action id="a0_0"><when state="none" output="a"/><when state="s1" output="&#x00E1;"/><when state="s2" output="&#x00E4;"/><when state="s3" output="&#x00E2;"/><when state="s4" output="&#x00E3;"/><when state="s5" output="&#x00E0;"/></action>
+    <action id="a0_14"><when state="none" output="e"/><when state="s1" output="&#x00E9;"/><when state="s2" output="&#x00EB;"/><when state="s3" output="&#x00EA;"/><when state="s5" output="&#x00E8;"/></action>
+    <action id="a0_16"><when state="none" output="y"/><when state="s2" output="&#x00FF;"/></action>
+    <action id="a0_31"><when state="none" output="o"/><when state="s1" output="&#x00F3;"/><when state="s2" output="&#x00F6;"/><when state="s3" output="&#x00F4;"/><when state="s4" output="&#x00F5;"/><when state="s5" output="&#x00F2;"/></action>
+    <action id="a0_32"><when state="none" output="u"/><when state="s1" output="&#x00FA;"/><when state="s2" output="&#x00FC;"/><when state="s3" output="&#x00FB;"/><when state="s5" output="&#x00F9;"/></action>
+    <action id="a0_34"><when state="none" output="i"/><when state="s1" output="&#x00ED;"/><when state="s2" output="&#x00EF;"/><when state="s3" output="&#x00EE;"/><when state="s5" output="&#x00EC;"/></action>
+    <action id="a0_38"><when state="none" output="j"/><when state="s1" output="j&#x0301;"/></action>
+    <action id="a0_45"><when state="none" output="n"/><when state="s4" output="&#x00F1;"/></action>
+    <action id="a0_49"><when state="none" output=" "/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_54"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_55"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_56"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_57"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_58"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_59"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_60"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_61"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_62"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_63"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_64"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_68"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_73"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_74"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_79"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_80"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_90"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_93"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_94"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_95"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a0_127"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_0"><when state="none" output="A"/><when state="s1" output="&#x00C1;"/><when state="s2" output="&#x00C4;"/><when state="s3" output="&#x00C2;"/><when state="s4" output="&#x00C3;"/><when state="s5" output="&#x00C0;"/></action>
+    <action id="a1_14"><when state="none" output="E"/><when state="s1" output="&#x00C9;"/><when state="s2" output="&#x00CB;"/><when state="s3" output="&#x00CA;"/><when state="s5" output="&#x00C8;"/></action>
+    <action id="a1_16"><when state="none" output="Y"/><when state="s2" output="&#x0178;"/></action>
+    <action id="a1_31"><when state="none" output="O"/><when state="s1" output="&#x00D3;"/><when state="s2" output="&#x00D6;"/><when state="s3" output="&#x00D4;"/><when state="s4" output="&#x00D5;"/><when state="s5" output="&#x00D2;"/></action>
+    <action id="a1_32"><when state="none" output="U"/><when state="s1" output="&#x00DA;"/><when state="s2" output="&#x00DC;"/><when state="s3" output="&#x00DB;"/><when state="s5" output="&#x00D9;"/></action>
+    <action id="a1_34"><when state="none" output="I"/><when state="s1" output="&#x00CD;"/><when state="s2" output="&#x00CF;"/><when state="s3" output="&#x00CE;"/><when state="s5" output="&#x00CC;"/></action>
+    <action id="a1_38"><when state="none" output="J"/><when state="s1" output="J&#x0301;"/></action>
+    <action id="a1_45"><when state="none" output="N"/><when state="s4" output="&#x00D1;"/></action>
+    <action id="a1_49"><when state="none" output=" "/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_54"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_55"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_56"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_57"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_58"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_59"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_60"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_61"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_62"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_63"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_64"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_68"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_73"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_74"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_79"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_80"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_90"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_93"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_94"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_95"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a1_127"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_14"><when state="none" next="s1"/></action>
+    <action id="a2_32"><when state="none" next="s2"/></action>
+    <action id="a2_34"><when state="none" next="s3"/></action>
+    <action id="a2_45"><when state="none" next="s4"/></action>
+    <action id="a2_50"><when state="none" next="s5"/></action>
+    <action id="a2_54"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_55"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_56"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_57"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_58"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_59"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_60"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_61"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_62"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_63"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_64"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_68"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_73"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_74"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_79"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_80"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_90"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_93"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_94"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_95"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a2_127"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_54"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_55"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_56"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_57"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_58"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_59"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_60"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_61"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_62"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_63"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_64"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_68"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_73"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_74"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_79"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_80"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_90"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_93"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_94"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_95"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+    <action id="a3_127"><when state="none" output=""/><when state="s1" output="&#x00B4;"/><when state="s2" output="&#x00A8;"/><when state="s3" output="&#x02C6;"/><when state="s4" output="&#x02DC;"/><when state="s5" output="`"/></action>
+  </actions>
+  <terminators>
+    <when state="s1" output="&#x00B4;"/>
+    <when state="s2" output="&#x00A8;"/>
+    <when state="s3" output="&#x02C6;"/>
+    <when state="s4" output="&#x02DC;"/>
+    <when state="s5" output="`"/>
+  </terminators>
 </keyboard>
