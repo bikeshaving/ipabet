@@ -14,7 +14,15 @@ First install needs a logout (TIS registration). After that: `./build.sh install
 ## Files
 
 - `Sources/main.swift` — IMKServer boot.
-- `Sources/InputController.swift` — the transformation engine. Loads `ipakey.json`, rewrites the character before the cursor on modifier keys. Only state is the Option-prefix dead-key mark.
+- `Sources/InputController.swift` — the transformation engine. Loads
+  `ipakey.json` and assembles each glyph in an IMK **composition** (marked
+  text): modifier keys, postfix marks, and backspace all edit the composing
+  glyph inside the IME, and the finished cluster is committed to the app as a
+  single precomposed `insertText`. The engine never reads or edits the client's
+  committed text (no `selectedRange`, `string(from:)`, or `replacementRange`
+  reach-back — the calls whose support varies per app), so behavior is
+  identical in every input field. State: the composing glyph, the
+  Option-prefix dead-key mark, and the `9` bracket toggle.
 - `ipakey.json` — mapping (copy of `spec/ipakey.json`).
 - `Info.plist` — bundle ID must contain `.inputmethod.`; claims `und-fonipa`.
 - `IPAbet.keylayout` — cosmetic layout used only to give the on-screen **Keyboard
