@@ -18,6 +18,8 @@ IPAbet is US-first; the IPA is purely additive:
   bare `1` is a real `1` (tmux prefixes, vim counts, shortcuts all work).
 - **Shift + letter** — a modifier on the previous segment (`sH`→ʃ, `tR`→ʈ,
   `nG`→ŋ), grounded in romanization conventions (pinyin / ITRANS / ALA-LC).
+  `C` makes the base letter a click at that place (`tC`→ǀ, `qC`→ǃ, `lC`→ǁ) —
+  see `spec/clicks.md`.
 - **Shift + number** — the IPA glyphs with no Latin key (`⇧2`→ʔ, `⇧3`→ʕ,
   `⇧5`→ə, `⇧1`→ɨ, `⇧4`→ɾ, `⇧7`→ħ), grounded in Arabizi + X-SAMPA.
 - **Option** — diacritics and suprasegmentals, postfix, on Apple's ABC Extended
@@ -31,6 +33,7 @@ bijection, so IPAbet↔IPA round-trips losslessly.
 
 - `spec/ipabet.json` — the canonical mapping. Source of truth for every implementation.
 - `spec/diacritics.md` — the diacritic-layer design and rationale.
+- `spec/clicks.md` — the click-consonant key assignments and rationale.
 - `ime/` — **IPAbet**, the macOS input method (reference implementation).
 - `web/` — interactive chart and visual keyboard.
 - `lib/` — JS transcoder (planned).

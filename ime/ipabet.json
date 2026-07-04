@@ -13,7 +13,8 @@
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
   "X": "glottalic — voiced → implosive, voiceless → ejective",
-  "B": "bilabial place"
+  "B": "bilabial place",
+  "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)"
  },
  "letters": [
   {
@@ -675,6 +676,36 @@
    "glyph": "ʐ",
    "cp": "U+0290",
    "name": "LATIN SMALL LETTER Z WITH RETROFLEX HOOK"
+  },
+  {
+   "key": "pC",
+   "glyph": "ʘ",
+   "cp": "U+0298",
+   "name": "LATIN LETTER BILABIAL CLICK"
+  },
+  {
+   "key": "tC",
+   "glyph": "ǀ",
+   "cp": "U+01C0",
+   "name": "LATIN LETTER DENTAL CLICK"
+  },
+  {
+   "key": "qC",
+   "glyph": "ǃ",
+   "cp": "U+01C3",
+   "name": "LATIN LETTER RETROFLEX CLICK"
+  },
+  {
+   "key": "cC",
+   "glyph": "ǂ",
+   "cp": "U+01C2",
+   "name": "LATIN LETTER ALVEOLAR CLICK"
+  },
+  {
+   "key": "lC",
+   "glyph": "ǁ",
+   "cp": "U+01C1",
+   "name": "LATIN LETTER LATERAL CLICK"
   }
  ],
  "marks": [

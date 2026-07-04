@@ -102,7 +102,7 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
   typed directly; digits and punctuation are native.
 - **Shift** — US shift, overridden where IPA needs it: **number keys → the IPA
   glyph with no Latin home** (⇧5 → ə, ⇧2 → ʔ…); a letter right after a glyph →
-  an IPA modifier transform (`t` `⇧H` → θ).
+  an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ).
 - **Option** — postfix diacritics (Apple's ABC Extended layout: `a` `⌥e` → á),
   plus IPA-only marks; `⌥4` superscriptizes the previous glyph (`t` `h` `⌥4` → tʰ).
 - **Option-Shift** — the raw US shifted character, for a symbol an IPA layer
