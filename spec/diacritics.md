@@ -74,6 +74,11 @@ collision because marks with a doubled form have no positional twin and vice ver
 - primary ↔ secondary (e.g., primary stress ↔ secondary stress)
 - specific transliteration rescues (e.g., mid-centralized ↔ dot below)
 
+Repeat presses **cycle** through a mark's forms and wrap around (`⌥e`×3 is
+acute again); a mark with only one form **toggles back off** on the second
+press. Either way the keystroke makes a visible change — never a duplicate
+stack of the same combining mark, never a silent no-op.
+
 ## Tier 1 — ABC Extended key assignments (postfix)
 
 "Verbatim" means the **key→mark assignment** is ABC Extended's (⌥e = acute,
@@ -173,7 +178,8 @@ Absorbed by the doubling rule from Tier 1 and 2, requiring no base key of their 
   be multi-codepoint); and graceful fallback where `replacementRange` is
   refused (secure/password fields, terminals) — insert forward or no-op, never
   silently drop.
-- **Positioning:** Requires feature-aware ring positioning depending on the base character.
+- **Positioning:** the voiceless ring (`⌥k`) is placed by the base character —
+  above on descender bases (ŋ̊, ɡ̊, j̊), below otherwise (n̥, l̥).
 - **No base to decorate:** when `⌥`+mark is pressed with nothing before the
   cursor, emit the mark's **spacing form** where one exists (`⌥e`→`´`,
   `⌥n`→`˜`, `⌥;`→`ː`); for IPA-only marks with no spacing clone

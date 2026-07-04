@@ -886,10 +886,11 @@
   {
    "opt": "t",
    "mark": "͡",
+   "double": "‿",
    "type": "combining",
    "group": "Prosody",
    "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar)"
+   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar; ×2 undertie)"
   },
   {
    "opt": "x",

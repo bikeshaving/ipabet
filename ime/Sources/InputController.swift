@@ -199,35 +199,46 @@ class InputController: IMKInputController {
         m.spacing ? applySpacing(m, client) : applyCombining(m, client)
     }
 
-    /// Combining mark: decorate the previous glyph. Same mark again upgrades to
-    /// its "other form" (double / positional twin); a cycle steps through its
-    /// variants. With no glyph to decorate, the mark is emitted on its own —
-    /// never a dead keystroke.
+    /// IPA bases whose descenders collide with a below-ring: the voiceless
+    /// ring rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
+    private static let descenders: Set<Unicode.Scalar> =
+        Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ".unicodeScalars)
+
+    /// Combining mark: decorate the previous glyph. Repeat presses cycle
+    /// through the mark's forms (double / positional twin / cycle variants);
+    /// a mark with only one form toggles back off — a visible change either
+    /// way, never a duplicate stack. With no glyph to decorate, the mark is
+    /// emitted on its own — never a dead keystroke.
     private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
         guard let (p, r) = lastCluster(client) else { insert(m.mark, client); return }
         let (base, marks) = decompose(p)
-        let scalar = m.mark.unicodeScalars.first!
+        var scalar = m.mark.unicodeScalars.first!
+        if scalar == "\u{0325}", let b = base.unicodeScalars.first, Self.descenders.contains(b) {
+            scalar = "\u{030A}"   // ring below → ring above on a descender base
+        }
         if let last = marks.last {
-            if last == scalar, let dbl = m.double {
-                replace(r, with: recompose(base, Array(marks.dropLast()) + Array(dbl.unicodeScalars)), client)
-                return
-            }
-            if !m.cycle.isEmpty {
-                let ring = ([m.mark] + m.cycle).map { $0.unicodeScalars.first! }
-                if let i = ring.firstIndex(of: last) {
-                    replace(r, with: recompose(base, Array(marks.dropLast()) + [ring[(i + 1) % ring.count]]), client)
-                    return
+            var forms = [scalar]
+            if let dbl = m.double { forms.append(dbl.unicodeScalars.first!) }
+            forms += m.cycle.map { $0.unicodeScalars.first! }
+            if let i = forms.firstIndex(of: last) {
+                if forms.count == 1 {
+                    replace(r, with: recompose(base, marks.dropLast()), client)
+                } else {
+                    replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
                 }
+                return
             }
         }
         replace(r, with: recompose(base, marks + [scalar]), client)
     }
 
-    /// Spacing mark: insert in place. Same mark again upgrades it (read back the
-    /// just-inserted glyph and replace).
+    /// Spacing mark: insert in place. Same mark again upgrades it (read back
+    /// the just-inserted glyph and replace); on the upgraded form it cycles
+    /// back (ˈ ⇄ ˌ) rather than stacking a stray mark.
     private func applySpacing(_ m: Mark, _ client: IMKTextInput) {
-        if let dbl = m.double, let (p, r) = lastCluster(client), String(p) == m.mark {
-            replace(r, with: dbl, client); return
+        if let dbl = m.double, let (p, r) = lastCluster(client) {
+            if String(p) == m.mark { replace(r, with: dbl, client); return }
+            if String(p) == dbl { replace(r, with: m.mark, client); return }
         }
         insert(m.mark, client)
     }
