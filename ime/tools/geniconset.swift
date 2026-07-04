@@ -33,11 +33,12 @@ ctx.setAllowsAntialiasing(true)
 ctx.setShouldAntialias(true)
 ctx.interpolationQuality = .high
 
-// Badge geometry: slight inset so it doesn't kiss the tile edges, generous
-// corner radius like the system superellipse badges.
-let inset  = (size * 0.06).rounded()
-let rect   = CGRect(x: inset, y: inset, width: size - 2*inset, height: size - 2*inset)
-let radius = rect.width * 0.28
+// Badge geometry measured off Apple's own input-source icons (2SetKorean
+// .tiff, 32 px rep): the badge is FULL BLEED — no inset — with a corner
+// radius of 12.5% of the tile. (Our previous 6% inset + 28% radius read as
+// a circle at list size.)
+let rect   = CGRect(x: 0, y: 0, width: size, height: size)
+let radius = size * 0.125
 
 // Schwa glyph path from a heavy weight so the knockout reads at 16 px.
 let font = CTFontCreateWithName("Helvetica-Bold" as CFString, size * 0.72, nil)
@@ -47,11 +48,13 @@ CTFontGetGlyphsForCharacters(font, &uni, &glyphs, uni.count)
 guard let glyphPath = CTFontCreatePathForGlyph(font, glyphs[0], nil) else {
     fatalError("no glyph path")
 }
+// Scale the glyph to Apple's knockout proportion (한 spans ~66% of the
+// tile; the round ə sits at ~60% for the same optical weight) and center.
 let gb = glyphPath.boundingBox
-// Center the glyph optically within the badge.
-let tx = rect.midX - gb.midX
-let ty = rect.midY - gb.midY
-var xf = CGAffineTransform(translationX: tx, y: ty)
+let scale = (size * 0.60) / gb.height
+var xf = CGAffineTransform(translationX: rect.midX - gb.midX * scale,
+                           y: rect.midY - gb.midY * scale)
+    .scaledBy(x: scale, y: scale)
 let centeredGlyph = glyphPath.copy(using: &xf)!
 
 // Compose: rounded-rect badge + glyph as an even-odd hole.
