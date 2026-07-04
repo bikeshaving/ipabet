@@ -75,9 +75,9 @@ collision because marks with a doubled form have no positional twin and vice ver
 - specific transliteration rescues (e.g., mid-centralized ↔ dot below)
 
 Repeat presses **cycle** through a mark's forms and wrap around (`⌥e`×3 is
-acute again); a mark with only one form **toggles back off** on the second
-press. Either way the keystroke makes a visible change — never a duplicate
-stack of the same combining mark, never a silent no-op.
+acute again). A mark with only one form simply stacks again — visible and
+one backspace away. Mark keys never *remove*: backspace is the peeler, and a
+keystroke always moves the text forward, never silently no-ops.
 
 ## Tier 1 — ABC Extended key assignments (postfix)
 

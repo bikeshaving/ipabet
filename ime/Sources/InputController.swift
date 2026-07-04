@@ -205,10 +205,10 @@ class InputController: IMKInputController {
         Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ".unicodeScalars)
 
     /// Combining mark: decorate the previous glyph. Repeat presses cycle
-    /// through the mark's forms (double / positional twin / cycle variants);
-    /// a mark with only one form toggles back off — a visible change either
-    /// way, never a duplicate stack. With no glyph to decorate, the mark is
-    /// emitted on its own — never a dead keystroke.
+    /// through the mark's forms (double / positional twin / cycle variants),
+    /// wrapping around. A mark with only one form just stacks again — mark
+    /// keys never remove (backspace is the peeler). With no glyph to
+    /// decorate, the mark is emitted on its own — never a dead keystroke.
     private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
         guard let (p, r) = lastCluster(client) else { insert(m.mark, client); return }
         let (base, marks) = decompose(p)
@@ -220,12 +220,8 @@ class InputController: IMKInputController {
             var forms = [scalar]
             if let dbl = m.double { forms.append(dbl.unicodeScalars.first!) }
             forms += m.cycle.map { $0.unicodeScalars.first! }
-            if let i = forms.firstIndex(of: last) {
-                if forms.count == 1 {
-                    replace(r, with: recompose(base, marks.dropLast()), client)
-                } else {
-                    replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
-                }
+            if forms.count > 1, let i = forms.firstIndex(of: last) {
+                replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
                 return
             }
         }
