@@ -17,9 +17,13 @@ one for clicks.
 | `cC` | ǂ | palatal | laminal palatal |
 | `lC` | ǁ | lateral | apical with lateral release |
 
-Accompaniments compose as usual: voicing (`g` + tie), nasalization (`n` +
-tie or `⌥n`), aspiration (`⌥4` superscript ʰ), glottalization (`X`) — the
-click letter carries only the influx, per current phonological practice.
+Accompaniments compose as usual — the click letter carries only the influx,
+per current phonological practice. The Khoisanist standard notation for
+voiced and nasal clicks is a **superscript accompaniment prefix**: type the
+accompaniment, superscriptize it with `⌥4`, then the click —
+`g` `⌥4` `qC` → ᶢǃ, `ŋ` (`nG`) `⌥4` `qC` → ᵑǃ. Aspiration follows as usual
+(`qC` `h` `⌥4` → ǃʰ), glottalization via `X`, or spell the cluster out
+(ǃq, ǃk) per your tradition's convention.
 
 ## Why these letters
 
