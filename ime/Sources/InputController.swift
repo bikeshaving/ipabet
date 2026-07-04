@@ -128,9 +128,14 @@ class InputController: IMKInputController {
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
 
-        // Option-Shift: single-key raw-US passthrough (the key's shifted char).
-        // This is how you type a symbol the Option layer claims — ⌥⇧4 → $, ⌥⇧1 → !.
+        // Option-Shift: escape hatch. On letters/digits it inserts the raw-US
+        // shifted char (⌥⇧H → H to dodge a transform, ⌥⇧1 → !, ⌥⇧4 → $). On
+        // punctuation it DECLINES, so Mac's own Option-layer typography passes
+        // through untouched (⌥⇧[ → “, ⌥⇧] → ’, ⌥⇧- → em-dash). Inserting the
+        // plain shifted char there would clobber curly quotes and dashes.
         if opt && shift {
+            let bare = USLayout.char(event.keyCode, shift: false)
+            guard let c = bare.first, c.isLetter || c.isNumber else { return false }
             let raw = USLayout.char(event.keyCode, shift: true)
             guard !raw.isEmpty else { return false }
             insert(raw, client)

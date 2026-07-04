@@ -17,12 +17,6 @@
  },
  "letters": [
   {
-   "key": "|R",
-   "glyph": "ǃ",
-   "cp": "U+01C3",
-   "name": "LATIN LETTER RETROFLEX CLICK"
-  },
-  {
    "key": "1",
    "glyph": "ɨ",
    "cp": "U+0268",
@@ -225,12 +219,6 @@
    "glyph": "z",
    "cp": "U+007A",
    "name": "LATIN SMALL LETTER Z"
-  },
-  {
-   "key": "|",
-   "glyph": "ǀ",
-   "cp": "U+01C0",
-   "name": "LATIN LETTER DENTAL CLICK"
   },
   {
    "key": "1H",
@@ -687,24 +675,6 @@
    "glyph": "ʐ",
    "cp": "U+0290",
    "name": "LATIN SMALL LETTER Z WITH RETROFLEX HOOK"
-  },
-  {
-   "key": "|B",
-   "glyph": "ʘ",
-   "cp": "U+0298",
-   "name": "LATIN LETTER BILABIAL CLICK"
-  },
-  {
-   "key": "|J",
-   "glyph": "ǂ",
-   "cp": "U+01C2",
-   "name": "LATIN LETTER ALVEOLAR CLICK"
-  },
-  {
-   "key": "|L",
-   "glyph": "ǁ",
-   "cp": "U+01C1",
-   "name": "LATIN LETTER LATERAL CLICK"
   }
  ],
  "marks": [
