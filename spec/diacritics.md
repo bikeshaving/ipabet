@@ -55,8 +55,8 @@ they pass through as real digit keys (tmux prefixes, vim counts, app shortcuts,
 not just text). **Shift + number** yields the IPA glyph with no Latin home:
 
 `⇧1`→ɨ, `⇧2`→ʔ, `⇧3`→ʕ, `⇧4`→ɾ, `⇧5`→ə, `⇧7`→ħ, `⇧8`→/ (solidus).
-(ɐ is not on the number row: it is the centralized a, so it is typed `aU`,
-like `oU`→ɵ — the U-centralize rule.)
+(ɐ is not on the number row: it is the lax a, so it is typed `aH` — the same
+H-laxing that gives ɪ ʊ ɛ ɔ. Its dark sibling ʌ is `aU`.)
 
 Where a number key has no IPA glyph (`6`, `9`, `0`), Shift falls through to
 the native US symbol — so `^`, `(`, and `)` stay one keystroke away. The

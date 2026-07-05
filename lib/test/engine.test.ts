@@ -32,6 +32,8 @@ describe("digraph transforms", () => {
 	test("thing: t ⇧H i ⇧H n ⇧G → θɪŋ", () => expect(typed("t", "+h", "i", "+h", "n", "+g")).toBe("θɪŋ"));
 	test("retroflex: t ⇧R → ʈ", () => expect(typed("t", "+r")).toBe("ʈ"));
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
+	test("lax a: a ⇧H → ɐ", () => expect(typed("a", "+h")).toBe("ɐ"));
+	test("dark a: a ⇧U → ʌ", () => expect(typed("a", "+u")).toBe("ʌ"));
 	test("marks survive the swap: s ⌥; is unaffected, s̪ ⇧H keeps bridge", () => {
 		// dental s, then H: ʃ with the dental bridge preserved
 		expect(typed("s", "~d", "+h")).toBe(nfc("ʃ\u{032A}"));

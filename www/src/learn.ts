@@ -95,7 +95,7 @@ const LEVELS = [
 			drill("cat", "k", "a", "+e", "t"),
 			drill("ship", "s", "+h", "i", "+h", "p"),
 			drill("thing", "t", "+h", "i", "+h", "n", "+g"),
-			drill("judge", "d", "z", "+h", "a", "+h", "d", "z", "+h"),
+			drill("judge", "d", "z", "+h", "a", "+u", "d", "z", "+h"),
 			drill("world", "w", "+5", "+h", "+r", "l", "d"),
 			drill("about", "+5", "~'", "b", "a", "u", "+h", "t"),
 			drill("phonetics", "f", "+5", "~'", "n", "e", "+h", "t", "i", "+h", "k", "s"),

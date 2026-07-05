@@ -1,6 +1,6 @@
 {
  "modifiers": {
-  "H": "lenite toward /h/ — spirantize, open, lax",
+  "H": "lenite toward /h/ — spirantize, open, lax (vowels lax one notch: iH→ɪ, aH→ɐ)",
   "R": "retroflex (coronals); trill (elsewhere)",
   "J": "palatalize (consonants only)",
   "W": "labialize / round-flip",
@@ -8,7 +8,7 @@
   "G": "dorsal deepening — velar/uvular place",
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
-  "U": "velarize/dark (consonants); centralize (oU)",
+  "U": "velarize/dark (consonants); centralize or back (vowels: oU→ɵ, aU→ʌ)",
   "O": "drag toward o (vowels)",
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
@@ -48,7 +48,7 @@
    "name": "LATIN SMALL LETTER SCHWA"
   },
   {
-   "key": "aU",
+   "key": "aH",
    "glyph": "ɐ",
    "cp": "U+0250",
    "name": "LATIN SMALL LETTER TURNED A"
@@ -294,7 +294,7 @@
    "name": "LATIN SMALL LETTER AE"
   },
   {
-   "key": "aH",
+   "key": "aU",
    "glyph": "ʌ",
    "cp": "U+028C",
    "name": "LATIN SMALL LETTER TURNED V"
