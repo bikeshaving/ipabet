@@ -1,4 +1,4 @@
-// @ipabet/core — the IPAbet engine in TypeScript.
+// @b9g/ipabet — the IPAbet engine in TypeScript.
 //
 // A faithful port of the macOS IME's stateless engine
 // (ime/Sources/InputController.swift): every keystroke reads the text before
