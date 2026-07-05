@@ -39,8 +39,6 @@
                 <string>org.bikeshaving.inputmethod.IPAbet.IPA</string>
                 <key>TISIntendedLanguage</key>
                 <string>und-fonipa</string>
-                <key>tsInputModeDefaultStateKey</key>
-                <true/>
                 <key>tsInputModeIsVisibleKey</key>
                 <true/>
                 <key>tsInputModeMenuIconFileKey</key>
