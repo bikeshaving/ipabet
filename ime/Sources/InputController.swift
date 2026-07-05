@@ -42,6 +42,12 @@ struct Mark {
     let spacing: Bool
     let double: String?
     let cycle: [String]
+    // spacing clone (´ for acute, ^ for circumflex): what a combining mark
+    // emits standing alone — no base to decorate, or the base already wears
+    // it (the "cap"). IPA-only marks with no clone ride a no-break space.
+    let clone: String?
+
+    var standalone: String { clone ?? "\u{00A0}" + mark }
 }
 
 struct Tables {
@@ -67,7 +73,8 @@ struct Tables {
             optMarks[opt] = Mark(mark: mark,
                                  spacing: (r["type"] as? String) == "spacing",
                                  double: r["double"] as? String,
-                                 cycle: r["cycle"] as? [String] ?? [])
+                                 cycle: r["cycle"] as? [String] ?? [],
+                                 clone: r["clone"] as? String)
         }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
@@ -206,11 +213,16 @@ class InputController: IMKInputController {
 
     /// Combining mark: decorate the previous glyph. Repeat presses cycle
     /// through the mark's forms (double / positional twin / cycle variants),
-    /// wrapping around. A mark with only one form just stacks again — mark
-    /// keys never remove (backspace is the peeler). With no glyph to
-    /// decorate, the mark is emitted on its own — never a dead keystroke.
+    /// wrapping around. A mark with only one form CAPS: the press emits the
+    /// mark's standalone form (spacing clone, or NBSP-carried) instead of
+    /// stacking a duplicate — mark keys never remove (backspace peels). With
+    /// no glyph to decorate, the standalone form likewise — never a dead
+    /// keystroke. (A bare combining mark can't be "inserted after" a cluster:
+    /// Unicode would attach it right back — that IS stacking.)
     private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
-        guard let (p, r) = lastCluster(client) else { insert(m.mark, client); return }
+        guard let (p, r) = lastCluster(client) else { insert(m.standalone, client); return }
+        // pressing the mark key on its own standalone form: another one
+        if String(p) == m.clone { insert(m.standalone, client); return }
         let (base, marks) = decompose(p)
         var scalar = m.mark.unicodeScalars.first!
         if scalar == "\u{0325}", let b = base.unicodeScalars.first, Self.descenders.contains(b) {
@@ -222,6 +234,10 @@ class InputController: IMKInputController {
             forms += m.cycle.map { $0.unicodeScalars.first! }
             if forms.count > 1, let i = forms.firstIndex(of: last) {
                 replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
+                return
+            }
+            if last == scalar {   // already wears it, no other form: cap
+                insert(m.standalone, client)
                 return
             }
         }
@@ -262,6 +278,10 @@ class InputController: IMKInputController {
         guard let (p, r) = lastCluster(client) else { return false }
         let (base, marks) = decompose(p)
         guard !marks.isEmpty else { return false }   // bare glyph: native delete
+        // orphan combining mark (base-less cluster): peeling would mean
+        // inserting an empty replacement, which the macOS 15 transport
+        // silently drops — decline and let the host delete it natively.
+        guard !base.isEmpty else { return false }
         replace(r, with: recompose(base, marks.dropLast()), client)
         return true
     }

@@ -31,6 +31,13 @@ interface Mark {
 	spacing: boolean;
 	double?: string;
 	cycle: string[];
+	/** Spacing clone (´, ^): the mark's standalone form. No clone → the
+	 * combining mark rides a no-break space. */
+	clone?: string;
+}
+
+function standalone(m: Mark): string {
+	return m.clone ?? "\u{00A0}" + m.mark;
 }
 
 // ---------------------------------------------------------------- tables
@@ -47,12 +54,14 @@ for (const e of spec.marks as {
 	type: string;
 	double?: string;
 	cycle?: string[];
+	clone?: string;
 }[]) {
 	optMarks.set(e.opt, {
 		mark: e.mark,
 		spacing: e.type === "spacing",
 		double: e.double,
 		cycle: e.cycle ?? [],
+		clone: e.clone,
 	});
 }
 
@@ -130,13 +139,17 @@ function replaceCluster(cluster: string, text: string): Edit {
 /**
  * Combining mark: decorate the previous glyph. Repeat presses cycle through
  * the mark's forms (double / positional twin / cycle variants), wrapping
- * around. A mark with only one form just stacks again — mark keys never
- * remove (backspace is the peeler). With no glyph to decorate, the mark is
- * emitted on its own — never a dead keystroke.
+ * around. A mark with only one form CAPS: the press emits the mark's
+ * standalone form (spacing clone, or NBSP-carried) instead of stacking a
+ * duplicate — mark keys never remove (backspace peels). With no glyph to
+ * decorate, the standalone form likewise. (A bare combining mark can't be
+ * "inserted after" a cluster: Unicode attaches it right back — that IS
+ * stacking.)
  */
 function applyCombining(m: Mark, textBefore: string): Edit {
 	const p = lastCluster(textBefore);
-	if (p === undefined) return {type: "insert", text: m.mark};
+	if (p === undefined) return {type: "insert", text: standalone(m)};
+	if (p === m.clone) return {type: "insert", text: standalone(m)};
 	const {base, marks} = decompose(p);
 	let scalar = m.mark;
 	if (scalar === RING_BELOW && DESCENDERS.has(base[0] ?? "")) {
@@ -151,6 +164,10 @@ function applyCombining(m: Mark, textBefore: string): Edit {
 		if (forms.length > 1 && i !== -1) {
 			const next = forms[(i + 1) % forms.length];
 			return replaceCluster(p, recompose(base, [...marks.slice(0, -1), next]));
+		}
+		if (last === scalar) {
+			// already wears it, no other form: cap
+			return {type: "insert", text: standalone(m)};
 		}
 	}
 	return replaceCluster(p, recompose(base, [...marks, scalar]));
@@ -264,6 +281,8 @@ export function handleBackspace(textBefore: string): Edit {
 	if (p === undefined) return {type: "pass"};
 	const {base, marks} = decompose(p);
 	if (marks.length === 0) return {type: "pass"};
+	// orphan combining mark: let the host delete the whole cluster
+	if (base.length === 0) return {type: "pass"};
 	return replaceCluster(p, recompose(base, marks.slice(0, -1)));
 }
 

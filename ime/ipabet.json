@@ -712,6 +712,7 @@
   {
    "opt": "e",
    "mark": "́",
+   "clone": "´",
    "type": "combining",
    "double": "̋",
    "group": "Tone",
@@ -721,6 +722,7 @@
   {
    "opt": "`",
    "mark": "̀",
+   "clone": "`",
    "type": "combining",
    "double": "̏",
    "group": "Tone",
@@ -730,6 +732,7 @@
   {
    "opt": "6",
    "mark": "̂",
+   "clone": "^",
    "type": "combining",
    "group": "Tone",
    "cp": "U+0302",
@@ -738,6 +741,7 @@
   {
    "opt": "v",
    "mark": "̌",
+   "clone": "ˇ",
    "type": "combining",
    "double": "̬",
    "group": "Tone",
@@ -747,6 +751,7 @@
   {
    "opt": "a",
    "mark": "̄",
+   "clone": "¯",
    "type": "combining",
    "group": "Tone",
    "cp": "U+0304",
@@ -755,6 +760,7 @@
   {
    "opt": "n",
    "mark": "̃",
+   "clone": "˜",
    "type": "combining",
    "double": "̰",
    "group": "Nasalization",
@@ -764,6 +770,7 @@
   {
    "opt": "u",
    "mark": "̈",
+   "clone": "¨",
    "type": "combining",
    "double": "̤",
    "group": "Articulation",
@@ -773,6 +780,7 @@
   {
    "opt": "b",
    "mark": "̆",
+   "clone": "˘",
    "type": "combining",
    "double": "̯",
    "group": "Syllabicity",
@@ -782,6 +790,7 @@
   {
    "opt": "k",
    "mark": "̥",
+   "clone": "˚",
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0325",
@@ -790,6 +799,7 @@
   {
    "opt": "w",
    "mark": "̇",
+   "clone": "˙",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0307",
@@ -798,6 +808,7 @@
   {
    "opt": "c",
    "mark": "̧",
+   "clone": "¸",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
@@ -806,6 +817,7 @@
   {
    "opt": "m",
    "mark": "̨",
+   "clone": "˛",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",

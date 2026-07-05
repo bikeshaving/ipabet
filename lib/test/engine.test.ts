@@ -65,8 +65,10 @@ describe("option diacritics (postfix)", () => {
 	test("señor tilde: n ⌥n → ñ", () => expect(typed("s", "e", "n", "~n")).toBe(nfc("señ")));
 	test("acute: e ⌥e → é", () => expect(typed("e", "~e")).toBe(nfc("é")));
 	test("length: a ⌥; → aː", () => expect(typed("a", "~;")).toBe("aː"));
-	test("no base: ⌥n alone emits the bare mark", () =>
-		expect(typed("~n")).toBe("\u{0303}"));
+	test("no base: ⌥n alone emits its spacing clone", () =>
+		expect(typed("~n")).toBe("˜"));
+	test("no base, clone-less mark rides NBSP: ⌥d alone", () =>
+		expect(typed("~d")).toBe("\u{00A0}\u{032A}"));
 });
 
 describe("doubling / cycling", () => {
@@ -76,8 +78,12 @@ describe("doubling / cycling", () => {
 		expect(typed("e", "~e", "~e")).toBe(nfc("e\u{030B}"));
 		expect(typed("e", "~e", "~e", "~e")).toBe(nfc("é"));
 	});
-	test("single-form mark stacks (never toggles off): a ⌥a ⌥a", () =>
-		expect(typed("a", "~a", "~a")).toBe(nfc("a\u{0304}\u{0304}")));
+	test("single-form mark caps to its spacing clone: a ⌥a ⌥a → ā¯", () =>
+		expect(typed("a", "~a", "~a")).toBe(nfc("a\u{0304}") + "¯"));
+	test("circumflex caps: e ⌥6 ⌥6 ⌥6 → ê^^", () =>
+		expect(typed("e", "~6", "~6", "~6")).toBe(nfc("e\u{0302}") + "^^"));
+	test("clone-less mark caps to NBSP carrier: a ⌥. ⌥. → a̝ + NBSP◌̝", () =>
+		expect(typed("a", "~.", "~.")).toBe(nfc("a\u{031D}") + "\u{00A0}\u{031D}"));
 	test("dental cycle: d ⌥d ⌥d → apical", () =>
 		expect(typed("d", "~d", "~d")).toBe(nfc("d\u{033A}")));
 	test("stress cycles both ways: ⌥' ⌥' → ˌ, ×3 → ˈ", () => {

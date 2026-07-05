@@ -75,9 +75,14 @@ collision because marks with a doubled form have no positional twin and vice ver
 - specific transliteration rescues (e.g., mid-centralized ↔ dot below)
 
 Repeat presses **cycle** through a mark's forms and wrap around (`⌥e`×3 is
-acute again). A mark with only one form simply stacks again — visible and
-one backspace away. Mark keys never *remove*: backspace is the peeler, and a
-keystroke always moves the text forward, never silently no-ops.
+acute again). A mark with only one form **caps**: pressing it on a base that
+already wears it emits the mark's *standalone form* — its spacing clone
+(`ā`+`⌥a` → `ā¯`, `ê`+`⌥6` → `ê^`), or the combining mark carried on a
+no-break space for IPA-only marks with no clone. The cluster itself never
+accumulates duplicates. (A bare combining mark cannot be "inserted after" a
+cluster — Unicode attaches it right back; that *is* stacking. Hence the
+clone.) Mark keys never *remove*: backspace is the peeler, and a keystroke
+always moves the text forward, never silently no-ops.
 
 ## Tier 1 — ABC Extended key assignments (postfix)
 
@@ -183,5 +188,6 @@ Absorbed by the doubling rule from Tier 1 and 2, requiring no base key of their 
 - **No base to decorate:** when `⌥`+mark is pressed with nothing before the
   cursor, emit the mark's **spacing form** where one exists (`⌥e`→`´`,
   `⌥n`→`˜`, `⌥;`→`ː`); for IPA-only marks with no spacing clone
-  (bridge-below, tacks, half-rings), emit the bare combining mark (it renders
-  harmlessly on the space). Never a silent no-op.
+  (bridge-below, tacks, half-rings), emit the combining mark carried on a
+  no-break space. Never a silent no-op. The spacing clones live in
+  `ipabet.json` (`clone` field) and also serve the cap rule above.
