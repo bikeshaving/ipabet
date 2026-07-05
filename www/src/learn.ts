@@ -1,6 +1,7 @@
 import {typeKeys, type Keystroke} from "../../lib/src/index.ts";
 import {CSS} from "./style.ts";
 import {lessonIndexSection} from "./lesson-page.ts";
+import {LESSONS} from "./lessons.ts";
 // Shovel's asset pipeline rewrites this import to a hashed URL string at
 // build time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
@@ -103,6 +104,8 @@ const LEVELS = [
 	},
 ];
 
+const HEAR = LESSONS.flatMap((l) => l.transcribe).map(({word, say, target, labels}) => ({word, say, target, labels}));
+
 export const LEARN_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -133,6 +136,27 @@ export const LEARN_HTML = `<!DOCTYPE html>
 	color: var(--dim); padding: 0.25rem 0.75rem; cursor: pointer; font-size: 0.85rem;
 }
 #streak { color: var(--accent); height: 1.4rem; font-size: 0.9rem; margin-top: 0.5rem; }
+#hear {
+	background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+	padding: 2rem 1.5rem; margin: 2rem 0; text-align: center;
+}
+#hear.armed, #drill.armed { border-color: var(--accent); }
+#hear h2 { margin: 0 0 0.75rem; }
+#play {
+	background: var(--accent); color: #fff; border: none; border-radius: 8px;
+	padding: 0.55rem 1.4rem; font-size: 1.05rem; cursor: pointer;
+}
+#hword { color: var(--dim); height: 1.4rem; margin-top: 0.75rem; }
+#htyped {
+	font-size: 2.2rem; height: 3.4rem; line-height: 3.4rem; margin-top: 0.25rem;
+	border-bottom: 2px solid var(--line); display: inline-block; min-width: 12rem;
+	font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif;
+}
+#htyped.good { border-color: #1a7f37; }
+#htyped.bad { border-color: #c43a3a; }
+#hhint { height: 2rem; margin-top: 0.5rem; }
+#hhint .ans { margin-left: 0.5rem; }
+#hstreak { color: var(--accent); height: 1.4rem; font-size: 0.9rem; }
 .notice { color: var(--dim); font-size: 0.9rem; text-align: center; }
 </style>
 </head>
@@ -140,10 +164,20 @@ export const LEARN_HTML = `<!DOCTYPE html>
 <main>
 	<header>
 		<h1><a href="/" style="text-decoration:none;color:inherit">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/learn</span></h1>
-		<p class="tagline">Drills that run the real engine.</p>
-		<p class="trust">Your keystrokes below are interpreted by the same code as the macOS input method — no install needed to practice.</p>
+		<p class="tagline">Hear it. Type it. /tɹænˈskɹaɪb/.</p>
+		<p class="trust">Your keystrokes are interpreted by the same engine as the macOS input method — no install needed to practice.</p>
 	</header>
 
+	<div id="hear">
+		<h2>Transcribe what you hear</h2>
+		<button id="play">🔊 play a word</button>
+		<div id="hword"></div>
+		<div><span id="htyped"></span></div>
+		<div id="hhint"></div>
+		<div id="hstreak"></div>
+	</div>
+
+	<h2 style="margin-top:3rem">Learn the keyboard</h2>
 	<div id="drill">
 		<div id="level"></div>
 		<div id="blurb"></div>
@@ -166,7 +200,8 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__LEVELS = ${JSON.stringify(LEVELS)};</script>
+<script>window.__LEVELS = ${JSON.stringify(LEVELS)};
+window.__HEAR = ${JSON.stringify(HEAR)};</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;

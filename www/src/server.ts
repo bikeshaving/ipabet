@@ -119,6 +119,7 @@ const HTML = `<!DOCTYPE html>
 		<div class="out"><span class="text ipa"></span><span class="caret"></span></div>
 		<div class="word"></div>
 	</div>
+	<p style="text-align:center;margin-top:-1rem"><a href="/learn">🔊 Try it yourself — transcribe what you hear, right in the browser →</a></p>
 
 	<section>
 		<h2>A normal keyboard, with the IPA one shift away</h2>
