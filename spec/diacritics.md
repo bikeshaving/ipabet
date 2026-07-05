@@ -54,10 +54,12 @@ Bare number keys are **native US digits** — the IME declines them entirely, so
 they pass through as real digit keys (tmux prefixes, vim counts, app shortcuts,
 not just text). **Shift + number** yields the IPA glyph with no Latin home:
 
-`⇧1`→ɨ, `⇧2`→ʔ, `⇧3`→ʕ, `⇧4`→ɾ, `⇧5`→ə, `⇧6`→ɐ, `⇧7`→ħ, `⇧8`→/ (solidus).
+`⇧1`→ɨ, `⇧2`→ʔ, `⇧3`→ʕ, `⇧4`→ɾ, `⇧5`→ə, `⇧7`→ħ, `⇧8`→/ (solidus).
+(ɐ is not on the number row: it is the centralized a, so it is typed `aU`,
+like `oU`→ɵ — the U-centralize rule.)
 
-Where a number key has no IPA glyph (`9`, `0`), Shift falls through to the
-native US symbol — so `(` and `)` stay one keystroke away on `⇧9`/`⇧0`. The
+Where a number key has no IPA glyph (`6`, `9`, `0`), Shift falls through to
+the native US symbol — so `^`, `(`, and `)` stay one keystroke away. The
 other shifted symbols (`! @ # $ % ^ & *`) live on `⌥⇧`.
 
 *(This supersedes the earlier "Caps Lock number mode" idea, now removed: with
