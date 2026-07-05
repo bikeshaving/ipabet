@@ -3,6 +3,8 @@ import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
 import {CHART_HTML} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
+import {LESSONS} from "./lessons.ts";
+import {lessonHTML} from "./lesson-page.ts";
 import {assets} from "@b9g/assets/middleware";
 
 // ipabet.json is the single source of truth: every table on this page is
@@ -276,6 +278,14 @@ router.route("/chart").get(() => {
 
 router.route("/learn").get(() => {
 	return new Response(LEARN_HTML, {
+		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/learn/:slug").get((_req, ctx) => {
+	const lesson = LESSONS.find((l) => l.slug === ctx.params.slug);
+	if (lesson === undefined) return new Response("Not found", {status: 404});
+	return new Response(lessonHTML(lesson), {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
 	});
 });

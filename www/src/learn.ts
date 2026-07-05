@@ -1,5 +1,6 @@
 import {typeKeys, type Keystroke} from "../../lib/src/index.ts";
 import {CSS} from "./style.ts";
+import {lessonIndexSection} from "./lesson-page.ts";
 // Shovel's asset pipeline rewrites this import to a hashed URL string at
 // build time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
@@ -156,6 +157,8 @@ export const LEARN_HTML = `<!DOCTYPE html>
 	<p class="notice">Type what you see. <kbd>⇧</kbd> and <kbd>⌥</kbd> work like the real keyboard;
 	backspace peels diacritics one mark at a time. Two misses reveal the keys.
 	Hardware keyboard required — this is a typing tutor, after all.</p>
+
+	${lessonIndexSection()}
 
 	<footer>
 		<a href="/">← IPAbet</a>
