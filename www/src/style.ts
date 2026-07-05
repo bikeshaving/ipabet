@@ -36,18 +36,21 @@ header h1 .ipa { color: var(--accent); }
 	background: var(--card); border: 1px solid var(--line); border-radius: 12px;
 	padding: 1.5rem; margin: 2rem 0; text-align: center;
 }
-#demo .keys { min-height: 2rem; }
+/* Fixed heights on every row: the demo cycles words of different lengths
+   and the word caption appears late — nothing here may reflow the page. */
+#demo .keys { height: 2rem; overflow: hidden; white-space: nowrap; }
 #demo .keys kbd { font-size: 1rem; margin: 0 0.15rem; opacity: 0.35; transition: opacity 0.15s; }
 #demo .keys kbd.hit { opacity: 1; border-color: var(--accent); }
 #demo .out {
-	font-size: 2.4rem; min-height: 3.6rem; margin-top: 0.5rem;
+	font-size: 2.4rem; height: 3.6rem; line-height: 3.6rem;
+	margin-top: 0.5rem; overflow: hidden; white-space: nowrap;
 }
 #demo .out .caret {
 	display: inline-block; width: 2px; height: 2.2rem; background: var(--accent);
 	vertical-align: -0.35rem; animation: blink 1s step-end infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
-#demo .word { color: var(--dim); font-size: 0.9rem; margin-top: 0.5rem; }
+#demo .word { color: var(--dim); font-size: 0.9rem; height: 1.4rem; margin-top: 0.25rem; }
 
 section { margin-top: 4rem; }
 h2 { font-size: 1.5rem; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
