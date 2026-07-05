@@ -62,7 +62,10 @@
     </array>
     <key>TISInputSourceID</key>
     <string>org.bikeshaving.inputmethod.IPAbet</string>
+    <!-- "en", not "und-fonipa": IPAbet is a US keyboard with IPA on the
+         shifted layers, and the picker groups by language — bare "und"
+         made it hard to find. -->
     <key>TISIntendedLanguage</key>
-    <string>und-fonipa</string>
+    <string>en</string>
 </dict>
 </plist>

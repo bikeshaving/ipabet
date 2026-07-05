@@ -17,7 +17,7 @@ if [ -d IPAbet.iconset ] && command -v iconutil >/dev/null; then
   iconutil -c icns IPAbet.iconset -o "$APP/Contents/Resources/IPAbet.icns"
 fi
 cp Info.plist "$APP/Contents/"
-cp ipabet.json ipabet.pdf ipabet-alt.pdf "$APP/Contents/Resources/"
+cp ipabet.json ipabet.pdf "$APP/Contents/Resources/"
 # Cosmetic Keyboard Viewer layout, referenced by name via overrideKeyboard.
 cp IPAbet.keylayout "$APP/Contents/Resources/"
 
