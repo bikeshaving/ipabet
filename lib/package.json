@@ -1,0 +1,16 @@
+{
+  "name": "@ipabet/core",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The IPAbet engine in TypeScript — simulate the macOS IME on the web",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14"
+  }
+}

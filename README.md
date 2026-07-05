@@ -36,7 +36,8 @@ bijection, so IPAbet↔IPA round-trips losslessly.
 - `spec/clicks.md` — the click-consonant key assignments and rationale.
 - `ime/` — **IPAbet**, the macOS input method (reference implementation).
 - `web/` — interactive chart and visual keyboard.
-- `lib/` — JS transcoder (planned).
+- `lib/` — `@ipabet/core`, the engine in TypeScript (simulates the IME on the
+  web; parity test suite doubles as the notation's executable spec).
 
 ## IPAbet (macOS)
 
