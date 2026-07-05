@@ -139,12 +139,10 @@ function replaceCluster(cluster: string, text: string): Edit {
 /**
  * Combining mark: decorate the previous glyph. Repeat presses cycle through
  * the mark's forms (double / positional twin / cycle variants), wrapping
- * around. A mark with only one form CAPS: the press emits the mark's
- * standalone form (spacing clone, or NBSP-carried) instead of stacking a
- * duplicate — mark keys never remove (backspace peels). With no glyph to
- * decorate, the standalone form likewise. (A bare combining mark can't be
- * "inserted after" a cluster: Unicode attaches it right back — that IS
- * stacking.)
+ * around. A mark with only one form is the degenerate cycle [mark,
+ * absence]: the second press lifts it back off — its "other form" is bare.
+ * With no glyph to decorate, the standalone form (spacing clone, or
+ * NBSP-carried) — never a dead keystroke.
  */
 function applyCombining(m: Mark, textBefore: string): Edit {
 	const p = lastCluster(textBefore);
@@ -166,8 +164,8 @@ function applyCombining(m: Mark, textBefore: string): Edit {
 			return replaceCluster(p, recompose(base, [...marks.slice(0, -1), next]));
 		}
 		if (last === scalar) {
-			// already wears it, no other form: cap
-			return {type: "insert", text: standalone(m)};
+			// its "other form" is absence: lift it off
+			return replaceCluster(p, recompose(base, marks.slice(0, -1)));
 		}
 	}
 	return replaceCluster(p, recompose(base, [...marks, scalar]));

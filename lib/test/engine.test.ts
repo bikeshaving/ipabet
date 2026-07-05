@@ -78,12 +78,14 @@ describe("doubling / cycling", () => {
 		expect(typed("e", "~e", "~e")).toBe(nfc("e\u{030B}"));
 		expect(typed("e", "~e", "~e", "~e")).toBe(nfc("é"));
 	});
-	test("single-form mark caps to its spacing clone: a ⌥a ⌥a → ā¯", () =>
-		expect(typed("a", "~a", "~a")).toBe(nfc("a\u{0304}") + "¯"));
-	test("circumflex caps: e ⌥6 ⌥6 ⌥6 → ê^^", () =>
-		expect(typed("e", "~6", "~6", "~6")).toBe(nfc("e\u{0302}") + "^^"));
-	test("clone-less mark caps to NBSP carrier: a ⌥. ⌥. → a̝ + NBSP◌̝", () =>
-		expect(typed("a", "~.", "~.")).toBe(nfc("a\u{031D}") + "\u{00A0}\u{031D}"));
+	test("single-form mark toggles off: a ⌥a ⌥a → a (other form = absence)", () =>
+		expect(typed("a", "~a", "~a")).toBe("a"));
+	test("circumflex toggles: e ⌥6 ⌥6 → e, ×3 → ê", () => {
+		expect(typed("e", "~6", "~6")).toBe("e");
+		expect(typed("e", "~6", "~6", "~6")).toBe(nfc("e\u{0302}"));
+	});
+	test("clone-less single-form toggles too: a ⌥. ⌥. → a", () =>
+		expect(typed("a", "~.", "~.")).toBe("a"));
 	test("dental cycle: d ⌥d ⌥d → apical", () =>
 		expect(typed("d", "~d", "~d")).toBe(nfc("d\u{033A}")));
 	test("stress cycles both ways: ⌥' ⌥' → ˌ, ×3 → ˈ", () => {

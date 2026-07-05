@@ -213,12 +213,10 @@ class InputController: IMKInputController {
 
     /// Combining mark: decorate the previous glyph. Repeat presses cycle
     /// through the mark's forms (double / positional twin / cycle variants),
-    /// wrapping around. A mark with only one form CAPS: the press emits the
-    /// mark's standalone form (spacing clone, or NBSP-carried) instead of
-    /// stacking a duplicate — mark keys never remove (backspace peels). With
-    /// no glyph to decorate, the standalone form likewise — never a dead
-    /// keystroke. (A bare combining mark can't be "inserted after" a cluster:
-    /// Unicode would attach it right back — that IS stacking.)
+    /// wrapping around. A mark with only one form is the degenerate cycle
+    /// [mark, absence]: the second press lifts it back off — its "other
+    /// form" is bare. With no glyph to decorate, the standalone form
+    /// (spacing clone, or NBSP-carried) — never a dead keystroke.
     private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
         guard let (p, r) = lastCluster(client) else { insert(m.standalone, client); return }
         // pressing the mark key on its own standalone form: another one
@@ -236,8 +234,8 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
                 return
             }
-            if last == scalar {   // already wears it, no other form: cap
-                insert(m.standalone, client)
+            if last == scalar {   // its "other form" is absence: lift it off
+                replace(r, with: recompose(base, marks.dropLast()), client)
                 return
             }
         }

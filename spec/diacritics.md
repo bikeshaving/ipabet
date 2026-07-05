@@ -75,14 +75,12 @@ collision because marks with a doubled form have no positional twin and vice ver
 - specific transliteration rescues (e.g., mid-centralized ↔ dot below)
 
 Repeat presses **cycle** through a mark's forms and wrap around (`⌥e`×3 is
-acute again). A mark with only one form **caps**: pressing it on a base that
-already wears it emits the mark's *standalone form* — its spacing clone
-(`ā`+`⌥a` → `ā¯`, `ê`+`⌥6` → `ê^`), or the combining mark carried on a
-no-break space for IPA-only marks with no clone. The cluster itself never
-accumulates duplicates. (A bare combining mark cannot be "inserted after" a
-cluster — Unicode attaches it right back; that *is* stacking. Hence the
-clone.) Mark keys never *remove*: backspace is the peeler, and a keystroke
-always moves the text forward, never silently no-ops.
+acute again). A mark with only one form is the **degenerate cycle
+[mark, absence]**: its "other form" is bare, so the second press lifts the
+mark back off (`ā`+`⌥a` → `a`, `ê`+`⌥6` → `e`) and the third re-applies it.
+The cluster never accumulates duplicate marks, and every press makes a
+visible change — never a silent no-op. Backspace remains the general peeler
+for stacked *different* marks.
 
 ## Tier 1 — ABC Extended key assignments (postfix)
 
