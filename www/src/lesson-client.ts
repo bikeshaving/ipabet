@@ -72,13 +72,34 @@ let ti = 0;
 let buffer = "";
 let misses = 0;
 
+let voice: SpeechSynthesisVoice | null = null;
+function pickVoice() {
+	const vs = speechSynthesis.getVoices().filter((v) => v.lang.startsWith("en"));
+	// Prefer enhanced/premium local voices: far clearer final consonants.
+	voice =
+		vs.find((v) => /premium|enhanced/i.test(v.name)) ??
+		vs.find((v) => /samantha|alex|ava|allison/i.test(v.name)) ??
+		vs.find((v) => v.localService) ?? vs[0] ?? null;
+}
+pickVoice();
+speechSynthesis.addEventListener?.("voiceschanged", pickVoice);
+
+function say(word: string) {
+	// Twice, with a beat between: TTS clips word-final stops, and the second
+	// token usually gets a cleaner release.
+	speechSynthesis.cancel();
+	for (const text of [word, word]) {
+		const u = new SpeechSynthesisUtterance(text);
+		u.lang = "en-US";
+		u.rate = 0.8;
+		if (voice) u.voice = voice;
+		speechSynthesis.speak(u);
+	}
+}
+
 function speak() {
 	const item = window.__TRANSCRIBE[ti];
-	const u = new SpeechSynthesisUtterance(item.say ?? item.word);
-	u.lang = "en-US";
-	u.rate = 0.85;
-	speechSynthesis.cancel();
-	speechSynthesis.speak(u);
+	say(item.say ?? item.word);
 }
 
 function renderT() {
