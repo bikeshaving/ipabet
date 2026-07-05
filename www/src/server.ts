@@ -2,6 +2,8 @@ import {Router} from "@b9g/router";
 import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
 import {CHART_HTML} from "./chart.ts";
+import {LEARN_HTML} from "./learn.ts";
+import {assets} from "@b9g/assets/middleware";
 
 // ipabet.json is the single source of truth: every table on this page is
 // generated from it, so the site cannot drift from the spec (the fate of
@@ -223,6 +225,7 @@ const HTML = `<!DOCTYPE html>
 	<footer>
 		<span>MIT © 2026 Brian Kim</span>
 		<a href="/chart">The IPA chart in keystrokes</a>
+		<a href="/learn">Learn to type it</a>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
@@ -257,6 +260,7 @@ run();
 </html>`;
 
 const router = new Router();
+router.use(assets());
 
 router.route("/").get(() => {
 	return new Response(HTML, {
@@ -266,6 +270,12 @@ router.route("/").get(() => {
 
 router.route("/chart").get(() => {
 	return new Response(CHART_HTML, {
+		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/learn").get(() => {
+	return new Response(LEARN_HTML, {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
 	});
 });
