@@ -59,10 +59,12 @@ through untouched — transparent to English, shell, and shortcuts.
 
 ## Status
 
-Tier 1 (segments) covers 100% of the standard IPA chart. Tier 2 (diacritics and
-suprasegmentals) lives on the Option layer, grounded in ABC Extended and
-X-SAMPA/TIPA convention. Not yet covered: Chao tone letters, prosodic bars,
-extIPA.
+Tier 1 (segments) covers every symbol on the standard IPA chart — pulmonic
+and non-pulmonic (clicks, implosives, ejectives) — save one deliberate
+omission: ɧ, which has no stable articulation (Ladefoged & Maddieson), so its
+variants are transcribed directly. Tier 2 (diacritics and suprasegmentals)
+lives on the Option layer, grounded in ABC Extended and X-SAMPA/TIPA
+convention. Not yet covered: Chao tone letters, prosodic bars, extIPA.
 
 ## License
 
