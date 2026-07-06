@@ -107,6 +107,12 @@ describe("ring positioning", () => {
 	test("n ⌥k → ring below", () => expect(typed("n", "~k")).toBe(nfc("n\u{0325}")));
 	test("ŋ ⌥k → ring above (descender)", () =>
 		expect(typed("n", "+g", "~k")).toBe(nfc("ŋ\u{030A}")));
+	test("syllabic positions too: n ⌥s → n̩, ŋ ⌥s → ŋ̍", () => {
+		expect(typed("n", "~s")).toBe(nfc("n\u{0329}"));
+		expect(typed("n", "+g", "~s")).toBe(nfc("ŋ\u{030D}"));
+	});
+	test("syllabic is single-form now: repeat toggles off", () =>
+		expect(typed("n", "~s", "~s")).toBe("n"));
 });
 
 describe("superscript operator ⌥4", () => {

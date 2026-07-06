@@ -872,10 +872,9 @@
    "opt": "s",
    "mark": "̩",
    "type": "combining",
-   "double": "̍",
    "group": "Syllabicity",
    "cp": "U+0329",
-   "name": "COMBINING VERTICAL LINE BELOW (syllabic; ×2 above)"
+   "name": "COMBINING VERTICAL LINE BELOW (syllabic; positioned by base)"
   },
   {
    "opt": "t",

@@ -138,7 +138,7 @@ These have no ABC Extended home (or explicitly adapt an ABC Extended analogue). 
 | `,` | ̞ down tack | lowered | comma rides low | — |
 | `9` | ̜ left half-ring | less rounded | TIPA `(` draws left half-ring | — |
 | `0` | ̹ right half-ring | more rounded | TIPA `)` draws right half-ring | — |
-| `s` | ̩ vert line below | syllabic | TIPA `\s` = **S**yllabic | ̍ line above (syllabic variant) |
+| `s` | ̩/̍ vert line | syllabic (engine positions above/below by base) | TIPA `\s` = **S**yllabic | — |
 | `t` | ͡ tie bar | affricate tie | TIPA `\t` = **T**ie | ‿ undertie (linking) |
 | `x` | ̽ x above | mid-centralized | `x` = × shape | ̣ dot below (Rescues native ABC Ext) |
 | `l` | ̴ tilde overlay | velarized/pharyng. (on l: atomic ɫ, toggles) | ABC Ext "stroke/slash" analogue | — |

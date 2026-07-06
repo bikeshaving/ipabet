@@ -206,10 +206,18 @@ class InputController: IMKInputController {
         m.spacing ? applySpacing(m, client) : applyCombining(m, client)
     }
 
-    /// IPA bases whose descenders collide with a below-ring: the voiceless
-    /// ring rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
+    /// IPA bases whose descenders collide with below-marks. Marks with a
+    /// positional twin ride above these: voiceless ring (n̥ but ŋ̊) and
+    /// syllabic line (n̩ but ŋ̍). Position is non-contrastive; the engine
+    /// owns it.
     private static let descenders: Set<Unicode.Scalar> =
         Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ".unicodeScalars)
+
+    /// below-form → above-form for descender bases
+    private static let positional: [Unicode.Scalar: Unicode.Scalar] = [
+        "\u{0325}": "\u{030A}",   // ring below → ring above
+        "\u{0329}": "\u{030D}",   // vertical line below → above (syllabic)
+    ]
 
     /// Combining mark: decorate the previous glyph. Repeat presses cycle
     /// through the mark's forms (double / positional twin / cycle variants),
@@ -230,8 +238,9 @@ class InputController: IMKInputController {
             if base == "l" { replace(r, with: recompose("ɫ", marks), client); return }
             if base == "ɫ" { replace(r, with: recompose("l", marks), client); return }
         }
-        if scalar == "\u{0325}", let b = base.unicodeScalars.first, Self.descenders.contains(b) {
-            scalar = "\u{030A}"   // ring below → ring above on a descender base
+        if let above = Self.positional[scalar], let b = base.unicodeScalars.first,
+           Self.descenders.contains(b) {
+            scalar = above
         }
         if let last = marks.last {
             var forms = [scalar]

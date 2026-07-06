@@ -93,8 +93,12 @@ const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 // rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
 const DESCENDERS = new Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ");
 
-const RING_BELOW = "̥";
-const RING_ABOVE = "̊";
+// below-form → above-form for descender bases (ring, syllabic line);
+// position is non-contrastive, the engine owns it.
+const POSITIONAL: Record<string, string> = {
+	"\u{0325}": "\u{030A}",
+	"\u{0329}": "\u{030D}",
+};
 
 // ---------------------------------------------------------------- unicode
 
@@ -156,8 +160,9 @@ function applyCombining(m: Mark, textBefore: string): Edit {
 		if (base === "l") return replaceCluster(p, recompose("ɫ", marks));
 		if (base === "ɫ") return replaceCluster(p, recompose("l", marks));
 	}
-	if (scalar === RING_BELOW && DESCENDERS.has(base[0] ?? "")) {
-		scalar = RING_ABOVE; // ring below → ring above on a descender base
+	const above = POSITIONAL[scalar];
+	if (above !== undefined && DESCENDERS.has(base[0] ?? "")) {
+		scalar = above;
 	}
 	const last = marks[marks.length - 1];
 	if (last !== undefined) {
