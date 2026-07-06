@@ -150,6 +150,10 @@ class InputController: IMKInputController {
         let t = Tables.shared
         let flags = event.modifierFlags
         if flags.contains(.command) || flags.contains(.control) { return false }
+        // Secure input (password fields): the OS already bypasses IMEs here,
+        // but decline explicitly in case a host leaks events — never
+        // transform what someone types into a password.
+        if IsSecureEventInputEnabled() { return false }
 
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
