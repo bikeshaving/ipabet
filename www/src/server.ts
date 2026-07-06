@@ -4,6 +4,7 @@ import {CSS} from "./style.ts";
 import {CHART_HTML} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {LESSONS} from "./lessons.ts";
+import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
 import {lessonHTML} from "./lesson-page.ts";
 import {assets} from "@b9g/assets/middleware";
 
@@ -208,6 +209,21 @@ router.route("/").get(() => {
 router.route("/chart").get(() => {
 	return new Response(CHART_HTML, {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/keys").get(() => {
+	return new Response(KEYS_HTML, {
+		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/ipabet.json").get(() => {
+	return new Response(SPEC_JSON, {
+		headers: {
+			"Content-Type": "application/json; charset=utf-8",
+			"Access-Control-Allow-Origin": "*",
+		},
 	});
 });
 

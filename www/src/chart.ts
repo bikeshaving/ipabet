@@ -1,4 +1,6 @@
 import spec from "../../spec/ipabet.json";
+// @ts-ignore — Shovel rewrites this to a hashed asset URL at build time.
+import chartPdf from "./chart.pdf" with {assetBase: "/assets/"};
 import {AUDIO} from "./audio-map.ts";
 
 // The IPAbet chart: the IPA chart (layout derived from the official 2015
@@ -311,8 +313,11 @@ table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(-
 svg { width: 100%; height: auto; }
 svg .vgrid line { stroke: var(--line); stroke-width: 1; }
 svg circle { fill: var(--fg); }
-svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); }
-svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); }
+/* White halo lifts the glyph/keystroke off the trapezoid lines so the rules
+   don't read as strike-throughs. paint-order draws the stroke behind the fill. */
+svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); paint-order: stroke; stroke: #fff; stroke-width: 2.5px; stroke-linejoin: round; }
+svg text.axis { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 svg text.axis { font-size: 9px; fill: var(--dim); }
 
 .attrib { font-size: 6.5pt; color: var(--dim); margin-top: 0.14in; text-align: center; }
@@ -338,7 +343,7 @@ export const CHART_HTML = `<!DOCTYPE html>
 <style>${SHEET_CSS}</style>
 </head>
 <body>
-<p class="webnav"><a href="/">← IPAbet</a> · This page prints on one sheet (⌘P).</p>
+<p class="webnav"><a href="/">← IPAbet</a> · <a href="${chartPdf}" download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or ⌘P.</p>
 <div class="sheet">
 	<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>
 
