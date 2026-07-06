@@ -49,7 +49,10 @@ nicety — a dead keystroke is always a bug.
 one press and the IME goes fully transparent (every key native: code,
 camelCase identifiers, `$`/`%`/`@`), press again and IPA returns. Also in the
 input menu. Cycling *to* IPAbet clears the lock — arriving here declares you
-want the IPA-ness. One bit of settings state; composition remains stateless.
+want the IPA-ness. **Per-App Lock** (input-menu preference) changes the
+policy: the lock then remembers each app separately, persists across
+restarts, and survives arrival — toggle once in your terminal and it stays
+raw forever. Settings state only; composition remains stateless.
 
 **Option-Shift is the "Raw US" escape hatch:** `⌥⇧H`→`H`, `⌥⇧2`→`@`, `⌥⇧4`→`$`
 — the raw shifted character of any key, for a symbol an IPA layer claims. Plain

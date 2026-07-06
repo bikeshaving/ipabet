@@ -114,22 +114,62 @@ struct Tables {
 class InputController: IMKInputController {
     // Raw-US lock: when on, every keystroke is declined — the IME is
     // transparent (for code, camelCase, shifted symbols). Toggled by
-    // ⌥⇧Space or the input menu. Global across apps, like a lock key.
+    // ⌥⇧Space or the input menu.
+    //
+    // Two policies (input-menu preferences, UserDefaults-backed):
+    //  - global (default): one lock, session-only, cleared on arrival
+    //  - per-app: the lock remembers each app (Terminal stays raw forever
+    //    after one toggle), persisted across restarts, arrival-proof
     static var rawLock = false
+    static var perAppLock: Bool {
+        get { UserDefaults.standard.bool(forKey: "PerAppRawLock") }
+        set { UserDefaults.standard.set(newValue, forKey: "PerAppRawLock") }
+    }
+    static var lockedApps: Set<String> {
+        get { Set(UserDefaults.standard.stringArray(forKey: "RawLockedApps") ?? []) }
+        set { UserDefaults.standard.set(Array(newValue), forKey: "RawLockedApps") }
+    }
+
+    private func clientBundleID() -> String {
+        client()?.bundleIdentifier() ?? ""
+    }
+
+    private func isRawLocked(for bundleID: String) -> Bool {
+        Self.perAppLock ? Self.lockedApps.contains(bundleID) : Self.rawLock
+    }
+
+    private func toggleRaw(for bundleID: String) {
+        if Self.perAppLock {
+            var apps = Self.lockedApps
+            if apps.contains(bundleID) { apps.remove(bundleID) } else { apps.insert(bundleID) }
+            Self.lockedApps = apps
+        } else {
+            Self.rawLock.toggle()
+        }
+    }
 
     override func menu() -> NSMenu! {
         let menu = NSMenu()
-        let item = NSMenuItem(title: "Raw US Lock (⌥⇧Space)",
-                              action: #selector(toggleRawLock(_:)),
-                              keyEquivalent: "")
-        item.target = self
-        item.state = Self.rawLock ? .on : .off
-        menu.addItem(item)
+        let bundleID = clientBundleID()
+        let lock = NSMenuItem(title: "Raw US Lock (⌥⇧Space)",
+                              action: #selector(toggleRawLock(_:)), keyEquivalent: "")
+        lock.target = self
+        lock.state = isRawLocked(for: bundleID) ? .on : .off
+        menu.addItem(lock)
+        let perApp = NSMenuItem(title: "Per-App Lock",
+                                action: #selector(togglePerApp(_:)), keyEquivalent: "")
+        perApp.target = self
+        perApp.state = Self.perAppLock ? .on : .off
+        menu.addItem(perApp)
         return menu
     }
 
     @objc func toggleRawLock(_ sender: Any?) {
-        Self.rawLock.toggle()
+        toggleRaw(for: clientBundleID())
+    }
+
+    @objc func togglePerApp(_ sender: Any?) {
+        Self.perAppLock.toggle()
     }
 
 
@@ -163,10 +203,10 @@ class InputController: IMKInputController {
         // The sticky sibling of the ⌥⇧ escape. One bit of *settings* state;
         // composition remains stateless.
         if opt && shift && event.keyCode == 49 {
-            Self.rawLock.toggle()
+            toggleRaw(for: clientBundleID())
             return true
         }
-        if Self.rawLock { return false }
+        if isRawLocked(for: clientBundleID()) { return false }
 
         if event.keyCode == 51 { return handleBackspace(client) }
 

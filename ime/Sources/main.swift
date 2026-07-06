@@ -20,6 +20,8 @@ DistributedNotificationCenter.default().addObserver(
           let idPtr = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { return }
     let id = Unmanaged<CFString>.fromOpaque(idPtr).takeUnretainedValue() as String
     if id == "org.bikeshaving.inputmethod.IPAbet" {
+        // Arrival clears the global lock; per-app locks are sticky by
+        // design (Terminal stays raw — that's their whole point).
         InputController.rawLock = false
     }
 }
