@@ -706,6 +706,12 @@
    "glyph": "ǁ",
    "cp": "U+01C1",
    "name": "LATIN LETTER LATERAL CLICK"
+  },
+  {
+   "key": "sG",
+   "glyph": "ɧ",
+   "cp": "U+0267",
+   "name": "LATIN SMALL LETTER HENG WITH HOOK"
   }
  ],
  "marks": [
