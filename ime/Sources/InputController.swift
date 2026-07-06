@@ -223,6 +223,13 @@ class InputController: IMKInputController {
         if String(p) == m.clone { insert(m.standalone, client); return }
         let (base, marks) = decompose(p)
         var scalar = m.mark.unicodeScalars.first!
+        // Velarization on l: Unicode never fuses overlay marks (l + U+0334
+        // stays two ragged codepoints), but the literature's dark l is the
+        // atomic ɫ — emit it, and toggle back off, like the ɚ/ɝ rhotics.
+        if scalar == "\u{0334}" {
+            if base == "l" { replace(r, with: recompose("ɫ", marks), client); return }
+            if base == "ɫ" { replace(r, with: recompose("l", marks), client); return }
+        }
         if scalar == "\u{0325}", let b = base.unicodeScalars.first, Self.descenders.contains(b) {
             scalar = "\u{030A}"   // ring below → ring above on a descender base
         }

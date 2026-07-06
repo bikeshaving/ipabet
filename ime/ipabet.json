@@ -8,7 +8,7 @@
   "G": "dorsal deepening — velar/uvular place",
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
-  "U": "velarize/dark (consonants); centralize or back (vowels: oU→ɵ, aU→ʌ)",
+  "U": "centralize or back (vowels: oU→ɵ, aU→ʌ)",
   "O": "drag toward o (vowels)",
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
@@ -442,12 +442,6 @@
    "glyph": "ɭ",
    "cp": "U+026D",
    "name": "LATIN SMALL LETTER L WITH RETROFLEX HOOK"
-  },
-  {
-   "key": "lU",
-   "glyph": "ɫ",
-   "cp": "U+026B",
-   "name": "LATIN SMALL LETTER L WITH MIDDLE TILDE"
   },
   {
    "key": "mV",

@@ -150,6 +150,12 @@ function applyCombining(m: Mark, textBefore: string): Edit {
 	if (p === m.clone) return {type: "insert", text: standalone(m)};
 	const {base, marks} = decompose(p);
 	let scalar = m.mark;
+	// Velarization on l: Unicode never fuses overlay marks, but the
+	// literature's dark l is atomic ɫ — emit it, and toggle back off.
+	if (scalar === "\u{0334}") {
+		if (base === "l") return replaceCluster(p, recompose("ɫ", marks));
+		if (base === "ɫ") return replaceCluster(p, recompose("l", marks));
+	}
 	if (scalar === RING_BELOW && DESCENDERS.has(base[0] ?? "")) {
 		scalar = RING_ABOVE; // ring below → ring above on a descender base
 	}

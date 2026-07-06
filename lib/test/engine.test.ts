@@ -89,6 +89,12 @@ describe("doubling / cycling", () => {
 	});
 	test("clone-less single-form toggles too: a ⌥. ⌥. → a", () =>
 		expect(typed("a", "~.", "~.")).toBe("a"));
+	test("dark l is atomic: l ⌥l → ɫ, ⌥l again → l", () => {
+		expect(typed("l", "~l")).toBe("ɫ");
+		expect(typed("l", "~l", "~l")).toBe("l");
+	});
+	test("velarization elsewhere stays an overlay: t ⌥l", () =>
+		expect(typed("t", "~l")).toBe("t\u{0334}"));
 	test("dental cycle: d ⌥d ⌥d → apical", () =>
 		expect(typed("d", "~d", "~d")).toBe(nfc("d\u{033A}")));
 	test("stress cycles both ways: ⌥' ⌥' → ˌ, ×3 → ˈ", () => {
