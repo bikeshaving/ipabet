@@ -21,6 +21,14 @@ were running. The IPA is purely **additive**, one modifier away:
 Nothing US is ever lost; you never fight the keyboard to type a quote, comma,
 digit, or bracket.
 
+**The segment/modification test:** if a candidate assignment can be
+paraphrased as "X with an IPA diacritic," it belongs on the mark layer (or an
+engine rule), never in the letters table. The letters table holds segments
+with their own identity. (This test retroactively removed lU→ɫ, 5R→ɚ, and
+eR→ɝ; it does *not* apply to place/phonation morphology like ʈ ɲ ɓ — those
+are segments derived by Shift transforms — nor to ç, whose cedilla is
+orthographic history, not an IPA operation.)
+
 **Every keystroke emits something — no silent no-ops, ever.** A key that finds
 no applicable IPA interpretation falls through until something is produced: the
 IPA glyph, the decorated mark, or the raw key. This is a hard invariant, not a

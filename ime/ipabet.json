@@ -270,12 +270,6 @@
    "name": "LATIN SMALL LETTER REVERSED OPEN E"
   },
   {
-   "key": "5R",
-   "glyph": "ɚ",
-   "cp": "U+025A",
-   "name": "LATIN SMALL LETTER SCHWA WITH HOOK"
-  },
-  {
    "key": "5W",
    "glyph": "ɞ",
    "cp": "U+025E",
@@ -358,12 +352,6 @@
    "glyph": "ɛ",
    "cp": "U+025B",
    "name": "LATIN SMALL LETTER OPEN E"
-  },
-  {
-   "key": "eR",
-   "glyph": "ɝ",
-   "cp": "U+025D",
-   "name": "LATIN SMALL LETTER REVERSED OPEN E WITH HOOK"
   },
   {
    "key": "eW",
