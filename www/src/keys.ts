@@ -111,7 +111,7 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	<h2>Tier 1 · rules (not table-driven)</h2>
 	<div class="tablewrap"><table>
 		<tr><td class="k">vowel ⇧R</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity (⇧5 ⇧R → ɚ, ⇧5 ⇧H ⇧R → ɝ precomposed; every other vowel takes the hook)</td></tr>
-		<tr><td class="k">obstruent ⇧P</td><td class="g">Cʼ</td><td class="cp">U+02BC</td><td>ejective — appends ʼ to a voiceless obstruent (p t ʈ c k q ɸ f θ s ʃ ʂ ç x χ ɬ); open class</td></tr>
+		<tr><td class="k">obstruent ⇧X</td><td class="g">Cʼ</td><td class="cp">U+02BC</td><td>ejective (eXplosive) — appends ʼ to a voiceless obstruent (p t ʈ c k q ɸ f θ s ʃ ʂ ç x χ ɬ); open class</td></tr>
 	</table></div>
 
 	<h2>Tier 2 · diacritics &amp; suprasegmentals (Option layer, postfix)</h2>

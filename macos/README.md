@@ -28,7 +28,7 @@ composition session: no underline, no state to flush on clicks/focus
 changes/input-source switches, and nothing for a host to desync.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
-`⇧R`, ejective `⇧P`, superscript `⌥4`, postfix marks, backspace) operate on
+`⇧R`, ejective `⇧X`, superscript `⌥4`, postfix marks, backspace) operate on
 the **decomposed view** of the cluster — base glyph + combining marks split
 via NFD — and
 recompose to NFC on write. NFC fusion (é is one codepoint, n̥ is two) therefore

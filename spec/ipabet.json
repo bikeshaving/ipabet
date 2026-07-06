@@ -8,14 +8,14 @@
   "G": "dorsal deepening — velar/uvular place",
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
+  "B": "bilabial place",
   "U": "centralize or back (vowels: oU→ɵ, aU→ʌ)",
   "O": "drag toward o (vowels)",
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
-  "X": "implosive (voiced glottalic ingressive)",
-  "B": "bilabial place",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
-  "P": "ejective (voiceless glottalic egressive; voiceless obstruents only)"
+  "P": "implosive (voiced glottalic ingressive)",
+  "X": "ejective (voiceless glottalic egressive; voiceless obstruents only)"
  },
  "letters": [
   {
@@ -301,7 +301,7 @@
    "name": "LATIN LETTER SMALL CAPITAL OE"
   },
   {
-   "key": "bX",
+   "key": "bP",
    "glyph": "ɓ",
    "cp": "U+0253",
    "name": "LATIN SMALL LETTER B WITH HOOK"
@@ -319,7 +319,7 @@
    "name": "LATIN SMALL LETTER C WITH CEDILLA"
   },
   {
-   "key": "dX",
+   "key": "dP",
    "glyph": "ɗ",
    "cp": "U+0257",
    "name": "LATIN SMALL LETTER D WITH HOOK"
@@ -355,7 +355,7 @@
    "name": "LATIN SMALL LETTER O WITH STROKE"
   },
   {
-   "key": "gX",
+   "key": "gP",
    "glyph": "ɠ",
    "cp": "U+0260",
    "name": "LATIN SMALL LETTER G WITH HOOK"
@@ -391,7 +391,7 @@
    "name": "LATIN LETTER SMALL CAPITAL I"
   },
   {
-   "key": "jX",
+   "key": "jP",
    "glyph": "ʄ",
    "cp": "U+0284",
    "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK"
@@ -649,7 +649,7 @@
    "name": "LATIN LETTER LATERAL CLICK"
   },
   {
-   "key": "qX",
+   "key": "qP",
    "glyph": "ʛ",
    "cp": "U+029B",
    "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"

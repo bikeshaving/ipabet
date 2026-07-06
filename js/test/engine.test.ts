@@ -52,34 +52,34 @@ describe("clicks (C modifier)", () => {
 		expect(typed("g", "~4", "q", "+c")).toBe("ᶢǃ"));
 });
 
-describe("airstream: implosives (X) and ejectives (P)", () => {
-	test("implosives — voiced stops via ⇧X", () => {
-		expect(typed("b", "+x")).toBe("ɓ");
-		expect(typed("d", "+x")).toBe("ɗ");
-		expect(typed("j", "+x")).toBe("ʄ");
-		expect(typed("g", "+x")).toBe("ɠ");
+describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive)", () => {
+	test("implosives — voiced stops via ⇧P", () => {
+		expect(typed("b", "+p")).toBe("ɓ");
+		expect(typed("d", "+p")).toBe("ɗ");
+		expect(typed("j", "+p")).toBe("ʄ");
+		expect(typed("g", "+p")).toBe("ɠ");
 	});
-	test("uvular implosive is qX now; gG retired to literal", () => {
-		expect(typed("q", "+x")).toBe("ʛ");
+	test("uvular implosive is qP now; gG retired to literal", () => {
+		expect(typed("q", "+p")).toBe("ʛ");
 		expect(typed("g", "+g")).toBe("gG"); // gG→ʛ removed; ɢ stays on gQ
 		expect(typed("g", "+q")).toBe("ɢ");
 	});
-	test("ejective — ⇧P appends ʼ to a voiceless obstruent", () => {
-		expect(typed("k", "+p")).toBe("k\u{02BC}");
-		expect(typed("t", "+p")).toBe("t\u{02BC}");
-		expect(typed("s", "+p")).toBe("s\u{02BC}");
-		expect(typed("s", "+h", "+p")).toBe("ʃ\u{02BC}"); // ʃʼ
-		expect(typed("t", "+r", "+p")).toBe("ʈ\u{02BC}"); // ʈʼ (retroflex ejective)
+	test("ejective — ⇧X appends ʼ to a voiceless obstruent", () => {
+		expect(typed("k", "+x")).toBe("k\u{02BC}");
+		expect(typed("t", "+x")).toBe("t\u{02BC}");
+		expect(typed("s", "+x")).toBe("s\u{02BC}");
+		expect(typed("s", "+h", "+x")).toBe("ʃ\u{02BC}"); // ʃʼ
+		expect(typed("t", "+r", "+x")).toBe("ʈ\u{02BC}"); // ʈʼ (retroflex ejective)
 	});
-	test("ejective affricate: t ʃ ⇧P → tʃʼ", () =>
-		expect(typed("t", "s", "+h", "+p")).toBe("tʃ\u{02BC}"));
-	test("⇧P guards to voiceless obstruents — vowel/sonorant/voiced pass to literal P", () => {
-		expect(typed("a", "+p")).toBe("aP");
-		expect(typed("m", "+p")).toBe("mP");
-		expect(typed("b", "+p")).toBe("bP");
+	test("ejective affricate: t ʃ ⇧X → tʃʼ", () =>
+		expect(typed("t", "s", "+h", "+x")).toBe("tʃ\u{02BC}"));
+	test("⇧X guards to voiceless obstruents — vowel/sonorant/voiced pass to literal X", () => {
+		expect(typed("a", "+x")).toBe("aX");
+		expect(typed("m", "+x")).toBe("mX");
+		expect(typed("z", "+x")).toBe("zX");
 	});
 	test("the ejective ʼ is U+02BC, not the curly quote U+2019", () => {
-		expect(typed("k", "+p").codePointAt(1)).toBe(0x02BC);
+		expect(typed("k", "+x").codePointAt(1)).toBe(0x02BC);
 	});
 });
 

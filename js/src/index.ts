@@ -276,9 +276,9 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 			else out = recompose(base, marks) + "˞";
 			return replaceCluster(p, out);
 		}
-		// ejective: P after a voiceless obstruent appends ʼ (U+02BC). Open
-		// class, guarded like R; a non-obstruent falls through to a literal P.
-		if (s === "P" && base.length > 0 && VOICELESS_OBSTRUENTS.includes(base[0])) {
+		// ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
+		// Open class, guarded like R; a non-obstruent falls through to a literal X.
+		if (s === "X" && base.length > 0 && VOICELESS_OBSTRUENTS.includes(base[0])) {
 			return replaceCluster(p, recompose(base, marks) + "\u{02BC}");
 		}
 	}
