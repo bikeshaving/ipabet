@@ -20,6 +20,8 @@ cp Info.plist "$APP/Contents/"
 cp ipabet.json ipabet.pdf "$APP/Contents/Resources/"
 # Cosmetic Keyboard Viewer layout, referenced by name via overrideKeyboard.
 cp IPAbet.keylayout "$APP/Contents/Resources/"
+mkdir -p "$APP/Contents/Resources/en.lproj"
+cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 
 # Ad-hoc sign (required on Apple Silicon)
 codesign --force --deep --sign - "$APP"

@@ -1,50 +1,59 @@
-// genmenupdf.swift — generates ipabet.pdf, the input-source icon.
+// genmenupdf.swift — generates the input-source icon PDFs.
 //
-// Both system renderers of input-source icons — TextInputMenuAgent (menu-bar
-// dropdown) and TextInputSwitcher (fn/Ctrl-Space HUD) — frame each entry in a
-// rounded-rect badge and expect the icon to fill it. Apple's own IMEs get a
-// per-context composited badge (a path gated to Apple: KLInputSourceIconManager
-// returns nil for third parties). We can only ship ONE static file, so we ship
-// a badge that mimics the composed one — traced from a headless render of
-// Korean's 2SetKorean badge: 22×16pt, full bleed, ~1.75pt corner radius, glyph
-// knocked out at ~56% of the tile height. Template image: color ignored, alpha
-// is the mask.
+// The two system renderers frame icons differently: the menu-bar dropdown
+// wraps each entry in a rounded badge; the fn/Ctrl-Space cycler shows bare
+// glyphs (only the selected entry is filled). Apple's IMEs supply a
+// context-specific composited icon; we approximate by shipping BOTH files
+// and pointing the menu icon key at the badge and the alternate/palette key
+// at the bare glyph (requires ComponentInputModeDict registration).
 //
-// Usage: swift genmenupdf.swift ipabet.pdf
+//   ipabet.pdf       — 22×16 badge (menu dropdown)
+//   ipabet-bare.pdf  — bare ə glyph (fn cycler / palette)
+//
+// Template images: color ignored, alpha is the mask.
+//
+// Usage: swift genmenupdf.swift   (writes both, cwd)
 
 import Cocoa
 import CoreText
 
-guard CommandLine.arguments.count == 2 else {
-    FileHandle.standardError.write("usage: genmenupdf.swift <out.pdf>\n".data(using: .utf8)!)
-    exit(1)
+func glyphPath(scale: CGFloat, in box: CGRect, heightFrac: CGFloat) -> CGPath {
+    let font = CTFontCreateWithName("Helvetica-Bold" as CFString, 16, nil)
+    var uni: [UniChar] = Array("ə".utf16)
+    var glyphs = [CGGlyph](repeating: 0, count: 1)
+    CTFontGetGlyphsForCharacters(font, &uni, &glyphs, 1)
+    let gp = CTFontCreatePathForGlyph(font, glyphs[0], nil)!
+    let gb = gp.boundingBox
+    let s = (box.height * heightFrac) / gb.height
+    var xf = CGAffineTransform(translationX: box.midX - gb.midX * s,
+                               y: box.midY - gb.midY * s).scaledBy(x: s, y: s)
+    return gp.copy(using: &xf)!
 }
 
-var box = CGRect(x: 0, y: 0, width: 22, height: 16)   // pt; the system badge frame
-let data = NSMutableData()
-let ctx = CGContext(consumer: CGDataConsumer(data: data as CFMutableData)!, mediaBox: &box, nil)!
-ctx.beginPDFPage(nil)
+func writePDF(_ path: String, _ draw: (CGContext, CGRect) -> Void) {
+    var box = CGRect(x: 0, y: 0, width: 22, height: 16)
+    let data = NSMutableData()
+    let ctx = CGContext(consumer: CGDataConsumer(data: data as CFMutableData)!, mediaBox: &box, nil)!
+    ctx.beginPDFPage(nil)
+    draw(ctx, box)
+    ctx.endPDFPage(); ctx.closePDF()
+    try! (data as Data).write(to: URL(fileURLWithPath: path))
+    FileHandle.standardError.write("wrote \(path)\n".data(using: .utf8)!)
+}
 
-// Glyph path, knocked out of the badge as an even-odd hole.
-let font = CTFontCreateWithName("Helvetica-Bold" as CFString, 16, nil)
-var uni: [UniChar] = Array("ə".utf16)
-var glyphs = [CGGlyph](repeating: 0, count: 1)
-CTFontGetGlyphsForCharacters(font, &uni, &glyphs, 1)
-let gp = CTFontCreatePathForGlyph(font, glyphs[0], nil)!
-let gb = gp.boundingBox
-let scale = (box.height * 0.56) / gb.height
-var xf = CGAffineTransform(translationX: box.midX - gb.midX * scale,
-                           y: box.midY - gb.midY * scale)
-    .scaledBy(x: scale, y: scale)
+// Badge: rounded rect with the glyph knocked out (even-odd), like Korean's.
+writePDF("ipabet.pdf") { ctx, box in
+    let path = CGMutablePath()
+    path.addRoundedRect(in: box, cornerWidth: 1.75, cornerHeight: 1.75)
+    path.addPath(glyphPath(scale: 1, in: box, heightFrac: 0.56))
+    ctx.addPath(path)
+    ctx.setFillColor(CGColor(gray: 0, alpha: 1))
+    ctx.fillPath(using: .evenOdd)
+}
 
-let path = CGMutablePath()
-path.addRoundedRect(in: box, cornerWidth: 1.75, cornerHeight: 1.75)
-path.addPath(gp.copy(using: &xf)!)
-ctx.addPath(path)
-ctx.setFillColor(CGColor(gray: 0, alpha: 1))
-ctx.fillPath(using: .evenOdd)
-
-ctx.endPDFPage()
-ctx.closePDF()
-try! (data as Data).write(to: URL(fileURLWithPath: CommandLine.arguments[1]))
-FileHandle.standardError.write("wrote \(CommandLine.arguments[1]) (22×16 pt badge)\n".data(using: .utf8)!)
+// Bare glyph: larger, no frame — matches the fn cycler.
+writePDF("ipabet-bare.pdf") { ctx, box in
+    ctx.addPath(glyphPath(scale: 1, in: box, heightFrac: 0.72))
+    ctx.setFillColor(CGColor(gray: 0, alpha: 1))
+    ctx.fillPath()
+}
