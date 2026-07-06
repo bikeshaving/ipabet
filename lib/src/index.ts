@@ -123,9 +123,10 @@ function decompose(cluster: string): {base: string; marks: string[]} {
 	let base = "";
 	const marks: string[] = [];
 	for (const cp of cluster.normalize("NFD")) {
-		if (isCombining(cp)) marks.push(cp);
-		else if (marks.length === 0) base += cp;
-		else base += cp; // non-mark after marks: keep with base (degenerate)
+		// base takes leading non-combining scalars; once any mark appears,
+		// everything after goes to marks (matches the Swift engine).
+		if (marks.length === 0 && !isCombining(cp)) base += cp;
+		else marks.push(cp);
 	}
 	return {base, marks};
 }

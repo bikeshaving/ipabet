@@ -38,12 +38,17 @@ jamo-peel-then-native pattern.
 
 ## Files
 
-- `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation policy.
-- `Sources/InputController.swift` — the engine described above. State: the
-  Option-prefix dead-key mark and the `9` bracket toggle. Loads `ipabet.json`.
-- `ipabet.json` — mapping (copy of `spec/ipabet.json`).
-- `Info.plist` — bundle ID must contain `.inputmethod.`; claims `und-fonipa`.
-  See the macOS 15 rules below before touching the launch keys.
+- `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation
+  policy + the raw-lock-clears-on-arrival observer.
+- `Sources/InputController.swift` — the stateless engine described above,
+  plus the raw-US lock and secure-field handling. Loads `ipabet.json`.
+- `ipabet.json` — the mapping, copied from `spec/ipabet.json` at build time.
+- `Info.plist` — bundle ID must contain `.inputmethod.`; registers one
+  visible input mode (see the icon/name notes inline). See the macOS 15
+  rules below before touching the launch keys.
+- `tools/genmenupdf.swift` — regenerates `ipabet.pdf`, the input-source icon.
+- `tools/reregister.swift` — `TISRegisterInputSource` helper (run after
+  `build.sh install` so the source appears without a logout on reinstalls).
 - `tools/probe.swift` — instrumented test host: an AppKit `NSTextView` that
   logs every NSTextInputClient call (strings, codepoints, ranges) plus a
   `WKWebView` input that logs DOM composition events; both stream to the
@@ -51,11 +56,6 @@ jamo-peel-then-native pattern.
   `swiftc tools/probe.swift -o /tmp/imeprobe -framework Cocoa -framework WebKit`.
   This is the ground truth for any input bug — beware terminal scrollback
   from earlier runs; trust `/tmp/imeprobe.log` (truncated per launch).
-- `IPAbet.keylayout` — cosmetic layout for a Keyboard Viewer preview,
-  **currently unused**: the `overrideKeyboard(withKeyboardNamed:)` call was
-  removed while debugging macOS 15 event routing (reference IMEs only pass
-  full system TIS layout IDs there). Regenerate with
-  `swift tools/genkeylayout.swift > IPAbet.keylayout` if revived.
 
 ## Hard-won macOS 15 rules (probe- and crash-verified; do not relearn)
 
@@ -107,5 +107,8 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
   plus IPA-only marks; `⌥4` superscriptizes the previous glyph (`t` `h` `⌥4` → tʰ).
 - **Option-Shift** — the raw US shifted character, for a symbol an IPA layer
   claims (`⌥⇧4` → `$`, `⌥⇧1` → `!`).
+- **⌥⇧Space** — the raw-US lock: toggles the whole IME transparent (for code,
+  camelCase, shifted symbols) until pressed again. Cleared on switching to
+  IPAbet; a Per-App Lock option (input menu) remembers it per app.
 
-See `spec/diacritics.md` for the full diacritic layout and rationale.
+The full chart, every keystroke, and audio live at [ipabet.org](https://ipabet.org).

@@ -14,12 +14,9 @@ import {assets} from "@b9g/assets/middleware";
 interface Letter {
 	key: string;
 	glyph: string;
-	cp: string;
-	name: string;
 }
 
 const letters = spec.letters as Letter[];
-const modifiers = spec.modifiers as Record<string, string>;
 
 function esc(s: string): string {
 	return s

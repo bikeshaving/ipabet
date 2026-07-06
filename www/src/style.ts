@@ -65,12 +65,7 @@ table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
 th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--dim); font-weight: 600; font-size: 0.85rem; }
 td.desc { color: var(--dim); }
-td.dim { color: var(--dim); }
 td .ipa, td.ipa { font-size: 1.1rem; }
-
-.compare td:first-child { white-space: nowrap; }
-.yes { color: #1a7f37; } .no { color: var(--dim); }
-@media (prefers-color-scheme: dark) { .yes { color: #4ade80; } }
 
 ol.install { margin: 1rem 0 0 1.25rem; }
 ol.install li { margin-bottom: 0.75rem; }

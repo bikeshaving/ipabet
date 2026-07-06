@@ -219,7 +219,7 @@ class InputController: IMKInputController {
 
 
     // Stateless: no pending marks, no modes, nothing to desync. Every keystroke
-    // reads the document and acts. (Number mode, when added, reads Caps Lock.)
+    // reads the document and acts.
 
     override func activateServer(_ sender: Any!) {
         // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
@@ -314,7 +314,7 @@ class InputController: IMKInputController {
                 replace(r, with: out, client); return true
             }
         }
-        // letter / click base glyph
+        // letter base glyph
         if let glyph = t.letters[s] { insert(glyph, client); return true }
         // capitals with no transform, punctuation, digits 8/9/0: type literally
         return false
