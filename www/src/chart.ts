@@ -1,4 +1,5 @@
 import spec from "../../spec/ipabet.json";
+import {AUDIO} from "./audio-map.ts";
 
 // The IPAbet chart: the IPA chart (layout derived from the official 2015
 // sheet, CC BY-SA) with the IPAbet keystrokes printed beside every symbol —
@@ -40,6 +41,12 @@ function G(glyph: string, fallback?: string): string {
 	return `<b class="ipa">${esc(glyph)}</b>${note}`;
 }
 
+/** Click-to-hear: recording URL for a glyph, where one exists. */
+function audioAttr(glyph: string): string {
+	const url = AUDIO[glyph];
+	return url === undefined ? "" : ` data-audio="${url}" role="button" tabindex="0" title="play ${esc(glyph)}"`;
+}
+
 // ------------------------------------------------- pulmonic consonants
 
 // Cell spec: glyph pair, colspan, shading. The coronal region merges to one
@@ -71,8 +78,8 @@ function pulmonicTable(): string {
 			.map((c) => {
 				const cls = c.sh ? ' class="sh"' : c.shr ? ' class="shr"' : "";
 				const span = c.span !== undefined ? ` colspan="${c.span}"` : "";
-				const vl = c.vl !== undefined ? `<span class="u">${G(c.vl)}</span>` : "<span class=\"u\"></span>";
-				const vd = c.vd !== undefined ? `<span class="u">${G(c.vd)}</span>` : "<span class=\"u\"></span>";
+				const vl = c.vl !== undefined ? `<span class="u"${audioAttr(c.vl)}>${G(c.vl)}</span>` : "<span class=\"u\"></span>";
+				const vd = c.vd !== undefined ? `<span class="u"${audioAttr(c.vd)}>${G(c.vd)}</span>` : "<span class=\"u\"></span>";
 				const body = c.vl === undefined && c.vd === undefined ? "" : vl + vd;
 				return `<td${cls}${span}>${body}</td>`;
 			})
@@ -91,7 +98,7 @@ function nonPulmonic(): string {
 	const ej: [string, string][] = [["pʼ", "Bilabial"], ["tʼ", "Dental/alveolar"], ["kʼ", "Velar"], ["sʼ", "Alveolar fricative"]];
 	const col = (title: string, entries: [string, string][]) =>
 		`<div><h4>${title}</h4>${entries
-			.map(([g, name]) => `<div class="li">${G(g)}<span class="nm">${name}</span></div>`)
+			.map(([g, name]) => `<div class="li"${audioAttr(g)}>${G(g)}<span class="nm">${name}</span></div>`)
 			.join("")}</div>`;
 	return `<div class="cols3">
 		${col("Clicks", clicks)}
@@ -116,7 +123,7 @@ function otherSymbols(): string {
 		["t͡s", "Affricate (tie bar)", "t s ⌥t"],
 	];
 	return entries
-		.map(([g, name, fb]) => `<div class="li">${G(g, fb)}<span class="nm">${name}</span></div>`)
+		.map(([g, name, fb]) => `<div class="li"${audioAttr(g)}>${G(g, fb)}<span class="nm">${name}</span></div>`)
 		.join("");
 }
 
@@ -188,7 +195,9 @@ function vowelChart(): string {
 		if (v.dot) glyphs.push(`<circle cx="${x}" cy="${y}" r="2.2"/>`);
 		const gx = v.dot ? (v.round ? x + 13 : x - 13) : x;
 		const key = reverse.get(v.g);
-		glyphs.push(`<text class="v" x="${gx}" y="${y + 5}" text-anchor="middle">${esc(v.g)}</text>`);
+		const au = AUDIO[v.g];
+		const attr = au === undefined ? "" : ` data-audio="${au}" role="button" tabindex="0"`;
+		glyphs.push(`<text class="v"${attr} x="${gx}" y="${y + 5}" text-anchor="middle">${esc(v.g)}</text>`);
 		if (key !== undefined) {
 			glyphs.push(`<text class="k" x="${gx}" y="${y + 18}" text-anchor="middle">${esc(keyText(key))}</text>`);
 		}
@@ -302,6 +311,8 @@ svg text.axis { font-size: 9px; fill: var(--dim); }
 
 .attrib { font-size: 6.5pt; color: var(--dim); margin-top: 0.14in; text-align: center; }
 .attrib a { color: var(--dim); }
+[data-audio] { cursor: pointer; }
+[data-audio]:hover .g, svg text.v[data-audio]:hover { fill: var(--key); color: var(--key); }
 .webnav { text-align: center; font-family: -apple-system, sans-serif; font-size: 0.85rem; padding: 0.75rem; }
 @media print {
 	html { background: #fff; }
@@ -348,9 +359,20 @@ export const CHART_HTML = `<!DOCTYPE html>
 	<h3>DIACRITICS</h3>
 	${diacritics()}
 
-	<p class="attrib">Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; ⌥ marks are typed after their base.
+	<p class="attrib">Click any symbol to hear it. Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; ⌥ marks are typed after their base.
+	Audio: Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses, re-hosted with attribution.
 	Layout derived from <a href="https://www.internationalphoneticassociation.org/content/ipa-chart">The International Phonetic Alphabet (revised to 2015)</a>,
 	© 2015 International Phonetic Association, CC BY-SA 3.0. This sheet is likewise CC BY-SA · <a href="https://ipabet.org">ipabet.org</a></p>
 </div>
+<script>
+let cur = null;
+document.addEventListener("click", (e) => {
+	const el = e.target.closest("[data-audio]");
+	if (!el) return;
+	if (cur) cur.pause();
+	cur = new Audio(el.dataset.audio);
+	cur.play();
+});
+</script>
 </body>
 </html>`;
