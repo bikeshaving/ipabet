@@ -122,6 +122,7 @@ function otherSymbols(): string {
 		["ɺ", "Voiced alveolar lateral flap"],
 		["t͡s", "Affricate (tie bar)", "t s ⌥t"],
 	];
+	entries.push(["ɧ", "Simultaneous ʃ and x"]);
 	return entries
 		.map(([g, name, fb]) => `<div class="li"${audioAttr(g)}>${G(g, fb)}<span class="nm">${name}</span></div>`)
 		.join("");

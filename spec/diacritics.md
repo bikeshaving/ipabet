@@ -6,9 +6,11 @@ Status: **Active Specification**
 
 IPAbet is a **normal US keyboard** with IPA layered onto its shifted positions.
 Type unshifted and you get exactly US — every letter, digit, and punctuation
-mark is native and untouched, so the layout is a flawless daily driver: prose,
-shell, tmux prefixes, vim counts, and app shortcuts all behave as if no IME
-were running. The IPA is purely **additive**, one modifier away:
+mark is native and untouched, and ⌘/⌃ chords are declined, so prose, shell,
+tmux prefixes, vim counts, and app shortcuts behave natively. What the IPA
+claims is *shifted* positions: the number row's symbols (@→ʔ, %→ə while
+active) and post-letter capital modifiers (typing "GitHub" yields Giθub) —
+with ⌥⇧ as the escape, and the input-source switcher one keystroke away. The IPA is purely **additive**, one modifier away:
 
 - IPA base letters that *are* Latin letters (a, s, t, m…) → just the bare key.
 - IPA base glyphs with *no* Latin key (ə, ʔ, ɾ, ɨ…) → **Shift + number**.

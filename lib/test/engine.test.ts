@@ -34,7 +34,6 @@ describe("digraph transforms", () => {
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
 	test("lax a: a ⇧H → ɐ", () => expect(typed("a", "+h")).toBe("ɐ"));
 	test("dark a: a ⇧U → ʌ", () => expect(typed("a", "+u")).toBe("ʌ"));
-	test("sj-sound: s ⇧G → ɧ (the s-series: s ʃ ɕ ɧ)", () => expect(typed("s", "+g")).toBe("ɧ"));
 	test("marks survive the swap: s ⌥; is unaffected, s̪ ⇧H keeps bridge", () => {
 		// dental s, then H: ʃ with the dental bridge preserved
 		expect(typed("s", "~d", "+h")).toBe(nfc("ʃ\u{032A}"));

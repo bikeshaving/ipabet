@@ -124,8 +124,8 @@ const HTML = `<!DOCTYPE html>
 	<section>
 		<h2>A normal keyboard, with the IPA one shift away</h2>
 		<p>IPAbet is a <b>normal US keyboard</b>. Bare keys type plain US — letters,
-		digits, punctuation, shortcuts, all untouched — so it's a flawless daily
-		driver for prose, code, and the terminal. The IPA chart is layered onto the
+		digits, punctuation, shortcuts, all untouched — so prose, code, and the
+		terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the
 		shifted positions: <span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span>
 		<span class="combo"><kbd>⇧5</kbd><span class="arrow">→</span><b class="ipa">ə</b></span>
 		<span class="combo"><kbd>n</kbd><kbd>⌥n</kbd><span class="arrow">→</span><b class="ipa">ñ</b></span>
@@ -213,9 +213,14 @@ const HTML = `<!DOCTYPE html>
 
 	<section>
 		<h2>FAQ</h2>
-		<p><b>Does it mess with normal typing?</b> No — that's the design's first
-		principle. Bare keys, digits, punctuation, and shortcuts are native US;
-		tmux prefixes and vim counts pass straight through.</p>
+		<p><b>Does it mess with normal typing?</b> The bare layer doesn't: letters,
+		digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all
+		native US. What the IPA layer claims is <i>shifted</i> positions: the number
+		row's symbols (typing <kbd>@</kbd> gives ʔ, <kbd>%</kbd> gives ə) and
+		capital modifiers right after a letter (typing "GitHub" gives Giθub).
+		<kbd>⌥⇧</kbd> escapes any of them — or toggle input sources, one keystroke,
+		like any bilingual typist. IPAbet is comfortable to leave on while writing
+		prose <i>about</i> transcriptions; switch out for symbol-heavy work.</p>
 		<p><b>Are the symbols real IPA codepoints?</b> Yes — IPAbet emits the true
 		characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your
 		transcriptions are searchable, fontable Unicode.</p>
