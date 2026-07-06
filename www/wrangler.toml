@@ -2,6 +2,7 @@ name = "ipabet-org"
 main = "dist/server/worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 [build]
 command = "npm run build"
@@ -12,8 +13,6 @@ command = "npm run build"
 [assets]
 directory = "dist/public"
 
-# Enable once the ipabet.org zone is on Cloudflare (nameservers moved
-# from Namecheap):
-# [[routes]]
-# pattern = "ipabet.org"
-# custom_domain = true
+[[routes]]
+pattern = "ipabet.org"
+custom_domain = true
