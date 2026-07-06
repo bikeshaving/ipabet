@@ -7,6 +7,38 @@ import {LESSONS} from "./lessons.ts";
 import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
 import {lessonHTML} from "./lesson-page.ts";
 import {assets} from "@b9g/assets/middleware";
+import {isHTTPError} from "@b9g/http-errors";
+
+// Secure-by-default. @b9g/router decides whether to render a full stack-trace
+// debug page from `import.meta.env.MODE !== "production"` — so an *unset* MODE
+// counts as dev. @b9g/platform-cloudflare does not define MODE at build time,
+// so on Workers every 4xx/5xx would leak a stack trace. Force production unless
+// a real mode is already set (local `shovel dev` keeps its stacks).
+try {
+	const meta = import.meta as unknown as {env?: Record<string, string>};
+	meta.env ??= {};
+	meta.env.MODE ??= "production";
+} catch {
+	// import.meta.env not writable on this platform — the boundary below covers it.
+}
+
+// Outermost error boundary: catch anything a handler (or the router's own
+// no-match NotFound) throws, log the real error server-side for `wrangler
+// tail`, and return a sanitized response. Never the framework debug page.
+// Same Rack-style `try { yield } catch` pattern the router's own middleware use.
+async function* errorBoundary(request: Request): AsyncGenerator<Request, Response | void, Response> {
+	try {
+		return yield request;
+	} catch (error) {
+		const status = isHTTPError(error) ? (error as {status: number}).status : 500;
+		if (status >= 500) console.error("Unhandled error:", (error as Error)?.stack ?? error);
+		const body = status < 500 ? ((error as Error)?.message || "Error") : "Internal Server Error";
+		return new Response(body, {
+			status,
+			headers: {"Content-Type": "text/plain; charset=utf-8"},
+		});
+	}
+}
 
 // ipabet.json is the single source of truth: every table on this page is
 // generated from it, so the site cannot drift from the spec (the fate of
@@ -198,6 +230,7 @@ run();
 </html>`;
 
 const router = new Router();
+router.use(errorBoundary);
 router.use(assets());
 
 router.route("/").get(() => {
