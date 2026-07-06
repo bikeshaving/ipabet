@@ -18,17 +18,8 @@ interface Letter {
 	name: string;
 }
 
-interface Mark {
-	opt: string;
-	mark: string;
-	type: string;
-	double?: string;
-	name: string;
-}
-
 const letters = spec.letters as Letter[];
 const modifiers = spec.modifiers as Record<string, string>;
-const marks = spec.marks as Mark[];
 
 function esc(s: string): string {
 	return s
@@ -41,30 +32,6 @@ function esc(s: string): string {
 // ⇧ + number row: the IPA glyphs with no Latin home.
 const shiftNumbers = letters.filter((l) => /^[0-9]$/.test(l.key));
 
-// Digraph transforms, grouped by their modifier letter.
-const digraphs = letters.filter((l) => l.key.length === 2);
-const byModifier = new Map<string, Letter[]>();
-for (const d of digraphs) {
-	const mod = d.key[1];
-	if (!byModifier.has(mod)) byModifier.set(mod, []);
-	byModifier.get(mod)!.push(d);
-}
-
-function digraphRows(): string {
-	return [...byModifier.entries()]
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([mod, entries]) => {
-			const examples = entries
-				.slice(0, 6)
-				.map(
-					(e) =>
-						`<span class="combo"><kbd>${esc(e.key[0])}</kbd><kbd>⇧${esc(mod)}</kbd><span class="arrow">→</span><b class="ipa">${esc(e.glyph)}</b></span>`,
-				)
-				.join(" ");
-			return `<tr><td><kbd>⇧${esc(mod)}</kbd></td><td class="desc">${esc(modifiers[mod] ?? "")}</td><td class="examples">${examples}</td></tr>`;
-		})
-		.join("\n");
-}
 
 function shiftNumberCells(): string {
 	return shiftNumbers
@@ -73,18 +40,6 @@ function shiftNumberCells(): string {
 				`<span class="combo"><kbd>⇧${esc(l.key)}</kbd><span class="arrow">→</span><b class="ipa">${esc(l.glyph)}</b></span>`,
 		)
 		.join(" ");
-}
-
-function markRows(): string {
-	return marks
-		.map((m) => {
-			const dbl = m.double
-				? `<td class="ipa">${esc("◌" + m.double)}</td>`
-				: `<td class="dim">—</td>`;
-			const shown = m.type === "combining" ? "◌" + m.mark : m.mark;
-			return `<tr><td><kbd>⌥${esc(m.opt)}</kbd></td><td class="ipa">${esc(shown)}</td>${dbl}<td class="desc">${esc(m.name.toLowerCase())}</td></tr>`;
-		})
-		.join("\n");
 }
 
 // The hero demo: real keystroke sequences from the notation, animated.
@@ -158,44 +113,20 @@ const HTML = `<!DOCTYPE html>
 	</section>
 
 	<section>
-		<h2>How does everyone else type IPA?</h2>
-		<div class="tablewrap">
-		<table class="compare">
-			<tr><th></th><th>System-wide</th><th>Typing speed</th><th>Maintained</th></tr>
-			<tr><td>Web pickers (typeit)</td><td class="no">no — copy-paste</td><td class="no">no — clicking</td><td class="yes">yes</td></tr>
-			<tr><td>IPA Palette</td><td class="yes">yes</td><td class="no">no — clicking</td><td class="no">discontinued, Intel-only</td></tr>
-			<tr><td>SIL Keyman</td><td class="yes">yes</td><td class="no">memorized codes</td><td class="yes">yes</td></tr>
-			<tr><td>X-SAMPA keylayouts</td><td class="yes">yes</td><td class="no">X-SAMPA required</td><td class="no">unsigned, 2013–2020</td></tr>
-			<tr><td>LaTeX TIPA / Praat codes</td><td class="no">app-locked</td><td class="no">escape codes</td><td class="yes">yes</td></tr>
-			<tr><td><b>IPAbet</b></td><td class="yes">yes</td><td class="yes">yes — QWERTY muscle memory</td><td class="yes">yes</td></tr>
-		</table>
-		</div>
+		<h2>Typing IPA has a history</h2>
+		<p>Generations of transcribers have gotten by on click-palettes, web
+		pickers, hand-built keyboard layouts, and escape codes like X-SAMPA and
+		TIPA — each an ingenious workaround for keyboards that stop at 26
+		letters, and each a system IPAbet learned something from. The bet here
+		is simpler: transcription should just be <i>typing</i>.</p>
 	</section>
 
-	<section>
-		<h2>The modifier letters</h2>
-		<p>A capital letter right after a glyph transforms it. Each modifier has one
-		meaning, grounded in romanization tradition:</p>
-		<div class="tablewrap">
-		<table>
-			<tr><th>Modifier</th><th>Meaning</th><th>Examples</th></tr>
-			${digraphRows()}
-		</table>
-		</div>
-	</section>
 
 	<section>
-		<h2>Diacritics — postfix, on the Option layer</h2>
-		<p>Type the base, then decorate it: <span class="combo"><kbd>e</kbd><kbd>⌥e</kbd><span class="arrow">→</span><b class="ipa">é</b></span>.
-		Key assignments follow Apple's ABC&nbsp;Extended layout where one exists and
-		X-SAMPA/TIPA convention where it doesn't. Pressing a mark key twice yields
-		the mark's <i>other form</i> (tilde above ↔ tilde below, acute ↔ double acute).</p>
-		<div class="tablewrap">
-		<table>
-			<tr><th>Key</th><th>Mark</th><th>×2</th><th>Name</th></tr>
-			${markRows()}
-		</table>
-		</div>
+		<h2>The full reference</h2>
+		<p>Every symbol, every keystroke, every sound: <a href="/chart">the IPA
+		chart in IPAbet keystrokes</a> — one printable page, with audio. And
+		<a href="/learn">/learn</a> teaches it to your fingers in an afternoon.</p>
 	</section>
 
 	<section>
