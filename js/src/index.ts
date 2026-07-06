@@ -89,6 +89,10 @@ const SHIFTED_DIGITS: Record<string, string> = {
 
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 
+// Voiceless obstruents — the ejectivizable set (⇧P). Plosives + oral
+// fricatives; ejectives need voicelessness (sealed glottis) and a closure.
+const VOICELESS_OBSTRUENTS = "ptʈckqɸfθsʃʂçxχɬ";
+
 // IPA bases whose descenders collide with a below-ring: the voiceless ring
 // rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
 const DESCENDERS = new Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ");
@@ -271,6 +275,11 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 			else if (base === "ɜ") out = recompose("ɝ", marks);
 			else out = recompose(base, marks) + "˞";
 			return replaceCluster(p, out);
+		}
+		// ejective: P after a voiceless obstruent appends ʼ (U+02BC). Open
+		// class, guarded like R; a non-obstruent falls through to a literal P.
+		if (s === "P" && base.length > 0 && VOICELESS_OBSTRUENTS.includes(base[0])) {
+			return replaceCluster(p, recompose(base, marks) + "\u{02BC}");
 		}
 	}
 

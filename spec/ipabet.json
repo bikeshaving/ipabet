@@ -12,9 +12,10 @@
   "O": "drag toward o (vowels)",
   "A": "drag toward a (vowels)",
   "E": "ligature with e",
-  "X": "glottalic — voiced → implosive, voiceless → ejective",
+  "X": "implosive (voiced glottalic ingressive)",
   "B": "bilabial place",
-  "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)"
+  "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
+  "P": "ejective (voiceless glottalic egressive; voiceless obstruents only)"
  },
  "letters": [
   {
@@ -366,12 +367,6 @@
    "name": "LATIN SMALL LETTER G WITH HOOK"
   },
   {
-   "key": "gG",
-   "glyph": "ʛ",
-   "cp": "U+029B",
-   "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"
-  },
-  {
    "key": "gH",
    "glyph": "ɣ",
    "cp": "U+0263",
@@ -406,12 +401,6 @@
    "glyph": "ʄ",
    "cp": "U+0284",
    "name": "LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK"
-  },
-  {
-   "key": "kX",
-   "glyph": "kʼ",
-   "cp": "U+006B U+02BC",
-   "name": "LATIN SMALL LETTER K; MODIFIER LETTER APOSTROPHE"
   },
   {
    "key": "lG",
@@ -492,22 +481,10 @@
    "name": "LATIN SMALL LETTER RAMS HORN"
   },
   {
-   "key": "pX",
-   "glyph": "pʼ",
-   "cp": "U+0070 U+02BC",
-   "name": "LATIN SMALL LETTER P; MODIFIER LETTER APOSTROPHE"
-  },
-  {
    "key": "pH",
    "glyph": "ɸ",
    "cp": "U+0278",
    "name": "LATIN SMALL LETTER PHI"
-  },
-  {
-   "key": "qX",
-   "glyph": "qʼ",
-   "cp": "U+0071 U+02BC",
-   "name": "LATIN SMALL LETTER Q; MODIFIER LETTER APOSTROPHE"
   },
   {
    "key": "qH",
@@ -546,12 +523,6 @@
    "name": "LATIN SMALL LETTER TURNED R WITH HOOK"
   },
   {
-   "key": "sX",
-   "glyph": "sʼ",
-   "cp": "U+0073 U+02BC",
-   "name": "LATIN SMALL LETTER S; MODIFIER LETTER APOSTROPHE"
-  },
-  {
    "key": "sH",
    "glyph": "ʃ",
    "cp": "U+0283",
@@ -574,12 +545,6 @@
    "glyph": "ʂ",
    "cp": "U+0282",
    "name": "LATIN SMALL LETTER S WITH HOOK"
-  },
-  {
-   "key": "tX",
-   "glyph": "tʼ",
-   "cp": "U+0074 U+02BC",
-   "name": "LATIN SMALL LETTER T; MODIFIER LETTER APOSTROPHE"
   },
   {
    "key": "tH",
@@ -688,6 +653,12 @@
    "glyph": "ǁ",
    "cp": "U+01C1",
    "name": "LATIN LETTER LATERAL CLICK"
+  },
+  {
+   "key": "qX",
+   "glyph": "ʛ",
+   "cp": "U+029B",
+   "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"
   }
  ],
  "marks": [

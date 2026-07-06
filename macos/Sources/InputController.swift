@@ -313,6 +313,12 @@ class InputController: IMKInputController {
                 }
                 replace(r, with: out, client); return true
             }
+            // ejective: P after a voiceless obstruent appends ʼ (U+02BC). Open
+            // class — any voiceless obstruent, matching the chart's "p t k s …".
+            // Guarded like R; a non-obstruent falls through to a literal P.
+            if s == "P", let b = base.first, "ptʈckqɸfθsʃʂçxχɬ".contains(b) {
+                replace(r, with: recompose(base, marks) + "\u{02BC}", client); return true
+            }
         }
         // letter base glyph
         if let glyph = t.letters[s] { insert(glyph, client); return true }

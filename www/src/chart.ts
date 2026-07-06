@@ -95,15 +95,20 @@ function pulmonicTable(): string {
 function nonPulmonic(): string {
 	const clicks: [string, string][] = [["ʘ", "Bilabial"], ["ǀ", "Dental"], ["ǃ", "(Post)alveolar"], ["ǂ", "Palatoalveolar"], ["ǁ", "Alveolar lateral"]];
 	const impl: [string, string][] = [["ɓ", "Bilabial"], ["ɗ", "Dental/alveolar"], ["ʄ", "Palatal"], ["ɠ", "Velar"], ["ʛ", "Uvular"]];
-	const ej: [string, string][] = [["pʼ", "Bilabial"], ["tʼ", "Dental/alveolar"], ["kʼ", "Velar"], ["sʼ", "Alveolar fricative"]];
+	// Ejectives are base + ⇧P (open class — any voiceless obstruent); the ʼ is
+	// U+02BC, not a curly quote. Keystrokes shown as fallbacks.
+	const ej: [string, string, string][] = [["pʼ", "Bilabial", "p ⇧P"], ["tʼ", "Dental/alveolar", "t ⇧P"], ["kʼ", "Velar", "k ⇧P"], ["sʼ", "Alveolar fricative", "s ⇧P"]];
 	const col = (title: string, entries: [string, string][]) =>
 		`<div><h4>${title}</h4>${entries
 			.map(([g, name]) => `<div class="li"${audioAttr(g)}>${G(g)}<span class="nm">${name}</span></div>`)
 			.join("")}</div>`;
+	const ejCol = `<div><h4>Ejectives</h4>${ej
+		.map(([g, name, keys]) => `<div class="li"${audioAttr(g)}>${G(g, keys)}<span class="nm">${name}</span></div>`)
+		.join("")}<div class="fine">…any voiceless obstruent + ⇧P</div></div>`;
 	return `<div class="cols3">
 		${col("Clicks", clicks)}
 		${col("Voiced implosives", impl)}
-		${col("Ejectives", ej)}
+		${ejCol}
 	</div>`;
 }
 
