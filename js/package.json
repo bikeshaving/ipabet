@@ -2,7 +2,7 @@
   "name": "@b9g/ipabet",
   "private": true,
   "version": "0.1.0",
-  "description": "The IPAbet engine in TypeScript \u2014 simulate the macOS IME on the web",
+  "description": "The IPAbet engine in TypeScript \u2014 the notation, everywhere JavaScript runs",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"

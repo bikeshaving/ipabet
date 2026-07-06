@@ -1,7 +1,7 @@
 // @b9g/ipabet — the IPAbet engine in TypeScript.
 //
 // A faithful port of the macOS IME's stateless engine
-// (ime/Sources/InputController.swift): every keystroke reads the text before
+// (macos/Sources/InputController.swift): every keystroke reads the text before
 // the cursor and returns an edit — insert, replace-the-previous-cluster, or
 // pass (defer to the host's native behavior). There is no composition state.
 // All previous-glyph rules operate on the decomposed (NFD) view of the last

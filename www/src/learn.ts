@@ -1,4 +1,4 @@
-import {typeKeys, type Keystroke} from "../../lib/src/index.ts";
+import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 import {CSS} from "./style.ts";
 import {lessonIndexSection} from "./lesson-page.ts";
 import {LESSONS} from "./lessons.ts";

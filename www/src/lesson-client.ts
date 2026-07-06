@@ -8,7 +8,7 @@ import {
 	applyEdit,
 	nativeChar,
 	type Keystroke,
-} from "../../lib/src/index.ts";
+} from "../../js/src/index.ts";
 
 interface Choice {
 	text: string;

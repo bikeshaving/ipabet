@@ -1,6 +1,8 @@
-# IPAbet
+# IPAbet — macOS
 
-The macOS input method for IPAbet. Faceless InputMethodKit app, no Xcode required.
+The macOS input method for IPAbet: a faceless InputMethodKit app, no Xcode
+required. The reference implementation of the notation; other platforms port
+against the [`js/`](../js) parity suite.
 
 ## Build
 

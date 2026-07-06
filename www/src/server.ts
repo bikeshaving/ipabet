@@ -131,7 +131,7 @@ const HTML = `<!DOCTYPE html>
 		<p>IPAbet is in active development ahead of its first signed release. To build
 		from source today:</p>
 		<ol class="install">
-			<li>Clone <a href="https://github.com/bikeshaving/ipabet">github.com/bikeshaving/ipabet</a> and run <kbd>cd ime &amp;&amp; ./build.sh install</kbd></li>
+			<li>Clone <a href="https://github.com/bikeshaving/ipabet">github.com/bikeshaving/ipabet</a> and run <kbd>cd macos &amp;&amp; ./build.sh install</kbd></li>
 			<li><b>Log out and back in</b> — macOS requires this once for new input methods; it's normal.</li>
 			<li>System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.</li>
 		</ol>

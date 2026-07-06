@@ -1,4 +1,4 @@
-import {typeKeys, type Keystroke} from "../../lib/src/index.ts";
+import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 
 // The transcription curriculum (English speakers' track). Lessons are DATA:
 // prose sections, multiple-choice checks, and transcription tests whose

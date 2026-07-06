@@ -30,17 +30,26 @@ bijection, so IPAbet↔IPA round-trips losslessly.
 
 ## Layout
 
-- `spec/ipabet.json` — the canonical mapping. Source of truth for every implementation.
-- `ime/` — **IPAbet**, the macOS input method (reference implementation).
-- `lib/` — `@b9g/ipabet`, the engine in TypeScript (simulates the IME on the
-  web; parity test suite doubles as the notation's executable spec).
+This is a monorepo: one notation (`spec/`), one implementation per platform.
+
+- `spec/ipabet.json` — the canonical mapping. Source of truth for every
+  implementation.
+- `macos/` — the macOS input method (Swift / InputMethodKit). The reference
+  implementation.
+- `js/` — `@b9g/ipabet`, the engine in TypeScript. Runs the notation anywhere
+  JavaScript does; its parity test suite doubles as the notation's executable
+  spec. Powers the web.
 - `www/` — [ipabet.org](https://ipabet.org): landing, the printable/audible IPA
   chart, and the transcription drills and lessons.
+
+Planned platforms (each a sibling of `macos/`, all driven by `spec/ipabet.json`
+and pinned to the `js/` parity suite): `linux/` (IBus/fcitx), `windows/` (TSF),
+`ios/` and `android/` (keyboard extensions).
 
 ## IPAbet (macOS)
 
 ```sh
-cd ime && ./build.sh install
+cd macos && ./build.sh install
 ```
 
 Log out and back in (first install only), then add **IPA** under System Settings
