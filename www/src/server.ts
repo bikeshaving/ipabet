@@ -5,6 +5,7 @@ import {CHART_HTML} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {LESSONS} from "./lessons.ts";
 import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
+import {DESIGN_HTML} from "./design.ts";
 import {lessonHTML} from "./lesson-page.ts";
 import {assets} from "@b9g/assets/middleware";
 import {isHTTPError} from "@b9g/http-errors";
@@ -95,7 +96,7 @@ const HTML = `<!DOCTYPE html>
 <main>
 	<header>
 		<h1>IPA<span class="ipa">bet</span></h1>
-		<p class="tagline">Type IPA at typing speed.</p>
+		<p class="tagline">IPA at typing speed.</p>
 		<p class="trust">Free · open source · fully offline · a native macOS input method that works in every app</p>
 	</header>
 
@@ -196,6 +197,7 @@ const HTML = `<!DOCTYPE html>
 		<span>MIT © 2026 Brian Kim</span>
 		<a href="/chart">The IPA chart in keystrokes</a>
 		<a href="/learn">Learn to type it</a>
+		<a href="/design">Design</a>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
@@ -247,6 +249,12 @@ router.route("/chart").get(() => {
 
 router.route("/keys").get(() => {
 	return new Response(KEYS_HTML, {
+		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/design").get(() => {
+	return new Response(DESIGN_HTML, {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
 	});
 });
