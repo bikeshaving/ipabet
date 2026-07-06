@@ -5,9 +5,9 @@
     <key>CFBundleIdentifier</key>
     <string>org.bikeshaving.inputmethod.IPAbet</string>
     <key>CFBundleName</key>
-    <string>IPA</string>
+    <string>IPA – IPAbet</string>
     <key>CFBundleDisplayName</key>
-    <string>IPAbet — IPA Transcription</string>
+    <string>IPA – IPAbet</string>
     <key>NSHumanReadableCopyright</key>
     <string>© 2026 Brian Kim. MIT License.</string>
     <key>CFBundleIconFile</key>
