@@ -118,6 +118,10 @@ describe("superscript operator ⌥4", () => {
 describe("rhotic R", () => {
 	test("ə ⇧R → ɚ (precomposed)", () => expect(typed("+5", "+r")).toBe("ɚ"));
 	test("a ⇧R → a˞ (spacing hook)", () => expect(typed("a", "+r")).toBe("a˞"));
+	test("rhoticity is a dimension: e ⇧R → e˞, ʌ ⇧R → ʌ˞", () => {
+		expect(typed("e", "+r")).toBe("e˞");
+		expect(typed("a", "+u", "+r")).toBe("ʌ˞");
+	});
 });
 
 describe("option-shift raw escape", () => {
