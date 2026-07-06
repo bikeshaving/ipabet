@@ -1,6 +1,7 @@
 import Cocoa
 import InputMethodKit
 import Carbon
+import IOKit
 
 // Decodes a physical key (virtual keyCode) through a fixed US layout, so the
 // engine's ASCII-keyed tables work regardless of the active keyboard layout —
@@ -112,6 +113,50 @@ struct Tables {
 
 @objc(InputController)
 class InputController: IMKInputController {
+    // Secure/password fields. macOS normally routes keystrokes AROUND the
+    // IME when a field enables secure event input, so we're simply never
+    // called there (the OS handles it). This closes the two documented
+    // gaps (pattern verified against fcitx5-macos):
+    //  1. Hosts that show password fields but never call
+    //     EnableSecureEventInput — a real macOS bug; Apple's own auth sheets
+    //     do this. We decline for them by bundle ID.
+    //  2. A host that leaks events despite secure input being on: decline
+    //     when IsSecureEventInputEnabled() AND the app we're typing into is
+    //     the one that owns secure input (the PID cross-check avoids a
+    //     background app's stuck secure-input state disabling IPA globally).
+    private static let secureHosts: Set<String> = [
+        "com.apple.loginwindow",
+        "com.apple.SecurityAgent",
+        "com.apple.wifi.WiFiAgent",
+        "com.apple.wifi-settings-extension",
+        "com.apple.systempreferences",   // Apple-ID / iCloud password sheets
+        "com.apple.AppStore",            // purchase auth
+    ]
+
+    /// The app currently holding secure event input, by bundle ID (via the
+    /// IORegistry console-users table), or nil.
+    private static func secureInputOwner() -> String? {
+        let root = IORegistryGetRootEntry(kIOMainPortDefault)
+        guard root != 0 else { return nil }
+        defer { IOObjectRelease(root) }
+        var unmanaged: Unmanaged<CFMutableDictionary>?
+        guard IORegistryEntryCreateCFProperties(root, &unmanaged, kCFAllocatorDefault, 0) == KERN_SUCCESS,
+              let props = unmanaged?.takeRetainedValue() as? [String: Any],
+              let users = props["IOConsoleUsers"] as? [[String: Any]] else { return nil }
+        for user in users {
+            if let pid = user["kCGSSessionSecureInputPID"] as? pid_t, pid != 0 {
+                return NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
+            }
+        }
+        return nil
+    }
+
+    private func inSecureContext(_ bundleID: String) -> Bool {
+        if Self.secureHosts.contains(bundleID) { return true }
+        guard IsSecureEventInputEnabled() else { return false }
+        return Self.secureInputOwner() == bundleID
+    }
+
     // Raw-US lock: when on, every keystroke is declined — the IME is
     // transparent (for code, camelCase, shifted symbols). Toggled by
     // ⌥⇧Space or the input menu.
@@ -193,7 +238,7 @@ class InputController: IMKInputController {
         // Secure input (password fields): the OS already bypasses IMEs here,
         // but decline explicitly in case a host leaks events — never
         // transform what someone types into a password.
-        if IsSecureEventInputEnabled() { return false }
+        if inSecureContext(client.bundleIdentifier() ?? "") { return false }
 
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
