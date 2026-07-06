@@ -92,6 +92,9 @@ describe("shifted number row", () => {
 	test("⇧9 passes (native paren)", () => {
 		expect(handleKey("", {key: "9", shift: true})).toEqual({type: "pass"});
 	});
+	test("⇧8 passes now (solidus removed — type / manually)", () => {
+		expect(handleKey("", {key: "8", shift: true})).toEqual({type: "pass"});
+	});
 });
 
 describe("option diacritics (postfix)", () => {

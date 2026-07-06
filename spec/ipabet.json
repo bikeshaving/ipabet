@@ -61,12 +61,6 @@
    "name": "LATIN SMALL LETTER H WITH STROKE"
   },
   {
-   "key": "8",
-   "glyph": "/",
-   "cp": "U+002F",
-   "name": "SOLIDUS"
-  },
-  {
    "key": "a",
    "glyph": "a",
    "cp": "U+0061",
