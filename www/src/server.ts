@@ -149,9 +149,10 @@ const HTML = `<!DOCTYPE html>
 		native US. What the IPA layer claims is <i>shifted</i> positions: the number
 		row's symbols (typing <kbd>@</kbd> gives ʔ, <kbd>%</kbd> gives ə) and
 		capital modifiers right after a letter (typing "GitHub" gives Giθub).
-		<kbd>⌥⇧</kbd> escapes any of them — or toggle input sources, one keystroke,
-		like any bilingual typist. IPAbet is comfortable to leave on while writing
-		prose <i>about</i> transcriptions; switch out for symbol-heavy work.</p>
+		<kbd>⌥⇧</kbd> escapes any single one, and <kbd>⌥⇧Space</kbd> is the
+		<b>Raw-US Lock</b>: one press makes the keyboard fully native (write code,
+		paste in a terminal, type camelCase), one press brings the IPA back. Leave
+		IPAbet on all day; lock and unlock as you switch registers.</p>
 		<p><b>Are the symbols real IPA codepoints?</b> Yes — IPAbet emits the true
 		characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your
 		transcriptions are searchable, fontable Unicode.</p>

@@ -45,6 +45,11 @@ nicety — a dead keystroke is always a bug.
 | **Option** | IPA diacritics, postfix — ABC Extended + IPA-only pictograms |
 | **Option-Shift** | the raw US shifted character — the escape for anything an IPA layer claims |
 
+**⌥⇧Space is the Raw-US Lock** — the sticky sibling of the escape hatch:
+one press and the IME goes fully transparent (every key native: code,
+camelCase identifiers, `$`/`%`/`@`), press again and IPA returns. Also in the
+input menu. This is one bit of settings state; composition remains stateless.
+
 **Option-Shift is the "Raw US" escape hatch:** `⌥⇧H`→`H`, `⌥⇧2`→`@`, `⌥⇧4`→`$`
 — the raw shifted character of any key, for a symbol an IPA layer claims. Plain
 digits need no escape: they're the bare number keys.

@@ -112,6 +112,26 @@ struct Tables {
 
 @objc(InputController)
 class InputController: IMKInputController {
+    // Raw-US lock: when on, every keystroke is declined — the IME is
+    // transparent (for code, camelCase, shifted symbols). Toggled by
+    // ⌥⇧Space or the input menu. Global across apps, like a lock key.
+    static var rawLock = false
+
+    override func menu() -> NSMenu! {
+        let menu = NSMenu()
+        let item = NSMenuItem(title: "Raw US Lock (⌥⇧Space)",
+                              action: #selector(toggleRawLock(_:)),
+                              keyEquivalent: "")
+        item.target = self
+        item.state = Self.rawLock ? .on : .off
+        menu.addItem(item)
+        return menu
+    }
+
+    @objc func toggleRawLock(_ sender: Any?) {
+        Self.rawLock.toggle()
+    }
+
 
     // Stateless: no pending marks, no modes, nothing to desync. Every keystroke
     // reads the document and acts. (Number mode, when added, reads Caps Lock.)
@@ -130,10 +150,21 @@ class InputController: IMKInputController {
         let t = Tables.shared
         let flags = event.modifierFlags
         if flags.contains(.command) || flags.contains(.control) { return false }
-        if event.keyCode == 51 { return handleBackspace(client) }
 
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
+
+        // ⌥⇧Space toggles the raw-US lock: the whole IME goes transparent
+        // (every key native — code, camelCase, $, %) until toggled back.
+        // The sticky sibling of the ⌥⇧ escape. One bit of *settings* state;
+        // composition remains stateless.
+        if opt && shift && event.keyCode == 49 {
+            Self.rawLock.toggle()
+            return true
+        }
+        if Self.rawLock { return false }
+
+        if event.keyCode == 51 { return handleBackspace(client) }
 
         // Option-Shift: escape hatch. On letters/digits it inserts the raw-US
         // shifted char (⌥⇧H → H to dodge a transform, ⌥⇧1 → !, ⌥⇧4 → $). On
