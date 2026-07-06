@@ -131,7 +131,7 @@ These have no ABC Extended home (or explicitly adapt an ABC Extended analogue). 
 | `s` | ̩ vert line below | syllabic | TIPA `\s` = **S**yllabic | ̍ line above (syllabic variant) |
 | `t` | ͡ tie bar | affricate tie | TIPA `\t` = **T**ie | ‿ undertie (linking) |
 | `x` | ̽ x above | mid-centralized | `x` = × shape | ̣ dot below (Rescues native ABC Ext) |
-| `l` | ̴ tilde overlay | velarized/pharyng. | ABC Ext "stroke/slash" analogue | — |
+| `l` | ̴ tilde overlay | velarized/pharyng. (on l: atomic ɫ, toggles) | ABC Ext "stroke/slash" analogue | — |
 | `r` | ↗ | global rise | X-SAMPA `<R>` = **R**ise | — |
 | `f` | ↘ | global fall | X-SAMPA `<F>` = **F**all | — |
 | `q` | ̚ left angle above | unreleased | Mnemonic: **Q**uiet / **Q**uash | — |
