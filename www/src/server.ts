@@ -88,8 +88,8 @@ const HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IPAbet — type IPA at typing speed</title>
-<meta name="description" content="IPAbet is a free, open-source macOS input method for typing IPA (International Phonetic Alphabet) at full typing speed, in every app. A normal US keyboard with the IPA chart on its shifted layers — no codes to memorize, no copy-paste.">
+<title>IPAbet — an IPA keyboard for macOS, at typing speed</title>
+<meta name="description" content="IPAbet is a free, open-source IPA keyboard for macOS — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste.">
 <style>${CSS}</style>
 </head>
 <body>
@@ -97,7 +97,7 @@ const HTML = `<!DOCTYPE html>
 	<header>
 		<h1>IPA<span class="ipa">bet</span></h1>
 		<p class="tagline">IPA at typing speed.</p>
-		<p class="trust">Free · open source · fully offline · a native macOS input method that works in every app</p>
+		<p class="trust">A native macOS IPA keyboard · free · open source · fully offline · works in every app</p>
 	</header>
 
 	<div id="demo" aria-hidden="true">

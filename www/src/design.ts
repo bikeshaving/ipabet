@@ -36,7 +36,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The design of IPAbet</title>
-<meta name="description" content="How IPAbet works, and the five constraints that shaped it: identity preservation, a two-character bound, local determinism, a phonetic operator algebra, and reuse of existing conventions.">
+<meta name="description" content="How IPAbet — the IPA keyboard for macOS — works, and the five constraints that shaped it: identity preservation, a two-character bound, local determinism, a phonetic operator algebra, and reuse of existing conventions.">
 <style>${CSS}${EXTRA}</style>
 </head>
 <body>
@@ -47,9 +47,9 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 	</header>
 
 	<section style="margin-top:2rem">
-		<p class="lede">IPAbet is a keyboard input method for macOS that lets you type the
-		International Phonetic Alphabet directly — at ordinary typing speed, in any
-		application. Rather than replacing your keyboard layout, it adds the IPA to
+		<p class="lede">IPAbet is an IPA keyboard for macOS — a system-wide input method that
+		lets you type the International Phonetic Alphabet directly, at ordinary typing
+		speed, in any application. Rather than replacing your keyboard layout, it adds the IPA to
 		the standard US keyboard: unshifted keys type their normal characters, while
 		the phonetic symbols live on the Shift and Option layers. Prose, code, and
 		shortcuts type exactly as before; the IPA is one modifier key away.</p>
