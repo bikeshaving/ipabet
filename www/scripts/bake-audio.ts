@@ -16,7 +16,7 @@
 
 import {CURRICULUM} from "../src/curriculum.ts";
 import {createHash} from "node:crypto";
-import {mkdirSync, existsSync, writeFileSync} from "node:fs";
+import {mkdirSync, existsSync, writeFileSync, readdirSync, unlinkSync} from "node:fs";
 import {join, dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 
@@ -38,10 +38,22 @@ const ARABIC_FALLBACK: [string, string] = ["Zeina", "standard"];
 const xml = (s: string) =>
 	s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;").replace(/'/g, "&apos;");
-const hash = (voice: string, ipa: string) =>
-	createHash("sha256").update(voice + "|" + ipa).digest("hex").slice(0, 16);
+const hash = (voice: string, ph: string) =>
+	createHash("sha256").update(voice + "|" + ph).digest("hex").slice(0, 16);
 
-interface Clip { ipa: string; word: string; voiceId: string; engine: string; file: string; }
+// How to *demonstrate* an isolated sound (the lesson's opening drill): vowels get
+// held (lengthened), momentary consonants can't be sustained so they ride an
+// [aCa] frame, and everything continuant is played alone. The manifest still keys
+// on the bare sound; only the synthesized audio is dressed up.
+const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
+const MOMENTARY = new Set(["ʔ", "q", "ɾ"]); // stops + tap — a burst, not a hold
+function demoPh(target: string): string {
+	if ([...target].length === 1 && VOWELS.includes(target)) return target + "ː"; // hold the vowel
+	if (MOMENTARY.has(target)) return "a" + target + "a";                          // frame the burst
+	return target;                                                                // isolate the continuant
+}
+
+interface Clip { ipa: string; word: string; ph: string; voiceId: string; engine: string; file: string; }
 
 // Collect one clip per unique target IPA. Isolated-sound drills (lang "") borrow
 // the lesson's dominant language voice, so a trill drills in Spanish, ʕ in Arabic.
@@ -52,9 +64,11 @@ for (const les of CURRICULUM) {
 	const dominant = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
 	for (const wd of les.words) {
 		if (clips.has(wd.target)) continue;
+		const isDemo = !wd.lang; // the isolated-sound drill carries no language tag
 		const lang = wd.lang || dominant || "English";
 		const [voiceId, engine] = VOICE[lang] ?? DEFAULT;
-		clips.set(wd.target, {ipa: wd.target, word: wd.word, voiceId, engine, file: hash(voiceId, wd.target) + ".mp3"});
+		const ph = isDemo ? demoPh(wd.target) : wd.target;
+		clips.set(wd.target, {ipa: wd.target, word: wd.word, ph, voiceId, engine, file: hash(voiceId, ph) + ".mp3"});
 	}
 }
 
@@ -72,7 +86,7 @@ async function tryVoice(voiceId: string, engine: string, ssml: string, out: stri
 async function synth(c: Clip): Promise<"baked" | "cached" | "fail"> {
 	const out = join(AUDIO_DIR, c.file);
 	if (existsSync(out)) return "cached";
-	const ssml = `<speak><phoneme alphabet="ipa" ph="${xml(c.ipa)}">${xml(c.word)}</phoneme></speak>`;
+	const ssml = `<speak><phoneme alphabet="ipa" ph="${xml(c.ph)}">${xml(c.word)}</phoneme></speak>`;
 	let ok = await tryVoice(c.voiceId, c.engine, ssml, out);
 	if (!ok && c.voiceId === "Hala") ok = await tryVoice(ARABIC_FALLBACK[0], ARABIC_FALLBACK[1], ssml, out);
 	return ok ? "baked" : "fail";
@@ -110,3 +124,9 @@ entries.forEach((c, i) => lines.push(`\t${JSON.stringify(c.ipa)}: w${i},`));
 lines.push("};", "");
 writeFileSync(MAP_FILE, lines.join("\n"));
 console.log(`wrote ${MAP_FILE} (${entries.length} entries)`);
+
+// Sweep orphans — clips whose audio changed (e.g. a demo re-dressed) leave the old file behind.
+const keep = new Set(entries.map((c) => c.file));
+let removed = 0;
+for (const f of readdirSync(AUDIO_DIR)) if (f.endsWith(".mp3") && !keep.has(f)) { unlinkSync(join(AUDIO_DIR, f)); removed++; }
+if (removed) console.log(`swept ${removed} orphaned mp3(s)`);

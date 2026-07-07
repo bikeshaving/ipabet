@@ -17,7 +17,8 @@ const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; r
 const audioFor = (g?: string): string | undefined => (g ? (AUDIO_OF[g] ?? AUDIO_OF[AUDIO_ALIAS[g] ?? ""]) : undefined);
 
 const LESSONS = CURRICULUM.map((l) => ({
-	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro, audio: audioFor(l.sound),
+	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro,
+	audio: (l.sound ? WORD_AUDIO[l.sound] : undefined) ?? audioFor(l.sound), // Polly demo (held/framed), Commons fallback
 	words: l.words.map((w) => ({...w, audio: WORD_AUDIO[w.target]})),
 }));
 
