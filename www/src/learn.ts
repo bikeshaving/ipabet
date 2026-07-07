@@ -1,6 +1,7 @@
 import {CURRICULUM} from "./curriculum.ts";
 import {CSS} from "./style.ts";
 import {AUDIO} from "./audio-map.ts";
+import {WORD_AUDIO} from "./word-audio-map.ts";
 // Shovel's asset pipeline rewrites this import to a hashed URL string at build
 // time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
@@ -16,7 +17,8 @@ const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; r
 const audioFor = (g?: string): string | undefined => (g ? (AUDIO_OF[g] ?? AUDIO_OF[AUDIO_ALIAS[g] ?? ""]) : undefined);
 
 const LESSONS = CURRICULUM.map((l) => ({
-	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro, audio: audioFor(l.sound), words: l.words,
+	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro, audio: audioFor(l.sound),
+	words: l.words.map((w) => ({...w, audio: WORD_AUDIO[w.target]})),
 }));
 
 const LEARN_CSS = `

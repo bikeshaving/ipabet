@@ -3,3 +3,9 @@ dist/
 
 # wrangler/miniflare local state
 .wrangler/
+
+# local secrets (AWS Polly credentials, etc.) — never commit
+.env
+.env.local
+.env.*.local
+!.env.example

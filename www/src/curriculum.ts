@@ -196,3 +196,32 @@ for (const les of CURRICULUM) {
 	if (target === les.sound)
 		les.words.unshift({word: les.sound, lang: "", gloss: "the new sound on its own", target, labels: les.keys});
 }
+
+// False friends — real words where the spelling can't be trusted but the sound
+// is one already taught. Appended to the END of each lesson as the payoff: the
+// course's whole thesis in miniature ("busy" is /bɪzi/, not "bussy"). Keyed by
+// 1-based lesson number. Only lessons whose sound + taught inventory afford a
+// genuine false friend get any — the foreign/exotic sounds (θ ð, trill, ñ, Arabic)
+// mostly don't, because English spelling doesn't lie about *them*.
+const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
+	1: [en("sew", "s", "o"), en("quay", "k", "i"), en("gnu", "n", "u")],
+	2: [en("busy", "b", "i", "+h", "z", "i"), en("women", "w", "i", "+h", "m", "i", "+h", "n"), en("build", "b", "i", "+h", "l", "d")],
+	3: [en("said", "s", "e", "+h", "d"), en("many", "m", "e", "+h", "n", "i"), en("guess", "g", "e", "+h", "s")],
+	4: [en("plaid", "p", "l", "a", "+e", "d")],
+	5: [en("wolf", "w", "u", "+h", "l", "f"), en("would", "w", "u", "+h", "d")],
+	6: [en("caught", "k", "o", "+h", "t"), en("walk", "w", "o", "+h", "k"), en("sauce", "s", "o", "+h", "s")],
+	7: [en("blood", "b", "l", "u", "+a", "d"), en("does", "d", "u", "+a", "z"), en("money", "m", "u", "+a", "n", "i")],
+	8: [en("chef", "s", "+h", "e", "+h", "f"), en("sure", "s", "+h", "o", "+h")],
+	9: [en("ink", "i", "+h", "n", "+g", "k"), en("bank", "b", "a", "+e", "n", "+g", "k"), en("monkey", "m", "u", "+a", "n", "+g", "k", "i")],
+	12: [en("wrong", "r", "+h", "o", "+h", "n", "+g"), en("wrist", "r", "+h", "i", "+h", "s", "t")],
+	13: [en("pencil", "p", "e", "+h", "n", "s", "+5", "l"), en("lemon", "l", "e", "+h", "m", "+5", "n")],
+	14: [en("aisle", "a", "i", "+h", "l"), en("height", "h", "a", "i", "+h", "t"), en("buy", "b", "a", "i", "+h"), en("island", "a", "i", "+h", "l", "+5", "n", "d")],
+	15: [en("bough", "b", "a", "u", "+h"), en("drought", "d", "r", "+h", "a", "u", "+h", "t")],
+	16: [en("though", "d", "+h", "o", "u", "+h"), en("dough", "d", "o", "u", "+h"), en("beau", "b", "o", "u", "+h")],
+	17: [en("eight", "e", "i", "+h", "t"), en("steak", "s", "t", "e", "i", "+h", "k"), en("they", "d", "+h", "e", "i", "+h")],
+	18: [en("buoy", "b", "o", "+h", "i", "+h")],
+	22: [en("loch", "l", "o", "+h", "x")],
+	26: [en("button", "b", "u", "+a", "+2", "+5", "n")],
+};
+for (let i = 0; i < CURRICULUM.length; i++)
+	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push({...friend, gloss: "false friend"});

@@ -11,7 +11,7 @@ import {
 	type Keystroke,
 } from "../../js/src/index.ts";
 
-interface Word { word: string; lang: string; gloss: string; target: string; labels: string[]; }
+interface Word { word: string; lang: string; gloss: string; target: string; labels: string[]; audio?: string; }
 interface Lesson { title: string; sound?: string; keys?: string[]; intro: string; audio?: string; words: Word[]; }
 declare global { interface Window { __CURRICULUM: Lesson[]; } }
 
@@ -28,13 +28,14 @@ const word = () => lesson().words[wi];
 
 // ---------------------------------------------------------------- sound
 let curAudio: HTMLAudioElement | null = null;
-function playSound() {
-	const url = lesson().audio;
+function play(url?: string) {
 	if (!url) return;
 	if (curAudio) curAudio.pause();
 	curAudio = new Audio(url);
 	curAudio.play().catch(() => {}); // autoplay may be blocked pre-gesture; click replays
 }
+const playSound = () => play(lesson().audio); // the lesson's isolated phoneme (Commons recording)
+const playWord = () => play(word().audio);    // the current word, baked from its IPA (Polly)
 
 // ------------------------------------------------------------ keyboard IO
 const CODE_KEYS: Record<string, string> = {
@@ -84,7 +85,9 @@ function goWord(newLesson: boolean) {
 	buffer = ""; misses = 0;
 	hinted = wi === 0;            // first word of a lesson (the demo) shows its keys
 	render();
-	if (newLesson) playSound();
+	// new lesson with a taught sound → play that phoneme intro; otherwise play the word itself
+	if (newLesson && lesson().audio) playSound();
+	else playWord();
 }
 function next() {
 	streak = misses === 0 && !hinted ? streak + 1 : 0;
@@ -183,5 +186,5 @@ window.addEventListener("keydown", (e) => {
 });
 
 buildKeyboard();
-$("#target").addEventListener("click", playSound);
+$("#target").addEventListener("click", playWord);
 goWord(true);
