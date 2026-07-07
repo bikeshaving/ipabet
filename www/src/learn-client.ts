@@ -31,6 +31,52 @@ stages.forEach((s, si) => {
 let ii = 0, buffer = "", misses = 0, streak = 0, hinted = false;
 const cur = () => items[ii];
 
+// ---------------------------------------------------- spaced repetition
+// Leitner boxes, persisted: a clean recall promotes an item (longer wait),
+// a stumble resets it to soon. New symbols are introduced in syllabus order
+// only when reviews are caught up — progressive disclosure plus review.
+const SRS_KEY = "ipabet-learn-srs-v1";
+const INTERVALS = [2, 5, 13, 34, 89]; // steps until re-review, by box
+const MAX_BOX = INTERVALS.length - 1;
+interface Cell { box: number; due: number; seen: boolean; }
+const idOf = (it: Item) => `${it.si}:${it.kind}:${it.d.target}`;
+const srs: Cell[] = items.map(() => ({box: 0, due: 0, seen: false}));
+let step = 0, introducing = false;
+try {
+	const saved = JSON.parse(localStorage.getItem(SRS_KEY) || "null");
+	if (saved) {
+		step = saved.step || 0;
+		items.forEach((it, i) => { const s = saved.items?.[idOf(it)]; if (s) srs[i] = {box: s.b, due: s.d, seen: true}; });
+	}
+} catch { /* private mode / no storage — run stateless */ }
+function save() {
+	try {
+		const out: Record<string, {b: number; d: number}> = {};
+		items.forEach((it, i) => { if (srs[i].seen) out[idOf(it)] = {b: srs[i].box, d: srs[i].due}; });
+		localStorage.setItem(SRS_KEY, JSON.stringify({step, items: out}));
+	} catch { /* ignore */ }
+}
+function pick(): number {
+	let best = -1, bestDue = Infinity;
+	for (let i = 0; i < items.length; i++)
+		if (srs[i].seen && srs[i].due <= step && srs[i].due < bestDue) { best = i; bestDue = srs[i].due; }
+	if (best >= 0) return best;                                  // a review is due
+	for (let i = 0; i < items.length; i++) if (!srs[i].seen) return i; // else introduce the next new symbol
+	let si = 0, sd = Infinity;                                   // else the soonest-due
+	for (let i = 0; i < items.length; i++) if (srs[i].due < sd) { sd = srs[i].due; si = i; }
+	return si;
+}
+const learned = () => srs.filter((c) => c.box >= 2).length;
+function goto(i: number) {
+	ii = i;
+	introducing = !srs[i].seen;
+	if (introducing) srs[i].seen = true;
+	hinted = introducing;      // first sight of a symbol: show the keys, unprompted
+	buffer = ""; misses = 0;
+	render();
+	playCurrent();
+}
+
 // ------------------------------------------------------------ sound
 // Real Wikimedia Commons phoneme recordings (self-hosted, attributed on
 // /chart). Played when a glyph appears — you hear what you're typing.
@@ -83,7 +129,7 @@ function render() {
 	const it = cur(), s = stages[it.si];
 	$("#stage").textContent = `Stage ${it.si + 1} of ${stages.length} · ${s.title}`;
 	$("#note").textContent = s.note;
-	$("#prog").textContent = `${it.kind === "glyph" ? "new glyph" : "word"} ${it.n} / ${it.of}`;
+	$("#prog").textContent = `${introducing ? "new symbol — keys shown" : "review"} · ${learned()} of ${items.length} learned`;
 	$("#target").textContent = it.d.target;
 	$("#target").style.cursor = it.d.audio ? "pointer" : "default";
 	$("#target").title = it.d.audio ? "play the sound" : "";
@@ -100,14 +146,16 @@ function render() {
 }
 function jumpTo(si: number) {
 	const at = items.findIndex((it) => it.si === si);
-	if (at >= 0) { ii = at; buffer = ""; misses = 0; hinted = false; streak = 0; render(); playCurrent(); }
+	if (at >= 0) { streak = 0; goto(at); }
 }
 function advance() {
-	streak = misses === 0 && !hinted ? streak + 1 : 0;
-	buffer = ""; misses = 0; hinted = false;
-	ii = (ii + 1) % items.length;
-	render();
-	playCurrent();
+	const i = ii, clean = misses === 0 && !hinted;
+	streak = clean ? streak + 1 : 0;
+	srs[i].box = clean ? Math.min(srs[i].box + 1, MAX_BOX) : 0; // clean promotes, stumble resets
+	srs[i].due = step + INTERVALS[srs[i].box];
+	step += 1;
+	save();
+	goto(pick());
 }
 function check() {
 	if (buffer.normalize("NFC") === cur().d.target.normalize("NFC")) {
@@ -214,5 +262,4 @@ window.addEventListener("keydown", (e) => {
 
 buildKeyboard();
 $("#target").addEventListener("click", playCurrent);
-render();
-playCurrent();
+goto(pick());
