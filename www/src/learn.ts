@@ -1,89 +1,23 @@
-import spec from "../../spec/ipabet.json";
-import {type Keystroke} from "../../js/src/index.ts";
+import {CURRICULUM} from "./curriculum.ts";
 import {CSS} from "./style.ts";
-import {STAGES, WORDBANK} from "./wordbank.ts";
 import {AUDIO} from "./audio-map.ts";
 // Shovel's asset pipeline rewrites this import to a hashed URL string at build
 // time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
 import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
-// The big harvested word bank (thousands of verified real words, CC-BY-SA from
-// Wiktionary via wikipron) — served as an asset the client fetches, not inlined.
-// @ts-ignore
-import harvestUrl from "./harvest-words.json" with {assetBase: "/assets/"};
 
-// /learn — a touch-typing tutor for IPA. No lectures, no quizzes: a single
-// drill that walks the syllabus stage by stage (progressive disclosure), each
-// stage introducing its new glyphs and then the words that just became
-// typeable. Every target is computed by the real engine, so all are correct.
-
-function keysFor(specKey: string): Keystroke[] {
-	return [...specKey].map((c) => {
-		if (/[A-Z]/.test(c)) return {key: c.toLowerCase(), shift: true, option: false};
-		if (/[0-9]/.test(c)) return {key: c, shift: true, option: false}; // shifted-number row
-		return {key: c, shift: false, option: false};
-	});
-}
-function label(k: Keystroke): string {
-	return (k.option ? "⌥" : "") + (k.shift ? "⇧" : "") +
-		(k.shift && /[a-z]/.test(k.key) ? k.key.toUpperCase() : k.key);
-}
+// /learn — the graded IPAbet course. A fixed, hand-designed touch-typing
+// syllabus (curriculum.ts): plain keyboard → English vowels → digraphs →
+// diphthongs → the sounds English lacks. Every word is engine-verified; each
+// new sound plays its real Commons phoneme recording on introduction.
 
 const AUDIO_OF = AUDIO as Record<string, string>;
-const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; the recording is keyed on ɡ U+0261
-const audioFor = (g: string): string | undefined => AUDIO_OF[g] ?? AUDIO_OF[AUDIO_ALIAS[g] ?? ""];
+const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; recording keyed on ɡ U+0261
+const audioFor = (g?: string): string | undefined => (g ? (AUDIO_OF[g] ?? AUDIO_OF[AUDIO_ALIAS[g] ?? ""]) : undefined);
 
-// The vowels (nuclei for generated syllables); everything else is a consonant.
-const VOWELS = new Set([..."aeiouyəɨʉɯɪʊɛœɜɞɐɘøɵɤʏæʌɔɑɒɶ"]);
-
-const keyByGlyph = new Map<string, string>();
-for (const e of spec.letters as {key: string; glyph: string}[])
-	if (!keyByGlyph.has(e.glyph)) keyByGlyph.set(e.glyph, e.key);
-
-// A bare single lowercase key you already touch-type — no drilling needed;
-// these unlock from the start so word generation has raw material immediately.
-function isObvious(ks: Keystroke[]): boolean {
-	return ks.length === 1 && !ks[0].shift && !ks[0].option && /[a-z]/.test(ks[0].key);
-}
-
-interface GlyphInfo { g: string; kind: "V" | "C"; labels: string[]; audio?: string; obvious: boolean; note: string; }
-
-// Every learnable segment, in syllabus order. Consonants + vowels feed the word
-// generator; new (non-obvious) sounds are introduced one at a time.
-const GLYPHS: GlyphInfo[] = [];
-const seenG = new Set<string>();
-for (const s of STAGES) {
-	for (const g of s.glyphs) {
-		if (seenG.has(g)) continue; seenG.add(g);
-		const k = keyByGlyph.get(g); if (k === undefined) continue;
-		const ks = keysFor(k);
-		GLYPHS.push({g, kind: VOWELS.has(g) ? "V" : "C", labels: ks.map(label),
-			audio: audioFor(g), obvious: isObvious(ks), note: s.note});
-	}
-}
-
-const LANG: Record<string, string> = {es: "Spanish", it: "Italian", en: "English", fr: "French", de: "German", ar: "Arabic"};
-
-function isCombining(cp: number): boolean {
-	return (cp >= 0x0300 && cp <= 0x036f) || (cp >= 0x1dc0 && cp <= 0x1dff) || (cp >= 0x02b0 && cp <= 0x02ff && cp !== 0x02bc);
-}
-const baseGlyphs = (ipa: string): string[] => [...new Set([...ipa].filter((ch) => !isCombining(ch.codePointAt(0)!)))];
-
-// The real words, tagged by the base glyphs they need — a word becomes typeable
-// once all its glyphs are unlocked. This is the drill's material: real words,
-// served fresh (unseen) as your repertoire grows.
-const WORDS = WORDBANK.map((w) => ({
-	target: w.ipa, labels: w.keys, word: w.w, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang, glyphs: baseGlyphs(w.ipa),
+const LESSONS = CURRICULUM.map((l) => ({
+	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro, audio: audioFor(l.sound), words: l.words,
 }));
-
-// A real demonstration word for each new sound, shown once when it's introduced.
-interface Demo { word: string; target: string; labels: string[]; gloss?: string; lang?: string; }
-const DEMO: Record<string, Demo> = {};
-for (const gl of GLYPHS) {
-	if (gl.obvious || DEMO[gl.g]) continue;
-	const w = WORDBANK.find((w) => [...w.ipa].includes(gl.g));
-	if (w) DEMO[gl.g] = {word: w.w, target: w.ipa, labels: w.keys, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang};
-}
 
 const LEARN_CSS = `
 #drill { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
@@ -132,7 +66,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 	<header>
 		<h1><a href="/" style="text-decoration:none;color:inherit">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/learn</span></h1>
 		<p class="tagline">Learn it like touch typing.</p>
-		<p class="trust">Type what you see. No theory, no quizzes — just the glyphs and a growing bank of real words, drilled by the same engine as the macOS keyboard.</p>
+		<p class="trust">Type what you see. A guided course — real words from the first lesson, one new sound at a time — drilled by the same engine as the macOS keyboard.</p>
 	</header>
 
 	<div id="drill">
@@ -157,7 +91,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)}; window.__WORDS = ${JSON.stringify(WORDS)}; window.__HARVEST = "${harvestUrl}";</script>
+<script>window.__CURRICULUM = ${JSON.stringify(LESSONS)};</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;
