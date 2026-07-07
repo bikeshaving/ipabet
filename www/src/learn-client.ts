@@ -11,7 +11,7 @@ import {
 	type Keystroke,
 } from "../../js/src/index.ts";
 
-interface Word { word: string; gloss: string; target: string; labels: string[]; }
+interface Word { word: string; lang: string; gloss: string; target: string; labels: string[]; }
 interface Lesson { title: string; sound?: string; keys?: string[]; intro: string; audio?: string; words: Word[]; }
 declare global { interface Window { __CURRICULUM: Lesson[]; } }
 
@@ -68,13 +68,13 @@ function renderHint() {
 function render() {
 	const les = lesson();
 	$("#stage").innerHTML = `Lesson ${li + 1} / ${LESSONS.length} — ${les.title}`
-		+ (les.sound ? ` &middot; <span style="color:var(--accent)">new sound ${les.sound}${les.keys ? " (" + les.keys.join(" ") + ")" : ""}</span>` : "");
+		+ (les.sound ? ` &middot; new sound <span style="color:var(--accent)">/${les.sound}/</span>` + (les.keys ? " &nbsp; type " + les.keys.map((k) => `<kbd>${k}</kbd>`).join(" ") : "") : "");
 	$("#note").textContent = les.intro;
-	$("#prog").textContent = `word ${wi + 1} / ${les.words.length}` + (wi === 0 && les.sound ? " · keys shown" : "");
-	$("#target").textContent = word().target;
+	$("#prog").textContent = wi === 0 && les.sound ? "the new sound, on its own — keys shown" : `${wi + 1} / ${les.words.length}`;
+	$("#target").textContent = `/${word().target}/`;
 	$("#target").style.cursor = les.audio ? "pointer" : "default";
-	$("#target").title = les.audio ? "play the new sound" : "";
-	$("#word").innerHTML = `<b>${word().word}</b>${word().gloss ? ` — ${word().gloss}` : ""}`;
+	$("#target").title = les.audio ? "play the sound" : "";
+	$("#word").innerHTML = `<b>${word().word}</b>${word().gloss ? ` — ${word().gloss}` : ""}${word().lang ? ` · ${word().lang}` : ""}`;
 	$("#typed").textContent = buffer;
 	$("#streak").textContent = streak > 2 ? `${streak} in a row` : "";
 	renderHint();
