@@ -41,16 +41,17 @@ const xml = (s: string) =>
 const hash = (voice: string, ph: string) =>
 	createHash("sha256").update(voice + "|" + ph).digest("hex").slice(0, 16);
 
-// How to *demonstrate* an isolated sound (the lesson's opening drill): vowels get
-// held (lengthened), momentary consonants can't be sustained so they ride an
-// [aCa] frame, and everything continuant is played alone. The manifest still keys
-// on the bare sound; only the synthesized audio is dressed up.
+// How to *demonstrate* an isolated sound (the lesson's opening drill): vowels are
+// held (lengthened) so you can sit in the quality; every consonant rides an [aCa]
+// frame ("ara", "aʃa") — the standard phonetic demonstration. (A stop *needs* the
+// frame since a burst can't be sustained; we frame all consonants alike for one
+// consistent format.) Diphthongs and diacritic demos play as-is. The manifest
+// still keys on the bare sound — only the synthesized audio is dressed up.
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
-const MOMENTARY = new Set(["ʔ", "q", "ɾ"]); // stops + tap — a burst, not a hold
 function demoPh(target: string): string {
-	if ([...target].length === 1 && VOWELS.includes(target)) return target + "ː"; // hold the vowel
-	if (MOMENTARY.has(target)) return "a" + target + "a";                          // frame the burst
-	return target;                                                                // isolate the continuant
+	if ([...target].length !== 1) return target;      // diphthong / diacritic demo
+	if (VOWELS.includes(target)) return target + "ː"; // hold the vowel
+	return "a" + target + "a";                        // frame the consonant [aCa]
 }
 
 interface Clip { ipa: string; word: string; ph: string; voiceId: string; engine: string; file: string; }
