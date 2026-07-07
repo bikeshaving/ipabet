@@ -174,7 +174,7 @@ export const CURRICULUM: Lesson[] = [
 	// ── Phase 6 · diacritics (the Option layer) ─────────────────────
 	{title: "Nasal vowels — ◌̃", sound: "◌̃", keys: ["⌥n"], intro: "Nasal vowels — the air escapes through the nose (French).", words: [
 		w("bon", "French", "good", "b", "o", "+h", "~n"), w("vin", "French", "wine", "v", "e", "+h", "~n"),
-		w("blanc", "French", "white", "b", "l", "a", "+o", "~n"),
+		w("blanc", "French", "white", "b", "l", "a", "+h", "~n"),
 	]},
 	{title: "Length — ː", sound: "ː", keys: ["⌥;"], intro: "Length — hold the previous sound long.", words: [
 		w("père", "French", "father", "p", "e", "+h", "~;", "r", "+q"), w("Tee", "German", "tea", "t", "e", "~;"),

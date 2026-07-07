@@ -1,6 +1,6 @@
 {
  "modifiers": {
-  "H": "lenite toward /h/ — spirantize, open, lax (vowels lax one notch: iH→ɪ, aH→ɐ)",
+  "H": "lenite toward /h/ — spirantize, open, lax (vowels: iH→ɪ, uH→ʊ, aH→ɑ)",
   "R": "retroflex (coronals); trill (elsewhere)",
   "J": "palatalize (consonants only)",
   "W": "labialize / round-flip",
@@ -9,8 +9,7 @@
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
   "B": "bilabial place",
-  "U": "centralize or back (vowels: oU→ɵ)",
-  "O": "drag toward o (vowels)",
+  "U": "centralize or back (vowels: oU→ɵ, aU→ɐ)",
   "A": "drag toward a (vowels: oA→ɒ, uA→ʌ)",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
@@ -50,9 +49,9 @@
   },
   {
    "key": "aH",
-   "glyph": "ɐ",
-   "cp": "U+0250",
-   "name": "LATIN SMALL LETTER TURNED A"
+   "glyph": "ɑ",
+   "cp": "U+0251",
+   "name": "LATIN SMALL LETTER ALPHA"
   },
   {
    "key": "7",
@@ -289,10 +288,10 @@
    "name": "LATIN SMALL LETTER TURNED V"
   },
   {
-   "key": "aO",
-   "glyph": "ɑ",
-   "cp": "U+0251",
-   "name": "LATIN SMALL LETTER ALPHA"
+   "key": "aU",
+   "glyph": "ɐ",
+   "cp": "U+0250",
+   "name": "LATIN SMALL LETTER TURNED A"
   },
   {
    "key": "aW",
