@@ -14,15 +14,17 @@ import {
 
 interface GlyphInfo { g: string; kind: "V" | "C"; labels: string[]; audio?: string; obvious: boolean; note: string; }
 interface Demo { word: string; target: string; labels: string[]; gloss?: string; lang?: string; }
+interface RealWord { target: string; labels: string[]; word: string; gloss?: string; lang: string; glyphs: string[]; }
 interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; intro?: boolean; focusG?: string; }
 
 declare global {
-	interface Window { __GLYPHS: GlyphInfo[]; __DEMO: Record<string, Demo>; }
+	interface Window { __GLYPHS: GlyphInfo[]; __DEMO: Record<string, Demo>; __WORDS: RealWord[]; }
 }
 
 const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
 const GLYPHS = window.__GLYPHS;
 const DEMO = window.__DEMO;
+const WORDS = window.__WORDS;
 
 // ------------------------------------------------------------ keyboard IO
 const CODE_KEYS: Record<string, string> = {
@@ -49,8 +51,8 @@ const learnable = GLYPHS.filter((g) => !g.obvious);   // introduced one at a tim
 let Cs: GlyphInfo[] = [], Vs: GlyphInfo[] = [];        // unlocked sounds for generation
 let nextLearn = 0;                                     // how many learnable sounds unlocked
 let focus: GlyphInfo | null = null;                    // the sound currently being woven in
-let mastered = 0, pendingDemo = false;                 // reps of focus done / show demo next
-const NEED = 4;                                        // clean focus-words to master a sound
+let pendingDemo = false;                               // show the demo word for a new sound next
+const seen = new Set<string>();                        // real words already served this run
 
 const KEY = "ipabet-learn-v2";
 try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) nextLearn = s.n || 0; } catch { /* no storage */ }
@@ -62,7 +64,7 @@ function rebuildUnlocked() {
 	for (let i = 0; i < nextLearn; i++) (learnable[i].kind === "C" ? Cs : Vs).push(learnable[i]);
 }
 function setFocus() {
-	if (nextLearn < learnable.length) { focus = learnable[nextLearn]; mastered = 0; pendingDemo = true; }
+	if (nextLearn < learnable.length) { focus = learnable[nextLearn]; pendingDemo = true; }
 	else focus = null;
 }
 rebuildUnlocked();
@@ -71,33 +73,48 @@ setFocus();
 let current: Drill;
 let buffer = "", misses = 0, streak = 0, hinted = false, introducing = false;
 
-// ------------------------------------------------------------ generation
-const rand = <T>(a: T[]): T => a[Math.floor(Math.random() * a.length)];
-function generate(): Drill {
-	const syls = Math.random() < 0.5 ? 1 : 2;
-	const parts: GlyphInfo[] = [];
-	for (let s = 0; s < syls; s++) {
-		if (Cs.length && Math.random() < 0.85) parts.push(rand(Cs)); // onset
-		parts.push(rand(Vs));                                        // nucleus
-		if (Cs.length && Math.random() < 0.30) parts.push(rand(Cs)); // coda
-	}
-	// weave in the sound being learned
-	if (focus && !parts.some((p) => p.g === focus!.g)) {
-		const slots = parts.map((p, i) => ({p, i})).filter((x) => x.p.kind === focus!.kind).map((x) => x.i);
-		if (slots.length) parts[rand(slots)] = focus;
-		else parts.push(focus);
-	}
-	const hasFocus = focus !== null && parts.some((p) => p.g === focus!.g);
-	return {target: parts.map((p) => p.g).join(""), labels: parts.flatMap((p) => p.labels), focusG: hasFocus ? focus!.g : undefined};
+// ------------------------------------------------------- word selection
+// Real words only, drawn fresh (unseen) from the bank, filtered to the sounds
+// you've unlocked and preferring the sound currently being learned. When the
+// current sounds run out of unseen words, the next sound unlocks (bringing more
+// words). Never random — every drill is a real word.
+function unlockedSet(): Set<string> {
+	const s = new Set<string>();
+	for (const g of Cs) s.add(g.g);
+	for (const g of Vs) s.add(g.g);
+	if (focus) s.add(focus.g);
+	return s;
+}
+function pickWord(): RealWord | null {
+	const U = unlockedSet();
+	const avail = WORDS.filter((w) => !seen.has(w.target) && w.glyphs.every((g) => U.has(g)));
+	if (!avail.length) return null;
+	const focused = focus ? avail.filter((w) => w.glyphs.includes(focus!.g)) : [];
+	const pool = focused.length ? focused : avail;
+	const w = pool[Math.floor(Math.random() * pool.length)];
+	seen.add(w.target);
+	return w;
+}
+function asDrill(w: RealWord, extra?: Partial<Drill>): Drill {
+	return {target: w.target, labels: w.labels, word: w.word, gloss: w.gloss, lang: w.lang,
+		focusG: focus && w.glyphs.includes(focus.g) ? focus.g : undefined, ...extra};
 }
 function nextDrill(): Drill {
+	// introduce a new sound with its demonstration word (or the first real word
+	// that uses it), keys shown — the "here's the new sound" moment.
 	if (focus && pendingDemo) {
 		pendingDemo = false;
 		const d = DEMO[focus.g];
-		if (d) return {target: d.target, labels: d.labels, word: d.word, gloss: d.gloss, lang: d.lang, audio: focus.audio, intro: true, note: focus.note, focusG: focus.g};
-		const g = generate(); g.intro = true; g.audio = focus.audio; g.note = focus.note; return g; // no demo word — introduce via a generated one
+		if (d) { seen.add(d.target); return {target: d.target, labels: d.labels, word: d.word, gloss: d.gloss, lang: d.lang, audio: focus.audio, intro: true, note: focus.note, focusG: focus.g}; }
+		const w = pickWord();
+		if (w) return asDrill(w, {intro: true, audio: focus.audio, note: focus.note});
 	}
-	return generate();
+	const w = pickWord();
+	if (w) return asDrill(w);
+	if (focus) { (focus.kind === "C" ? Cs : Vs).push(focus); nextLearn += 1; save(); setFocus(); return nextDrill(); } // out of fresh words → unlock next sound
+	seen.clear();                                    // all sounds learned, all words seen → recycle
+	const again = pickWord();
+	return again ? asDrill(again) : {target: "—", labels: []};
 }
 
 // ------------------------------------------------------------ sound
@@ -111,7 +128,6 @@ function playCurrent() {
 }
 
 // ------------------------------------------------------------ render
-const learnedCount = () => nextLearn;
 function renderHint() {
 	const show = hinted || misses >= 2;
 	$("#hint").innerHTML = show
@@ -121,12 +137,12 @@ function renderHint() {
 	if (btn) btn.addEventListener("click", () => { hinted = true; renderHint(); });
 }
 function render() {
-	$("#stage").textContent = focus ? `New sound: ${focus.g}` : "Free play — every sound unlocked";
+	$("#stage").textContent = focus ? `New sound: ${focus.g}` : "Every sound unlocked";
 	$("#note").textContent = current.note ?? (focus ? focus.note : "");
-	$("#prog").textContent = current.intro
-		? "here’s the keys — then you’ll build with it"
-		: (current.focusG ? `drilling ${current.focusG} · ${mastered}/${NEED}` : "fresh combination")
-		+ ` · ${learnedCount()}/${learnable.length} sounds learned`;
+	$("#prog").textContent = (current.intro
+		? "new sound — keys shown"
+		: (current.focusG ? `real word featuring ${current.focusG}` : "real word"))
+		+ ` · ${nextLearn}/${learnable.length} sounds unlocked`;
 	$("#target").textContent = current.target;
 	$("#target").style.cursor = current.audio ? "pointer" : "default";
 	$("#target").title = current.audio ? "play the sound" : "";
@@ -145,12 +161,7 @@ function goto(d: Drill) {
 	playCurrent();
 }
 function advance() {
-	const clean = misses === 0 && !hinted;
-	streak = clean ? streak + 1 : 0;
-	if (focus && current.focusG === focus.g && !current.intro && clean) {
-		mastered += 1;
-		if (mastered >= NEED) { (focus.kind === "C" ? Cs : Vs).push(focus); nextLearn += 1; save(); setFocus(); }
-	}
+	streak = misses === 0 && !hinted ? streak + 1 : 0;
 	goto(nextDrill());
 }
 function check() {

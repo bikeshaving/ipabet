@@ -60,6 +60,18 @@ for (const s of STAGES) {
 
 const LANG: Record<string, string> = {es: "Spanish", it: "Italian", en: "English", fr: "French", de: "German", ar: "Arabic"};
 
+function isCombining(cp: number): boolean {
+	return (cp >= 0x0300 && cp <= 0x036f) || (cp >= 0x1dc0 && cp <= 0x1dff) || (cp >= 0x02b0 && cp <= 0x02ff && cp !== 0x02bc);
+}
+const baseGlyphs = (ipa: string): string[] => [...new Set([...ipa].filter((ch) => !isCombining(ch.codePointAt(0)!)))];
+
+// The real words, tagged by the base glyphs they need — a word becomes typeable
+// once all its glyphs are unlocked. This is the drill's material: real words,
+// served fresh (unseen) as your repertoire grows.
+const WORDS = WORDBANK.map((w) => ({
+	target: w.ipa, labels: w.keys, word: w.w, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang, glyphs: baseGlyphs(w.ipa),
+}));
+
 // A real demonstration word for each new sound, shown once when it's introduced.
 interface Demo { word: string; target: string; labels: string[]; gloss?: string; lang?: string; }
 const DEMO: Record<string, Demo> = {};
@@ -141,7 +153,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)};</script>
+<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)}; window.__WORDS = ${JSON.stringify(WORDS)};</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;
