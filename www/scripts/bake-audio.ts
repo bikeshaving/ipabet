@@ -42,16 +42,16 @@ const hash = (voice: string, ph: string) =>
 	createHash("sha256").update(voice + "|" + ph).digest("hex").slice(0, 16);
 
 // How to *demonstrate* an isolated sound (the lesson's opening drill): vowels are
-// held (lengthened) so you can sit in the quality; every consonant rides an [aCa]
-// frame ("ara", "aʃa") — the standard phonetic demonstration. (A stop *needs* the
-// frame since a burst can't be sustained; we frame all consonants alike for one
-// consistent format.) Diphthongs and diacritic demos play as-is. The manifest
-// still keys on the bare sound — only the synthesized audio is dressed up.
+// held (lengthened) so you can sit in the quality; every consonant rides the
+// two-part [Ca aCa] frame ("ra ara", "ʃa aʃa") — onset then intervocalic, which
+// gives a short consonant enough room to be heard clearly. Diphthongs and diacritic
+// demos play as-is. The manifest still keys on the bare sound — only the
+// synthesized audio is dressed up.
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 function demoPh(target: string): string {
-	if ([...target].length !== 1) return target;      // diphthong / diacritic demo
-	if (VOWELS.includes(target)) return target + "ː"; // hold the vowel
-	return "a" + target + "a";                        // frame the consonant [aCa]
+	if ([...target].length !== 1) return target;         // diphthong / diacritic demo
+	if (VOWELS.includes(target)) return target + "ː";    // hold the vowel
+	return target + "a a" + target + "a";                // frame the consonant [Ca aCa] — "ra ara"
 }
 
 interface Clip { ipa: string; word: string; ph: string; voiceId: string; engine: string; file: string; }
