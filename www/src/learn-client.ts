@@ -1,6 +1,8 @@
-// /learn client — one drill that walks the syllabus stage by stage. Each stage
-// introduces its new glyphs, then the words that just became typeable; the pool
-// grows as you climb. Keystrokes run the real IPAbet engine (@b9g/ipabet).
+// /learn client — a generative typing tutor. The bare letters you already
+// touch-type are unlocked from the start; new sounds are introduced one at a
+// time (with a real demonstration word), and the drill CONTINUOUSLY GENERATES
+// fresh little words from the sounds you know — so you're always combining, not
+// re-typing. Keystrokes run the real IPAbet engine (@b9g/ipabet).
 
 import {
 	handleKey,
@@ -10,84 +12,17 @@ import {
 	type Keystroke,
 } from "../../js/src/index.ts";
 
-interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; }
-interface Stage { title: string; note: string; glyphs: Drill[]; words: Drill[]; }
+interface GlyphInfo { g: string; kind: "V" | "C"; labels: string[]; audio?: string; obvious: boolean; note: string; }
+interface Demo { word: string; target: string; labels: string[]; gloss?: string; lang?: string; }
+interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; intro?: boolean; focusG?: string; }
 
 declare global {
-	interface Window { __STAGES: Stage[]; }
+	interface Window { __GLYPHS: GlyphInfo[]; __DEMO: Record<string, Demo>; }
 }
 
 const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
-const stages = window.__STAGES;
-
-// Flatten into a single ordered course: each stage's new glyphs, then its words.
-interface Item { si: number; kind: "glyph" | "word"; d: Drill; n: number; of: number; }
-const items: Item[] = [];
-stages.forEach((s, si) => {
-	const list = [...s.glyphs.map((d) => ["glyph", d] as const), ...s.words.map((d) => ["word", d] as const)];
-	list.forEach(([kind, d], j) => items.push({si, kind, d, n: j + 1, of: list.length}));
-});
-
-let ii = 0, buffer = "", misses = 0, streak = 0, hinted = false;
-const cur = () => items[ii];
-
-// ---------------------------------------------------- spaced repetition
-// Leitner boxes, persisted: a clean recall promotes an item (longer wait),
-// a stumble resets it to soon. New symbols are introduced in syllabus order
-// only when reviews are caught up — progressive disclosure plus review.
-const SRS_KEY = "ipabet-learn-srs-v1";
-const INTERVALS = [2, 5, 13, 34, 89]; // steps until re-review, by box
-const MAX_BOX = INTERVALS.length - 1;
-interface Cell { box: number; due: number; seen: boolean; }
-const idOf = (it: Item) => `${it.si}:${it.kind}:${it.d.target}`;
-const srs: Cell[] = items.map(() => ({box: 0, due: 0, seen: false}));
-let step = 0, introducing = false;
-try {
-	const saved = JSON.parse(localStorage.getItem(SRS_KEY) || "null");
-	if (saved) {
-		step = saved.step || 0;
-		items.forEach((it, i) => { const s = saved.items?.[idOf(it)]; if (s) srs[i] = {box: s.b, due: s.d, seen: true}; });
-	}
-} catch { /* private mode / no storage — run stateless */ }
-function save() {
-	try {
-		const out: Record<string, {b: number; d: number}> = {};
-		items.forEach((it, i) => { if (srs[i].seen) out[idOf(it)] = {b: srs[i].box, d: srs[i].due}; });
-		localStorage.setItem(SRS_KEY, JSON.stringify({step, items: out}));
-	} catch { /* ignore */ }
-}
-function pick(): number {
-	let best = -1, bestDue = Infinity;
-	for (let i = 0; i < items.length; i++)
-		if (srs[i].seen && srs[i].due <= step && srs[i].due < bestDue) { best = i; bestDue = srs[i].due; }
-	if (best >= 0) return best;                                  // a review is due
-	for (let i = 0; i < items.length; i++) if (!srs[i].seen) return i; // else introduce the next new symbol
-	let si = 0, sd = Infinity;                                   // else the soonest-due
-	for (let i = 0; i < items.length; i++) if (srs[i].due < sd) { sd = srs[i].due; si = i; }
-	return si;
-}
-const learned = () => srs.filter((c) => c.box >= 2).length;
-function goto(i: number) {
-	ii = i;
-	introducing = !srs[i].seen;
-	if (introducing) srs[i].seen = true;
-	hinted = introducing;      // first sight of a symbol: show the keys, unprompted
-	buffer = ""; misses = 0;
-	render();
-	playCurrent();
-}
-
-// ------------------------------------------------------------ sound
-// Real Wikimedia Commons phoneme recordings (self-hosted, attributed on
-// /chart). Played when a glyph appears — you hear what you're typing.
-let curAudio: HTMLAudioElement | null = null;
-function playCurrent() {
-	const url = cur().d.audio;
-	if (!url) return;
-	if (curAudio) curAudio.pause();
-	curAudio = new Audio(url);
-	curAudio.play().catch(() => {}); // autoplay may be blocked pre-gesture; click replays
-}
+const GLYPHS = window.__GLYPHS;
+const DEMO = window.__DEMO;
 
 // ------------------------------------------------------------ keyboard IO
 const CODE_KEYS: Record<string, string> = {
@@ -109,59 +44,120 @@ function dropLastCluster(text: string): string {
 	return text.slice(0, text.length - last.length);
 }
 
+// ------------------------------------------------------------ learning state
+const learnable = GLYPHS.filter((g) => !g.obvious);   // introduced one at a time
+let Cs: GlyphInfo[] = [], Vs: GlyphInfo[] = [];        // unlocked sounds for generation
+let nextLearn = 0;                                     // how many learnable sounds unlocked
+let focus: GlyphInfo | null = null;                    // the sound currently being woven in
+let mastered = 0, pendingDemo = false;                 // reps of focus done / show demo next
+const NEED = 4;                                        // clean focus-words to master a sound
+
+const KEY = "ipabet-learn-v2";
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) nextLearn = s.n || 0; } catch { /* no storage */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({n: nextLearn})); } catch { /* ignore */ } }
+
+function rebuildUnlocked() {
+	Cs = GLYPHS.filter((g) => g.obvious && g.kind === "C");
+	Vs = GLYPHS.filter((g) => g.obvious && g.kind === "V");
+	for (let i = 0; i < nextLearn; i++) (learnable[i].kind === "C" ? Cs : Vs).push(learnable[i]);
+}
+function setFocus() {
+	if (nextLearn < learnable.length) { focus = learnable[nextLearn]; mastered = 0; pendingDemo = true; }
+	else focus = null;
+}
+rebuildUnlocked();
+setFocus();
+
+let current: Drill;
+let buffer = "", misses = 0, streak = 0, hinted = false, introducing = false;
+
+// ------------------------------------------------------------ generation
+const rand = <T>(a: T[]): T => a[Math.floor(Math.random() * a.length)];
+function generate(): Drill {
+	const syls = Math.random() < 0.5 ? 1 : 2;
+	const parts: GlyphInfo[] = [];
+	for (let s = 0; s < syls; s++) {
+		if (Cs.length && Math.random() < 0.85) parts.push(rand(Cs)); // onset
+		parts.push(rand(Vs));                                        // nucleus
+		if (Cs.length && Math.random() < 0.30) parts.push(rand(Cs)); // coda
+	}
+	// weave in the sound being learned
+	if (focus && !parts.some((p) => p.g === focus!.g)) {
+		const slots = parts.map((p, i) => ({p, i})).filter((x) => x.p.kind === focus!.kind).map((x) => x.i);
+		if (slots.length) parts[rand(slots)] = focus;
+		else parts.push(focus);
+	}
+	const hasFocus = focus !== null && parts.some((p) => p.g === focus!.g);
+	return {target: parts.map((p) => p.g).join(""), labels: parts.flatMap((p) => p.labels), focusG: hasFocus ? focus!.g : undefined};
+}
+function nextDrill(): Drill {
+	if (focus && pendingDemo) {
+		pendingDemo = false;
+		const d = DEMO[focus.g];
+		if (d) return {target: d.target, labels: d.labels, word: d.word, gloss: d.gloss, lang: d.lang, audio: focus.audio, intro: true, note: focus.note, focusG: focus.g};
+		const g = generate(); g.intro = true; g.audio = focus.audio; g.note = focus.note; return g; // no demo word — introduce via a generated one
+	}
+	return generate();
+}
+
+// ------------------------------------------------------------ sound
+let curAudio: HTMLAudioElement | null = null;
+function playCurrent() {
+	const url = current.audio;
+	if (!url) return;
+	if (curAudio) curAudio.pause();
+	curAudio = new Audio(url);
+	curAudio.play().catch(() => {}); // autoplay may be blocked pre-gesture; click replays
+}
+
 // ------------------------------------------------------------ render
+const learnedCount = () => nextLearn;
 function renderHint() {
 	const show = hinted || misses >= 2;
 	$("#hint").innerHTML = show
-		? cur().d.labels.map((l) => `<kbd>${l}</kbd>`).join("")
+		? current.labels.map((l) => `<kbd>${l}</kbd>`).join("")
 		: `<button id="hintbtn">show keys</button>`;
 	const btn = document.querySelector("#hintbtn");
 	if (btn) btn.addEventListener("click", () => { hinted = true; renderHint(); });
 }
-function renderNav() {
-	$("#stagenav").innerHTML = stages
-		.map((s, si) => `<button data-si="${si}" class="${si === cur().si ? "on" : ""}">${s.title}</button>`)
-		.join("");
-	document.querySelectorAll("#stagenav button").forEach((b) =>
-		b.addEventListener("click", () => jumpTo(Number((b as HTMLElement).dataset.si))));
-}
 function render() {
-	const it = cur(), s = stages[it.si];
-	$("#stage").textContent = `Stage ${it.si + 1} of ${stages.length} · ${s.title}`;
-	$("#note").textContent = s.note;
-	$("#prog").textContent = `${introducing ? "new symbol — keys shown" : "review"} · ${learned()} of ${items.length} learned`;
-	$("#target").textContent = it.d.target;
-	$("#target").style.cursor = it.d.audio ? "pointer" : "default";
-	$("#target").title = it.d.audio ? "play the sound" : "";
-	if (it.d.word) {
-		$("#word").innerHTML = `<b>${it.d.word}</b>${it.d.gloss ? ` — ${it.d.gloss}` : ""} · ${it.d.lang}`;
-	} else {
-		$("#word").textContent = it.d.note ?? "";
-	}
+	$("#stage").textContent = focus ? `New sound: ${focus.g}` : "Free play — every sound unlocked";
+	$("#note").textContent = current.note ?? (focus ? focus.note : "");
+	$("#prog").textContent = current.intro
+		? "here’s the keys — then you’ll build with it"
+		: (current.focusG ? `drilling ${current.focusG} · ${mastered}/${NEED}` : "fresh combination")
+		+ ` · ${learnedCount()}/${learnable.length} sounds learned`;
+	$("#target").textContent = current.target;
+	$("#target").style.cursor = current.audio ? "pointer" : "default";
+	$("#target").title = current.audio ? "play the sound" : "";
+	if (current.word) $("#word").innerHTML = `<b>${current.word}</b>${current.gloss ? ` — ${current.gloss}` : ""} · ${current.lang}`;
+	else $("#word").textContent = "";
 	$("#typed").textContent = buffer;
 	$("#streak").textContent = streak > 2 ? `${streak} in a row` : "";
 	renderHint();
-	renderNav();
 	highlightKeyboard();
 }
-function jumpTo(si: number) {
-	const at = items.findIndex((it) => it.si === si);
-	if (at >= 0) { streak = 0; goto(at); }
+function goto(d: Drill) {
+	current = d; buffer = ""; misses = 0;
+	introducing = d.intro === true;
+	hinted = introducing;      // a newly-introduced sound shows its keys unprompted
+	render();
+	playCurrent();
 }
 function advance() {
-	const i = ii, clean = misses === 0 && !hinted;
+	const clean = misses === 0 && !hinted;
 	streak = clean ? streak + 1 : 0;
-	srs[i].box = clean ? Math.min(srs[i].box + 1, MAX_BOX) : 0; // clean promotes, stumble resets
-	srs[i].due = step + INTERVALS[srs[i].box];
-	step += 1;
-	save();
-	goto(pick());
+	if (focus && current.focusG === focus.g && !current.intro && clean) {
+		mastered += 1;
+		if (mastered >= NEED) { (focus.kind === "C" ? Cs : Vs).push(focus); nextLearn += 1; save(); setFocus(); }
+	}
+	goto(nextDrill());
 }
 function check() {
-	if (buffer.normalize("NFC") === cur().d.target.normalize("NFC")) {
+	if (buffer.normalize("NFC") === current.target.normalize("NFC")) {
 		$("#typed").classList.add("good");
 		setTimeout(() => { $("#typed").classList.remove("good"); advance(); }, 350);
-	} else if ([...buffer].length >= [...cur().d.target].length) {
+	} else if ([...buffer].length >= [...current.target].length) {
 		misses += 1;
 		$("#typed").classList.add("bad");
 		setTimeout(() => $("#typed").classList.remove("bad"), 250);
@@ -182,12 +178,9 @@ function sendKey(k: Keystroke) {
 }
 
 // -------------------------------------------------- on-screen keyboard
-// A tapped keyboard so no hardware is needed (mobile too), and — the real
-// payoff — it highlights the next key you need, like a proper typing tutor.
 const KB_ROWS = ["1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./"];
 let shiftArmed = false, optArmed = false;
 
-// Reconstruct a keystroke from a display label ("⇧H" → h+shift, "⌥e" → e+opt).
 function keystrokeFromLabel(lab: string): Keystroke {
 	const option = lab.includes("⌥");
 	const shift = lab.includes("⇧");
@@ -203,16 +196,14 @@ function simulate(labels: string[], upto: number): string {
 	}
 	return b;
 }
-// Which keystroke comes next, given what's typed so far.
 function nextKeystroke(): Keystroke | null {
-	const labels = cur().d.labels;
+	const labels = current.labels;
 	for (let p = 0; p <= labels.length; p++) {
 		if (simulate(labels, p).normalize("NFC") === buffer.normalize("NFC"))
 			return p < labels.length ? keystrokeFromLabel(labels[p]) : null;
 	}
-	return labels.length ? keystrokeFromLabel(labels[0]) : null; // diverged → back to start
+	return labels.length ? keystrokeFromLabel(labels[0]) : null;
 }
-
 function tapChar(ch: string) {
 	sendKey({key: ch, shift: shiftArmed, option: optArmed});
 	shiftArmed = false; optArmed = false; updateMods();
@@ -227,7 +218,7 @@ function buildKeyboard() {
 	function cap(txt: string, cls: string, k: string, on: () => void): HTMLButtonElement {
 		const b = document.createElement("button");
 		b.textContent = txt; b.className = cls; if (k) b.dataset.k = k;
-		b.addEventListener("mousedown", (e) => e.preventDefault()); // keep page focus
+		b.addEventListener("mousedown", (e) => e.preventDefault());
 		b.addEventListener("click", (e) => { e.preventDefault(); on(); });
 		return b;
 	}
@@ -261,5 +252,5 @@ window.addEventListener("keydown", (e) => {
 });
 
 buildKeyboard();
+goto(nextDrill());
 $("#target").addEventListener("click", playCurrent);
-goto(pick());

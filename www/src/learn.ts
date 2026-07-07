@@ -1,5 +1,5 @@
 import spec from "../../spec/ipabet.json";
-import {typeKeys, type Keystroke} from "../../js/src/index.ts";
+import {type Keystroke} from "../../js/src/index.ts";
 import {CSS} from "./style.ts";
 import {STAGES, WORDBANK} from "./wordbank.ts";
 import {AUDIO} from "./audio-map.ts";
@@ -25,39 +25,49 @@ function label(k: Keystroke): string {
 		(k.shift && /[a-z]/.test(k.key) ? k.key.toUpperCase() : k.key);
 }
 
-interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; }
-
 const AUDIO_OF = AUDIO as Record<string, string>;
+const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; the recording is keyed on ɡ U+0261
+const audioFor = (g: string): string | undefined => AUDIO_OF[g] ?? AUDIO_OF[AUDIO_ALIAS[g] ?? ""];
 
-// glyph → its canonical spec key (first occurrence wins)
+// The vowels (nuclei for generated syllables); everything else is a consonant.
+const VOWELS = new Set([..."aeiouyəɨʉɯɪʊɛœɜɞɐɘøɵɤʏæʌɔɑɒɶ"]);
+
 const keyByGlyph = new Map<string, string>();
-for (const e of spec.letters as {key: string; glyph: string}[]) {
+for (const e of spec.letters as {key: string; glyph: string}[])
 	if (!keyByGlyph.has(e.glyph)) keyByGlyph.set(e.glyph, e.key);
+
+// A bare single lowercase key you already touch-type — no drilling needed;
+// these unlock from the start so word generation has raw material immediately.
+function isObvious(ks: Keystroke[]): boolean {
+	return ks.length === 1 && !ks[0].shift && !ks[0].option && /[a-z]/.test(ks[0].key);
 }
-function glyphDrill(glyph: string): Drill | null {
-	const k = keyByGlyph.get(glyph);
-	if (k === undefined) return null;
-	const ks = keysFor(k);
-	return {target: typeKeys(ks), labels: ks.map(label), audio: AUDIO_OF[glyph]};
-}
-// marks need a carrier: drill them on a bare "a".
-function markDrill(m: {opt: string; mark: string; name?: string}): Drill {
-	const ks: Keystroke[] = [{key: "a", shift: false, option: false}, {key: m.opt, shift: false, option: true}];
-	return {target: typeKeys(ks), labels: ks.map(label), note: (m.name ?? "").toLowerCase()};
+
+interface GlyphInfo { g: string; kind: "V" | "C"; labels: string[]; audio?: string; obvious: boolean; note: string; }
+
+// Every learnable segment, in syllabus order. Consonants + vowels feed the word
+// generator; new (non-obvious) sounds are introduced one at a time.
+const GLYPHS: GlyphInfo[] = [];
+const seenG = new Set<string>();
+for (const s of STAGES) {
+	for (const g of s.glyphs) {
+		if (seenG.has(g)) continue; seenG.add(g);
+		const k = keyByGlyph.get(g); if (k === undefined) continue;
+		const ks = keysFor(k);
+		GLYPHS.push({g, kind: VOWELS.has(g) ? "V" : "C", labels: ks.map(label),
+			audio: audioFor(g), obvious: isObvious(ks), note: s.note});
+	}
 }
 
 const LANG: Record<string, string> = {es: "Spanish", it: "Italian", en: "English", fr: "French", de: "German", ar: "Arabic"};
 
-const STAGE_DATA = STAGES.map((s, i) => ({
-	title: s.title,
-	note: s.note,
-	glyphs: s.id === "marks"
-		? (spec.marks as {opt: string; mark: string; name?: string}[]).map(markDrill)
-		: [...s.glyphs].map(glyphDrill).filter((d): d is Drill => d !== null),
-	words: WORDBANK.filter((w) => w.stage === i).map((w): Drill => ({
-		target: w.ipa, labels: w.keys, word: w.w, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang,
-	})),
-}));
+// A real demonstration word for each new sound, shown once when it's introduced.
+interface Demo { word: string; target: string; labels: string[]; gloss?: string; lang?: string; }
+const DEMO: Record<string, Demo> = {};
+for (const gl of GLYPHS) {
+	if (gl.obvious || DEMO[gl.g]) continue;
+	const w = WORDBANK.find((w) => [...w.ipa].includes(gl.g));
+	if (w) DEMO[gl.g] = {word: w.w, target: w.ipa, labels: w.keys, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang};
+}
 
 const LEARN_CSS = `
 #drill { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
@@ -120,7 +130,6 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<div id="streak"></div>
 	</div>
 	<div id="kbd"></div>
-	<div id="stagenav"></div>
 
 	<p class="notice">Type on your keyboard or tap the keys — the next one lights up.
 	<kbd>⇧</kbd> and <kbd>⌥</kbd> behave like the real keyboard, and backspace peels
@@ -132,7 +141,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__STAGES = ${JSON.stringify(STAGE_DATA)};</script>
+<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)};</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;
