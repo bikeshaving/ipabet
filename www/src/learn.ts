@@ -7,6 +7,10 @@ import {AUDIO} from "./audio-map.ts";
 // time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
 import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
+// The big harvested word bank (thousands of verified real words, CC-BY-SA from
+// Wiktionary via wikipron) — served as an asset the client fetches, not inlined.
+// @ts-ignore
+import harvestUrl from "./harvest-words.json" with {assetBase: "/assets/"};
 
 // /learn — a touch-typing tutor for IPA. No lectures, no quizzes: a single
 // drill that walks the syllabus stage by stage (progressive disclosure), each
@@ -153,7 +157,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)}; window.__WORDS = ${JSON.stringify(WORDS)};</script>
+<script>window.__GLYPHS = ${JSON.stringify(GLYPHS)}; window.__DEMO = ${JSON.stringify(DEMO)}; window.__WORDS = ${JSON.stringify(WORDS)}; window.__HARVEST = "${harvestUrl}";</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;

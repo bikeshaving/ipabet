@@ -18,13 +18,16 @@ interface RealWord { target: string; labels: string[]; word: string; gloss?: str
 interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; intro?: boolean; focusG?: string; }
 
 declare global {
-	interface Window { __GLYPHS: GlyphInfo[]; __DEMO: Record<string, Demo>; __WORDS: RealWord[]; }
+	interface Window { __GLYPHS: GlyphInfo[]; __DEMO: Record<string, Demo>; __WORDS: RealWord[]; __HARVEST?: string; }
 }
 
 const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
 const GLYPHS = window.__GLYPHS;
 const DEMO = window.__DEMO;
 const WORDS = window.__WORDS;
+// Fold in the big harvested bank (thousands of real words) as soon as it loads;
+// the drill picks from WORDS at draw time, so the pool just grows underneath it.
+if (window.__HARVEST) fetch(window.__HARVEST).then((r) => r.json()).then((h: RealWord[]) => WORDS.push(...h)).catch(() => {});
 
 // ------------------------------------------------------------ keyboard IO
 const CODE_KEYS: Record<string, string> = {
