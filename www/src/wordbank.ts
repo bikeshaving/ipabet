@@ -30,19 +30,19 @@ function label(k: string): string {
 // (Judgment call on boundaries — tune freely; the machinery doesn't care.)
 export interface Stage { id: string; title: string; note: string; glyphs: string; }
 export const STAGES: Stage[] = [
-	{id: "free", title: "The free alphabet", glyphs: "pbtdkgmnfvszlwhaeiou",
-		note: "Most keys already type their own IPA sound. Vowels are cardinal (ah eh ee oh oo, not English), and g is always hard."},
-	{id: "false-friends", title: "False friends", glyphs: "cjqrxy",
-		note: "Same letters, different sounds: r is a trill, j is “y”, x is the loch sound, y is a rounded vowel, q is uvular, c is palatal."},
+	{id: "free", title: "The free alphabet", glyphs: "pbtdkgmnfvszlwhaeiouə",
+		note: "Most keys already type their own IPA sound. Vowels are cardinal (ah eh ee oh oo, not English), and g is always hard. Plus the schwa ə on ⇧5 — English’s most common vowel."},
+	{id: "false-friends", title: "False friends", glyphs: "cjqrxyɾ",
+		note: "Same letters, different sounds: r is a trill, j is “y”, x is the loch sound, y is a rounded vowel, q is uvular, c is palatal. And ⇧4 is the quick tap ɾ — the trill’s single-flap cousin (Spanish pero vs. perro)."},
 	{id: "digraphs", title: "English digraphs", glyphs: "ʃθðŋʒ",
 		note: "The sh/th/ng you already spell: ⇧H spirantizes, ⇧G goes dorsal."},
-	{id: "vowels", title: "The English vowels", glyphs: "ɪʊɛɔæʌə",
-		note: "English’s lax vowels and schwa — where real English words open up."},
+	{id: "vowels", title: "The English vowels", glyphs: "ɪʊɛɔæʌ",
+		note: "English’s lax vowels — where real English words open up."},
 	{id: "place", title: "Place shifts", glyphs: "ʈɖɳɭʂʐɻɽɟʝʎɲɕʑɥʟʀɴɢʁ",
 		note: "The productive operators: ⇧R retroflex, ⇧J palatal, ⇧Q/⇧G dorsal."},
 	{id: "fricatives", title: "Fricatives & rounding", glyphs: "ɸβçχɣɦʋʍɹøœɤɯɰʉɐɑɒɜɞɘʏɶɵɬɮɺɱⱱ",
 		note: "⇧H opens stops to fricatives; ⇧W rounds/flips vowels."},
-	{id: "guttural", title: "The throat & no-Latin keys", glyphs: "ʔʕħɨɾʜʢʡ",
+	{id: "guttural", title: "The throat & no-Latin keys", glyphs: "ʔʕħɨʜʢʡ",
 		note: "The shifted-number row: glottal, pharyngeal, uvular — mnemonic from Arabizi."},
 	{id: "marks", title: "Diacritics", glyphs: "",  // combining marks handled specially
 		note: "The Option layer: nasalization, length, stress, tone, rhoticity."},
@@ -74,6 +74,7 @@ const SRC: Src[] = [
 	{w: "sole", lang: "it", gloss: "sun", keys: ["s", "o", "l", "e"]},
 	// false friends — the letter lies; the foreign word tells the truth
 	{w: "perro", lang: "es", gloss: "dog", keys: ["p", "e", "r", "o"]},
+	{w: "pero", lang: "es", gloss: "but", keys: ["p", "e", "+4", "o"]},
 	{w: "rojo", lang: "es", gloss: "red", keys: ["r", "o", "x", "o"]},
 	{w: "niño", lang: "es", gloss: "child", keys: ["n", "i", "n", "+j", "o"]},
 	{w: "ajo", lang: "es", gloss: "garlic", keys: ["a", "x", "o"]},

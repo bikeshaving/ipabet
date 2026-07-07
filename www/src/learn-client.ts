@@ -10,7 +10,7 @@ import {
 	type Keystroke,
 } from "../../js/src/index.ts";
 
-interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; }
+interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; }
 interface Stage { title: string; note: string; glyphs: Drill[]; words: Drill[]; }
 
 declare global {
@@ -30,6 +30,18 @@ stages.forEach((s, si) => {
 
 let ii = 0, buffer = "", misses = 0, streak = 0, hinted = false;
 const cur = () => items[ii];
+
+// ------------------------------------------------------------ sound
+// Real Wikimedia Commons phoneme recordings (self-hosted, attributed on
+// /chart). Played when a glyph appears — you hear what you're typing.
+let curAudio: HTMLAudioElement | null = null;
+function playCurrent() {
+	const url = cur().d.audio;
+	if (!url) return;
+	if (curAudio) curAudio.pause();
+	curAudio = new Audio(url);
+	curAudio.play().catch(() => {}); // autoplay may be blocked pre-gesture; click replays
+}
 
 // ------------------------------------------------------------ keyboard IO
 const CODE_KEYS: Record<string, string> = {
@@ -73,6 +85,8 @@ function render() {
 	$("#note").textContent = s.note;
 	$("#prog").textContent = `${it.kind === "glyph" ? "new glyph" : "word"} ${it.n} / ${it.of}`;
 	$("#target").textContent = it.d.target;
+	$("#target").style.cursor = it.d.audio ? "pointer" : "default";
+	$("#target").title = it.d.audio ? "play the sound" : "";
 	if (it.d.word) {
 		$("#word").innerHTML = `<b>${it.d.word}</b>${it.d.gloss ? ` — ${it.d.gloss}` : ""} · ${it.d.lang}`;
 	} else {
@@ -82,16 +96,18 @@ function render() {
 	$("#streak").textContent = streak > 2 ? `${streak} in a row` : "";
 	renderHint();
 	renderNav();
+	highlightKeyboard();
 }
 function jumpTo(si: number) {
 	const at = items.findIndex((it) => it.si === si);
-	if (at >= 0) { ii = at; buffer = ""; misses = 0; hinted = false; streak = 0; render(); }
+	if (at >= 0) { ii = at; buffer = ""; misses = 0; hinted = false; streak = 0; render(); playCurrent(); }
 }
 function advance() {
 	streak = misses === 0 && !hinted ? streak + 1 : 0;
 	buffer = ""; misses = 0; hinted = false;
 	ii = (ii + 1) % items.length;
 	render();
+	playCurrent();
 }
 function check() {
 	if (buffer.normalize("NFC") === cur().d.target.normalize("NFC")) {
@@ -105,23 +121,98 @@ function check() {
 	}
 }
 
-// ------------------------------------------------------------ input
+// ------------------------------------------------------------ input core
+function doBackspace() {
+	const edit = handleBackspace(buffer);
+	buffer = edit.type === "pass" ? dropLastCluster(buffer) : applyEdit(buffer, edit);
+	render();
+}
+function sendKey(k: Keystroke) {
+	buffer = applyEdit(buffer, handleKey(buffer, k), nativeChar(k));
+	render();
+	check();
+}
+
+// -------------------------------------------------- on-screen keyboard
+// A tapped keyboard so no hardware is needed (mobile too), and — the real
+// payoff — it highlights the next key you need, like a proper typing tutor.
+const KB_ROWS = ["1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./"];
+let shiftArmed = false, optArmed = false;
+
+// Reconstruct a keystroke from a display label ("⇧H" → h+shift, "⌥e" → e+opt).
+function keystrokeFromLabel(lab: string): Keystroke {
+	const option = lab.includes("⌥");
+	const shift = lab.includes("⇧");
+	let key = lab.replace(/[⌥⇧]/g, "");
+	if (key.length === 1 && /[A-Z]/.test(key)) key = key.toLowerCase();
+	return {key, shift, option};
+}
+function simulate(labels: string[], upto: number): string {
+	let b = "";
+	for (let i = 0; i < upto; i++) {
+		const k = keystrokeFromLabel(labels[i]);
+		b = applyEdit(b, handleKey(b, k), nativeChar(k));
+	}
+	return b;
+}
+// Which keystroke comes next, given what's typed so far.
+function nextKeystroke(): Keystroke | null {
+	const labels = cur().d.labels;
+	for (let p = 0; p <= labels.length; p++) {
+		if (simulate(labels, p).normalize("NFC") === buffer.normalize("NFC"))
+			return p < labels.length ? keystrokeFromLabel(labels[p]) : null;
+	}
+	return labels.length ? keystrokeFromLabel(labels[0]) : null; // diverged → back to start
+}
+
+function tapChar(ch: string) {
+	sendKey({key: ch, shift: shiftArmed, option: optArmed});
+	shiftArmed = false; optArmed = false; updateMods();
+}
+function updateMods() {
+	document.querySelector("#kbd .mshift")?.classList.toggle("armed", shiftArmed);
+	document.querySelector("#kbd .mopt")?.classList.toggle("armed", optArmed);
+}
+function buildKeyboard() {
+	const kb = document.querySelector("#kbd");
+	if (!kb) return;
+	function cap(txt: string, cls: string, k: string, on: () => void): HTMLButtonElement {
+		const b = document.createElement("button");
+		b.textContent = txt; b.className = cls; if (k) b.dataset.k = k;
+		b.addEventListener("mousedown", (e) => e.preventDefault()); // keep page focus
+		b.addEventListener("click", (e) => { e.preventDefault(); on(); });
+		return b;
+	}
+	function row(): HTMLDivElement { const r = document.createElement("div"); r.className = "kbrow"; kb!.appendChild(r); return r; }
+	KB_ROWS.forEach((chars, ri) => {
+		const r = row();
+		if (ri === 3) r.appendChild(cap("⇧", "kb wide mshift", "", () => { shiftArmed = !shiftArmed; updateMods(); }));
+		for (const ch of chars) r.appendChild(cap(ch, "kb", ch, () => tapChar(ch)));
+		if (ri === 3) r.appendChild(cap("⌫", "kb wide", "", doBackspace));
+	});
+	const r = row();
+	r.appendChild(cap("⌥", "kb wide mopt", "", () => { optArmed = !optArmed; updateMods(); }));
+	r.appendChild(cap("space", "kb space", " ", () => tapChar(" ")));
+}
+function highlightKeyboard() {
+	const nk = nextKeystroke();
+	document.querySelectorAll("#kbd .kb").forEach((b) =>
+		b.classList.toggle("hot", nk !== null && (b as HTMLElement).dataset.k === nk.key));
+	document.querySelector("#kbd .mshift")?.classList.toggle("need", nk?.shift === true);
+	document.querySelector("#kbd .mopt")?.classList.toggle("need", nk?.option === true);
+}
+
+// -------------------------------------------------------- physical keys
 window.addEventListener("keydown", (e) => {
 	if (e.metaKey || e.ctrlKey) return;
-	if (e.key === "Backspace") {
-		e.preventDefault();
-		const edit = handleBackspace(buffer);
-		buffer = edit.type === "pass" ? dropLastCluster(buffer) : applyEdit(buffer, edit);
-		render();
-		return;
-	}
+	if (e.key === "Backspace") { e.preventDefault(); doBackspace(); return; }
 	const k = keyFromEvent(e);
 	if (k === null) return;
 	e.preventDefault();
-	const edit = handleKey(buffer, k);
-	buffer = applyEdit(buffer, edit, nativeChar(k));
-	render();
-	check();
+	sendKey(k);
 });
 
+buildKeyboard();
+$("#target").addEventListener("click", playCurrent);
 render();
+playCurrent();

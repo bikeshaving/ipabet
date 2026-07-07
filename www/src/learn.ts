@@ -2,6 +2,7 @@ import spec from "../../spec/ipabet.json";
 import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 import {CSS} from "./style.ts";
 import {STAGES, WORDBANK} from "./wordbank.ts";
+import {AUDIO} from "./audio-map.ts";
 // Shovel's asset pipeline rewrites this import to a hashed URL string at build
 // time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
@@ -24,7 +25,9 @@ function label(k: Keystroke): string {
 		(k.shift && /[a-z]/.test(k.key) ? k.key.toUpperCase() : k.key);
 }
 
-interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; }
+interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; audio?: string; }
+
+const AUDIO_OF = AUDIO as Record<string, string>;
 
 // glyph → its canonical spec key (first occurrence wins)
 const keyByGlyph = new Map<string, string>();
@@ -35,7 +38,7 @@ function glyphDrill(glyph: string): Drill | null {
 	const k = keyByGlyph.get(glyph);
 	if (k === undefined) return null;
 	const ks = keysFor(k);
-	return {target: typeKeys(ks), labels: ks.map(label)};
+	return {target: typeKeys(ks), labels: ks.map(label), audio: AUDIO_OF[glyph]};
 }
 // marks need a carrier: drill them on a bare "a".
 function markDrill(m: {opt: string; mark: string; name?: string}): Drill {
@@ -79,6 +82,14 @@ const LEARN_CSS = `
 	color: var(--dim); font-size: 0.8rem; padding: 0.2rem 0.7rem; cursor: pointer; }
 #stagenav button.on { border-color: var(--accent); color: var(--accent); }
 .notice { color: var(--dim); font-size: 0.9rem; text-align: center; }
+#kbd { max-width: 33rem; margin: 1.25rem auto 0; user-select: none; }
+.kbrow { display: flex; gap: 0.3rem; justify-content: center; margin-top: 0.3rem; }
+.kb { flex: 1 1 0; min-width: 0; padding: 0.5rem 0; border: 1px solid var(--kbd-line);
+	background: var(--kbd-bg); color: var(--fg); border-radius: 6px; cursor: pointer;
+	font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
+.kb.wide { flex: 1.5 1 0; } .kb.space { flex: 6 1 0; }
+.kb.hot { background: var(--accent); border-color: var(--accent); color: #fff; }
+.kb.armed, .kb.need { border-color: var(--accent); color: var(--accent); }
 `;
 
 export const LEARN_HTML = `<!DOCTYPE html>
@@ -108,11 +119,12 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<div id="hint"></div>
 		<div id="streak"></div>
 	</div>
+	<div id="kbd"></div>
 	<div id="stagenav"></div>
 
-	<p class="notice"><kbd>⇧</kbd> and <kbd>⌥</kbd> work like the real keyboard;
-	backspace peels diacritics one mark at a time. Two misses reveal the keys.
-	Hardware keyboard required — it's a typing tutor, after all.</p>
+	<p class="notice">Type on your keyboard or tap the keys — the next one lights up.
+	<kbd>⇧</kbd> and <kbd>⌥</kbd> behave like the real keyboard, and backspace peels
+	diacritics off one mark at a time. Click the symbol to hear it.</p>
 
 	<footer>
 		<a href="/">← IPAbet</a>
