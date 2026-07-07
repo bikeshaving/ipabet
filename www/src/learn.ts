@@ -1,198 +1,118 @@
+import spec from "../../spec/ipabet.json";
 import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 import {CSS} from "./style.ts";
-import {lessonIndexSection} from "./lesson-page.ts";
-import {LESSONS} from "./lessons.ts";
-// Shovel's asset pipeline rewrites this import to a hashed URL string at
-// build time; TypeScript sees the module itself, hence the ignore.
+import {STAGES, WORDBANK} from "./wordbank.ts";
+// Shovel's asset pipeline rewrites this import to a hashed URL string at build
+// time; TypeScript sees the module itself, hence the ignore.
 // @ts-ignore
 import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
 
-// /learn — typing drills. Drills are authored as KEYSTROKE SEQUENCES and
-// their targets are computed here by running the real engine (typeKeys), so
-// every drill is guaranteed typeable and every hint is guaranteed true.
+// /learn — a touch-typing tutor for IPA. No lectures, no quizzes: a single
+// drill that walks the syllabus stage by stage (progressive disclosure), each
+// stage introducing its new glyphs and then the words that just became
+// typeable. Every target is computed by the real engine, so all are correct.
 
-// Compact notation: "s" bare, "+h" shift, "~n" option, "~+2" option-shift.
-function seq(...keys: string[]): Keystroke[] {
-	return keys.map((k) => {
-		let shift = false, option = false, key = k;
-		while (key[0] === "+" || key[0] === "~") {
-			if (key[0] === "+") shift = true;
-			else option = true;
-			key = key.slice(1);
-		}
-		return {key, shift, option};
+function keysFor(specKey: string): Keystroke[] {
+	return [...specKey].map((c) => {
+		if (/[A-Z]/.test(c)) return {key: c.toLowerCase(), shift: true, option: false};
+		if (/[0-9]/.test(c)) return {key: c, shift: true, option: false}; // shifted-number row
+		return {key: c, shift: false, option: false};
 	});
 }
-
-function label(k: string): string {
-	let shift = false, option = false, key = k;
-	while (key[0] === "+" || key[0] === "~") {
-		if (key[0] === "+") shift = true;
-		else option = true;
-		key = key.slice(1);
-	}
-	const mods = (option ? "⌥" : "") + (shift ? "⇧" : "");
-	return mods + (shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
+function label(k: Keystroke): string {
+	return (k.option ? "⌥" : "") + (k.shift ? "⇧" : "") +
+		(k.shift && /[a-z]/.test(k.key) ? k.key.toUpperCase() : k.key);
 }
 
-function drill(word: string | undefined, ...keys: string[]) {
-	return {
-		target: typeKeys(seq(...keys)),
-		labels: keys.map(label),
-		word,
-	};
+interface Drill { target: string; labels: string[]; word?: string; gloss?: string; lang?: string; note?: string; }
+
+// glyph → its canonical spec key (first occurrence wins)
+const keyByGlyph = new Map<string, string>();
+for (const e of spec.letters as {key: string; glyph: string}[]) {
+	if (!keyByGlyph.has(e.glyph)) keyByGlyph.set(e.glyph, e.key);
+}
+function glyphDrill(glyph: string): Drill | null {
+	const k = keyByGlyph.get(glyph);
+	if (k === undefined) return null;
+	const ks = keysFor(k);
+	return {target: typeKeys(ks), labels: ks.map(label)};
+}
+// marks need a carrier: drill them on a bare "a".
+function markDrill(m: {opt: string; mark: string; name?: string}): Drill {
+	const ks: Keystroke[] = [{key: "a", shift: false, option: false}, {key: m.opt, shift: false, option: true}];
+	return {target: typeKeys(ks), labels: ks.map(label), note: (m.name ?? "").toLowerCase()};
 }
 
-const LEVELS = [
-	{
-		title: "Level 1 · The shifted number row",
-		blurb: "The IPA glyphs with no Latin letter live on ⇧ + numbers.",
-		drills: [
-			drill(undefined, "+5"),
-			drill(undefined, "+2"),
-			drill(undefined, "+1"),
-			drill(undefined, "+4"),
-			drill(undefined, "+3"),
-			drill(undefined, "+7"),
-		],
-	},
-	{
-		title: "Level 2 · Modifier transforms",
-		blurb: "A ⇧letter right after a glyph transforms it: H lenites, R retroflexes, G goes dorsal, J palatalizes, W rounds.",
-		drills: [
-			drill(undefined, "s", "+h"),
-			drill(undefined, "t", "+h"),
-			drill(undefined, "z", "+h"),
-			drill(undefined, "n", "+g"),
-			drill(undefined, "t", "+r"),
-			drill(undefined, "n", "+j"),
-			drill(undefined, "i", "+h"),
-			drill(undefined, "u", "+h"),
-			drill(undefined, "e", "+h"),
-			drill(undefined, "a", "+e"),
-			drill(undefined, "a", "+u"),
-			drill(undefined, "q", "+c"),
-		],
-	},
-	{
-		title: "Level 3 · The Option layer",
-		blurb: "Postfix diacritics: type the base, then ⌥+key decorates it. ⌥4 superscripts. R after a vowel adds rhoticity.",
-		drills: [
-			drill(undefined, "e", "~e"),
-			drill(undefined, "a", "~n"),
-			drill(undefined, "n", "~k"),
-			drill(undefined, "a", "~;"),
-			drill(undefined, "t", "h", "~4"),
-			drill(undefined, "~'"),
-			drill(undefined, "+5", "+r"),
-			drill(undefined, "a", "~n", "~n"),
-		],
-	},
-	{
-		title: "Level 4 · Words",
-		blurb: "Put it together — full transcriptions at typing speed.",
-		drills: [
-			drill("cat", "k", "a", "+e", "t"),
-			drill("ship", "s", "+h", "i", "+h", "p"),
-			drill("thing", "t", "+h", "i", "+h", "n", "+g"),
-			drill("judge", "d", "z", "+h", "a", "+u", "d", "z", "+h"),
-			drill("world", "w", "+5", "+h", "+r", "l", "d"),
-			drill("about", "+5", "~'", "b", "a", "u", "+h", "t"),
-			drill("phonetics", "f", "+5", "~'", "n", "e", "+h", "t", "i", "+h", "k", "s"),
-			drill("señor (nasalized)", "s", "e", "n", "~n", "o", "r"),
-		],
-	},
-];
+const LANG: Record<string, string> = {es: "Spanish", it: "Italian", en: "English", fr: "French", de: "German", ar: "Arabic"};
 
-const HEAR = LESSONS.flatMap((l) => l.transcribe).map(({word, say, target, labels}) => ({word, say, target, labels}));
+const STAGE_DATA = STAGES.map((s, i) => ({
+	title: s.title,
+	note: s.note,
+	glyphs: s.id === "marks"
+		? (spec.marks as {opt: string; mark: string; name?: string}[]).map(markDrill)
+		: [...s.glyphs].map(glyphDrill).filter((d): d is Drill => d !== null),
+	words: WORDBANK.filter((w) => w.stage === i).map((w): Drill => ({
+		target: w.ipa, labels: w.keys, word: w.w, gloss: w.gloss, lang: LANG[w.lang] ?? w.lang,
+	})),
+}));
+
+const LEARN_CSS = `
+#drill { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+	padding: 2rem 1.5rem 2.25rem; margin: 2rem 0 1rem; text-align: center; }
+#stage { color: var(--accent); font-size: 0.85rem; letter-spacing: 0.02em; }
+#note { color: var(--dim); font-size: 0.95rem; margin-top: 0.35rem; min-height: 2.6rem; }
+#prog { color: var(--dim); font-size: 0.8rem; margin-top: 0.75rem; }
+#target { font-size: 3.2rem; height: 4.6rem; line-height: 4.6rem; }
+#word { color: var(--dim); height: 1.5rem; font-size: 0.95rem; }
+#word b { color: var(--fg); font-weight: 600; }
+#typed { font-size: 2.2rem; height: 3.4rem; line-height: 3.4rem; margin-top: 0.5rem;
+	border-bottom: 2px solid var(--line); display: inline-block; min-width: 12rem;
+	font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; }
+#typed.good { border-color: #1a7f37; } #typed.bad { border-color: #c43a3a; }
+#hint { height: 2.4rem; margin-top: 1rem; }
+#hint kbd { font-size: 0.95rem; margin: 0 0.15rem; }
+#hint button { background: none; border: 1px solid var(--line); border-radius: 6px;
+	color: var(--dim); padding: 0.25rem 0.75rem; cursor: pointer; font-size: 0.85rem; }
+#streak { color: var(--accent); height: 1.4rem; font-size: 0.9rem; margin-top: 0.5rem; }
+#stagenav { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.5rem; }
+#stagenav button { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+	color: var(--dim); font-size: 0.8rem; padding: 0.2rem 0.7rem; cursor: pointer; }
+#stagenav button.on { border-color: var(--accent); color: var(--accent); }
+.notice { color: var(--dim); font-size: 0.9rem; text-align: center; }
+`;
 
 export const LEARN_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Learn IPAbet — typing drills</title>
-<meta name="description" content="Interactive drills that teach you to type IPA at full speed with IPAbet. Runs the real input-method engine in your browser.">
-<style>${CSS}
-#drill {
-	background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-	padding: 2rem 1.5rem; margin: 2rem 0; text-align: center;
-}
-#level { color: var(--dim); font-size: 0.9rem; }
-#blurb { color: var(--dim); font-size: 0.95rem; height: 2.6rem; margin-top: 0.25rem; }
-#target { font-size: 3rem; height: 4.4rem; line-height: 4.4rem; }
-#word { color: var(--dim); height: 1.4rem; font-size: 0.95rem; }
-#typed {
-	font-size: 2.2rem; height: 3.4rem; line-height: 3.4rem; margin-top: 0.75rem;
-	border-bottom: 2px solid var(--line); display: inline-block; min-width: 12rem;
-	font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif;
-}
-#typed.good { border-color: #1a7f37; }
-#typed.bad { border-color: #c43a3a; }
-#hint { height: 2.4rem; margin-top: 1rem; }
-#hint kbd { font-size: 0.95rem; margin: 0 0.15rem; }
-#hint button {
-	background: none; border: 1px solid var(--line); border-radius: 6px;
-	color: var(--dim); padding: 0.25rem 0.75rem; cursor: pointer; font-size: 0.85rem;
-}
-#streak { color: var(--accent); height: 1.4rem; font-size: 0.9rem; margin-top: 0.5rem; }
-#hear {
-	background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-	padding: 2rem 1.5rem; margin: 2rem 0; text-align: center;
-}
-#hear.armed, #drill.armed { border-color: var(--accent); }
-#hear h2 { margin: 0 0 0.75rem; }
-#play {
-	background: var(--accent); color: #fff; border: none; border-radius: 8px;
-	padding: 0.55rem 1.4rem; font-size: 1.05rem; cursor: pointer;
-}
-#hword { color: var(--dim); height: 1.4rem; margin-top: 0.75rem; }
-#htyped {
-	font-size: 2.2rem; height: 3.4rem; line-height: 3.4rem; margin-top: 0.25rem;
-	border-bottom: 2px solid var(--line); display: inline-block; min-width: 12rem;
-	font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif;
-}
-#htyped.good { border-color: #1a7f37; }
-#htyped.bad { border-color: #c43a3a; }
-#hhint { height: 2rem; margin-top: 0.5rem; }
-#hhint .ans { margin-left: 0.5rem; }
-#hstreak { color: var(--accent); height: 1.4rem; font-size: 0.9rem; }
-.notice { color: var(--dim); font-size: 0.9rem; text-align: center; }
-</style>
+<title>Learn IPAbet — the typing tutor</title>
+<meta name="description" content="A touch-typing tutor for the IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser — powered by the real IPAbet engine. No theory, no quizzes.">
+<style>${CSS}${LEARN_CSS}</style>
 </head>
 <body>
 <main>
 	<header>
 		<h1><a href="/" style="text-decoration:none;color:inherit">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/learn</span></h1>
-		<p class="tagline">Hear it. Type it. /tɹænˈskɹaɪb/.</p>
-		<p class="trust">Your keystrokes are interpreted by the same engine as the macOS input method — no install needed to practice.</p>
+		<p class="tagline">Learn it like touch typing.</p>
+		<p class="trust">Type what you see. No theory, no quizzes — just the glyphs and a growing bank of real words, drilled by the same engine as the macOS keyboard.</p>
 	</header>
 
-	<div id="hear">
-		<h2>Transcribe what you hear</h2>
-		<button id="play">🔊 play a word</button>
-		<div id="hword"></div>
-		<div><span id="htyped"></span></div>
-		<div id="hhint"></div>
-		<div id="hstreak"></div>
-	</div>
-
-	<h2 style="margin-top:3rem">Learn the keyboard</h2>
 	<div id="drill">
-		<div id="level"></div>
-		<div id="blurb"></div>
+		<div id="stage"></div>
+		<div id="note"></div>
+		<div id="prog"></div>
 		<div id="target" class="ipa"></div>
 		<div id="word"></div>
 		<div><span id="typed"></span></div>
 		<div id="hint"></div>
 		<div id="streak"></div>
 	</div>
+	<div id="stagenav"></div>
 
-	<p class="notice">Type what you see. <kbd>⇧</kbd> and <kbd>⌥</kbd> work like the real keyboard;
+	<p class="notice"><kbd>⇧</kbd> and <kbd>⌥</kbd> work like the real keyboard;
 	backspace peels diacritics one mark at a time. Two misses reveal the keys.
-	Hardware keyboard required — this is a typing tutor, after all.</p>
-
-	${lessonIndexSection()}
+	Hardware keyboard required — it's a typing tutor, after all.</p>
 
 	<footer>
 		<a href="/">← IPAbet</a>
@@ -200,8 +120,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
-<script>window.__LEVELS = ${JSON.stringify(LEVELS)};
-window.__HEAR = ${JSON.stringify(HEAR)};</script>
+<script>window.__STAGES = ${JSON.stringify(STAGE_DATA)};</script>
 <script type="module" src="${learnClient}"></script>
 </body>
 </html>`;
