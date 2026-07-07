@@ -9,8 +9,8 @@
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
   "B": "bilabial place",
-  "U": "centralize or back (vowels: oU→ɵ, aU→ɐ)",
-  "A": "drag toward a (vowels: oA→ɒ, uA→ʌ)",
+  "A": "drag toward a (vowels: oA→ɒ, uA→ʌ, 5A→ɐ)",
+  "Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ); Welsh y, Russian ы",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
   "P": "implosive (voiced glottalic ingressive)",
@@ -18,7 +18,7 @@
  },
  "letters": [
   {
-   "key": "1",
+   "key": "iY",
    "glyph": "ɨ",
    "cp": "U+0268",
    "name": "LATIN SMALL LETTER I WITH STROKE"
@@ -216,13 +216,13 @@
    "name": "LATIN SMALL LETTER Z"
   },
   {
-   "key": "1H",
+   "key": "eY",
    "glyph": "ɘ",
    "cp": "U+0258",
    "name": "LATIN SMALL LETTER REVERSED E"
   },
   {
-   "key": "1W",
+   "key": "uY",
    "glyph": "ʉ",
    "cp": "U+0289",
    "name": "LATIN SMALL LETTER U BAR"
@@ -288,7 +288,7 @@
    "name": "LATIN SMALL LETTER TURNED V"
   },
   {
-   "key": "aU",
+   "key": "5A",
    "glyph": "ɐ",
    "cp": "U+0250",
    "name": "LATIN SMALL LETTER TURNED A"
@@ -462,7 +462,7 @@
    "name": "LATIN SMALL LETTER OPEN O"
   },
   {
-   "key": "oU",
+   "key": "oY",
    "glyph": "ɵ",
    "cp": "U+0275",
    "name": "LATIN SMALL LETTER BARRED O"

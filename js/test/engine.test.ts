@@ -33,7 +33,9 @@ describe("digraph transforms", () => {
 	test("retroflex: t ⇧R → ʈ", () => expect(typed("t", "+r")).toBe("ʈ"));
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
 	test("open back: a ⇧H → ɑ", () => expect(typed("a", "+h")).toBe("ɑ"));
-	test("central a: a ⇧U → ɐ", () => expect(typed("a", "+u")).toBe("ɐ"));
+	test("central: ⇧5 ⇧A → ɐ", () => expect(typed("+5", "+a")).toBe("ɐ"));
+	test("y-vowel: i ⇧Y → ɨ", () => expect(typed("i", "+y")).toBe("ɨ"));
+	test("y-vowel: o ⇧Y → ɵ", () => expect(typed("o", "+y")).toBe("ɵ"));
 	test("strut: u ⇧A → ʌ", () => expect(typed("u", "+a")).toBe("ʌ"));
 	test("marks survive the swap: s ⌥; is unaffected, s̪ ⇧H keeps bridge", () => {
 		// dental s, then H: ʃ with the dental bridge preserved
