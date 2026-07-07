@@ -224,4 +224,4 @@ const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
 	26: [en("button", "b", "u", "+a", "+2", "+5", "n")],
 };
 for (let i = 0; i < CURRICULUM.length; i++)
-	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push({...friend, gloss: "false friend"});
+	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push(friend); // unlabelled — the jolt is the lesson
