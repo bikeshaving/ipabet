@@ -9,9 +9,9 @@
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
   "B": "bilabial place",
-  "U": "centralize or back (vowels: oU→ɵ, aU→ʌ)",
+  "U": "centralize or back (vowels: oU→ɵ)",
   "O": "drag toward o (vowels)",
-  "A": "drag toward a (vowels)",
+  "A": "drag toward a (vowels: oA→ɒ, uA→ʌ)",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
   "P": "implosive (voiced glottalic ingressive)",
@@ -283,7 +283,7 @@
    "name": "LATIN SMALL LETTER AE"
   },
   {
-   "key": "aU",
+   "key": "uA",
    "glyph": "ʌ",
    "cp": "U+028C",
    "name": "LATIN SMALL LETTER TURNED V"

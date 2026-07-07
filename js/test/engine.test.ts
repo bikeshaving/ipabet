@@ -33,7 +33,7 @@ describe("digraph transforms", () => {
 	test("retroflex: t ⇧R → ʈ", () => expect(typed("t", "+r")).toBe("ʈ"));
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
 	test("lax a: a ⇧H → ɐ", () => expect(typed("a", "+h")).toBe("ɐ"));
-	test("dark a: a ⇧U → ʌ", () => expect(typed("a", "+u")).toBe("ʌ"));
+	test("strut: u ⇧A → ʌ", () => expect(typed("u", "+a")).toBe("ʌ"));
 	test("marks survive the swap: s ⌥; is unaffected, s̪ ⇧H keeps bridge", () => {
 		// dental s, then H: ʃ with the dental bridge preserved
 		expect(typed("s", "~d", "+h")).toBe(nfc("ʃ\u{032A}"));
@@ -159,7 +159,7 @@ describe("rhotic R", () => {
 	test("a ⇧R → a˞ (spacing hook)", () => expect(typed("a", "+r")).toBe("a˞"));
 	test("rhoticity is a dimension: e ⇧R → e˞, ʌ ⇧R → ʌ˞", () => {
 		expect(typed("e", "+r")).toBe("e˞");
-		expect(typed("a", "+u", "+r")).toBe("ʌ˞");
+		expect(typed("u", "+a", "+r")).toBe("ʌ˞");
 	});
 });
 

@@ -70,20 +70,20 @@ export const CURRICULUM: Lesson[] = [
 		en("dog", "d", "o", "+h", "g"), en("off", "o", "+h", "f"), en("on", "o", "+h", "n"), en("lost", "l", "o", "+h", "s", "t"),
 		en("soft", "s", "o", "+h", "f", "t"), en("boss", "b", "o", "+h", "s"), en("pocket", "p", "o", "+h", "k", "i", "+h", "t"),
 	]},
-	{title: "The vowel in “cup”", sound: "ʌ", keys: ["a", "⇧U"], intro: "The vowel in “cup”.", words: [
-		en("cup", "k", "a", "+u", "p"), en("but", "b", "a", "+u", "t"), en("sun", "s", "a", "+u", "n"), en("mud", "m", "a", "+u", "d"),
-		en("bus", "b", "a", "+u", "s"), en("sunset", "s", "a", "+u", "n", "s", "e", "+h", "t"), en("public", "p", "a", "+u", "b", "l", "i", "+h", "k"),
+	{title: "The vowel in “cup”", sound: "ʌ", keys: ["u", "⇧A"], intro: "The vowel in “cup”.", words: [
+		en("cup", "k", "u", "+a", "p"), en("but", "b", "u", "+a", "t"), en("sun", "s", "u", "+a", "n"), en("mud", "m", "u", "+a", "d"),
+		en("bus", "b", "u", "+a", "s"), en("sunset", "s", "u", "+a", "n", "s", "e", "+h", "t"), en("public", "p", "u", "+a", "b", "l", "i", "+h", "k"),
 	]},
 
 	// ── Phase 2 · the digraphs you already spell (sh / th / ng) ──────
 	{title: "“sh” — ʃ", sound: "ʃ", keys: ["s", "⇧H"], intro: "The “sh” sound.", words: [
 		en("ship", "s", "+h", "i", "+h", "p"), en("she", "s", "+h", "i"), en("fish", "f", "i", "+h", "s", "+h"),
 		en("cash", "k", "a", "+e", "s", "+h"), en("shop", "s", "+h", "o", "+h", "p"), en("wish", "w", "i", "+h", "s", "+h"),
-		en("push", "p", "u", "+h", "s", "+h"), en("shut", "s", "+h", "a", "+u", "t"),
+		en("push", "p", "u", "+h", "s", "+h"), en("shut", "s", "+h", "u", "+a", "t"),
 	]},
 	{title: "“ng” — ŋ", sound: "ŋ", keys: ["n", "⇧G"], intro: "The “ng” at the back of “sing”.", words: [
 		en("sing", "s", "i", "+h", "n", "+g"), en("king", "k", "i", "+h", "n", "+g"), en("long", "l", "o", "+h", "n", "+g"),
-		en("song", "s", "o", "+h", "n", "+g"), en("bang", "b", "a", "+e", "n", "+g"), en("sung", "s", "a", "+u", "n", "+g"),
+		en("song", "s", "o", "+h", "n", "+g"), en("bang", "b", "a", "+e", "n", "+g"), en("sung", "s", "u", "+a", "n", "+g"),
 		en("shrimp", "s", "+h", "r", "+h", "i", "+h", "m", "p"), en("bring", "b", "r", "+h", "i", "+h", "n", "+g"),
 	]},
 	{title: "“th” — θ", sound: "θ", keys: ["t", "⇧H"], intro: "The voiceless “th” in “thin”.", words: [
@@ -96,13 +96,13 @@ export const CURRICULUM: Lesson[] = [
 		en("them", "d", "+h", "e", "+h", "m"), en("than", "d", "+h", "a", "+e", "n"), en("with", "w", "i", "+h", "d", "+h"),
 	]},
 	{title: "The English r — ɹ", sound: "ɹ", keys: ["r", "⇧H"], intro: "The English “r”. (Bare r is a rolled trill.)", words: [
-		en("red", "r", "+h", "e", "+h", "d"), en("run", "r", "+h", "a", "+u", "n"), en("rat", "r", "+h", "a", "+e", "t"),
-		en("rock", "r", "+h", "o", "+h", "k"), en("rug", "r", "+h", "a", "+u", "g"), en("trip", "t", "r", "+h", "i", "+h", "p"),
+		en("red", "r", "+h", "e", "+h", "d"), en("run", "r", "+h", "u", "+a", "n"), en("rat", "r", "+h", "a", "+e", "t"),
+		en("rock", "r", "+h", "o", "+h", "k"), en("rug", "r", "+h", "u", "+a", "g"), en("trip", "t", "r", "+h", "i", "+h", "p"),
 		en("fresh", "f", "r", "+h", "e", "+h", "s", "+h"), en("thrash", "t", "+h", "r", "+h", "a", "+e", "s", "+h"),
 	]},
 	{title: "The schwa — ə", sound: "ə", keys: ["⇧5"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
-		en("the", "d", "+h", "+5"), en("a", "+5"), en("sudden", "s", "a", "+u", "d", "+5", "n"),
-		en("seven", "s", "e", "+h", "v", "+5", "n"), en("under", "a", "+u", "n", "d", "+5", "r", "+h"),
+		en("the", "d", "+h", "+5"), en("a", "+5"), en("sudden", "s", "u", "+a", "d", "+5", "n"),
+		en("seven", "s", "e", "+h", "v", "+5", "n"), en("under", "u", "+a", "n", "d", "+5", "r", "+h"),
 		en("rabbit", "r", "+h", "a", "+e", "b", "+5", "t"), en("listen", "l", "i", "+h", "s", "+5", "n"),
 	]},
 
@@ -159,7 +159,7 @@ export const CURRICULUM: Lesson[] = [
 
 	// ── Phase 5 · the throat (Arabic) ───────────────────────────────
 	{title: "The glottal stop — ʔ", sound: "ʔ", keys: ["⇧2"], intro: "The glottal stop — the catch in the middle of “uh-oh”.", words: [
-		en("uh-oh", "a", "+u", "+2", "o", "u", "+h"), w("ana", "Arabic", "I", "+2", "a", "n", "a"),
+		en("uh-oh", "u", "+a", "+2", "o", "u", "+h"), w("ana", "Arabic", "I", "+2", "a", "n", "a"),
 	]},
 	{title: "The pharyngeal ħ", sound: "ħ", keys: ["⇧7"], intro: "A hard, whispered h from deep in the throat (Arabic ح).", words: [
 		w("ħabīb", "Arabic", "beloved", "+7", "a", "b", "i", "~;", "b"), w("ħaram", "Arabic", "forbidden", "+7", "a", "r", "a", "m"),
