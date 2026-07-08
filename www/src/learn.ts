@@ -89,6 +89,15 @@ const LEARN_CSS = `
 .kb.hot { background: var(--accent); border-color: var(--accent); color: #fff;
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
 .kb.armed, .kb.need { border-color: var(--accent); color: var(--accent); }
+#controls { display: flex; justify-content: flex-end; margin: 1.5rem 0 -.75rem; }
+#ear { display: inline-flex; align-items: center; gap: .45rem; font-size: .74rem;
+	letter-spacing: .02em; color: var(--dim); background: var(--bg);
+	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem;
+	cursor: pointer; transition: color .15s, border-color .15s; }
+#ear .dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); transition: background .15s, box-shadow .15s; }
+#ear[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+#ear[aria-pressed="true"] .dot { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+#target.masked { filter: blur(15px); opacity: .5; cursor: default; transition: filter .35s ease, opacity .35s ease; }
 @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
 `;
 
@@ -109,6 +118,10 @@ export const LEARN_HTML = `<!DOCTYPE html>
 		<p class="trust">Type what you see. A guided course — real words from the first lesson, one new sound at a time — drilled by the same engine as the macOS keyboard.</p>
 	</header>
 
+	<div id="controls">
+		<button id="ear" aria-pressed="false" title="Hide the symbol and type from the sound alone">
+			<span class="dot"></span>Ear training</button>
+	</div>
 	<div id="drill">
 		<div id="bar"><div id="barfill"></div></div>
 		<div id="stage"></div>
@@ -127,7 +140,8 @@ export const LEARN_HTML = `<!DOCTYPE html>
 
 	<p class="notice">Type on your keyboard or tap the keys — the next one lights up.
 	<kbd>⇧</kbd> and <kbd>⌥</kbd> behave like the real keyboard, and backspace peels
-	diacritics off one mark at a time. Click the symbol to hear it.</p>
+	diacritics off one mark at a time. Click the symbol to hear it. Flip on
+	<b>Ear training</b> to hide the symbol and transcribe from sound alone.</p>
 
 	<footer>
 		<a href="/">← IPAbet</a>

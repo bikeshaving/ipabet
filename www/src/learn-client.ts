@@ -21,8 +21,9 @@ const LESSONS = window.__CURRICULUM;
 // ---------------------------------------------------------------- state
 const KEY = "ipabet-learn-course-v1";
 let li = 0, wi = 0, buffer = "", misses = 0, streak = 0, hinted = false;
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s.li === "number") li = Math.min(Math.max(s.li, 0), LESSONS.length - 1); } catch { /* no storage */ }
-function save() { try { localStorage.setItem(KEY, JSON.stringify({li})); } catch { /* ignore */ } }
+let ear = false, shown = false; // ear-training: hide the target, type from sound; `shown` = revealed this word
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s.li === "number") li = Math.min(Math.max(s.li, 0), LESSONS.length - 1); if (s && s.ear) ear = true; } catch { /* no storage */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({li, ear})); } catch { /* ignore */ } }
 const lesson = () => LESSONS[li];
 const word = () => lesson().words[wi];
 
@@ -61,12 +62,16 @@ function dropLastCluster(text: string): string {
 
 // ---------------------------------------------------------------- render
 function renderHint() {
-	const show = hinted || misses >= 2;
+	if (ear && !shown) { // ear mode: never spill the keys; offer a reveal escape instead
+		$("#hint").innerHTML = `<button id="hintbtn">reveal answer</button>`;
+		document.querySelector("#hintbtn")?.addEventListener("click", () => { shown = true; hinted = true; render(); });
+		return;
+	}
+	const show = hinted || misses >= 2 || (ear && shown);
 	$("#hint").innerHTML = show
 		? word().labels.map((l) => `<kbd>${l}</kbd>`).join("")
 		: `<button id="hintbtn">show keys</button>`;
-	const btn = document.querySelector("#hintbtn");
-	if (btn) btn.addEventListener("click", () => { hinted = true; renderHint(); });
+	document.querySelector("#hintbtn")?.addEventListener("click", () => { hinted = true; renderHint(); });
 }
 function render() {
 	const les = lesson();
@@ -75,8 +80,9 @@ function render() {
 	$("#note").textContent = les.intro;
 	$("#prog").textContent = wi === 0 && les.sound ? "the new sound, on its own — keys shown" : `${wi + 1} / ${les.words.length}`;
 	$("#target").textContent = `/${word().target}/`;
-	$("#target").style.cursor = les.audio ? "pointer" : "default";
-	$("#target").title = les.audio ? "play the sound" : "";
+	$("#target").classList.toggle("masked", ear && !shown); // ear mode hides the answer until solved/revealed
+	$("#target").style.cursor = word().audio ? "pointer" : "default";
+	$("#target").title = ear && !shown ? "listen — type what you hear" : "play the sound";
 	$("#word").innerHTML = `<b>${word().word}</b>${word().gloss ? ` — ${word().gloss}` : ""}${word().lang ? ` <span class="chip">${word().lang}</span>` : ""}`;
 	$("#typed").textContent = buffer;
 	$("#streak").textContent = streak > 2 ? `${streak} in a row` : "";
@@ -85,11 +91,11 @@ function render() {
 	highlightKeyboard();
 }
 function goWord(newLesson: boolean) {
-	buffer = ""; misses = 0;
-	hinted = wi === 0;            // first word of a lesson (the demo) shows its keys
+	buffer = ""; misses = 0; shown = false;
+	hinted = !ear && wi === 0;   // first word of a lesson shows its keys — but never in ear mode
 	render();
-	// new lesson with a taught sound → play that phoneme intro; otherwise play the word itself
-	if (newLesson && lesson().audio) playSound();
+	if (ear) playWord();                              // ear mode: always play the thing to transcribe
+	else if (newLesson && lesson().audio) playSound(); // else: new-sound lessons open on the phoneme
 	else playWord();
 }
 function next() {
@@ -102,6 +108,7 @@ function next() {
 }
 function check() {
 	if (buffer.normalize("NFC") === word().target.normalize("NFC")) {
+		shown = true; render(); // reveal the answer as the reward (un-masks it in ear mode)
 		$("#typedwrap").classList.add("good");
 		setTimeout(() => { $("#typedwrap").classList.remove("good"); next(); }, 350);
 	} else if ([...buffer].length >= [...word().target].length) {
@@ -191,4 +198,11 @@ window.addEventListener("keydown", (e) => {
 buildKeyboard();
 $("#target").addEventListener("click", playWord);
 document.querySelector("#say")?.addEventListener("click", playWord);
+const earBtn = document.querySelector("#ear");
+earBtn?.setAttribute("aria-pressed", String(ear)); // reflect persisted state on load
+earBtn?.addEventListener("click", () => {
+	ear = !ear; save();
+	earBtn.setAttribute("aria-pressed", String(ear));
+	goWord(false); // re-cast the current word under the new mode
+});
 goWord(true);
