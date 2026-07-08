@@ -18,8 +18,8 @@ const audioFor = (g?: string): string | undefined => (g ? (AUDIO_OF[g] ?? AUDIO_
 
 const LESSONS = CURRICULUM.map((l) => ({
 	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro,
-	audio: (l.sound ? WORD_AUDIO[l.sound] : undefined) ?? audioFor(l.sound), // Polly demo (held/framed), Commons fallback
-	words: l.words.map((w) => ({...w, audio: WORD_AUDIO[w.target]})),
+	audio: audioFor(l.sound) ?? (l.sound ? WORD_AUDIO[l.sound] : undefined), // Commons recording (more oomph); Polly demo only where Wiki has none (diphthongs)
+	words: l.words.map((wd) => ({...wd, audio: wd.lang ? WORD_AUDIO[wd.target] : (audioFor(wd.target) ?? WORD_AUDIO[wd.target])})),
 }));
 
 const LEARN_CSS = `
