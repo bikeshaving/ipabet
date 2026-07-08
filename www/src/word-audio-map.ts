@@ -25,469 +25,465 @@ import w9 from "./word-audio/b807144d69e91833.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
 import w10 from "./word-audio/6c83b1e9419e15f6.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w11 from "./word-audio/1765bbb3a5ccb6e5.mp3" with {assetBase: "/assets/"};
+import w11 from "./word-audio/735a53eafa47fcb4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w12 from "./word-audio/58329f9f2e3381e4.mp3" with {assetBase: "/assets/"};
+import w12 from "./word-audio/62223fbaf607e5ca.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w13 from "./word-audio/735a53eafa47fcb4.mp3" with {assetBase: "/assets/"};
+import w13 from "./word-audio/0e75a53fe4acc31e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w14 from "./word-audio/62223fbaf607e5ca.mp3" with {assetBase: "/assets/"};
+import w14 from "./word-audio/ef1c7e872609932b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w15 from "./word-audio/0e75a53fe4acc31e.mp3" with {assetBase: "/assets/"};
+import w15 from "./word-audio/e64563a0de950d8d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w16 from "./word-audio/ef1c7e872609932b.mp3" with {assetBase: "/assets/"};
+import w16 from "./word-audio/05ab7cc826a35d58.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w17 from "./word-audio/e64563a0de950d8d.mp3" with {assetBase: "/assets/"};
+import w17 from "./word-audio/3cce6fa16698e20d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w18 from "./word-audio/05ab7cc826a35d58.mp3" with {assetBase: "/assets/"};
+import w18 from "./word-audio/8767a78b37cd48b7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w19 from "./word-audio/3cce6fa16698e20d.mp3" with {assetBase: "/assets/"};
+import w19 from "./word-audio/f8f857b9054acc52.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w20 from "./word-audio/8767a78b37cd48b7.mp3" with {assetBase: "/assets/"};
+import w20 from "./word-audio/6da7b1d64a71fb99.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w21 from "./word-audio/f8f857b9054acc52.mp3" with {assetBase: "/assets/"};
+import w21 from "./word-audio/2c85057cdc841443.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w22 from "./word-audio/6da7b1d64a71fb99.mp3" with {assetBase: "/assets/"};
+import w22 from "./word-audio/efd5098a18baf7bd.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w23 from "./word-audio/2c85057cdc841443.mp3" with {assetBase: "/assets/"};
+import w23 from "./word-audio/1ee5d8375fc80535.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w24 from "./word-audio/efd5098a18baf7bd.mp3" with {assetBase: "/assets/"};
+import w24 from "./word-audio/2f09e3487e1bc583.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w25 from "./word-audio/1ee5d8375fc80535.mp3" with {assetBase: "/assets/"};
+import w25 from "./word-audio/4000de4c478f0b0f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w26 from "./word-audio/2f09e3487e1bc583.mp3" with {assetBase: "/assets/"};
+import w26 from "./word-audio/55fef1f5102ad0f9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w27 from "./word-audio/4000de4c478f0b0f.mp3" with {assetBase: "/assets/"};
+import w27 from "./word-audio/2b432f7a090dadc6.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w28 from "./word-audio/55fef1f5102ad0f9.mp3" with {assetBase: "/assets/"};
+import w28 from "./word-audio/1fbf14b59b4b5d49.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w29 from "./word-audio/2b432f7a090dadc6.mp3" with {assetBase: "/assets/"};
+import w29 from "./word-audio/58382170e483c779.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w30 from "./word-audio/1fbf14b59b4b5d49.mp3" with {assetBase: "/assets/"};
+import w30 from "./word-audio/8c2e312fff746623.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w31 from "./word-audio/58382170e483c779.mp3" with {assetBase: "/assets/"};
+import w31 from "./word-audio/5f2b7c39d09ab6f0.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w32 from "./word-audio/8c2e312fff746623.mp3" with {assetBase: "/assets/"};
+import w32 from "./word-audio/51cad327eb03223e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w33 from "./word-audio/5f2b7c39d09ab6f0.mp3" with {assetBase: "/assets/"};
+import w33 from "./word-audio/e72c6cded9836c80.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w34 from "./word-audio/51cad327eb03223e.mp3" with {assetBase: "/assets/"};
+import w34 from "./word-audio/4e5e48f91dd3eef5.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w35 from "./word-audio/e72c6cded9836c80.mp3" with {assetBase: "/assets/"};
+import w35 from "./word-audio/c48f643a15d708cd.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w36 from "./word-audio/4e5e48f91dd3eef5.mp3" with {assetBase: "/assets/"};
+import w36 from "./word-audio/ad595a329b0b5059.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w37 from "./word-audio/c48f643a15d708cd.mp3" with {assetBase: "/assets/"};
+import w37 from "./word-audio/7785a1cb6e79b931.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w38 from "./word-audio/ad595a329b0b5059.mp3" with {assetBase: "/assets/"};
+import w38 from "./word-audio/ac4c8f10da57e080.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w39 from "./word-audio/7785a1cb6e79b931.mp3" with {assetBase: "/assets/"};
+import w39 from "./word-audio/f85398b26c812342.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w40 from "./word-audio/ac4c8f10da57e080.mp3" with {assetBase: "/assets/"};
+import w40 from "./word-audio/590935cc64dcf0ed.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w41 from "./word-audio/f85398b26c812342.mp3" with {assetBase: "/assets/"};
+import w41 from "./word-audio/e284d4c27db1f2ad.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w42 from "./word-audio/590935cc64dcf0ed.mp3" with {assetBase: "/assets/"};
+import w42 from "./word-audio/0602d497086f8f9a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w43 from "./word-audio/e284d4c27db1f2ad.mp3" with {assetBase: "/assets/"};
+import w43 from "./word-audio/fab59ec4e96faa4c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w44 from "./word-audio/0602d497086f8f9a.mp3" with {assetBase: "/assets/"};
+import w44 from "./word-audio/c70f63821dfcee2c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w45 from "./word-audio/fab59ec4e96faa4c.mp3" with {assetBase: "/assets/"};
+import w45 from "./word-audio/06b74973f6974924.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w46 from "./word-audio/c70f63821dfcee2c.mp3" with {assetBase: "/assets/"};
+import w46 from "./word-audio/f8da1944518166b4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w47 from "./word-audio/06b74973f6974924.mp3" with {assetBase: "/assets/"};
+import w47 from "./word-audio/2bcb350049289a92.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w48 from "./word-audio/f8da1944518166b4.mp3" with {assetBase: "/assets/"};
+import w48 from "./word-audio/4323792549db1f87.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w49 from "./word-audio/2bcb350049289a92.mp3" with {assetBase: "/assets/"};
+import w49 from "./word-audio/bca88533d2b3ebdc.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w50 from "./word-audio/4323792549db1f87.mp3" with {assetBase: "/assets/"};
+import w50 from "./word-audio/73aea24cc5759375.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w51 from "./word-audio/bca88533d2b3ebdc.mp3" with {assetBase: "/assets/"};
+import w51 from "./word-audio/92f468ea12201ec9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w52 from "./word-audio/73aea24cc5759375.mp3" with {assetBase: "/assets/"};
+import w52 from "./word-audio/2f769db2a27d48e4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w53 from "./word-audio/92f468ea12201ec9.mp3" with {assetBase: "/assets/"};
+import w53 from "./word-audio/cb5963c298ff3848.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w54 from "./word-audio/2f769db2a27d48e4.mp3" with {assetBase: "/assets/"};
+import w54 from "./word-audio/c4459def274ea118.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w55 from "./word-audio/cb5963c298ff3848.mp3" with {assetBase: "/assets/"};
+import w55 from "./word-audio/31b6cf16a6c99a00.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w56 from "./word-audio/c4459def274ea118.mp3" with {assetBase: "/assets/"};
+import w56 from "./word-audio/2e015595111299c3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w57 from "./word-audio/31b6cf16a6c99a00.mp3" with {assetBase: "/assets/"};
+import w57 from "./word-audio/b26f8f688f84d2a5.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w58 from "./word-audio/2e015595111299c3.mp3" with {assetBase: "/assets/"};
+import w58 from "./word-audio/72a4997c4b2610f1.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w59 from "./word-audio/b26f8f688f84d2a5.mp3" with {assetBase: "/assets/"};
+import w59 from "./word-audio/1dd3dafa5c9823b1.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w60 from "./word-audio/72a4997c4b2610f1.mp3" with {assetBase: "/assets/"};
+import w60 from "./word-audio/39d633f57efa79ff.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w61 from "./word-audio/1dd3dafa5c9823b1.mp3" with {assetBase: "/assets/"};
+import w61 from "./word-audio/f47404204a6441ea.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w62 from "./word-audio/39d633f57efa79ff.mp3" with {assetBase: "/assets/"};
+import w62 from "./word-audio/9015029910c52130.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w63 from "./word-audio/f47404204a6441ea.mp3" with {assetBase: "/assets/"};
+import w63 from "./word-audio/c4f79eb46b16efbb.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w64 from "./word-audio/9015029910c52130.mp3" with {assetBase: "/assets/"};
+import w64 from "./word-audio/6151dce673af1408.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w65 from "./word-audio/c4f79eb46b16efbb.mp3" with {assetBase: "/assets/"};
+import w65 from "./word-audio/f01af2d60bab6d84.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w66 from "./word-audio/6151dce673af1408.mp3" with {assetBase: "/assets/"};
+import w66 from "./word-audio/9daaae2c4a3d1c16.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w67 from "./word-audio/f01af2d60bab6d84.mp3" with {assetBase: "/assets/"};
+import w67 from "./word-audio/d803a2ef8cb175b2.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w68 from "./word-audio/9daaae2c4a3d1c16.mp3" with {assetBase: "/assets/"};
+import w68 from "./word-audio/67e3310106d62713.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w69 from "./word-audio/d803a2ef8cb175b2.mp3" with {assetBase: "/assets/"};
+import w69 from "./word-audio/720c4017082e2e21.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w70 from "./word-audio/67e3310106d62713.mp3" with {assetBase: "/assets/"};
+import w70 from "./word-audio/24c9add753c5413a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w71 from "./word-audio/720c4017082e2e21.mp3" with {assetBase: "/assets/"};
+import w71 from "./word-audio/796827dbd61f2e0f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w72 from "./word-audio/24c9add753c5413a.mp3" with {assetBase: "/assets/"};
+import w72 from "./word-audio/143087f37f973219.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w73 from "./word-audio/796827dbd61f2e0f.mp3" with {assetBase: "/assets/"};
+import w73 from "./word-audio/9c5b117cf961fabc.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w74 from "./word-audio/143087f37f973219.mp3" with {assetBase: "/assets/"};
+import w74 from "./word-audio/62a4f820cad64399.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w75 from "./word-audio/9c5b117cf961fabc.mp3" with {assetBase: "/assets/"};
+import w75 from "./word-audio/a2669ab71bc61c4d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w76 from "./word-audio/62a4f820cad64399.mp3" with {assetBase: "/assets/"};
+import w76 from "./word-audio/f4d356122f133eec.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w77 from "./word-audio/a2669ab71bc61c4d.mp3" with {assetBase: "/assets/"};
+import w77 from "./word-audio/fbd659c91f56a2c9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w78 from "./word-audio/f4d356122f133eec.mp3" with {assetBase: "/assets/"};
+import w78 from "./word-audio/3eb51be8bf098a13.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w79 from "./word-audio/fbd659c91f56a2c9.mp3" with {assetBase: "/assets/"};
+import w79 from "./word-audio/2c3f7422d0bf07b7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w80 from "./word-audio/3eb51be8bf098a13.mp3" with {assetBase: "/assets/"};
+import w80 from "./word-audio/0409c3ecdd080a78.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w81 from "./word-audio/2c3f7422d0bf07b7.mp3" with {assetBase: "/assets/"};
+import w81 from "./word-audio/a092cdc04eac20e6.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w82 from "./word-audio/0409c3ecdd080a78.mp3" with {assetBase: "/assets/"};
+import w82 from "./word-audio/575aa7d42b557ae0.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w83 from "./word-audio/a092cdc04eac20e6.mp3" with {assetBase: "/assets/"};
+import w83 from "./word-audio/5bb2865ef5992be4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w84 from "./word-audio/575aa7d42b557ae0.mp3" with {assetBase: "/assets/"};
+import w84 from "./word-audio/9104d7766e09f375.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w85 from "./word-audio/5bb2865ef5992be4.mp3" with {assetBase: "/assets/"};
+import w85 from "./word-audio/fa1a3edee106a239.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w86 from "./word-audio/9104d7766e09f375.mp3" with {assetBase: "/assets/"};
+import w86 from "./word-audio/61612e59cedc4a55.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w87 from "./word-audio/fa1a3edee106a239.mp3" with {assetBase: "/assets/"};
+import w87 from "./word-audio/937e5e8d1b7f2b59.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w88 from "./word-audio/61612e59cedc4a55.mp3" with {assetBase: "/assets/"};
+import w88 from "./word-audio/3ab289ca8b9dfe30.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w89 from "./word-audio/937e5e8d1b7f2b59.mp3" with {assetBase: "/assets/"};
+import w89 from "./word-audio/623b1d3cf10ac8a3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w90 from "./word-audio/3ab289ca8b9dfe30.mp3" with {assetBase: "/assets/"};
+import w90 from "./word-audio/65d619da522d1c22.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w91 from "./word-audio/623b1d3cf10ac8a3.mp3" with {assetBase: "/assets/"};
+import w91 from "./word-audio/f35a92eacc84f9e9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w92 from "./word-audio/65d619da522d1c22.mp3" with {assetBase: "/assets/"};
+import w92 from "./word-audio/a1a68d36efeabf97.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w93 from "./word-audio/f35a92eacc84f9e9.mp3" with {assetBase: "/assets/"};
+import w93 from "./word-audio/b85da8e9e7b8630e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w94 from "./word-audio/a1a68d36efeabf97.mp3" with {assetBase: "/assets/"};
+import w94 from "./word-audio/b52c0dd4b54fe695.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w95 from "./word-audio/b85da8e9e7b8630e.mp3" with {assetBase: "/assets/"};
+import w95 from "./word-audio/a892254dbbd02d45.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w96 from "./word-audio/b52c0dd4b54fe695.mp3" with {assetBase: "/assets/"};
+import w96 from "./word-audio/0106cfd5d7daca69.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w97 from "./word-audio/a892254dbbd02d45.mp3" with {assetBase: "/assets/"};
+import w97 from "./word-audio/00a0750183068ebe.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w98 from "./word-audio/0106cfd5d7daca69.mp3" with {assetBase: "/assets/"};
+import w98 from "./word-audio/2441b2bfecf98a4f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w99 from "./word-audio/00a0750183068ebe.mp3" with {assetBase: "/assets/"};
+import w99 from "./word-audio/eb8cdec2dd32b2bb.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w100 from "./word-audio/2441b2bfecf98a4f.mp3" with {assetBase: "/assets/"};
+import w100 from "./word-audio/cec9c874826c2569.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w101 from "./word-audio/eb8cdec2dd32b2bb.mp3" with {assetBase: "/assets/"};
+import w101 from "./word-audio/95b21a9a0aef9646.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w102 from "./word-audio/cec9c874826c2569.mp3" with {assetBase: "/assets/"};
+import w102 from "./word-audio/4b27df8bfd34fbec.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w103 from "./word-audio/95b21a9a0aef9646.mp3" with {assetBase: "/assets/"};
+import w103 from "./word-audio/8599cd0cb3a90801.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w104 from "./word-audio/4b27df8bfd34fbec.mp3" with {assetBase: "/assets/"};
+import w104 from "./word-audio/e25898f036b3f04c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w105 from "./word-audio/8599cd0cb3a90801.mp3" with {assetBase: "/assets/"};
+import w105 from "./word-audio/028253dce631d3a5.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w106 from "./word-audio/e25898f036b3f04c.mp3" with {assetBase: "/assets/"};
+import w106 from "./word-audio/50016fbd18bba397.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w107 from "./word-audio/028253dce631d3a5.mp3" with {assetBase: "/assets/"};
+import w107 from "./word-audio/19b487e36aac42d0.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w108 from "./word-audio/50016fbd18bba397.mp3" with {assetBase: "/assets/"};
+import w108 from "./word-audio/58200b9c60f53532.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w109 from "./word-audio/19b487e36aac42d0.mp3" with {assetBase: "/assets/"};
+import w109 from "./word-audio/df3d150dfd72adb7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w110 from "./word-audio/58200b9c60f53532.mp3" with {assetBase: "/assets/"};
+import w110 from "./word-audio/ef58238216bc9ff3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w111 from "./word-audio/df3d150dfd72adb7.mp3" with {assetBase: "/assets/"};
+import w111 from "./word-audio/7d178562bc7404f3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w112 from "./word-audio/ef58238216bc9ff3.mp3" with {assetBase: "/assets/"};
+import w112 from "./word-audio/765c89bb4807eb63.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w113 from "./word-audio/7d178562bc7404f3.mp3" with {assetBase: "/assets/"};
+import w113 from "./word-audio/7cd878aa25ef4bbe.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w114 from "./word-audio/765c89bb4807eb63.mp3" with {assetBase: "/assets/"};
+import w114 from "./word-audio/f92f97e4fa262573.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w115 from "./word-audio/7cd878aa25ef4bbe.mp3" with {assetBase: "/assets/"};
+import w115 from "./word-audio/4af18e7262da0931.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w116 from "./word-audio/f92f97e4fa262573.mp3" with {assetBase: "/assets/"};
+import w116 from "./word-audio/84429395ebdc12cc.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w117 from "./word-audio/4af18e7262da0931.mp3" with {assetBase: "/assets/"};
+import w117 from "./word-audio/4afb5d1b0e049301.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w118 from "./word-audio/84429395ebdc12cc.mp3" with {assetBase: "/assets/"};
+import w118 from "./word-audio/0b47e27983e10fc4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w119 from "./word-audio/4afb5d1b0e049301.mp3" with {assetBase: "/assets/"};
+import w119 from "./word-audio/1a94655d25ccee50.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w120 from "./word-audio/0b47e27983e10fc4.mp3" with {assetBase: "/assets/"};
+import w120 from "./word-audio/842151ca8d0b19e9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w121 from "./word-audio/1a94655d25ccee50.mp3" with {assetBase: "/assets/"};
+import w121 from "./word-audio/fd6947db265c70f3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w122 from "./word-audio/842151ca8d0b19e9.mp3" with {assetBase: "/assets/"};
+import w122 from "./word-audio/c3708ccaae38201b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w123 from "./word-audio/fd6947db265c70f3.mp3" with {assetBase: "/assets/"};
+import w123 from "./word-audio/b1ef51bb50135895.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w124 from "./word-audio/c3708ccaae38201b.mp3" with {assetBase: "/assets/"};
+import w124 from "./word-audio/c007c96d4d6c3ffb.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w125 from "./word-audio/b1ef51bb50135895.mp3" with {assetBase: "/assets/"};
+import w125 from "./word-audio/6c227c7f9d77f18d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w126 from "./word-audio/c007c96d4d6c3ffb.mp3" with {assetBase: "/assets/"};
+import w126 from "./word-audio/ed77ab7b3dff0449.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w127 from "./word-audio/6c227c7f9d77f18d.mp3" with {assetBase: "/assets/"};
+import w127 from "./word-audio/e22df7616e37fd37.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w128 from "./word-audio/ed77ab7b3dff0449.mp3" with {assetBase: "/assets/"};
+import w128 from "./word-audio/18f43e0cb5badc50.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w129 from "./word-audio/e22df7616e37fd37.mp3" with {assetBase: "/assets/"};
+import w129 from "./word-audio/30acdef27c77fd28.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w130 from "./word-audio/18f43e0cb5badc50.mp3" with {assetBase: "/assets/"};
+import w130 from "./word-audio/48b38746835f04d1.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w131 from "./word-audio/30acdef27c77fd28.mp3" with {assetBase: "/assets/"};
+import w131 from "./word-audio/b9f0ce97e212dc6e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w132 from "./word-audio/48b38746835f04d1.mp3" with {assetBase: "/assets/"};
+import w132 from "./word-audio/131666980fd69b52.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w133 from "./word-audio/b9f0ce97e212dc6e.mp3" with {assetBase: "/assets/"};
+import w133 from "./word-audio/ce36aef2ada6e785.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w134 from "./word-audio/131666980fd69b52.mp3" with {assetBase: "/assets/"};
+import w134 from "./word-audio/f4ccbfbc9c7b972e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w135 from "./word-audio/ce36aef2ada6e785.mp3" with {assetBase: "/assets/"};
+import w135 from "./word-audio/4d0c9b34111beb1d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w136 from "./word-audio/f4ccbfbc9c7b972e.mp3" with {assetBase: "/assets/"};
+import w136 from "./word-audio/862f8937c4d6b535.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w137 from "./word-audio/4d0c9b34111beb1d.mp3" with {assetBase: "/assets/"};
+import w137 from "./word-audio/fa54adf327a694a1.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w138 from "./word-audio/862f8937c4d6b535.mp3" with {assetBase: "/assets/"};
+import w138 from "./word-audio/34a13bba68a3ab71.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w139 from "./word-audio/fa54adf327a694a1.mp3" with {assetBase: "/assets/"};
+import w139 from "./word-audio/d1f526057ce7328c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w140 from "./word-audio/34a13bba68a3ab71.mp3" with {assetBase: "/assets/"};
+import w140 from "./word-audio/ffb22ad1fe39268f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w141 from "./word-audio/d1f526057ce7328c.mp3" with {assetBase: "/assets/"};
+import w141 from "./word-audio/709019f8340a539c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w142 from "./word-audio/ffb22ad1fe39268f.mp3" with {assetBase: "/assets/"};
+import w142 from "./word-audio/9a20409f62b8db48.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w143 from "./word-audio/709019f8340a539c.mp3" with {assetBase: "/assets/"};
+import w143 from "./word-audio/88964dcae2f00b6d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w144 from "./word-audio/9a20409f62b8db48.mp3" with {assetBase: "/assets/"};
+import w144 from "./word-audio/54d99c2740a22203.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w145 from "./word-audio/88964dcae2f00b6d.mp3" with {assetBase: "/assets/"};
+import w145 from "./word-audio/71c897b5a6056f8f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w146 from "./word-audio/54d99c2740a22203.mp3" with {assetBase: "/assets/"};
+import w146 from "./word-audio/5c7689be6fcabf58.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w147 from "./word-audio/71c897b5a6056f8f.mp3" with {assetBase: "/assets/"};
+import w147 from "./word-audio/e725550ba5999545.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w148 from "./word-audio/5c7689be6fcabf58.mp3" with {assetBase: "/assets/"};
+import w148 from "./word-audio/1bbab6f25b324a52.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w149 from "./word-audio/e725550ba5999545.mp3" with {assetBase: "/assets/"};
+import w149 from "./word-audio/019e9ce03f33edc8.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w150 from "./word-audio/1bbab6f25b324a52.mp3" with {assetBase: "/assets/"};
+import w150 from "./word-audio/dc385046258da0f7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w151 from "./word-audio/019e9ce03f33edc8.mp3" with {assetBase: "/assets/"};
+import w151 from "./word-audio/282bc7a9174a9a4b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w152 from "./word-audio/dc385046258da0f7.mp3" with {assetBase: "/assets/"};
+import w152 from "./word-audio/6442d5ce14838b77.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w153 from "./word-audio/282bc7a9174a9a4b.mp3" with {assetBase: "/assets/"};
+import w153 from "./word-audio/e73487fdcf676ede.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w154 from "./word-audio/6442d5ce14838b77.mp3" with {assetBase: "/assets/"};
+import w154 from "./word-audio/6576dd4f68fb2a38.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w155 from "./word-audio/e73487fdcf676ede.mp3" with {assetBase: "/assets/"};
+import w155 from "./word-audio/82350adc1280ecef.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w156 from "./word-audio/6576dd4f68fb2a38.mp3" with {assetBase: "/assets/"};
+import w156 from "./word-audio/1e6eaa88bd7d86d9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w157 from "./word-audio/82350adc1280ecef.mp3" with {assetBase: "/assets/"};
+import w157 from "./word-audio/290847a5645c0b16.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w158 from "./word-audio/1e6eaa88bd7d86d9.mp3" with {assetBase: "/assets/"};
+import w158 from "./word-audio/fcdf581407f95bfe.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w159 from "./word-audio/290847a5645c0b16.mp3" with {assetBase: "/assets/"};
+import w159 from "./word-audio/a4d9a15b4b9ceb1e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w160 from "./word-audio/fcdf581407f95bfe.mp3" with {assetBase: "/assets/"};
+import w160 from "./word-audio/444d6b6a0cf9fcb3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w161 from "./word-audio/a4d9a15b4b9ceb1e.mp3" with {assetBase: "/assets/"};
+import w161 from "./word-audio/551f7ad6dd8b5249.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w162 from "./word-audio/444d6b6a0cf9fcb3.mp3" with {assetBase: "/assets/"};
+import w162 from "./word-audio/33b873513f3edf9d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w163 from "./word-audio/551f7ad6dd8b5249.mp3" with {assetBase: "/assets/"};
+import w163 from "./word-audio/6c22a7bb85c1d4c4.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w164 from "./word-audio/33b873513f3edf9d.mp3" with {assetBase: "/assets/"};
+import w164 from "./word-audio/ea8aaec3415429f0.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w165 from "./word-audio/6c22a7bb85c1d4c4.mp3" with {assetBase: "/assets/"};
+import w165 from "./word-audio/e4039e7165237871.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w166 from "./word-audio/ea8aaec3415429f0.mp3" with {assetBase: "/assets/"};
+import w166 from "./word-audio/d56ccbd2acd8a84d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w167 from "./word-audio/e4039e7165237871.mp3" with {assetBase: "/assets/"};
+import w167 from "./word-audio/f1791702970c8c51.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w168 from "./word-audio/d56ccbd2acd8a84d.mp3" with {assetBase: "/assets/"};
+import w168 from "./word-audio/6d176a9c2ed04301.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w169 from "./word-audio/f1791702970c8c51.mp3" with {assetBase: "/assets/"};
+import w169 from "./word-audio/aec3220e23b7ad61.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w170 from "./word-audio/6d176a9c2ed04301.mp3" with {assetBase: "/assets/"};
+import w170 from "./word-audio/b026829c0bde98e9.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w171 from "./word-audio/aec3220e23b7ad61.mp3" with {assetBase: "/assets/"};
+import w171 from "./word-audio/a48291e107b97fbd.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w172 from "./word-audio/b026829c0bde98e9.mp3" with {assetBase: "/assets/"};
+import w172 from "./word-audio/e41ead192c207a6f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w173 from "./word-audio/a48291e107b97fbd.mp3" with {assetBase: "/assets/"};
+import w173 from "./word-audio/846c3bce41b8fccb.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w174 from "./word-audio/e41ead192c207a6f.mp3" with {assetBase: "/assets/"};
+import w174 from "./word-audio/a3beda958f1f2355.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w175 from "./word-audio/846c3bce41b8fccb.mp3" with {assetBase: "/assets/"};
+import w175 from "./word-audio/a4c0414be58cee31.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w176 from "./word-audio/a3beda958f1f2355.mp3" with {assetBase: "/assets/"};
+import w176 from "./word-audio/5b04ae1f3e18b97d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w177 from "./word-audio/a4c0414be58cee31.mp3" with {assetBase: "/assets/"};
+import w177 from "./word-audio/56ef8eea86465fc0.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w178 from "./word-audio/5b04ae1f3e18b97d.mp3" with {assetBase: "/assets/"};
+import w178 from "./word-audio/a6178c288e612132.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w179 from "./word-audio/56ef8eea86465fc0.mp3" with {assetBase: "/assets/"};
+import w179 from "./word-audio/8f41562cca9d3d67.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w180 from "./word-audio/a6178c288e612132.mp3" with {assetBase: "/assets/"};
+import w180 from "./word-audio/c152d4109331951e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w181 from "./word-audio/8f41562cca9d3d67.mp3" with {assetBase: "/assets/"};
+import w181 from "./word-audio/97da15d7d2052419.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w182 from "./word-audio/c152d4109331951e.mp3" with {assetBase: "/assets/"};
+import w182 from "./word-audio/2518bab4758a313e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w183 from "./word-audio/97da15d7d2052419.mp3" with {assetBase: "/assets/"};
+import w183 from "./word-audio/3955cc8bcad919b5.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w184 from "./word-audio/2518bab4758a313e.mp3" with {assetBase: "/assets/"};
+import w184 from "./word-audio/29745ad286235899.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w185 from "./word-audio/3955cc8bcad919b5.mp3" with {assetBase: "/assets/"};
+import w185 from "./word-audio/6bae6b05821607f2.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w186 from "./word-audio/29745ad286235899.mp3" with {assetBase: "/assets/"};
+import w186 from "./word-audio/54d337d478ce7b68.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w187 from "./word-audio/6bae6b05821607f2.mp3" with {assetBase: "/assets/"};
+import w187 from "./word-audio/3e12f45e7368c07c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w188 from "./word-audio/54d337d478ce7b68.mp3" with {assetBase: "/assets/"};
+import w188 from "./word-audio/2ef9ca91983c8028.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w189 from "./word-audio/3e12f45e7368c07c.mp3" with {assetBase: "/assets/"};
+import w189 from "./word-audio/a1aebc5f3bac7327.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w190 from "./word-audio/2ef9ca91983c8028.mp3" with {assetBase: "/assets/"};
+import w190 from "./word-audio/ce80a4ce6b722fa3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w191 from "./word-audio/a1aebc5f3bac7327.mp3" with {assetBase: "/assets/"};
+import w191 from "./word-audio/5cda659fa2f3954a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w192 from "./word-audio/ce80a4ce6b722fa3.mp3" with {assetBase: "/assets/"};
+import w192 from "./word-audio/4c2372aa7023ba5a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w193 from "./word-audio/5cda659fa2f3954a.mp3" with {assetBase: "/assets/"};
+import w193 from "./word-audio/a61234a9929d3f97.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w194 from "./word-audio/4c2372aa7023ba5a.mp3" with {assetBase: "/assets/"};
+import w194 from "./word-audio/cc7f37fa9bef78af.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w195 from "./word-audio/a61234a9929d3f97.mp3" with {assetBase: "/assets/"};
+import w195 from "./word-audio/4960651b45ce1b7a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w196 from "./word-audio/cc7f37fa9bef78af.mp3" with {assetBase: "/assets/"};
+import w196 from "./word-audio/d764d4b17e3856ad.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w197 from "./word-audio/4960651b45ce1b7a.mp3" with {assetBase: "/assets/"};
+import w197 from "./word-audio/52f117611cd6ee9b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w198 from "./word-audio/d764d4b17e3856ad.mp3" with {assetBase: "/assets/"};
+import w198 from "./word-audio/55d3d2380269dc69.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w199 from "./word-audio/52f117611cd6ee9b.mp3" with {assetBase: "/assets/"};
+import w199 from "./word-audio/5b3051b582dead32.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w200 from "./word-audio/55d3d2380269dc69.mp3" with {assetBase: "/assets/"};
+import w200 from "./word-audio/2d1fb7de8b05314f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w201 from "./word-audio/5b3051b582dead32.mp3" with {assetBase: "/assets/"};
+import w201 from "./word-audio/5b3d49c067a6e024.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w202 from "./word-audio/2d1fb7de8b05314f.mp3" with {assetBase: "/assets/"};
+import w202 from "./word-audio/a1e64cd9e4a346b1.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w203 from "./word-audio/5b3d49c067a6e024.mp3" with {assetBase: "/assets/"};
+import w203 from "./word-audio/50ec9fb818a2c73a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w204 from "./word-audio/a1e64cd9e4a346b1.mp3" with {assetBase: "/assets/"};
+import w204 from "./word-audio/d34d8705a4d60f4f.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w205 from "./word-audio/50ec9fb818a2c73a.mp3" with {assetBase: "/assets/"};
+import w205 from "./word-audio/2d34aaf6e6395a0e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w206 from "./word-audio/d34d8705a4d60f4f.mp3" with {assetBase: "/assets/"};
+import w206 from "./word-audio/6069d0f38cd101b8.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w207 from "./word-audio/2d34aaf6e6395a0e.mp3" with {assetBase: "/assets/"};
+import w207 from "./word-audio/134e74028a1bfa13.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w208 from "./word-audio/6069d0f38cd101b8.mp3" with {assetBase: "/assets/"};
+import w208 from "./word-audio/2456da2bc6eb239b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w209 from "./word-audio/134e74028a1bfa13.mp3" with {assetBase: "/assets/"};
+import w209 from "./word-audio/414dd234be60f6aa.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w210 from "./word-audio/2456da2bc6eb239b.mp3" with {assetBase: "/assets/"};
+import w210 from "./word-audio/50c143e1d46024f3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w211 from "./word-audio/414dd234be60f6aa.mp3" with {assetBase: "/assets/"};
+import w211 from "./word-audio/40705d4445e29133.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w212 from "./word-audio/50c143e1d46024f3.mp3" with {assetBase: "/assets/"};
+import w212 from "./word-audio/651c756458654986.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w213 from "./word-audio/40705d4445e29133.mp3" with {assetBase: "/assets/"};
+import w213 from "./word-audio/96ef1313630d0ad3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w214 from "./word-audio/651c756458654986.mp3" with {assetBase: "/assets/"};
+import w214 from "./word-audio/a4dc8372e11f351d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w215 from "./word-audio/96ef1313630d0ad3.mp3" with {assetBase: "/assets/"};
+import w215 from "./word-audio/afb037cd9f4f5153.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w216 from "./word-audio/a4dc8372e11f351d.mp3" with {assetBase: "/assets/"};
+import w216 from "./word-audio/e7882174617a4f0d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w217 from "./word-audio/afb037cd9f4f5153.mp3" with {assetBase: "/assets/"};
+import w217 from "./word-audio/5bbd36225089677c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w218 from "./word-audio/e7882174617a4f0d.mp3" with {assetBase: "/assets/"};
+import w218 from "./word-audio/22cce86f710b18f3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w219 from "./word-audio/5bbd36225089677c.mp3" with {assetBase: "/assets/"};
+import w219 from "./word-audio/3d4a092c893b5675.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w220 from "./word-audio/22cce86f710b18f3.mp3" with {assetBase: "/assets/"};
+import w220 from "./word-audio/2248abf61d2db5c5.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w221 from "./word-audio/3d4a092c893b5675.mp3" with {assetBase: "/assets/"};
+import w221 from "./word-audio/550a78c528622f72.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w222 from "./word-audio/2248abf61d2db5c5.mp3" with {assetBase: "/assets/"};
+import w222 from "./word-audio/bdbe41d8e9e69639.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w223 from "./word-audio/550a78c528622f72.mp3" with {assetBase: "/assets/"};
+import w223 from "./word-audio/08028946e80fc167.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w224 from "./word-audio/bdbe41d8e9e69639.mp3" with {assetBase: "/assets/"};
+import w224 from "./word-audio/dc676bb2eca0c211.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w225 from "./word-audio/08028946e80fc167.mp3" with {assetBase: "/assets/"};
+import w225 from "./word-audio/0b466870f096325c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w226 from "./word-audio/dc676bb2eca0c211.mp3" with {assetBase: "/assets/"};
+import w226 from "./word-audio/2ee69ba85c4cd7a8.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w227 from "./word-audio/0b466870f096325c.mp3" with {assetBase: "/assets/"};
+import w227 from "./word-audio/3c9ccc78773b2a7c.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w228 from "./word-audio/2ee69ba85c4cd7a8.mp3" with {assetBase: "/assets/"};
+import w228 from "./word-audio/5b04e3f899bba8bd.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w229 from "./word-audio/3c9ccc78773b2a7c.mp3" with {assetBase: "/assets/"};
+import w229 from "./word-audio/7eb0254447aeb497.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w230 from "./word-audio/5b04e3f899bba8bd.mp3" with {assetBase: "/assets/"};
+import w230 from "./word-audio/a884d58adb53c6a7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w231 from "./word-audio/7eb0254447aeb497.mp3" with {assetBase: "/assets/"};
+import w231 from "./word-audio/099d3bfae0d2c7bb.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w232 from "./word-audio/a884d58adb53c6a7.mp3" with {assetBase: "/assets/"};
+import w232 from "./word-audio/a28f6cc68fbaf11b.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w233 from "./word-audio/099d3bfae0d2c7bb.mp3" with {assetBase: "/assets/"};
+import w233 from "./word-audio/07d2ecc2195efaf7.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w234 from "./word-audio/a28f6cc68fbaf11b.mp3" with {assetBase: "/assets/"};
+import w234 from "./word-audio/08b74029c95419f3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w235 from "./word-audio/07d2ecc2195efaf7.mp3" with {assetBase: "/assets/"};
+import w235 from "./word-audio/921b06423655a68e.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w236 from "./word-audio/08b74029c95419f3.mp3" with {assetBase: "/assets/"};
+import w236 from "./word-audio/5e0121121869c78a.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w237 from "./word-audio/921b06423655a68e.mp3" with {assetBase: "/assets/"};
+import w237 from "./word-audio/43c5b7db65c7fbe3.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w238 from "./word-audio/5e0121121869c78a.mp3" with {assetBase: "/assets/"};
+import w238 from "./word-audio/1f8f406076caa815.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w239 from "./word-audio/43c5b7db65c7fbe3.mp3" with {assetBase: "/assets/"};
+import w239 from "./word-audio/a9218bd98df4d79d.mp3" with {assetBase: "/assets/"};
 // @ts-ignore
-import w240 from "./word-audio/1f8f406076caa815.mp3" with {assetBase: "/assets/"};
-// @ts-ignore
-import w241 from "./word-audio/a9218bd98df4d79d.mp3" with {assetBase: "/assets/"};
-// @ts-ignore
-import w242 from "./word-audio/dd55946993c010f1.mp3" with {assetBase: "/assets/"};
+import w240 from "./word-audio/dd55946993c010f1.mp3" with {assetBase: "/assets/"};
 
 export const WORD_AUDIO: Record<string, string> = {
 	"mi": w0,
@@ -501,236 +497,234 @@ export const WORD_AUDIO: Record<string, string> = {
 	"gato": w8,
 	"sopa": w9,
 	"so": w10,
-	"ki": w11,
-	"nu": w12,
-	"ɪ": w13,
-	"sɪt": w14,
-	"ɪt": w15,
-	"ɪn": w16,
-	"pɪn": w17,
-	"tɪp": w18,
-	"kɪd": w19,
-	"bɪg": w20,
-	"mɪlk": w21,
-	"wɪnd": w22,
-	"bɪzi": w23,
-	"wɪmɪn": w24,
-	"bɪld": w25,
-	"ɛ": w26,
-	"pɛn": w27,
-	"tɛn": w28,
-	"bɛd": w29,
-	"gɛt": w30,
-	"mɛn": w31,
-	"bɛst": w32,
-	"dɛntɪst": w33,
-	"ɪnvɛst": w34,
-	"sɛd": w35,
-	"mɛni": w36,
-	"gɛs": w37,
-	"æ": w38,
-	"kæt": w39,
-	"mæp": w40,
-	"mæn": w41,
-	"bæd": w42,
-	"bæk": w43,
-	"hænd": w44,
-	"næpkɪn": w45,
-	"bæskɪt": w46,
-	"plæd": w47,
-	"ʊ": w48,
-	"pʊt": w49,
-	"fʊl": w50,
-	"bʊk": w51,
-	"gʊd": w52,
-	"pʊl": w53,
-	"fʊt": w54,
-	"bʊlɪt": w55,
-	"wʊlf": w56,
-	"wʊd": w57,
-	"ɔ": w58,
-	"dɔg": w59,
-	"ɔf": w60,
-	"ɔn": w61,
-	"lɔst": w62,
-	"sɔft": w63,
-	"bɔs": w64,
-	"pɔkɪt": w65,
-	"kɔt": w66,
-	"wɔk": w67,
-	"sɔs": w68,
-	"ʌ": w69,
-	"kʌp": w70,
-	"bʌt": w71,
-	"sʌn": w72,
-	"mʌd": w73,
-	"bʌs": w74,
-	"sʌnsɛt": w75,
-	"pʌblɪk": w76,
-	"blʌd": w77,
-	"dʌz": w78,
-	"mʌni": w79,
-	"ʃ": w80,
-	"ʃɪp": w81,
-	"ʃi": w82,
-	"fɪʃ": w83,
-	"kæʃ": w84,
-	"ʃɔp": w85,
-	"wɪʃ": w86,
-	"pʊʃ": w87,
-	"ʃʌt": w88,
-	"ʃɛf": w89,
-	"ʃɔ": w90,
-	"ŋ": w91,
-	"sɪŋ": w92,
-	"kɪŋ": w93,
-	"lɔŋ": w94,
-	"sɔŋ": w95,
-	"bæŋ": w96,
-	"sʌŋ": w97,
-	"ʃɹɪmp": w98,
-	"bɹɪŋ": w99,
-	"ɪŋk": w100,
-	"bæŋk": w101,
-	"mʌŋki": w102,
-	"θ": w103,
-	"θɪn": w104,
-	"θɪk": w105,
-	"bæθ": w106,
-	"mæθ": w107,
-	"pæθ": w108,
-	"mɔθ": w109,
-	"θɪŋ": w110,
-	"θæŋk": w111,
-	"ð": w112,
-	"ðɪs": w113,
-	"ðæt": w114,
-	"ðɛn": w115,
-	"ðɛm": w116,
-	"ðæn": w117,
-	"wɪð": w118,
-	"ɹ": w119,
-	"ɹɛd": w120,
-	"ɹʌn": w121,
-	"ɹæt": w122,
-	"ɹɔk": w123,
-	"ɹʌg": w124,
-	"tɹɪp": w125,
-	"fɹɛʃ": w126,
-	"θɹæʃ": w127,
-	"ɹɔŋ": w128,
-	"ɹɪst": w129,
-	"ə": w130,
-	"ðə": w131,
-	"sʌdən": w132,
-	"sɛvən": w133,
-	"ʌndəɹ": w134,
-	"ɹæbət": w135,
-	"lɪsən": w136,
-	"pɛnsəl": w137,
-	"lɛmən": w138,
-	"aɪ": w139,
-	"maɪ": w140,
-	"paɪ": w141,
-	"haɪ": w142,
-	"taɪm": w143,
-	"laɪk": w144,
-	"faɪv": w145,
-	"naɪt": w146,
-	"aɪl": w147,
-	"haɪt": w148,
-	"baɪ": w149,
-	"aɪlənd": w150,
-	"aʊ": w151,
-	"haʊ": w152,
-	"naʊ": w153,
-	"kaʊ": w154,
-	"aʊt": w155,
-	"haʊs": w156,
-	"daʊn": w157,
-	"laʊd": w158,
-	"baʊ": w159,
-	"dɹaʊt": w160,
-	"oʊ": w161,
-	"goʊ": w162,
-	"soʊ": w163,
-	"boʊt": w164,
-	"ɹoʊd": w165,
-	"hoʊm": w166,
-	"noʊt": w167,
-	"koʊld": w168,
-	"ðoʊ": w169,
-	"doʊ": w170,
-	"boʊ": w171,
-	"eɪ": w172,
-	"deɪ": w173,
-	"seɪ": w174,
-	"meɪ": w175,
-	"neɪm": w176,
-	"geɪm": w177,
-	"feɪs": w178,
-	"teɪk": w179,
-	"ɹeɪn": w180,
-	"eɪt": w181,
-	"steɪk": w182,
-	"ðeɪ": w183,
-	"ɔɪ": w184,
-	"bɔɪ": w185,
-	"tɔɪ": w186,
-	"kɔɪn": w187,
-	"ɔɪl": w188,
-	"nɔɪz": w189,
-	"r": w190,
-	"pero": w191,
-	"riko": w192,
-	"toro": w193,
-	"karo": w194,
-	"rosa": w195,
-	"ɾ": w196,
-	"peɾo": w197,
-	"kaɾa": w198,
-	"paɾa": w199,
-	"oɾa": w200,
-	"ɲ": w201,
-	"niɲo": w202,
-	"aɲo": w203,
-	"kaɲa": w204,
-	"piɲa": w205,
-	"x": w206,
-	"axo": w207,
-	"oxo": w208,
-	"kaxa": w209,
-	"roxo": w210,
-	"lɔx": w211,
-	"y": w212,
-	"ty": w213,
-	"vy": w214,
-	"sy": w215,
-	"ø": w216,
-	"pø": w217,
-	"fø": w218,
-	"dø": w219,
-	"blø": w220,
-	"ç": w221,
-	"ɪç": w222,
-	"nɪçt": w223,
-	"mɪlç": w224,
-	"ʔ": w225,
-	"ʌʔoʊ": w226,
-	"ʔana": w227,
-	"bʌʔən": w228,
-	"ħ": w229,
-	"ħabiːb": w230,
-	"ħaram": w231,
-	"ʕ": w232,
-	"ʕarabi": w233,
-	"q": w234,
-	"qalb": w235,
-	"qamar": w236,
-	"bɔ̃": w237,
-	"vɛ̃": w238,
-	"blɑ̃": w239,
-	"ː": w240,
-	"pɛːʁ": w241,
-	"teː": w242,
+	"ɪ": w11,
+	"sɪt": w12,
+	"ɪt": w13,
+	"ɪn": w14,
+	"pɪn": w15,
+	"tɪp": w16,
+	"kɪd": w17,
+	"bɪg": w18,
+	"mɪlk": w19,
+	"wɪnd": w20,
+	"bɪzi": w21,
+	"wɪmɪn": w22,
+	"bɪld": w23,
+	"ɛ": w24,
+	"pɛn": w25,
+	"tɛn": w26,
+	"bɛd": w27,
+	"gɛt": w28,
+	"mɛn": w29,
+	"bɛst": w30,
+	"dɛntɪst": w31,
+	"ɪnvɛst": w32,
+	"sɛd": w33,
+	"mɛni": w34,
+	"gɛs": w35,
+	"æ": w36,
+	"kæt": w37,
+	"mæp": w38,
+	"mæn": w39,
+	"bæd": w40,
+	"bæk": w41,
+	"hænd": w42,
+	"næpkɪn": w43,
+	"bæskɪt": w44,
+	"plæd": w45,
+	"ʊ": w46,
+	"pʊt": w47,
+	"fʊl": w48,
+	"bʊk": w49,
+	"gʊd": w50,
+	"pʊl": w51,
+	"fʊt": w52,
+	"bʊlɪt": w53,
+	"wʊlf": w54,
+	"wʊd": w55,
+	"ɔ": w56,
+	"dɔg": w57,
+	"ɔf": w58,
+	"ɔn": w59,
+	"lɔst": w60,
+	"sɔft": w61,
+	"bɔs": w62,
+	"pɔkɪt": w63,
+	"kɔt": w64,
+	"wɔk": w65,
+	"sɔs": w66,
+	"ʌ": w67,
+	"kʌp": w68,
+	"bʌt": w69,
+	"sʌn": w70,
+	"mʌd": w71,
+	"bʌs": w72,
+	"sʌnsɛt": w73,
+	"pʌblɪk": w74,
+	"blʌd": w75,
+	"dʌz": w76,
+	"mʌni": w77,
+	"ʃ": w78,
+	"ʃɪp": w79,
+	"ʃi": w80,
+	"fɪʃ": w81,
+	"kæʃ": w82,
+	"ʃɔp": w83,
+	"wɪʃ": w84,
+	"pʊʃ": w85,
+	"ʃʌt": w86,
+	"ʃɛf": w87,
+	"ʃɔ": w88,
+	"ŋ": w89,
+	"sɪŋ": w90,
+	"kɪŋ": w91,
+	"lɔŋ": w92,
+	"sɔŋ": w93,
+	"bæŋ": w94,
+	"sʌŋ": w95,
+	"ʃɹɪmp": w96,
+	"bɹɪŋ": w97,
+	"ɪŋk": w98,
+	"bæŋk": w99,
+	"mʌŋki": w100,
+	"θ": w101,
+	"θɪn": w102,
+	"θɪk": w103,
+	"bæθ": w104,
+	"mæθ": w105,
+	"pæθ": w106,
+	"mɔθ": w107,
+	"θɪŋ": w108,
+	"θæŋk": w109,
+	"ð": w110,
+	"ðɪs": w111,
+	"ðæt": w112,
+	"ðɛn": w113,
+	"ðɛm": w114,
+	"ðæn": w115,
+	"wɪð": w116,
+	"ɹ": w117,
+	"ɹɛd": w118,
+	"ɹʌn": w119,
+	"ɹæt": w120,
+	"ɹɔk": w121,
+	"ɹʌg": w122,
+	"tɹɪp": w123,
+	"fɹɛʃ": w124,
+	"θɹæʃ": w125,
+	"ɹɔŋ": w126,
+	"ɹɪst": w127,
+	"ə": w128,
+	"ðə": w129,
+	"sʌdən": w130,
+	"sɛvən": w131,
+	"ʌndəɹ": w132,
+	"ɹæbət": w133,
+	"lɪsən": w134,
+	"pɛnsəl": w135,
+	"lɛmən": w136,
+	"aɪ": w137,
+	"maɪ": w138,
+	"paɪ": w139,
+	"haɪ": w140,
+	"taɪm": w141,
+	"laɪk": w142,
+	"faɪv": w143,
+	"naɪt": w144,
+	"aɪl": w145,
+	"haɪt": w146,
+	"baɪ": w147,
+	"aɪlənd": w148,
+	"aʊ": w149,
+	"haʊ": w150,
+	"naʊ": w151,
+	"kaʊ": w152,
+	"aʊt": w153,
+	"haʊs": w154,
+	"daʊn": w155,
+	"laʊd": w156,
+	"baʊ": w157,
+	"dɹaʊt": w158,
+	"oʊ": w159,
+	"goʊ": w160,
+	"soʊ": w161,
+	"boʊt": w162,
+	"ɹoʊd": w163,
+	"hoʊm": w164,
+	"noʊt": w165,
+	"koʊld": w166,
+	"ðoʊ": w167,
+	"doʊ": w168,
+	"boʊ": w169,
+	"eɪ": w170,
+	"deɪ": w171,
+	"seɪ": w172,
+	"meɪ": w173,
+	"neɪm": w174,
+	"geɪm": w175,
+	"feɪs": w176,
+	"teɪk": w177,
+	"ɹeɪn": w178,
+	"eɪt": w179,
+	"steɪk": w180,
+	"ðeɪ": w181,
+	"ɔɪ": w182,
+	"bɔɪ": w183,
+	"tɔɪ": w184,
+	"kɔɪn": w185,
+	"ɔɪl": w186,
+	"nɔɪz": w187,
+	"r": w188,
+	"pero": w189,
+	"riko": w190,
+	"toro": w191,
+	"karo": w192,
+	"rosa": w193,
+	"ɾ": w194,
+	"peɾo": w195,
+	"kaɾa": w196,
+	"paɾa": w197,
+	"oɾa": w198,
+	"ɲ": w199,
+	"niɲo": w200,
+	"aɲo": w201,
+	"kaɲa": w202,
+	"piɲa": w203,
+	"x": w204,
+	"axo": w205,
+	"oxo": w206,
+	"kaxa": w207,
+	"roxo": w208,
+	"lɔx": w209,
+	"y": w210,
+	"ty": w211,
+	"vy": w212,
+	"sy": w213,
+	"ø": w214,
+	"pø": w215,
+	"fø": w216,
+	"dø": w217,
+	"blø": w218,
+	"ç": w219,
+	"ɪç": w220,
+	"nɪçt": w221,
+	"mɪlç": w222,
+	"ʔ": w223,
+	"ʌʔoʊ": w224,
+	"ʔana": w225,
+	"bʌʔən": w226,
+	"ħ": w227,
+	"ħabiːb": w228,
+	"ħaram": w229,
+	"ʕ": w230,
+	"ʕarabi": w231,
+	"q": w232,
+	"qalb": w233,
+	"qamar": w234,
+	"bɔ̃": w235,
+	"vɛ̃": w236,
+	"blɑ̃": w237,
+	"ː": w238,
+	"pɛːʁ": w239,
+	"teː": w240,
 };

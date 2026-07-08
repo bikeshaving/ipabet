@@ -204,7 +204,7 @@ for (const les of CURRICULUM) {
 // genuine false friend get any — the foreign/exotic sounds (θ ð, trill, ñ, Arabic)
 // mostly don't, because English spelling doesn't lie about *them*.
 const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
-	1: [en("sew", "s", "o"), en("quay", "k", "i"), en("gnu", "n", "u")],
+	1: [en("sew", "s", "o")],
 	2: [en("busy", "b", "i", "+h", "z", "i"), en("women", "w", "i", "+h", "m", "i", "+h", "n"), en("build", "b", "i", "+h", "l", "d")],
 	3: [en("said", "s", "e", "+h", "d"), en("many", "m", "e", "+h", "n", "i"), en("guess", "g", "e", "+h", "s")],
 	4: [en("plaid", "p", "l", "a", "+e", "d")],
