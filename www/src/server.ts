@@ -5,6 +5,7 @@ import {CHART_HTML} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
 import {DESIGN_HTML} from "./design.ts";
+import {EDITOR_HTML} from "./editor.ts";
 import {CHART_CSS} from "./chart-style.ts";
 import {AUDIO} from "./audio-map.ts";
 // Shovel rewrites this import to a hashed URL string at build time.
@@ -109,6 +110,7 @@ const HTML = `<!DOCTYPE html>
 		<div class="word"></div>
 	</div>
 	<p style="text-align:center;margin-top:-1rem"><a href="/learn">Try it yourself — learn to type it, right in the browser →</a></p>
+	<p style="text-align:center;margin-top:-.5rem;font-size:.92rem"><a href="/type">or just start typing in the scratchpad →</a></p>
 
 	<section>
 		<h2>The vowel space</h2>
@@ -209,6 +211,7 @@ const HTML = `<!DOCTYPE html>
 		<span>MIT © 2026 Brian Kim</span>
 		<a href="/chart">The IPA chart in keystrokes</a>
 		<a href="/learn">Learn to type it</a>
+		<a href="/type">Scratchpad</a>
 		<a href="/design">Design</a>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
@@ -284,6 +287,12 @@ router.route("/ipabet.json").get(() => {
 
 router.route("/learn").get(() => {
 	return new Response(LEARN_HTML, {
+		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/type").get(() => {
+	return new Response(EDITOR_HTML, {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
 	});
 });

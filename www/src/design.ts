@@ -168,6 +168,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 		<a href="/">Home</a>
 		<a href="/chart">Chart</a>
 		<a href="/learn">Learn</a>
+		<a href="/type">Scratchpad</a>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>

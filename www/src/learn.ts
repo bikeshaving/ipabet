@@ -155,6 +155,7 @@ export const LEARN_HTML = `<!DOCTYPE html>
 	<footer>
 		<a href="/">← IPAbet</a>
 		<a href="/chart">The chart</a>
+		<a href="/type">Scratchpad</a>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
