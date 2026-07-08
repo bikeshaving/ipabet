@@ -33,6 +33,8 @@ function play(url?: string) {
 	if (curAudio) curAudio.pause();
 	curAudio = new Audio(url);
 	curAudio.play().catch(() => {}); // autoplay may be blocked pre-gesture; click replays
+	const say = document.querySelector("#say");
+	if (say) { say.classList.remove("playing"); void (say as HTMLElement).offsetWidth; say.classList.add("playing"); }
 }
 const playSound = () => play(lesson().audio); // the lesson's isolated phoneme (Commons recording)
 const playWord = () => play(word().audio);    // the current word, baked from its IPA (Polly)
@@ -69,15 +71,16 @@ function renderHint() {
 function render() {
 	const les = lesson();
 	$("#stage").innerHTML = `Lesson ${li + 1} / ${LESSONS.length} — ${les.title}`
-		+ (les.sound ? ` &middot; new sound <span style="color:var(--accent)">/${les.sound}/</span>` + (les.keys ? " &nbsp; type " + les.keys.map((k) => `<kbd>${k}</kbd>`).join(" ") : "") : "");
+		+ (les.sound ? ` &middot; new sound <span class="g">/${les.sound}/</span>` + (les.keys ? " &nbsp; type " + les.keys.map((k) => `<kbd>${k}</kbd>`).join(" ") : "") : "");
 	$("#note").textContent = les.intro;
 	$("#prog").textContent = wi === 0 && les.sound ? "the new sound, on its own — keys shown" : `${wi + 1} / ${les.words.length}`;
 	$("#target").textContent = `/${word().target}/`;
 	$("#target").style.cursor = les.audio ? "pointer" : "default";
 	$("#target").title = les.audio ? "play the sound" : "";
-	$("#word").innerHTML = `<b>${word().word}</b>${word().gloss ? ` — ${word().gloss}` : ""}${word().lang ? ` · ${word().lang}` : ""}`;
+	$("#word").innerHTML = `<b>${word().word}</b>${word().gloss ? ` — ${word().gloss}` : ""}${word().lang ? ` <span class="chip">${word().lang}</span>` : ""}`;
 	$("#typed").textContent = buffer;
 	$("#streak").textContent = streak > 2 ? `${streak} in a row` : "";
+	$("#barfill").style.width = lesson().words.length ? `${((wi + 1) / lesson().words.length) * 100}%` : "0";
 	renderHint();
 	highlightKeyboard();
 }
@@ -99,12 +102,12 @@ function next() {
 }
 function check() {
 	if (buffer.normalize("NFC") === word().target.normalize("NFC")) {
-		$("#typed").classList.add("good");
-		setTimeout(() => { $("#typed").classList.remove("good"); next(); }, 350);
+		$("#typedwrap").classList.add("good");
+		setTimeout(() => { $("#typedwrap").classList.remove("good"); next(); }, 350);
 	} else if ([...buffer].length >= [...word().target].length) {
 		misses += 1;
-		$("#typed").classList.add("bad");
-		setTimeout(() => $("#typed").classList.remove("bad"), 250);
+		$("#typedwrap").classList.add("bad");
+		setTimeout(() => $("#typedwrap").classList.remove("bad"), 250);
 		renderHint();
 	}
 }
@@ -187,4 +190,5 @@ window.addEventListener("keydown", (e) => {
 
 buildKeyboard();
 $("#target").addEventListener("click", playWord);
+document.querySelector("#say")?.addEventListener("click", playWord);
 goWord(true);
