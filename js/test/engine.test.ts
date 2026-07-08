@@ -44,6 +44,40 @@ describe("digraph transforms", () => {
 	});
 });
 
+describe("shift-chaining (opt-in: hold shift to continue IPA)", () => {
+	// With the flag on, a shifted letter right after a *special* (non-ASCII) IPA
+	// glyph continues as a lowercase base, so a held-shift run flows without
+	// releasing. Gated on the previous glyph being special → acronyms never chain.
+	const chain = (...keys: string[]): string => typeKeys(seq(...keys), "", {shiftChain: true});
+
+	test("held run: t ⇧H⇧I⇧H⇧N⇧G → θɪŋ", () =>
+		expect(chain("t", "+h", "+i", "+h", "+n", "+g")).toBe("θɪŋ"));
+	test("held run with bare tail: s ⇧H⇧I⇧H p → ʃɪp", () =>
+		expect(chain("s", "+h", "+i", "+h", "p")).toBe("ʃɪp"));
+	test("chain one base off a special glyph: s ⇧H ⇧I → ʃi", () =>
+		expect(chain("s", "+h", "+i")).toBe("ʃi"));
+	test("non-modifier shifted letter after special chains too: t ⇧H ⇧K → θk", () =>
+		expect(chain("t", "+h", "+k")).toBe("θk"));
+
+	// Acronyms stay literal even with the flag on — no bare base seeds a special
+	// glyph, so chaining never engages (one-glyph lookback: capital → capital).
+	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
+	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
+	// even acronyms whose pairs *would* be digraphs stay literal (SH, PH, TH):
+	test("acronym SHA stays SHA", () => expect(chain("+s", "+h", "+a")).toBe("SHA"));
+	test("acronym PHP stays PHP", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
+	test("THE (digraph-bearing caps) stays THE", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
+
+	// A plain ASCII base (lowercase i) is not special, so a shifted letter after
+	// it does NOT chain — it's a capital.
+	test("lowercase base doesn't seed a chain: i ⇧P → iP", () =>
+		expect(chain("i", "+p")).toBe("iP"));
+
+	// Flag off (default) is unchanged: the same held run passes shifts as capitals.
+	test("flag off: t ⇧H⇧I⇧H⇧N⇧G → θIHNG (unchanged)", () =>
+		expect(typed("t", "+h", "+i", "+h", "+n", "+g")).toBe("θIHNG"));
+});
+
 describe("clicks (C modifier)", () => {
 	test("qC → ǃ", () => expect(typed("q", "+c")).toBe("ǃ"));
 	test("tC → ǀ", () => expect(typed("t", "+c")).toBe("ǀ"));

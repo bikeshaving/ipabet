@@ -2,7 +2,7 @@
   "name": "ipabet-org",
   "private": true,
   "version": "0.1.0",
-  "description": "ipabet.org \u2014 IPAbet, type IPA at typing speed",
+  "description": "ipabet.org — IPAbet, type IPA at typing speed",
   "type": "module",
   "scripts": {
     "develop": "shovel develop src/server.ts --platform cloudflare",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@b9g/assets": "^0.2.1",
+    "@b9g/crank": "^0.7.9",
     "@b9g/router": "^0.2.5",
     "@b9g/shovel": "^0.2.19"
   },

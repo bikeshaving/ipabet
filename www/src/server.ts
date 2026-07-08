@@ -5,6 +5,11 @@ import {CHART_HTML} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
 import {DESIGN_HTML} from "./design.ts";
+import {CHART_CSS} from "./chart-style.ts";
+import {AUDIO} from "./audio-map.ts";
+// Shovel rewrites this import to a hashed URL string at build time.
+// @ts-ignore
+import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 import {assets} from "@b9g/assets/middleware";
 import {isHTTPError} from "@b9g/http-errors";
 
@@ -88,7 +93,7 @@ const HTML = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IPAbet — an IPA keyboard for macOS, at typing speed</title>
 <meta name="description" content="IPAbet is a free, open-source IPA keyboard for macOS — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste.">
-<style>${CSS}</style>
+<style>${CSS}${CHART_CSS}</style>
 </head>
 <body>
 <main>
@@ -104,6 +109,15 @@ const HTML = `<!DOCTYPE html>
 		<div class="word"></div>
 	</div>
 	<p style="text-align:center;margin-top:-1rem"><a href="/learn">Try it yourself — learn to type it, right in the browser →</a></p>
+
+	<section>
+		<h2>The vowel space</h2>
+		<p>Every vowel is a base letter, at most one modifier on top:
+		<span class="combo"><kbd>i</kbd><kbd>⇧Y</kbd><span class="arrow">→</span><b class="ipa">ɨ</b></span>.
+		Pick a modifier to see how the derived vowels are built, or drag between the
+		articulatory quadrilateral and acoustic F1×F2 space. Click any vowel to hear it.</p>
+		<div id="vowel-chart"></div>
+	</section>
 
 	<section>
 		<h2>A normal keyboard, with the IPA one shift away</h2>
@@ -226,6 +240,8 @@ async function run() {
 }
 run();
 </script>
+<script>window.__CHART_AUDIO = ${JSON.stringify(AUDIO)};</script>
+<script type="module" src="${chartViz}"></script>
 </body>
 </html>`;
 

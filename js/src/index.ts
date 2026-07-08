@@ -223,7 +223,11 @@ function superscriptize(textBefore: string): Edit {
  * previous glyph, ⌥ → postfix diacritics, ⌥⇧ → raw-US escape on
  * letters/digits. Command/control chords and anything unmapped pass.
  */
-export function handleKey(textBefore: string, k: Keystroke): Edit {
+export function handleKey(
+	textBefore: string,
+	k: Keystroke,
+	opts: {shiftChain?: boolean} = {},
+): Edit {
 	const key = k.key;
 	const shift = k.shift ?? false;
 	const option = k.option ?? false;
@@ -287,6 +291,21 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 	const glyph = letters.get(s);
 	if (glyph !== undefined) return {type: "insert", text: glyph};
 
+	// Shift-chaining (opt-in): a shifted letter immediately after a *special*
+	// (non-ASCII) IPA glyph continues IPA as a lowercase base — so a held-shift
+	// run flows without releasing (θ ⇧I ⇧H → θɪ; t ⇧H⇧I⇧H⇧N⇧G → θɪŋ). It fires
+	// only here, after the modifier/R/X checks failed and the shifted key is not
+	// itself a base glyph (⇧I, ⇧H…). Gating on the *previous* glyph being special
+	// is what keeps acronyms safe: an all-caps run (NSA, THE, PHP) never produces
+	// a special glyph, so it never chains — one glyph of lookback, no state. A
+	// plain ASCII base (lowercase i) is not special, so it doesn't seed a chain.
+	if (opts.shiftChain && shift && /[a-z]/i.test(key) && p !== undefined) {
+		const prevBase = decompose(p).base;
+		if (prevBase.length > 0 && prevBase.charCodeAt(0) > 127) {
+			return {type: "insert", text: letters.get(key) ?? key};
+		}
+	}
+
 	// capitals with no transform, punctuation: native
 	return {type: "pass"};
 }
@@ -333,11 +352,15 @@ export function nativeChar(k: Keystroke): string {
  * Convenience: run a sequence of keystrokes against a buffer, applying pass
  * edits with their native character. Backspace is the keystroke {key: "⌫"}.
  */
-export function typeKeys(keys: Keystroke[], initial = ""): string {
+export function typeKeys(
+	keys: Keystroke[],
+	initial = "",
+	opts: {shiftChain?: boolean} = {},
+): string {
 	let text = initial;
 	for (const k of keys) {
 		const edit =
-			k.key === "⌫" ? handleBackspace(text) : handleKey(text, k);
+			k.key === "⌫" ? handleBackspace(text) : handleKey(text, k, opts);
 		if (k.key === "⌫" && edit.type === "pass") {
 			// native delete: drop the last grapheme cluster
 			const p = lastCluster(text);

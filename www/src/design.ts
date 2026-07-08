@@ -1,4 +1,9 @@
 import {CSS} from "./style.ts";
+import {CHART_CSS} from "./chart-style.ts";
+import {AUDIO} from "./audio-map.ts";
+// Shovel rewrites this import to a hashed URL string at build time.
+// @ts-ignore
+import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 
 // /design — the reference explanation of the notation: the neutral definition
 // plus the five constraints that determine nearly every assignment. Encyclopedic
@@ -37,7 +42,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The design of IPAbet</title>
 <meta name="description" content="How IPAbet — the IPA keyboard for macOS — works, and the five constraints that shaped it: identity preservation, a two-character bound, local determinism, a phonetic operator algebra, and reuse of existing conventions.">
-<style>${CSS}${EXTRA}</style>
+<style>${CSS}${EXTRA}${CHART_CSS}</style>
 </head>
 <body>
 <main>
@@ -110,8 +115,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 				the <a href="https://en.wikipedia.org/wiki/Arabic_chat_alphabet">Arabic chat alphabet</a>
 				(<span class="combo"><kbd>⇧2</kbd><span class="arrow">→</span><b class="ipa">ʔ</b></span>
 				<span class="combo"><kbd>⇧7</kbd><span class="arrow">→</span><b class="ipa">ħ</b></span>),
-				X-SAMPA (<span class="combo"><kbd>⇧1</kbd><span class="arrow">→</span><b class="ipa">ɨ</b></span>
-				<span class="combo"><kbd>⇧4</kbd><span class="arrow">→</span><b class="ipa">ɾ</b></span>),
+				X-SAMPA (<span class="combo"><kbd>⇧4</kbd><span class="arrow">→</span><b class="ipa">ɾ</b></span>),
 				and English spelling (<span class="combo"><kbd>w</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʍ</b></span>,
 				from <em>wh</em>). This keeps it guessable rather than idiosyncratic.</div>
 			</li>
@@ -136,6 +140,20 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 	</section>
 
 	<section>
+		<h2>The algebra, animated</h2>
+		<p>The operator algebra is easiest to see in motion. Every vowel and every pulmonic
+		consonant below sits at its true articulatory position; choose an operator to light up
+		the arrows that <em>generate</em> the derived symbols from their bases — the same
+		<kbd>⇧H</kbd>, <kbd>⇧R</kbd>, <kbd>⇧J</kbd> that you type. Drag the slider to morph the
+		vowel quadrilateral into acoustic F1×F2 space, or the consonant grid into the vocal
+		tract. Click any symbol to hear it.</p>
+		<h3 style="margin:1.5rem 0 0;font-size:1rem">Vowels</h3>
+		<div id="vowel-chart"></div>
+		<h3 style="margin:1.5rem 0 0;font-size:1rem">Pulmonic consonants</h3>
+		<div id="consonant-chart"></div>
+	</section>
+
+	<section>
 		<h2>Coverage</h2>
 		<p>IPAbet covers every symbol on the standard IPA chart — consonants, vowels,
 		diacritics, suprasegmentals, pulmonic and non-pulmonic — with one deliberate
@@ -153,5 +171,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 	</footer>
 </main>
+<script>window.__CHART_AUDIO = ${JSON.stringify(AUDIO)};</script>
+<script type="module" src="${chartViz}"></script>
 </body>
 </html>`;
