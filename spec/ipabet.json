@@ -10,8 +10,7 @@
   "V": "labiodental",
   "B": "bilabial place",
   "A": "drag toward a (vowels: oA→ɒ, uA→ʌ, 5A→ɐ)",
-  "Y": "central close — the y-vowels (iY→ɨ, uY→ʉ); Welsh y, Russian ы",
-  "U": "centralize the close-mid vowel (eU→ɘ, oU→ɵ)",
+  "Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ); Welsh y, Russian ы",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
   "P": "implosive (voiced glottalic ingressive)",
@@ -217,7 +216,7 @@
    "name": "LATIN SMALL LETTER Z"
   },
   {
-   "key": "eU",
+   "key": "eY",
    "glyph": "ɘ",
    "cp": "U+0258",
    "name": "LATIN SMALL LETTER REVERSED E"
@@ -463,7 +462,7 @@
    "name": "LATIN SMALL LETTER OPEN O"
   },
   {
-   "key": "oU",
+   "key": "oY",
    "glyph": "ɵ",
    "cp": "U+0275",
    "name": "LATIN SMALL LETTER BARRED O"
