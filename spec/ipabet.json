@@ -980,82 +980,295 @@
   "operator": "opt+p",
   "table": [
    {
-    "base": "h",
-    "sup": "ʰ"
+    "base": "a",
+    "sup": "ᵃ"
    },
    {
-    "base": "j",
-    "sup": "ʲ"
+    "base": "b",
+    "sup": "ᵇ"
    },
    {
-    "base": "w",
-    "sup": "ʷ"
-   },
-   {
-    "base": "g",
-    "sup": "ᶢ"
-   },
-   {
-    "base": "l",
-    "sup": "ˡ"
-   },
-   {
-    "base": "n",
-    "sup": "ⁿ"
-   },
-   {
-    "base": "ŋ",
-    "sup": "ᵑ"
-   },
-   {
-    "base": "s",
-    "sup": "ˢ"
-   },
-   {
-    "base": "x",
-    "sup": "ˣ"
-   },
-   {
-    "base": "m",
-    "sup": "ᵐ"
-   },
-   {
-    "base": "β",
-    "sup": "ᵝ"
+    "base": "c",
+    "sup": "ᶜ"
    },
    {
     "base": "d",
     "sup": "ᵈ"
    },
    {
-    "base": "t",
-    "sup": "ᵗ"
+    "base": "e",
+    "sup": "ᵉ"
+   },
+   {
+    "base": "f",
+    "sup": "ᶠ"
+   },
+   {
+    "base": "g",
+    "sup": "ᶢ"
+   },
+   {
+    "base": "h",
+    "sup": "ʰ"
+   },
+   {
+    "base": "i",
+    "sup": "ⁱ"
+   },
+   {
+    "base": "j",
+    "sup": "ʲ"
    },
    {
     "base": "k",
     "sup": "ᵏ"
    },
    {
+    "base": "l",
+    "sup": "ˡ"
+   },
+   {
+    "base": "m",
+    "sup": "ᵐ"
+   },
+   {
+    "base": "n",
+    "sup": "ⁿ"
+   },
+   {
+    "base": "o",
+    "sup": "ᵒ"
+   },
+   {
+    "base": "p",
+    "sup": "ᵖ"
+   },
+   {
     "base": "r",
     "sup": "ʳ"
    },
    {
-    "base": "ʕ",
-    "sup": "ˤ"
+    "base": "s",
+    "sup": "ˢ"
    },
    {
-    "base": "ʔ",
-    "sup": "ˀ"
+    "base": "t",
+    "sup": "ᵗ"
+   },
+   {
+    "base": "u",
+    "sup": "ᵘ"
+   },
+   {
+    "base": "v",
+    "sup": "ᵛ"
+   },
+   {
+    "base": "w",
+    "sup": "ʷ"
+   },
+   {
+    "base": "x",
+    "sup": "ˣ"
+   },
+   {
+    "base": "y",
+    "sup": "ʸ"
+   },
+   {
+    "base": "z",
+    "sup": "ᶻ"
+   },
+   {
+    "base": "ð",
+    "sup": "ᶞ"
+   },
+   {
+    "base": "ŋ",
+    "sup": "ᵑ"
+   },
+   {
+    "base": "œ",
+    "sup": "ꟹ"
+   },
+   {
+    "base": "ɐ",
+    "sup": "ᵄ"
+   },
+   {
+    "base": "ɑ",
+    "sup": "ᵅ"
+   },
+   {
+    "base": "ɒ",
+    "sup": "ᶛ"
+   },
+   {
+    "base": "ɔ",
+    "sup": "ᵓ"
+   },
+   {
+    "base": "ɕ",
+    "sup": "ᶝ"
+   },
+   {
+    "base": "ə",
+    "sup": "ᵊ"
+   },
+   {
+    "base": "ɛ",
+    "sup": "ᵋ"
+   },
+   {
+    "base": "ɜ",
+    "sup": "ᵌ"
+   },
+   {
+    "base": "ɟ",
+    "sup": "ᶡ"
+   },
+   {
+    "base": "ɡ",
+    "sup": "ᶢ"
+   },
+   {
+    "base": "ɣ",
+    "sup": "ˠ"
+   },
+   {
+    "base": "ɥ",
+    "sup": "ᶣ"
    },
    {
     "base": "ɦ",
     "sup": "ʱ"
    },
    {
-    "base": "ɣ",
-    "sup": "ˠ"
+    "base": "ɨ",
+    "sup": "ᶤ"
+   },
+   {
+    "base": "ɪ",
+    "sup": "ᶦ"
+   },
+   {
+    "base": "ɭ",
+    "sup": "ᶩ"
+   },
+   {
+    "base": "ɯ",
+    "sup": "ᵚ"
+   },
+   {
+    "base": "ɰ",
+    "sup": "ᶭ"
+   },
+   {
+    "base": "ɱ",
+    "sup": "ᶬ"
+   },
+   {
+    "base": "ɲ",
+    "sup": "ᶮ"
+   },
+   {
+    "base": "ɳ",
+    "sup": "ᶯ"
+   },
+   {
+    "base": "ɴ",
+    "sup": "ᶰ"
+   },
+   {
+    "base": "ɵ",
+    "sup": "ᶱ"
+   },
+   {
+    "base": "ɸ",
+    "sup": "ᶲ"
+   },
+   {
+    "base": "ɹ",
+    "sup": "ʴ"
+   },
+   {
+    "base": "ɻ",
+    "sup": "ʵ"
+   },
+   {
+    "base": "ʁ",
+    "sup": "ʶ"
+   },
+   {
+    "base": "ʂ",
+    "sup": "ᶳ"
+   },
+   {
+    "base": "ʃ",
+    "sup": "ᶴ"
+   },
+   {
+    "base": "ʉ",
+    "sup": "ᶶ"
+   },
+   {
+    "base": "ʊ",
+    "sup": "ᶷ"
+   },
+   {
+    "base": "ʋ",
+    "sup": "ᶹ"
+   },
+   {
+    "base": "ʌ",
+    "sup": "ᶺ"
+   },
+   {
+    "base": "ʍ",
+    "sup": "ꭩ"
+   },
+   {
+    "base": "ʐ",
+    "sup": "ᶼ"
+   },
+   {
+    "base": "ʑ",
+    "sup": "ᶽ"
+   },
+   {
+    "base": "ʒ",
+    "sup": "ᶾ"
+   },
+   {
+    "base": "ʔ",
+    "sup": "ˀ"
+   },
+   {
+    "base": "ʕ",
+    "sup": "ˤ"
+   },
+   {
+    "base": "ʝ",
+    "sup": "ᶨ"
+   },
+   {
+    "base": "ʟ",
+    "sup": "ᶫ"
+   },
+   {
+    "base": "β",
+    "sup": "ᵝ"
+   },
+   {
+    "base": "θ",
+    "sup": "ᶿ"
+   },
+   {
+    "base": "χ",
+    "sup": "ᵡ"
    }
-  ]
+  ],
+  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
  },
  "laws": {
   "optShift": [
