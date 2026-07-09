@@ -364,9 +364,13 @@ class InputController: IMKInputController {
             // inserted it when we declined it). Two clusters of lookback keep this
             // stateless; acronyms/CamelCase never have a special glyph behind a
             // capital, so they stay literal.
+            // Is the glyph behind this pending capital IPA content? Test the WHOLE
+            // cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
+            // and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
+            // base-only test would break the chain right after ⇧1 or a diacritic.
             if shift, base.count == 1, let bc = base.unicodeScalars.first,
                (65...90).contains(bc.value), let p2 = clusterBefore(r, client),
-               let f2 = decompose(p2).base.unicodeScalars.first, f2.value > 127 {
+               String(p2).unicodeScalars.contains(where: { $0.value > 127 }) {
                 base = base.lowercased()
             }
             if let combo = t.transforms[base + s] {

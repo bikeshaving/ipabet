@@ -302,9 +302,14 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 		// stateless and preserve caps by default: "ʃ⇧T" → ʃT, but "ʃ⇧T⇧R" → ʃʈ.
 		// Acronyms never have a special glyph behind them, so they stay literal.
 		if (shift && /^[A-Z]$/.test(base)) {
+			// Is the glyph behind this pending capital IPA content? Test the WHOLE
+			// cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
+			// and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
+			// base-only test would break the chain right after ⇧1 or a diacritic.
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
-			const b2 = p2 !== undefined ? decompose(p2).base : "";
-			if (b2.length > 0 && b2.charCodeAt(0) > 127) base = base.toLowerCase();
+			if (p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127)) {
+				base = base.toLowerCase();
+			}
 		}
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) return replaceCluster(p, recompose(combo, reposition(combo, marks)));

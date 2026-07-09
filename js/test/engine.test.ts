@@ -285,6 +285,14 @@ describe("⇧1 = tie bar (a glyph with no Latin home)", () => {
 		expect(typed("d", "+1", "z", "+h")).toBe("d\u{0361}ʒ"));
 	test("untied tʃ stays reachable (the tie is optional in IPA)", () =>
 		expect(typed("t", "s", "+h")).toBe("tʃ"));
+
+	// The tie must not break a held-shift run. Shift-chaining asks whether the
+	// glyph behind a pending capital is IPA content — testing only its BASE would
+	// judge "t͡" (ASCII t + U+0361) ordinary and strand the chain.
+	test("held-shift affricate: t ⇧1 ⇧S ⇧H → t͡ʃ", () =>
+		expect(typed("t", "+1", "+s", "+h")).toBe("t\u{0361}ʃ"));
+	test("a diacritic-bearing ASCII base still continues the chain: ⌥t s ⇧H ⇧I ⇧H", () =>
+		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
 
 describe("ring positioning", () => {
