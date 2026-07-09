@@ -760,7 +760,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA"
+   "name": "COMBINING CEDILLA (Latin tenant — transliteration, not IPA)"
   },
   {
    "opt": "m",
@@ -769,7 +769,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",
-   "name": "COMBINING OGONEK"
+   "name": "COMBINING OGONEK (Latin tenant — transliteration, not IPA)"
   },
   {
    "opt": "t",
@@ -802,12 +802,12 @@
    "exclusive": true
   },
   {
-   "opt": "g",
+   "opt": "l",
    "mark": "̴",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+0334",
-   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized)",
+   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized — ɫ is l + overlay)",
    "clone": "˜"
   },
   {
@@ -860,19 +860,19 @@
    "double": "̣",
    "group": "Articulation",
    "cp": "U+033D",
-   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below)",
+   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below, a Latin tenant: ṭ ḥ ṣ)",
    "clone": "˟"
   },
   {
    "opt": "q",
-   "mark": "̘",
+   "mark": "̙",
    "type": "combining",
    "group": "Articulation",
-   "cp": "U+0318",
-   "name": "COMBINING LEFT TACK BELOW (ATR — advanced tongue root; ⇧ → RTR)",
-   "double": "̙",
-   "clone": "˱",
-   "doubleClone": "˲",
+   "cp": "U+0319",
+   "name": "COMBINING RIGHT TACK BELOW (RTR — retracted tongue root; ⇧ → ATR, the advanced pole)",
+   "double": "̘",
+   "clone": "˲",
+   "doubleClone": "˱",
    "exclusive": true
   },
   {
@@ -1056,5 +1056,18 @@
     "sup": "ˠ"
    }
   ]
+ },
+ "laws": {
+  "optShift": [
+   "Exclusivity, not duality: marks on the SAME dimension replace each other (`exclusive: true`); marks on INDEPENDENT dimensions stack. Tone level is a five-way scale (mid on ⌥a), so exclusive pairs need not be binary or exhaustive.",
+   "⌥⇧ has three senses, not one: (a) the greater pole — ⌥= ⌥. ⌥w ⌥o ⌥q; (b) the more extreme value — ⌥e ⌥`; (c) the same glyph relocated below — ⌥n ⌥v ⌥u.",
+   "Unpolarized duals (⌥s syllabic/non-syllabic, ⌥d apical/laminal) fall under none of the three: their shift assignment is arbitrary and is labelled as such."
+  ],
+  "keyClasses": [
+   "IPA marks — earn a key by cross-tier phonetics (B), shape identity (C), or convention (A).",
+   "Latin tenants — ⌥c cedilla, ⌥m ogonek, ⌥⇧x dot-below. No IPA meaning; kept so the layout can also type transliteration. They cohabit with IPA marks and are not pairs.",
+   "Parked — no letter or shape claims them; assigned to mediocre reaches and labelled arbitrary rather than given a fake mnemonic. (⌥o, ⌥z, ⌥9, ⌥0)"
+  ],
+  "numberRow": "IPA *characters* with no Latin home — standalone glyphs (⇧2 ʔ, ⇧5 ə) and the tie bar ⇧1, which is a transformer, not an insertion."
  }
 }

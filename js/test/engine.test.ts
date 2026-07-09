@@ -188,9 +188,10 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~.", "a")).toBe(nfc("a\u{031E}"));
 		expect(typed("~+.", "a")).toBe(nfc("a\u{031D}"));
 	});
-	test("tongue-root on ⌥q (throat): ATR ⌥q a → a̘, RTR ⌥⇧q a → a̙", () => {
-		expect(typed("~q", "a")).toBe(nfc("a\u{0318}"));
-		expect(typed("~+q", "a")).toBe(nfc("a\u{0319}"));
+	// ⌥q matches ⌥='s polarity: shift is the *advanced* pole on both keys.
+	test("tongue-root on ⌥q (throat): RTR ⌥q a → a̙, ATR ⌥⇧q a → a̘", () => {
+		expect(typed("~q", "a")).toBe(nfc("a\u{0319}"));
+		expect(typed("~+q", "a")).toBe(nfc("a\u{0318}"));
 	});
 	test("rounding on ⌥w (labialize): less ⌥w o → o̜, more ⌥⇧w o → o̹", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
@@ -226,12 +227,14 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 		expect(typed("~n", "~n", "x")).toBe("x"));
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
 		expect(typed("~.", "~.")).toBe(""));
-	test("dark l is atomic: ⌥g l → ɫ; ⌥g ⌥g l → l (velarization lifted)", () => {
-		expect(typed("~g", "l")).toBe("ɫ");
-		expect(typed("~g", "~g", "l")).toBe("l");
+	// velarized lives on ⌥l: U+0334 is velarized OR pharyngealized, so ⌥g would be
+	// cross-tier-consistent for only half the mark, while ⌥l keeps ɫ = l + overlay.
+	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l l → l (velarization lifted)", () => {
+		expect(typed("~l", "l")).toBe("ɫ");
+		expect(typed("~l", "~l", "l")).toBe("l");
 	});
-	test("velarization elsewhere stays an overlay: ⌥g t → t̴", () =>
-		expect(typed("~g", "t")).toBe("t\u{0334}"));
+	test("velarization elsewhere stays an overlay: ⌥l t → t̴", () =>
+		expect(typed("~l", "t")).toBe("t\u{0334}"));
 	test("backspace peels the pending accent before touching the document", () => {
 		expect(typed("~n", "⌫")).toBe("");
 		expect(typed("~n", "~e", "⌫", "a")).toBe(nfc("ã"));
