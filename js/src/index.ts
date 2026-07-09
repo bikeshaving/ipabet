@@ -161,7 +161,13 @@ function replaceCluster(cluster: string, text: string): Edit {
  * tone, stress) are standalone glyphs, not decorations, so they stay postfix.
  */
 const NBSP = "\u{00A0}";
-const isPending = (cluster: string): boolean => decompose(cluster).base === NBSP;
+// A real pending placeholder is NBSP *carrying a combining mark*. A bare NBSP
+// is not ours — terminals (Terminal.app) pad the cell before the cursor with
+// NBSP, and absorbing onto that would rewrite terminal content. Require a mark.
+const isPending = (cluster: string): boolean => {
+	const {base, marks} = decompose(cluster);
+	return base === NBSP && marks.length > 0;
+};
 
 /** Combining diacritic (⌥/⌥⇧): stack a pending mark on an NBSP placeholder in
  *  front of the base that will absorb it. The same mark again lifts it off,

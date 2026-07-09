@@ -351,7 +351,14 @@ class InputController: IMKInputController {
     // MARK: - Option diacritic layer
 
     private static let nbsp = "\u{00A0}"
-    private func isPending(_ c: Character) -> Bool { decompose(c).base == Self.nbsp }
+    // A real pending placeholder is NBSP *carrying a combining mark*. A bare
+    // NBSP is not ours — Terminal.app pads the cell before the cursor with
+    // NBSP, and absorbing onto that rewrites terminal content (mangled input,
+    // eaten tmux keys). Require a mark so plain letters insert cleanly there.
+    private func isPending(_ c: Character) -> Bool {
+        let (base, marks) = decompose(c)
+        return base == Self.nbsp && !marks.isEmpty
+    }
 
     /// Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form.
     private func applyMark(_ m: Mark, secondary: Bool, _ client: IMKTextInput) {

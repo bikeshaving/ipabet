@@ -202,26 +202,36 @@ describe("dental family — spread across keys, no cycle", () => {
 });
 
 describe("toggle-off (press the same form again on the pending mark)", () => {
-	// Peeling the last mark leaves a bare NBSP placeholder (never an empty edit,
-	// which the IMK transport drops); the next base absorbs it, so ⌥n ⌥n x → x.
+	// Peeling the last mark leaves a *bare* NBSP (never an empty edit — the IMK
+	// transport drops those). A bare NBSP is inert: it is NOT a pending
+	// placeholder, so a following base does not absorb it. This is what keeps
+	// terminals safe — Terminal.app pads the cell before the cursor with NBSP.
 	const NBSP = "\u{00A0}";
 	test("⌥n ⌥n → bare NBSP (form lifts off before any base)", () => expect(typed("~n", "~n")).toBe(NBSP));
 	test("⌥⇧n ⌥⇧n → bare NBSP (second form toggles too)", () => expect(typed("~+n", "~+n")).toBe(NBSP));
 	test("single-form macron: ⌥a ⌥a → bare NBSP", () => expect(typed("~a", "~a")).toBe(NBSP));
-	test("a peeled placeholder is absorbed by the next base: ⌥n ⌥n x → x", () =>
-		expect(typed("~n", "~n", "x")).toBe("x"));
-	test("circumflex toggles: ⌥i ⌥i → bare NBSP, ×3 then e → ê", () => {
-		expect(typed("~i", "~i")).toBe(NBSP);
-		expect(typed("~i", "~i", "~i", "e")).toBe(nfc("e\u{0302}"));
-	});
+	test("a peeled (bare) NBSP is inert — the next base does NOT absorb it", () =>
+		expect(typed("~n", "~n", "x")).toBe(NBSP + "x"));
 	test("clone-less single-form toggles too: ⌥. ⌥. → bare NBSP", () =>
 		expect(typed("~.", "~.")).toBe(NBSP));
-	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l l → l (velarization lifted)", () => {
+	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l (bare NBSP) then l → NBSP l", () => {
 		expect(typed("~l", "l")).toBe("ɫ");
-		expect(typed("~l", "~l", "l")).toBe("l");
+		expect(typed("~l", "~l", "l")).toBe(NBSP + "l");
 	});
 	test("velarization elsewhere stays an overlay: ⌥l t → t̴", () =>
 		expect(typed("~l", "t")).toBe("t\u{0334}"));
+});
+
+describe("terminal safety: only NBSP+mark is a pending placeholder", () => {
+	// Terminal.app hands the IME an NBSP as the cell before the cursor. A bare
+	// NBSP must NOT be treated as ours, or every letter would rewrite terminal
+	// content. Only NBSP carrying a combining mark is a real pending diacritic.
+	test("bare NBSP before the cursor: x inserts, not absorbs", () =>
+		expect(typeKeys(seq("x"), "\u{00A0}")).toBe("\u{00A0}x"));
+	test("real pending (NBSP + tilde): x absorbs the mark", () =>
+		expect(typeKeys(seq("x"), "\u{00A0}\u{0303}")).toBe(nfc("x\u{0303}")));
+	test("plain letter before the cursor is untouched: r then k inserts", () =>
+		expect(typeKeys(seq("k"), "r")).toBe("rk"));
 });
 
 describe("ring positioning", () => {
