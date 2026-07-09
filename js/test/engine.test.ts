@@ -303,6 +303,54 @@ describe("⇧1 = tie bar (a glyph with no Latin home)", () => {
 		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
 
+describe("East Asian coverage", () => {
+	// Chao tone letters stack into arbitrary contours — the review's headline gap.
+	test("Mandarin contours: ⌥1–⌥5 stack", () => {
+		expect(typed("m", "a", "~2", "~1", "~4")).toBe("ma˨˩˦");   // dipping 214
+		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥");           // rising 35
+	});
+	test("tone numerals via the superscript operator: ma²¹⁴", () =>
+		expect(typed("m", "a", "2", "~p", "1", "~p", "4", "~p")).toBe("ma²¹⁴"));
+
+	test("Chinese affricates: t ⇧1 s⇧J → t͡ɕ, t ⇧1 s⇧R → t͡ʂ", () => {
+		expect(typed("t", "+1", "s", "+j")).toBe("t\u{0361}ɕ");
+		expect(typed("t", "+1", "s", "+r")).toBe("t\u{0361}ʂ");
+	});
+	test("aspiration via ⌥p: k h ⌥p → kʰ", () => expect(typed("k", "h", "~p")).toBe("kʰ"));
+
+	// All six Vietnamese tones (ngang is unmarked).
+	test("Vietnamese tones on a: ngang sắc huyền hỏi ngã nặng", () => {
+		expect(typed("a")).toBe("a");
+		expect(typed("~e", "a")).toBe(nfc("á"));
+		expect(typed("~`", "a")).toBe(nfc("à"));
+		expect(typed("~h", "a")).toBe(nfc("ả"));   // hỏi, U+0309
+		expect(typed("~n", "a")).toBe(nfc("ã"));
+		expect(typed("~+x", "a")).toBe(nfc("ạ"));
+	});
+	test("Vietnamese implosive: b ⇧P → ɓ", () => expect(typed("b", "+p")).toBe("ɓ"));
+
+	// Korean/Cantonese/Thai coda stops are unreleased; Korean has a fortis series.
+	test("unreleased coda stops on ⌥j", () => {
+		expect(typed("~j", "p")).toBe(nfc("p\u{031A}"));
+		expect(typed("~j", "k")).toBe(nfc("k\u{031A}"));
+	});
+	test("Cantonese sɐp̚", () => expect(typed("s", "+5", "+a", "~j", "p")).toBe(nfc("sɐp\u{031A}")));
+	test("Korean fortis on ⌥0: k͈ t͈ p͈ s͈", () => {
+		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
+		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
+	});
+	test("fortis affricate stacks with the tie: t ⇧1 ⌥0 s⇧J → t͡ɕ͈", () =>
+		expect(typed("t", "+1", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
+
+	// Vowels East Asianists need, one digraph each.
+	test("ɨ ɯ ɤ ʌ are single digraphs", () => {
+		expect(typed("i", "+y")).toBe("ɨ");
+		expect(typed("u", "+w")).toBe("ɯ");
+		expect(typed("o", "+w")).toBe("ɤ");
+		expect(typed("u", "+a")).toBe("ʌ");
+	});
+});
+
 describe("ring positioning", () => {
 	test("⌥k n → ring below", () => expect(typed("~k", "n")).toBe(nfc("n\u{0325}")));
 	test("⌥k n ⇧G → ring rides above the descender (prefixed before ŋ exists)", () =>

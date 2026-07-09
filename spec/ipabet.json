@@ -967,12 +967,12 @@
    "name": "COMBINING SEAGULL BELOW (linguolabial) — parked, arbitrary"
   },
   {
-   "opt": "0",
+   "opt": "j",
    "mark": "̚",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased) — parked, arbitrary",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; arbitrary key, placed on frequency)",
    "clone": "˺"
   },
   {
@@ -982,6 +982,14 @@
    "group": "Transliteration",
    "cp": "U+0309",
    "name": "COMBINING HOOK ABOVE (Vietnamese hỏi tone — Latin tenant, h for hook/hỏi)"
+  },
+  {
+   "opt": "0",
+   "mark": "͈",
+   "type": "combining",
+   "group": "Phonation",
+   "cp": "U+0348",
+   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)"
   }
  ],
  "superscripts": {
