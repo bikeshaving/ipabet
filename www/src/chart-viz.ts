@@ -256,7 +256,9 @@ function *VowelApp() {
 						const a = vpos(VBY[aSym], morph), b = vpos(VBY[bSym], morph);
 						const dx = b.x - a.x, dy = b.y - a.y;
 						const len = Math.hypot(dx, dy) || 1;
-						const pad = 21, padEnd = 24;
+						// pads pull the arrow off both circles; scale them down for close
+						// pairs (e.g. ə→ɜ in acoustic view) so the line never inverts.
+						const pad = Math.min(21, len * 0.33), padEnd = Math.min(24, len * 0.37);
 						const x1 = a.x + (dx / len) * pad, y1 = a.y + (dy / len) * pad;
 						const x2 = b.x - (dx / len) * padEnd, y2 = b.y - (dy / len) * padEnd;
 						return jsx`
@@ -566,7 +568,8 @@ function *ConsonantApp() {
 					${o ? o.pairs.map(([aS, bS]) => {
 						const a = cpos(CBY[aS], morph), b = cpos(CBY[bS], morph);
 						const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
-						const p1 = 17, p2 = 20;
+						// scale pads down for close pairs so short arrows never invert.
+						const p1 = Math.min(17, len * 0.33), p2 = Math.min(20, len * 0.37);
 						return jsx`
 							<line x1=${a.x + dx / len * p1} y1=${a.y + dy / len * p1}
 										x2=${b.x - dx / len * p2} y2=${b.y - dy / len * p2}
