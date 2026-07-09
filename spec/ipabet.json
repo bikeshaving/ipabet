@@ -658,6 +658,12 @@
    "glyph": "͡",
    "cp": "U+0361",
    "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — welds two symbols into one segment)"
+  },
+  {
+   "key": "tJ",
+   "glyph": "c",
+   "cp": "U+0063",
+   "name": "LATIN SMALL LETTER C (voiceless palatal stop — palatalized t)"
   }
  ],
  "marks": [
@@ -857,10 +863,9 @@
    "opt": "x",
    "mark": "̽",
    "type": "combining",
-   "double": "̣",
    "group": "Articulation",
    "cp": "U+033D",
-   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below, a Latin tenant: ṭ ḥ ṣ)",
+   "name": "COMBINING X ABOVE (mid-centralized)",
    "clone": "˟"
   },
   {
@@ -990,6 +995,16 @@
    "group": "Phonation",
    "cp": "U+0348",
    "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)"
+  },
+  {
+   "opt": "g",
+   "mark": "̇",
+   "clone": "˙",
+   "type": "combining",
+   "group": "Transliteration",
+   "cp": "U+0307",
+   "double": "̣",
+   "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ)"
   }
  ],
  "superscripts": {

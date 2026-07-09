@@ -303,6 +303,46 @@ describe("⇧1 = tie bar (a glyph with no Latin home)", () => {
 		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
 
+describe("accented capitals (a pending accent absorbs onto a capital base)", () => {
+	// The letters table is lowercase-keyed. Without an explicit capital path the
+	// accent commits as a spacing clone ("¨A"), breaking every sentence-initial
+	// accented word in every European language.
+	test("German Ä Ö Ü", () => {
+		expect(typed("~u", "+a")).toBe(nfc("Ä"));
+		expect(typed("~u", "+o")).toBe(nfc("Ö"));
+		expect(typed("~u", "+u")).toBe(nfc("Ü"));
+	});
+	test("French/Spanish É À Ê Ñ Ç", () => {
+		expect(typed("~e", "+e")).toBe(nfc("É"));
+		expect(typed("~`", "+a")).toBe(nfc("À"));
+		expect(typed("~i", "+e")).toBe(nfc("Ê"));
+		expect(typed("~n", "+n")).toBe(nfc("Ñ"));
+		expect(typed("~c", "+c")).toBe(nfc("Ç"));
+	});
+	// It must fire ONLY while an accent pends — acronyms and shift-chaining intact.
+	test("acronyms and chaining are untouched", () => {
+		expect(typed("+u", "+r", "+l")).toBe("URL");
+		expect(typed("+s", "+h", "+a")).toBe("SHA");
+		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ");
+		expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
+	});
+});
+
+describe("dot-above / dot-below (⌥g, a Latin-tenant shape twin)", () => {
+	test("dot above: ż ṅ ṁ ė", () => {
+		expect(typed("~g", "z")).toBe(nfc("ż"));   // Polish
+		expect(typed("~g", "n")).toBe(nfc("ṅ"));   // IAST velar nasal
+		expect(typed("~g", "e")).toBe(nfc("ė"));   // Lithuanian
+	});
+	test("dot below: ḥ ṭ ṣ ṛ", () => {
+		expect(typed("~+g", "h")).toBe(nfc("ḥ"));
+		expect(typed("~+g", "t")).toBe(nfc("ṭ"));
+		expect(typed("~+g", "r")).toBe(nfc("ṛ"));
+	});
+	test("dot above on a capital: Ż", () => expect(typed("~g", "+z")).toBe(nfc("Ż")));
+	test("palatalize series is complete: t ⇧J → c", () => expect(typed("t", "+j")).toBe("c"));
+});
+
 describe("East Asian coverage", () => {
 	// Chao tone letters stack into arbitrary contours — the review's headline gap.
 	test("Mandarin contours: ⌥1–⌥5 stack", () => {
@@ -325,7 +365,7 @@ describe("East Asian coverage", () => {
 		expect(typed("~`", "a")).toBe(nfc("à"));
 		expect(typed("~h", "a")).toBe(nfc("ả"));   // hỏi, U+0309
 		expect(typed("~n", "a")).toBe(nfc("ã"));
-		expect(typed("~+x", "a")).toBe(nfc("ạ"));
+		expect(typed("~+g", "a")).toBe(nfc("ạ"));
 	});
 	test("Vietnamese implosive: b ⇧P → ɓ", () => expect(typed("b", "+p")).toBe("ɓ"));
 

@@ -401,6 +401,16 @@ class InputController: IMKInputController {
             Dbg.log("  → emitBase '\(glyph)'")
             emitBase(glyph, client); return true
         }
+        // A pending accent absorbs onto a CAPITAL base: ⌥u ⇧A → Ä. The letters
+        // table is lowercase-keyed, so without this the capital misses and the
+        // accent commits as a spacing clone ("¨A") — breaking every accented
+        // capital in every language. Fires only while an accent pends, so
+        // acronyms and shift-chaining are untouched.
+        if !pending.isEmpty, s.count == 1, let c = s.unicodeScalars.first,
+           (65...90).contains(c.value) {
+            Dbg.log("  → emitBase capital '\(s)'")
+            emitBase(s, client); return true
+        }
         // Not a base: a pending accent commits as its spacing form (⌥e space → ´),
         // then the key passes. Capitals with no transform, punctuation, 8/9/0.
         flushPending(client)

@@ -370,6 +370,14 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
 	const glyph = letters.get(s);
 	if (glyph !== undefined) return emitBase(glyph, pending);
 
+	// A pending accent absorbs onto a CAPITAL base: ⌥u ⇧A → Ä. The letters table
+	// is lowercase-keyed, so without this the capital misses and the accent
+	// commits as a spacing clone ("¨A"). That broke every accented capital in
+	// every language — Ä Ö Ü É Á Ñ Ç — i.e. every sentence-initial word.
+	// Only fires while an accent pends, so acronyms and shift-chaining are
+	// untouched (the transform path is already skipped when pending).
+	if (pending.length > 0 && /^[A-Z]$/.test(s)) return emitBase(s, pending);
+
 	// capitals with no transform, punctuation: native. Under shift-chaining this
 	// is also how a chained base is emitted — a capital, pending a modifier that
 	// may lower+transform it (handled above via two-glyph lookback).
