@@ -216,6 +216,8 @@ class InputController: IMKInputController {
         // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
         // reference IMEs only pass full system TIS layout IDs here, and the
         // bare in-bundle name was a misrouting suspect on macOS 15.
+        Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall
+        Dbg.log("── activate app=\(clientBundleID()) ──")
     }
 
     override func commitComposition(_ sender: Any!) {}   // no composition to flush
@@ -225,7 +227,11 @@ class InputController: IMKInputController {
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
         let flags = event.modifierFlags
-        if flags.contains(.command) || flags.contains(.control) { return false }
+        Dbg.log("↓ kc=\(event.keyCode) ch=\(Dbg.str(event.characters)) mods=\(Dbg.mods(flags)) app=\(client.bundleIdentifier() ?? "?")")
+        if flags.contains(.command) || flags.contains(.control) {
+            Dbg.log("  → pass (cmd/ctrl chord — leader keys land here)")
+            return false
+        }
         // Secure input (password fields): the OS already bypasses IMEs here,
         // but decline explicitly in case a host leaks events — never
         // transform what someone types into a password.
@@ -310,6 +316,7 @@ class InputController: IMKInputController {
                 base = base.lowercased()
             }
             if let combo = t.transforms[base + s] {
+                Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
                 replace(r, with: recompose(combo, reposition(combo, marks)), client); return true
             }
             // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
@@ -332,8 +339,12 @@ class InputController: IMKInputController {
             }
         }
         // letter base glyph — absorbing any pending prefix diacritics
-        if let glyph = t.letters[s] { emitBase(glyph, client); return true }
+        if let glyph = t.letters[s] {
+            Dbg.log("  → emitBase '\(glyph)'")
+            emitBase(glyph, client); return true
+        }
         // capitals with no transform, punctuation, digits 8/9/0: type literally
+        Dbg.log("  → pass (literal '\(s)')")
         return false
     }
 
@@ -390,7 +401,11 @@ class InputController: IMKInputController {
 
     /// Emit a base glyph, absorbing any pending prefix diacritics onto it.
     private func emitBase(_ glyph: String, _ client: IMKTextInput) {
-        guard let (p, r) = lastCluster(client), isPending(p) else { insert(glyph, client); return }
+        guard let (p, r) = lastCluster(client), isPending(p) else {
+            Dbg.log("    emitBase: no pending → insert '\(glyph)'")
+            insert(glyph, client); return
+        }
+        Dbg.log("    emitBase: absorb onto '\(glyph)'")
         let marks = decompose(p).marks
         // dark l: overlay + l is the atomic ɫ, not a ragged l̴
         if marks.count == 1, marks[0] == "\u{0334}", glyph == "l" {
@@ -440,12 +455,19 @@ class InputController: IMKInputController {
     /// The grapheme cluster before the cursor and its UTF-16 range.
     private func lastCluster(_ client: IMKTextInput) -> (Character, NSRange)? {
         let sel = client.selectedRange()
-        guard sel.location != NSNotFound, sel.location > 0, sel.length == 0 else { return nil }
+        guard sel.location != NSNotFound, sel.location > 0, sel.length == 0 else {
+            Dbg.log("  lastCluster → nil (sel loc=\(sel.location) len=\(sel.length))")
+            return nil
+        }
         let start = max(0, sel.location - 16)
         var actual = NSRange()
         guard let s = client.string(from: NSRange(location: start, length: sel.location - start),
                                     actualRange: &actual),
-              let last = s.last else { return nil }
+              let last = s.last else {
+            Dbg.log("  lastCluster → nil (no string; client won't read)")
+            return nil
+        }
+        Dbg.log("  lastCluster → '\(Dbg.str(String(last)))'")
         return (last, NSRange(location: sel.location - (String(last) as NSString).length,
                               length: (String(last) as NSString).length))
     }
