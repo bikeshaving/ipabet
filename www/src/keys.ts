@@ -51,7 +51,7 @@ function segTable(rows: Letter[]): string {
 function markTable(): string {
 	return marks.map((m) => {
 		const shown = m.type === "combining" ? "◌" + m.mark : m.mark;
-		const two = m.double ? " · ×2 → ◌" + m.double : (m.cycle?.length ? " · cycles" : "");
+		const two = m.double ? " · ⇧ → ◌" + m.double : "";
 		return `<tr><td class="k">⌥${esc(m.opt)}</td><td class="g">${esc(shown)}</td><td class="cp">${cp(m.mark)}</td><td>${esc((m.name ?? "").toLowerCase())}${two}</td></tr>`;
 	}).join("\n");
 }
@@ -114,9 +114,13 @@ export const KEYS_HTML = `<!DOCTYPE html>
 		<tr><td class="k">obstruent ⇧X</td><td class="g">Cʼ</td><td class="cp">U+02BC</td><td>ejective (eXplosive) — appends ʼ to a voiceless obstruent (p t ʈ c k q ɸ f θ s ʃ ʂ ç x χ ɬ); open class</td></tr>
 	</table></div>
 
-	<h2>Tier 2 · diacritics &amp; suprasegmentals (Option layer, postfix)</h2>
-	<p>Type the base, then ⌥+key decorates it. A second press gives the mark's
-	other form (double, positional twin, or cycle); a single-form mark toggles off.</p>
+	<h2>Tier 2 · diacritics &amp; suprasegmentals (Option layer)</h2>
+	<p>Combining diacritics are <em>prefix</em>, dead-key style like é/ñ on the US
+	keyboard: press ⌥+key, then the base absorbs the mark (⌥n then n → ñ). They
+	stack. Spacing marks (length, tone, stress) are <em>postfix</em> — type the
+	base, then the mark. Where a mark has a second form, ⌥⇧+key gives it
+	(⌥⇧n → creaky, ⌥⇧' → secondary stress); pressing the same form again on the
+	pending mark toggles it off.</p>
 	<div class="tablewrap"><table>${markTable()}</table></div>
 
 	<h2>Tier 2 · superscripts (base + ⌥p)</h2>

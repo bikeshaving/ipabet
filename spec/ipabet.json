@@ -773,14 +773,33 @@
    "opt": "d",
    "mark": "̪",
    "type": "combining",
-   "cycle": [
-    "̺",
-    "̻",
-    "̼"
-   ],
    "group": "Articulation",
    "cp": "U+032A",
-   "name": "COMBINING BRIDGE BELOW (dental; cycle apical/laminal/linguolabial)"
+   "name": "COMBINING BRIDGE BELOW (dental)"
+  },
+  {
+   "opt": "j",
+   "mark": "̺",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+033A",
+   "name": "COMBINING INVERTED BRIDGE BELOW (apical)"
+  },
+  {
+   "opt": "y",
+   "mark": "̻",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+033B",
+   "name": "COMBINING SQUARE BELOW (laminal)"
+  },
+  {
+   "opt": "z",
+   "mark": "̼",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+033C",
+   "name": "COMBINING SEAGULL BELOW (linguolabial)"
   },
   {
    "opt": "=",
@@ -792,13 +811,13 @@
    "name": "COMBINING PLUS SIGN BELOW (advanced; ×2 ATR)"
   },
   {
-   "opt": "h",
+   "opt": "g",
    "mark": "̠",
    "type": "combining",
    "double": "̙",
    "group": "Articulation",
    "cp": "U+0320",
-   "name": "COMBINING MINUS SIGN BELOW (retracted; ×2 RTR)"
+   "name": "COMBINING MINUS SIGN BELOW (retracted; ⇧ → RTR)"
   },
   {
    "opt": ".",
@@ -909,7 +928,7 @@
    "name": "SOUTH EAST ARROW (global fall)"
   },
   {
-   "opt": "7",
+   "opt": "o",
    "mark": "ꜜ",
    "type": "spacing",
    "group": "Tone",
@@ -917,7 +936,7 @@
    "name": "MODIFIER LETTER RAISED DOWN ARROW (downstep)"
   },
   {
-   "opt": "8",
+   "opt": "i",
    "mark": "ꜛ",
    "type": "spacing",
    "group": "Tone",

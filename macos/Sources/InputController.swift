@@ -35,20 +35,13 @@ enum USLayout {
     }
 }
 
-// A diacritic on the Option layer. `spacing` marks insert in place (ˈ ː …);
-// combining marks decorate the previous glyph. `double` is the second-press
-// "other form"; `cycle` steps through variants (dental → apical → …).
+// A diacritic on the Option layer. `spacing` marks insert in place, postfix
+// (ˈ ː …); combining marks are prefix (dead-key) and the next base absorbs
+// them. `double` is the ⌥⇧ second form (⌥n → ã, ⌥⇧n → a̰).
 struct Mark {
     let mark: String
     let spacing: Bool
     let double: String?
-    let cycle: [String]
-    // spacing clone (´ for acute, ^ for circumflex): what a combining mark
-    // emits standing alone — no base to decorate, or the base already wears
-    // it (the "cap"). IPA-only marks with no clone ride a no-break space.
-    let clone: String?
-
-    var standalone: String { clone ?? "\u{00A0}" + mark }
 }
 
 struct Tables {
@@ -73,9 +66,7 @@ struct Tables {
             guard let opt = r["opt"] as? String, let mark = r["mark"] as? String else { continue }
             optMarks[opt] = Mark(mark: mark,
                                  spacing: (r["type"] as? String) == "spacing",
-                                 double: r["double"] as? String,
-                                 cycle: r["cycle"] as? [String] ?? [],
-                                 clone: r["clone"] as? String)
+                                 double: r["double"] as? String)
         }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
@@ -261,22 +252,29 @@ class InputController: IMKInputController {
         // through untouched (⌥⇧[ → “, ⌥⇧] → ’, ⌥⇧- → em-dash). Inserting the
         // plain shifted char there would clobber curly quotes and dashes.
         if opt && shift {
-            let bare = USLayout.char(event.keyCode, shift: false)
-            guard let c = bare.first, c.isLetter || c.isNumber else { return false }
+            let oc = USLayout.char(event.keyCode, shift: false)
+            // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary stress)
+            if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
+                applyMark(m, secondary: true, client); return true
+            }
+            // otherwise the raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @);
+            // punctuation passes so the host's own Option typography survives.
+            guard let c = oc.first, c.isLetter || c.isNumber else { return false }
             let raw = USLayout.char(event.keyCode, shift: true)
             guard !raw.isEmpty else { return false }
             insert(raw, client)
             return true
         }
 
-        // Option: the postfix diacritic layer, keyed by the key's unshifted US
-        // character (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥p → superscript,
-        // ⌥1–⌥5 → Chao tone letters ˩˨˧˦˥, ⌥7/⌥8 → downstep/upstep).
+        // Option: the diacritic layer, keyed by the key's unshifted US character
+        // (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥p → superscript, ⌥1–⌥5 →
+        // Chao tone letters ˩˨˧˦˥, ⌥o/⌥i → downstep/upstep). Combining marks are
+        // PREFIX (dead-key style, é/ñ); spacing marks stay postfix.
         if opt {
             let oc = USLayout.char(event.keyCode, shift: false)
             guard oc.count == 1 else { return false }
             if oc == "p" { return superscriptize(client) }
-            if let m = t.optMarks[oc] { applyMark(m, client); return true }
+            if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             if oc.first!.isNumber { insert(oc, client); return true }   // ⌥3/5/7/8 → digit
             return false
         }
@@ -287,7 +285,7 @@ class InputController: IMKInputController {
         // (! @ # …) live on ⌥⇧.
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
-            if shift, let glyph = t.letters[bareKey] { insert(glyph, client); return true }
+            if shift, let glyph = t.letters[bareKey] { emitBase(glyph, client); return true }
             return false
         }
 
@@ -312,7 +310,7 @@ class InputController: IMKInputController {
                 base = base.lowercased()
             }
             if let combo = t.transforms[base + s] {
-                replace(r, with: recompose(combo, marks), client); return true
+                replace(r, with: recompose(combo, reposition(combo, marks)), client); return true
             }
             // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
             // rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞,
@@ -333,79 +331,77 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(base, marks) + "\u{02BC}", client); return true
             }
         }
-        // letter base glyph
-        if let glyph = t.letters[s] { insert(glyph, client); return true }
+        // letter base glyph — absorbing any pending prefix diacritics
+        if let glyph = t.letters[s] { emitBase(glyph, client); return true }
         // capitals with no transform, punctuation, digits 8/9/0: type literally
         return false
     }
 
-    // MARK: - Option diacritic layer (postfix)
+    // MARK: - Option diacritic layer
 
-    private func applyMark(_ m: Mark, _ client: IMKTextInput) {
-        m.spacing ? applySpacing(m, client) : applyCombining(m, client)
+    private static let nbsp = "\u{00A0}"
+    private func isPending(_ c: Character) -> Bool { decompose(c).base == Self.nbsp }
+
+    /// Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form.
+    private func applyMark(_ m: Mark, secondary: Bool, _ client: IMKTextInput) {
+        let scalarStr = (secondary ? m.double : nil) ?? m.mark
+        m.spacing ? applySpacing(scalarStr, client) : applyCombining(scalarStr, client)
     }
 
     /// IPA bases whose descenders collide with below-marks. Marks with a
     /// positional twin ride above these: voiceless ring (n̥ but ŋ̊) and
     /// syllabic line (n̩ but ŋ̍). Position is non-contrastive; the engine
-    /// owns it.
+    /// owns it. Applied to the *final* base, so a mark that landed below on n
+    /// rides above once ⇧G makes it ŋ.
     private static let descenders: Set<Unicode.Scalar> =
         Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ".unicodeScalars)
 
-    /// below-form → above-form for descender bases
+    /// below-form ⇄ above-form for descender bases
     private static let positional: [Unicode.Scalar: Unicode.Scalar] = [
         "\u{0325}": "\u{030A}",   // ring below → ring above
         "\u{0329}": "\u{030D}",   // vertical line below → above (syllabic)
     ]
-
-    /// Combining mark: decorate the previous glyph. Repeat presses cycle
-    /// through the mark's forms (double / positional twin / cycle variants),
-    /// wrapping around. A mark with only one form is the degenerate cycle
-    /// [mark, absence]: the second press lifts it back off — its "other
-    /// form" is bare. With no glyph to decorate, the standalone form
-    /// (spacing clone, or NBSP-carried) — never a dead keystroke.
-    private func applyCombining(_ m: Mark, _ client: IMKTextInput) {
-        guard let (p, r) = lastCluster(client) else { insert(m.standalone, client); return }
-        // pressing the mark key on its own standalone form: another one
-        if String(p) == m.clone { insert(m.standalone, client); return }
-        let (base, marks) = decompose(p)
-        var scalar = m.mark.unicodeScalars.first!
-        // Velarization on l: Unicode never fuses overlay marks (l + U+0334
-        // stays two ragged codepoints), but the literature's dark l is the
-        // atomic ɫ — emit it, and toggle back off, like the ɚ/ɝ rhotics.
-        if scalar == "\u{0334}" {
-            if base == "l" { replace(r, with: recompose("ɫ", marks), client); return }
-            if base == "ɫ" { replace(r, with: recompose("l", marks), client); return }
-        }
-        if let above = Self.positional[scalar], let b = base.unicodeScalars.first,
-           Self.descenders.contains(b) {
-            scalar = above
-        }
-        if let last = marks.last {
-            var forms = [scalar]
-            if let dbl = m.double { forms.append(dbl.unicodeScalars.first!) }
-            forms += m.cycle.map { $0.unicodeScalars.first! }
-            if forms.count > 1, let i = forms.firstIndex(of: last) {
-                replace(r, with: recompose(base, Array(marks.dropLast()) + [forms[(i + 1) % forms.count]]), client)
-                return
-            }
-            if last == scalar {   // its "other form" is absence: lift it off
-                replace(r, with: recompose(base, marks.dropLast()), client)
-                return
-            }
-        }
-        replace(r, with: recompose(base, marks + [scalar]), client)
+    private static let positionalInv: [Unicode.Scalar: Unicode.Scalar] = [
+        "\u{030A}": "\u{0325}",
+        "\u{030D}": "\u{0329}",
+    ]
+    private func reposition(_ base: String, _ marks: [Unicode.Scalar]) -> [Unicode.Scalar] {
+        let desc = base.unicodeScalars.first.map(Self.descenders.contains) ?? false
+        return marks.map { desc ? (Self.positional[$0] ?? $0) : (Self.positionalInv[$0] ?? $0) }
     }
 
-    /// Spacing mark: insert in place. Same mark again upgrades it (read back
-    /// the just-inserted glyph and replace); on the upgraded form it cycles
-    /// back (ˈ ⇄ ˌ) rather than stacking a stray mark.
-    private func applySpacing(_ m: Mark, _ client: IMKTextInput) {
-        if let dbl = m.double, let (p, r) = lastCluster(client) {
-            if String(p) == m.mark { replace(r, with: dbl, client); return }
-            if String(p) == dbl { replace(r, with: m.mark, client); return }
+    /// Combining ⌥ diacritic, PREFIX (dead-key style, like é/ñ on the US
+    /// keyboard): the mark comes first and the next base absorbs it. Stateless:
+    /// the pending mark rides a real NBSP placeholder; `emitBase` folds the
+    /// accumulated stack onto the base that follows. The same form again peels
+    /// back off — down to a bare NBSP, never an empty replacement (which the
+    /// IMK transport drops). Marks stack and can co-occur.
+    private func applyCombining(_ scalarStr: String, _ client: IMKTextInput) {
+        let scalar = scalarStr.unicodeScalars.first!
+        guard let (p, r) = lastCluster(client), isPending(p) else {
+            insert(Self.nbsp + scalarStr, client); return
         }
-        insert(m.mark, client)
+        let marks = decompose(p).marks
+        let next: [Unicode.Scalar] = marks.last == scalar
+            ? Array(marks.dropLast())      // same form again: peel it off
+            : marks + [scalar]             // otherwise stack it
+        replace(r, with: recompose(Self.nbsp, next), client)
+    }
+
+    /// Emit a base glyph, absorbing any pending prefix diacritics onto it.
+    private func emitBase(_ glyph: String, _ client: IMKTextInput) {
+        guard let (p, r) = lastCluster(client), isPending(p) else { insert(glyph, client); return }
+        let marks = decompose(p).marks
+        // dark l: overlay + l is the atomic ɫ, not a ragged l̴
+        if marks.count == 1, marks[0] == "\u{0334}", glyph == "l" {
+            replace(r, with: "ɫ", client); return
+        }
+        replace(r, with: recompose(glyph, reposition(glyph, marks)), client)
+    }
+
+    /// Spacing mark, one specific form: insert it in place (postfix).
+    private func applySpacing(_ scalarStr: String, _ client: IMKTextInput) {
+        insert(scalarStr, client)
     }
 
     /// ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). No

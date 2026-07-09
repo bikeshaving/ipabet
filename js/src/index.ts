@@ -36,10 +36,6 @@ interface Mark {
 	clone?: string;
 }
 
-function standalone(m: Mark): string {
-	return m.clone ?? "\u{00A0}" + m.mark;
-}
-
 // ---------------------------------------------------------------- tables
 
 const letters = new Map<string, string>();
@@ -97,12 +93,21 @@ const VOICELESS_OBSTRUENTS = "ptʈckqɸfθsʃʂçxχɬ";
 // rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
 const DESCENDERS = new Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ");
 
-// below-form → above-form for descender bases (ring, syllabic line);
-// position is non-contrastive, the engine owns it.
+// below-form ⇄ above-form for descender bases (ring, syllabic line); position
+// is non-contrastive, the engine owns it. Applied to the *final* base, so a
+// mark that landed below on n rides above once ⇧G makes it ŋ.
 const POSITIONAL: Record<string, string> = {
 	"\u{0325}": "\u{030A}",
 	"\u{0329}": "\u{030D}",
 };
+const POSITIONAL_INV: Record<string, string> = {
+	"\u{030A}": "\u{0325}",
+	"\u{030D}": "\u{0329}",
+};
+function reposition(base: string, marks: readonly string[]): string[] {
+	const desc = DESCENDERS.has(base[0] ?? "");
+	return marks.map((sc) => (desc ? POSITIONAL[sc] : POSITIONAL_INV[sc]) ?? sc);
+}
 
 // ---------------------------------------------------------------- unicode
 
@@ -146,62 +151,59 @@ function replaceCluster(cluster: string, text: string): Edit {
 // ---------------------------------------------------------------- marks
 
 /**
- * Combining mark: decorate the previous glyph. Repeat presses cycle through
- * the mark's forms (double / positional twin / cycle variants), wrapping
- * around. A mark with only one form is the degenerate cycle [mark,
- * absence]: the second press lifts it back off — its "other form" is bare.
- * With no glyph to decorate, the standalone form (spacing clone, or
- * NBSP-carried) — never a dead keystroke.
+ * Combining ⌥ diacritics are PREFIX (dead-key style, like é/ñ on the US
+ * keyboard): the mark comes first and the next base absorbs it. Statelessly,
+ * the pending mark is emitted as a real NBSP placeholder (NBSP + combining
+ * mark), and `emitBase` folds the accumulated stack onto the base that follows.
+ * A form's primary is ⌥, its secondary is ⌥⇧ (the mark's `double`); pressing
+ * the same form again on the pending placeholder lifts it off (toggle). Marks
+ * are independent and can co-occur (ã̯). Spacing marks (length,
+ * tone, stress) are standalone glyphs, not decorations, so they stay postfix.
  */
-function applyCombining(m: Mark, textBefore: string): Edit {
+const NBSP = "\u{00A0}";
+const isPending = (cluster: string): boolean => decompose(cluster).base === NBSP;
+
+/** Combining diacritic (⌥/⌥⇧): stack a pending mark on an NBSP placeholder in
+ *  front of the base that will absorb it. The same mark again lifts it off,
+ *  down to a bare NBSP — never an empty replacement, which the macOS 15 IMK
+ *  transport silently drops. A bare NBSP is absorbed by the next base, or
+ *  deleted natively by backspace if the run is abandoned. */
+function pendingDiacritic(scalar: string, textBefore: string): Edit {
 	const p = lastCluster(textBefore);
-	if (p === undefined) return {type: "insert", text: standalone(m)};
-	if (p === m.clone) return {type: "insert", text: standalone(m)};
-	const {base, marks} = decompose(p);
-	let scalar = m.mark;
-	// Velarization on l: Unicode never fuses overlay marks, but the
-	// literature's dark l is atomic ɫ — emit it, and toggle back off.
-	if (scalar === "\u{0334}") {
-		if (base === "l") return replaceCluster(p, recompose("ɫ", marks));
-		if (base === "ɫ") return replaceCluster(p, recompose("l", marks));
+	if (p !== undefined && isPending(p)) {
+		const {marks} = decompose(p);
+		const next = marks[marks.length - 1] === scalar
+			? marks.slice(0, -1)          // same form again: peel it back off
+			: [...marks, scalar];         // otherwise stack it
+		return replaceCluster(p, recompose(NBSP, next));
 	}
-	const above = POSITIONAL[scalar];
-	if (above !== undefined && DESCENDERS.has(base[0] ?? "")) {
-		scalar = above;
-	}
-	const last = marks[marks.length - 1];
-	if (last !== undefined) {
-		const forms = [scalar];
-		if (m.double !== undefined) forms.push(m.double);
-		forms.push(...m.cycle);
-		const i = forms.indexOf(last);
-		if (forms.length > 1 && i !== -1) {
-			const next = forms[(i + 1) % forms.length];
-			return replaceCluster(p, recompose(base, [...marks.slice(0, -1), next]));
-		}
-		if (last === scalar) {
-			// its "other form" is absence: lift it off
-			return replaceCluster(p, recompose(base, marks.slice(0, -1)));
-		}
-	}
-	return replaceCluster(p, recompose(base, [...marks, scalar]));
+	return {type: "insert", text: NBSP + scalar};
 }
 
-/**
- * Spacing mark: insert in place. Same mark again upgrades it; on the
- * upgraded form it cycles back (ˈ ⇄ ˌ) rather than stacking a stray mark.
- */
-function applySpacing(m: Mark, textBefore: string): Edit {
-	if (m.double !== undefined) {
-		const p = lastCluster(textBefore);
-		if (p === m.mark) return replaceCluster(p, m.double);
-		if (p === m.double) return replaceCluster(p, m.mark);
-	}
-	return {type: "insert", text: m.mark};
+/** Spacing mark (stress, length, tone letter, arrows): insert it in place. */
+function applySpacing(scalar: string): Edit {
+	return {type: "insert", text: scalar};
 }
 
-function applyMark(m: Mark, textBefore: string): Edit {
-	return m.spacing ? applySpacing(m, textBefore) : applyCombining(m, textBefore);
+/** Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form. */
+function applyMark(m: Mark, textBefore: string, secondary = false): Edit {
+	const scalar = secondary && m.double !== undefined ? m.double : m.mark;
+	return m.spacing ? applySpacing(scalar) : pendingDiacritic(scalar, textBefore);
+}
+
+/** Emit a base glyph, absorbing any pending prefix diacritics onto it. */
+function emitBase(glyph: string, textBefore: string): Edit {
+	const p = lastCluster(textBefore);
+	if (p !== undefined && isPending(p)) {
+		const marks = decompose(p).marks;
+		// dark l: overlay + l is the atomic ɫ, not a ragged l̴
+		if (marks.length === 1 && marks[0] === "\u{0334}" && glyph === "l") {
+			return replaceCluster(p, "ɫ");
+		}
+		// ring/line below ride above a descender base
+		return replaceCluster(p, recompose(glyph, reposition(glyph, marks)));
+	}
+	return {type: "insert", text: glyph};
 }
 
 /** ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). */
@@ -220,7 +222,7 @@ function superscriptize(textBefore: string): Edit {
 /**
  * The IPAbet keystroke handler. Mirrors the IME's handle():
  * bare keys are plain US, ⇧number → IPA glyph, ⇧letter → transform of the
- * previous glyph, ⌥ → postfix diacritics, ⌥⇧ → raw-US escape on
+ * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → raw-US escape on
  * letters/digits. Command/control chords and anything unmapped pass.
  */
 export function handleKey(textBefore: string, k: Keystroke): Edit {
@@ -229,9 +231,13 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 	const option = k.option ?? false;
 	if (key.length !== 1) return {type: "pass"};
 
-	// Option-Shift: raw-US escape on letters/digits; punctuation passes so
-	// the host's own Option typography (curly quotes, dashes) survives.
+	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
+	// ⌥⇧' → secondary stress). Where the key holds no such mark it's the
+	// raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @); punctuation passes
+	// so the host's own Option typography (curly quotes, dashes) survives.
 	if (option && shift) {
+		const m2 = optMarks.get(key);
+		if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, textBefore, true);
 		if (/[a-z]/i.test(key)) return {type: "insert", text: key.toUpperCase()};
 		if (/[0-9]/.test(key)) {
 			return {type: "insert", text: SHIFTED_DIGITS[key] ?? key};
@@ -239,7 +245,7 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 		return {type: "pass"};
 	}
 
-	// Option: the postfix diacritic layer, keyed by the unshifted US char.
+	// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
 	if (option) {
 		if (key === "p") return superscriptize(textBefore);
 		const m = optMarks.get(key);
@@ -253,7 +259,7 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 	if (/[0-9]/.test(key)) {
 		if (shift) {
 			const glyph = letters.get(key);
-			if (glyph !== undefined) return {type: "insert", text: glyph};
+			if (glyph !== undefined) return emitBase(glyph, textBefore);
 		}
 		return {type: "pass"};
 	}
@@ -277,7 +283,7 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 			if (b2.length > 0 && b2.charCodeAt(0) > 127) base = base.toLowerCase();
 		}
 		const combo = transforms.get(base + s);
-		if (combo !== undefined) return replaceCluster(p, recompose(combo, marks));
+		if (combo !== undefined) return replaceCluster(p, recompose(combo, reposition(combo, marks)));
 		// vowel rhoticization: R after any vowel. ə and ɜ have precomposed
 		// rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞.
 		if (s === "R" && base.length > 0 && VOWELS.includes(base[0])) {
@@ -294,9 +300,9 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 		}
 	}
 
-	// letter / click base glyph
+	// letter / click base glyph — absorbing any pending prefix diacritics
 	const glyph = letters.get(s);
-	if (glyph !== undefined) return {type: "insert", text: glyph};
+	if (glyph !== undefined) return emitBase(glyph, textBefore);
 
 	// capitals with no transform, punctuation: native. Under shift-chaining this
 	// is also how a chained base is emitted — a capital, pending a modifier that

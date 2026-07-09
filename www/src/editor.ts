@@ -51,7 +51,7 @@ export const EDITOR_HTML = `<!DOCTYPE html>
 
 	<div id="pad">
 		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"
-			placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · n⌥n → ñ"></textarea>
+			placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · ⌥n n → ñ"></textarea>
 		<div id="bar2">
 			<span id="count">0</span>
 			<span class="grow"></span>

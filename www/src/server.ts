@@ -128,7 +128,7 @@ const HTML = `<!DOCTYPE html>
 		terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the
 		shifted positions: <span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span>
 		<span class="combo"><kbd>⇧5</kbd><span class="arrow">→</span><b class="ipa">ə</b></span>
-		<span class="combo"><kbd>n</kbd><kbd>⌥n</kbd><span class="arrow">→</span><b class="ipa">ñ</b></span>
+		<span class="combo"><kbd>⌥n</kbd><kbd>n</kbd><span class="arrow">→</span><b class="ipa">ñ</b></span>
 		— grounded in romanization conventions you already know, not codes to memorize.
 		The <a href="/chart">full IPA chart, annotated with its keystrokes</a>, is one page away.</p>
 		<div class="cards">
@@ -149,8 +149,8 @@ const HTML = `<!DOCTYPE html>
 				<td class="examples">${shiftNumberCells()}</td></tr>
 			<tr><td><kbd>⇧</kbd> + letter</td><td class="desc">modify the previous segment</td>
 				<td class="examples"><span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span> <span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span> <span class="combo"><kbd>n</kbd><kbd>⇧G</kbd><span class="arrow">→</span><b class="ipa">ŋ</b></span></td></tr>
-			<tr><td><kbd>⌥</kbd></td><td class="desc">postfix diacritics &amp; suprasegmentals</td>
-				<td class="examples"><span class="combo"><kbd>a</kbd><kbd>⌥e</kbd><span class="arrow">→</span><b class="ipa">á</b></span> <span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span> <span class="combo"><kbd>h</kbd><kbd>⌥p</kbd><span class="arrow">→</span><b class="ipa">ʰ</b></span></td></tr>
+			<tr><td><kbd>⌥</kbd></td><td class="desc">diacritics (prefix, dead-key style) &amp; suprasegmentals</td>
+				<td class="examples"><span class="combo"><kbd>⌥e</kbd><kbd>a</kbd><span class="arrow">→</span><b class="ipa">á</b></span> <span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span> <span class="combo"><kbd>h</kbd><kbd>⌥p</kbd><span class="arrow">→</span><b class="ipa">ʰ</b></span></td></tr>
 			<tr><td><kbd>⌥⇧</kbd></td><td class="desc">raw US escape — the plain character an IPA layer claims</td>
 				<td class="examples"><span class="combo"><kbd>⌥⇧2</kbd><span class="arrow">→</span><b>@</b></span> <span class="combo"><kbd>⌥⇧H</kbd><span class="arrow">→</span><b>H</b></span></td></tr>
 		</table>

@@ -38,9 +38,9 @@ describe("digraph transforms", () => {
 	test("y-vowel: o ⇧Y → ɵ", () => expect(typed("o", "+y")).toBe("ɵ"));
 	test("y-vowel: e ⇧Y → ɘ", () => expect(typed("e", "+y")).toBe("ɘ"));
 	test("strut: u ⇧A → ʌ", () => expect(typed("u", "+a")).toBe("ʌ"));
-	test("marks survive the swap: s ⌥; is unaffected, s̪ ⇧H keeps bridge", () => {
-		// dental s, then H: ʃ with the dental bridge preserved
-		expect(typed("s", "~d", "+h")).toBe(nfc("ʃ\u{032A}"));
+	test("marks survive the swap: ⌥d prefixes, s̪ then ⇧H keeps bridge", () => {
+		// dental prefix, s absorbs it (s̪), then H: ʃ with the bridge preserved
+		expect(typed("~d", "s", "+h")).toBe(nfc("ʃ\u{032A}"));
 	});
 });
 
@@ -143,56 +143,85 @@ describe("shifted number row", () => {
 	});
 });
 
-describe("option diacritics (postfix)", () => {
-	test("señor tilde: n ⌥n → ñ", () => expect(typed("s", "e", "n", "~n")).toBe(nfc("señ")));
-	test("acute: e ⌥e → é", () => expect(typed("e", "~e")).toBe(nfc("é")));
-	test("length: a ⌥; → aː", () => expect(typed("a", "~;")).toBe("aː"));
-	test("no base: ⌥n alone emits its spacing clone", () =>
-		expect(typed("~n")).toBe("˜"));
-	test("no base, clone-less mark rides NBSP: ⌥d alone", () =>
-		expect(typed("~d")).toBe("\u{00A0}\u{032A}"));
+describe("option diacritics (prefix, dead-key style)", () => {
+	// Combining ⌥ diacritics precede the base — the é/ñ muscle memory from the
+	// US keyboard. The mark rides an NBSP placeholder; the next base absorbs it.
+	test("señor tilde: ⌥n n → ñ", () => expect(typed("s", "e", "~n", "n")).toBe(nfc("señ")));
+	test("acute: ⌥e e → é", () => expect(typed("~e", "e")).toBe(nfc("é")));
+	test("length is spacing, still postfix: a ⌥; → aː", () => expect(typed("a", "~;")).toBe("aː"));
+	test("no base: a combining mark alone rides its NBSP placeholder", () => {
+		expect(typed("~n")).toBe("\u{00A0}\u{0303}");
+		expect(typed("~d")).toBe("\u{00A0}\u{032A}");
+	});
 });
 
-describe("doubling / cycling", () => {
-	test("tilde ×2 → creaky (below): a ⌥n ⌥n", () =>
-		expect(typed("a", "~n", "~n")).toBe(nfc("a\u{0330}")));
-	test("acute cycles: e ⌥e ⌥e → e-double-acute, ×3 wraps to é", () => {
-		expect(typed("e", "~e", "~e")).toBe(nfc("e\u{030B}"));
-		expect(typed("e", "~e", "~e", "~e")).toBe(nfc("é"));
+describe("second forms on ⌥⇧ (no cycling)", () => {
+	// A two-form mark's second form is ⌥⇧, not a double-press.
+	test("creaky: ⌥⇧n a → a̰ (⌥n a → ã)", () => {
+		expect(typed("~n", "a")).toBe(nfc("a\u{0303}"));
+		expect(typed("~+n", "a")).toBe(nfc("a\u{0330}"));
 	});
-	test("single-form mark toggles off: a ⌥a ⌥a → a (other form = absence)", () =>
-		expect(typed("a", "~a", "~a")).toBe("a"));
-	test("circumflex toggles: e ⌥6 ⌥6 → e, ×3 → ê", () => {
-		expect(typed("e", "~6", "~6")).toBe("e");
-		expect(typed("e", "~6", "~6", "~6")).toBe(nfc("e\u{0302}"));
-	});
-	test("clone-less single-form toggles too: a ⌥. ⌥. → a", () =>
-		expect(typed("a", "~.", "~.")).toBe("a"));
-	test("dark l is atomic: l ⌥l → ɫ, ⌥l again → l", () => {
-		expect(typed("l", "~l")).toBe("ɫ");
-		expect(typed("l", "~l", "~l")).toBe("l");
-	});
-	test("velarization elsewhere stays an overlay: t ⌥l", () =>
-		expect(typed("t", "~l")).toBe("t\u{0334}"));
-	test("dental cycle: d ⌥d ⌥d → apical", () =>
-		expect(typed("d", "~d", "~d")).toBe(nfc("d\u{033A}")));
-	test("stress cycles both ways: ⌥' ⌥' → ˌ, ×3 → ˈ", () => {
+	test("double-acute (extra-high tone): ⌥⇧e e → e̋", () =>
+		expect(typed("~+e", "e")).toBe(nfc("e\u{030B}")));
+	test("secondary stress is spacing, still postfix: ⌥' → ˈ, ⌥⇧' → ˌ", () => {
 		expect(typed("~'")).toBe("ˈ");
-		expect(typed("~'", "~'")).toBe("ˌ");
-		expect(typed("~'", "~'", "~'")).toBe("ˈ");
+		expect(typed("~+'")).toBe("ˌ");
 	});
+	test("non-syllabic: ⌥⇧b a → a̯ (diphthong glide)", () =>
+		expect(typed("~+b", "a")).toBe(nfc("a\u{032F}")));
+	test("breathy: ⌥⇧u a → a̤", () => expect(typed("~+u", "a")).toBe(nfc("a\u{0324}")));
+	test("half-long is spacing, still postfix: a ⌥; → aː, ⌥⇧; → ˑ", () => {
+		expect(typed("a", "~;")).toBe("aː");
+		expect(typed("~+;")).toBe("ˑ");
+	});
+	test("retracted ⌥g a → a̠, RTR ⌥⇧g a → a̙ (moved off ⌥h)", () => {
+		expect(typed("~g", "a")).toBe(nfc("a\u{0320}"));
+		expect(typed("~+g", "a")).toBe(nfc("a\u{0319}"));
+	});
+});
+
+describe("dental family — spread across keys, no cycle", () => {
+	test("dental ⌥d, apical ⌥j, laminal ⌥y, linguolabial ⌥z (all prefix)", () => {
+		expect(typed("~d", "d")).toBe(nfc("d\u{032A}"));
+		expect(typed("~j", "d")).toBe(nfc("d\u{033A}"));
+		expect(typed("~y", "d")).toBe(nfc("d\u{033B}"));
+		expect(typed("~z", "d")).toBe(nfc("d\u{033C}"));
+	});
+});
+
+describe("toggle-off (press the same form again on the pending mark)", () => {
+	// Peeling the last mark leaves a bare NBSP placeholder (never an empty edit,
+	// which the IMK transport drops); the next base absorbs it, so ⌥n ⌥n x → x.
+	const NBSP = "\u{00A0}";
+	test("⌥n ⌥n → bare NBSP (form lifts off before any base)", () => expect(typed("~n", "~n")).toBe(NBSP));
+	test("⌥⇧n ⌥⇧n → bare NBSP (second form toggles too)", () => expect(typed("~+n", "~+n")).toBe(NBSP));
+	test("single-form macron: ⌥a ⌥a → bare NBSP", () => expect(typed("~a", "~a")).toBe(NBSP));
+	test("a peeled placeholder is absorbed by the next base: ⌥n ⌥n x → x", () =>
+		expect(typed("~n", "~n", "x")).toBe("x"));
+	test("circumflex toggles: ⌥6 ⌥6 → bare NBSP, ×3 then e → ê", () => {
+		expect(typed("~6", "~6")).toBe(NBSP);
+		expect(typed("~6", "~6", "~6", "e")).toBe(nfc("e\u{0302}"));
+	});
+	test("clone-less single-form toggles too: ⌥. ⌥. → bare NBSP", () =>
+		expect(typed("~.", "~.")).toBe(NBSP));
+	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l l → l (velarization lifted)", () => {
+		expect(typed("~l", "l")).toBe("ɫ");
+		expect(typed("~l", "~l", "l")).toBe("l");
+	});
+	test("velarization elsewhere stays an overlay: ⌥l t → t̴", () =>
+		expect(typed("~l", "t")).toBe("t\u{0334}"));
 });
 
 describe("ring positioning", () => {
-	test("n ⌥k → ring below", () => expect(typed("n", "~k")).toBe(nfc("n\u{0325}")));
-	test("ŋ ⌥k → ring above (descender)", () =>
-		expect(typed("n", "+g", "~k")).toBe(nfc("ŋ\u{030A}")));
-	test("syllabic positions too: n ⌥s → n̩, ŋ ⌥s → ŋ̍", () => {
-		expect(typed("n", "~s")).toBe(nfc("n\u{0329}"));
-		expect(typed("n", "+g", "~s")).toBe(nfc("ŋ\u{030D}"));
+	test("⌥k n → ring below", () => expect(typed("~k", "n")).toBe(nfc("n\u{0325}")));
+	test("⌥k n ⇧G → ring rides above the descender (prefixed before ŋ exists)", () =>
+		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u{030A}")));
+	test("syllabic repositions too: ⌥s n → n̩, ⌥s n ⇧G → ŋ̍", () => {
+		expect(typed("~s", "n")).toBe(nfc("n\u{0329}"));
+		expect(typed("~s", "n", "+g")).toBe(nfc("ŋ\u{030D}"));
 	});
-	test("syllabic is single-form now: repeat toggles off", () =>
-		expect(typed("n", "~s", "~s")).toBe("n"));
+	test("syllabic is single-form now: ⌥s ⌥s repeat toggles off to bare NBSP", () =>
+		expect(typed("~s", "~s")).toBe("\u{00A0}"));
 });
 
 describe("superscript operator ⌥p", () => {
@@ -210,9 +239,9 @@ describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
 	});
 	test("contours stack: m a ⌥3 ⌥5 → ma˧˥ (mid-rising)", () =>
 		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥"));
-	test("downstep ⌥7 → ꜜ, upstep ⌥8 → ꜛ", () => {
-		expect(typed("~7")).toBe("ꜜ");
-		expect(typed("~8")).toBe("ꜛ");
+	test("downstep ⌥o → ꜜ, upstep ⌥i → ꜛ", () => {
+		expect(typed("~o")).toBe("ꜜ");
+		expect(typed("~i")).toBe("ꜛ");
 	});
 });
 
@@ -233,9 +262,9 @@ describe("option-shift raw escape", () => {
 });
 
 describe("backspace peel", () => {
-	test("ñ peels to n", () => expect(typed("n", "~n", "⌫")).toBe("n"));
+	test("ñ peels to n", () => expect(typed("~n", "n", "⌫")).toBe("n"));
 	test("stacked marks peel one at a time", () =>
-		expect(typed("a", "~n", "~e", "⌫")).toBe(nfc("ã")));
+		expect(typed("~n", "~e", "a", "⌫")).toBe(nfc("ã")));
 	test("bare glyph passes to native delete", () => {
 		expect(handleBackspace("sa")).toEqual({type: "pass"});
 	});

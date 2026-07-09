@@ -229,7 +229,7 @@ function diacritics(): string {
 		})
 		.join("");
 	return `<div class="cols2">${items}</div>
-	<p class="fine">Postfix: type the base, then the ⌥ mark. A second press gives the mark's other form (double, positional twin, or cycle). <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
+	<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧'</i> → secondary stress). Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
 }
 
 // ------------------------------------------------------ suprasegmentals
@@ -370,7 +370,7 @@ export const CHART_HTML = `<!DOCTYPE html>
 	<h3>DIACRITICS</h3>
 	${diacritics()}
 
-	<p class="attrib">Click any symbol to hear it. Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; ⌥ marks are typed after their base.
+	<p class="attrib">Click any symbol to hear it. Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; combining ⌥ marks are typed before their base (dead-key style), spacing marks after.
 	Audio: Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses, re-hosted with attribution.
 	Layout derived from <a href="https://www.internationalphoneticassociation.org/content/ipa-chart">The International Phonetic Alphabet (revised to 2015)</a>,
 	© 2015 International Phonetic Association, CC BY-SA 3.0. This sheet is likewise CC BY-SA · <a href="https://ipabet.org">ipabet.org</a></p>

@@ -83,7 +83,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 				<span class="name">Length bound — two characters</span><span class="tag hard">hard</span>
 				<div class="body">No phonetic segment costs more than a base letter and at most
 				one modifier: <span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span>.
-				(Diacritics are a separate postfix layer.) This bounds both the effort of any
+				(Diacritics are a separate prefix, dead-key layer.) This bounds both the effort of any
 				symbol and the amount of text the engine ever has to look at.</div>
 			</li>
 			<li>
