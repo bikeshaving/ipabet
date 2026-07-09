@@ -223,11 +223,7 @@ function superscriptize(textBefore: string): Edit {
  * previous glyph, ⌥ → postfix diacritics, ⌥⇧ → raw-US escape on
  * letters/digits. Command/control chords and anything unmapped pass.
  */
-export function handleKey(
-	textBefore: string,
-	k: Keystroke,
-	opts: {shiftChain?: boolean} = {},
-): Edit {
+export function handleKey(textBefore: string, k: Keystroke): Edit {
 	const key = k.key;
 	const shift = k.shift ?? false;
 	const option = k.option ?? false;
@@ -268,7 +264,18 @@ export function handleKey(
 	// combining marks already on it survive the swap (decomposed view).
 	const p = lastCluster(textBefore);
 	if (p !== undefined) {
-		const {base, marks} = decompose(p);
+		let {base, marks} = decompose(p);
+		// Shift-chaining: a capital typed right after a special (non-ASCII) IPA
+		// glyph is a *pending base* — lower it so a following modifier transforms
+		// it, while a capital that never gets a modifier simply stays as typed
+		// (it already passed through natively). Two glyphs of lookback keep this
+		// stateless and preserve caps by default: "ʃ⇧T" → ʃT, but "ʃ⇧T⇧R" → ʃʈ.
+		// Acronyms never have a special glyph behind them, so they stay literal.
+		if (shift && /^[A-Z]$/.test(base)) {
+			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
+			const b2 = p2 !== undefined ? decompose(p2).base : "";
+			if (b2.length > 0 && b2.charCodeAt(0) > 127) base = base.toLowerCase();
+		}
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) return replaceCluster(p, recompose(combo, marks));
 		// vowel rhoticization: R after any vowel. ə and ɜ have precomposed
@@ -291,22 +298,9 @@ export function handleKey(
 	const glyph = letters.get(s);
 	if (glyph !== undefined) return {type: "insert", text: glyph};
 
-	// Shift-chaining (opt-in): a shifted letter immediately after a *special*
-	// (non-ASCII) IPA glyph continues IPA as a lowercase base — so a held-shift
-	// run flows without releasing (θ ⇧I ⇧H → θɪ; t ⇧H⇧I⇧H⇧N⇧G → θɪŋ). It fires
-	// only here, after the modifier/R/X checks failed and the shifted key is not
-	// itself a base glyph (⇧I, ⇧H…). Gating on the *previous* glyph being special
-	// is what keeps acronyms safe: an all-caps run (NSA, THE, PHP) never produces
-	// a special glyph, so it never chains — one glyph of lookback, no state. A
-	// plain ASCII base (lowercase i) is not special, so it doesn't seed a chain.
-	if (opts.shiftChain && shift && /[a-z]/i.test(key) && p !== undefined) {
-		const prevBase = decompose(p).base;
-		if (prevBase.length > 0 && prevBase.charCodeAt(0) > 127) {
-			return {type: "insert", text: letters.get(key) ?? key};
-		}
-	}
-
-	// capitals with no transform, punctuation: native
+	// capitals with no transform, punctuation: native. Under shift-chaining this
+	// is also how a chained base is emitted — a capital, pending a modifier that
+	// may lower+transform it (handled above via two-glyph lookback).
 	return {type: "pass"};
 }
 
@@ -352,15 +346,11 @@ export function nativeChar(k: Keystroke): string {
  * Convenience: run a sequence of keystrokes against a buffer, applying pass
  * edits with their native character. Backspace is the keystroke {key: "⌫"}.
  */
-export function typeKeys(
-	keys: Keystroke[],
-	initial = "",
-	opts: {shiftChain?: boolean} = {},
-): string {
+export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let text = initial;
 	for (const k of keys) {
 		const edit =
-			k.key === "⌫" ? handleBackspace(text) : handleKey(text, k, opts);
+			k.key === "⌫" ? handleBackspace(text) : handleKey(text, k);
 		if (k.key === "⌫" && edit.type === "pass") {
 			// native delete: drop the last grapheme cluster
 			const p = lastCluster(text);

@@ -26,11 +26,7 @@ const EDITOR_CSS = `
 	color: var(--fg); cursor: pointer; transition: color .15s, border-color .15s, background .15s;
 }
 #bar2 button:hover { border-color: var(--accent); color: var(--accent); }
-#chain { display: inline-flex; align-items: center; gap: .45rem; color: var(--dim); }
-#chain .dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); transition: background .15s, box-shadow .15s; }
-#chain[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
-#chain[aria-pressed="true"] .dot { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-#count { color: var(--dim); font: .78rem ui-monospace, Menlo, monospace; margin-left: .2rem; }
+#count { color: var(--dim); font: .78rem ui-monospace, Menlo, monospace; }
 .tips { color: var(--dim); font-size: .9rem; line-height: 1.6; }
 .tips kbd { font-size: .82rem; }
 .tips .combo { white-space: nowrap; }
@@ -57,7 +53,6 @@ export const EDITOR_HTML = `<!DOCTYPE html>
 		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"
 			placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · n⌥n → ñ"></textarea>
 		<div id="bar2">
-			<button id="chain" aria-pressed="true"><span class="dot"></span>Hold-shift chaining</button>
 			<span id="count">0</span>
 			<span class="grow"></span>
 			<button id="clear">Clear</button>
@@ -71,8 +66,7 @@ export const EDITOR_HTML = `<!DOCTYPE html>
 			(<span class="combo"><kbd>⇧2</kbd><span class="arrow">→</span><b class="ipa">ʔ</b></span>),
 			<span class="combo"><kbd>⌥</kbd></span> adds diacritics
 			(<span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span>),
-			and <span class="combo"><kbd>⌥⇧</kbd></span> escapes to raw US. With <b>hold-shift chaining</b> on,
-			hold <kbd>⇧</kbd> across a run to keep typing IPA without re-tapping. The
+			and <span class="combo"><kbd>⌥⇧</kbd></span> escapes to raw US. The
 			<a href="/chart">full chart</a> has every key.
 		</p>
 	</div>

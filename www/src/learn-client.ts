@@ -18,11 +18,6 @@ declare global { interface Window { __CURRICULUM: Lesson[]; } }
 const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
 const LESSONS = window.__CURRICULUM;
 
-// Prototype: hold shift to continue IPA (a shifted letter after a special glyph
-// chains as a base). Additive — the taught bare-key paths still work identically,
-// so the on-path check (which compares glyph output, not keystrokes) is unaffected.
-const CHAIN = {shiftChain: true};
-
 // ---------------------------------------------------------------- state
 const KEY = "ipabet-learn-course-v1";
 let li = 0, wi = 0, buffer = "", misses = 0, streak = 0, hinted = false;
@@ -141,7 +136,7 @@ function doBackspace() {
 	render();
 }
 function sendKey(k: Keystroke) {
-	buffer = applyEdit(buffer, handleKey(buffer, k, CHAIN), nativeChar(k));
+	buffer = applyEdit(buffer, handleKey(buffer, k), nativeChar(k));
 	render();
 	check();
 }
@@ -158,7 +153,7 @@ function keystrokeFromLabel(lab: string): Keystroke {
 }
 function simulate(labels: string[], upto: number): string {
 	let b = "";
-	for (let i = 0; i < upto; i++) { const k = keystrokeFromLabel(labels[i]); b = applyEdit(b, handleKey(b, k, CHAIN), nativeChar(k)); }
+	for (let i = 0; i < upto; i++) { const k = keystrokeFromLabel(labels[i]); b = applyEdit(b, handleKey(b, k), nativeChar(k)); }
 	return b;
 }
 function nextKeystroke(): Keystroke | null {

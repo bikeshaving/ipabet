@@ -297,7 +297,19 @@ class InputController: IMKInputController {
         // Shift-letter modifiers transform the previous glyph in place; any
         // combining marks already on it survive the swap (decomposed view).
         if let (p, r) = lastCluster(client) {
-            let (base, marks) = decompose(p)
+            let (base0, marks) = decompose(p)
+            var base = base0
+            // Shift-chaining: a capital typed right after a special (non-ASCII) IPA
+            // glyph is a *pending base* — lower it so this modifier transforms it,
+            // while a capital with no modifier stays as typed (the host already
+            // inserted it when we declined it). Two clusters of lookback keep this
+            // stateless; acronyms/CamelCase never have a special glyph behind a
+            // capital, so they stay literal.
+            if shift, base.count == 1, let bc = base.unicodeScalars.first,
+               (65...90).contains(bc.value), let p2 = clusterBefore(r, client),
+               let f2 = decompose(p2).base.unicodeScalars.first, f2.value > 127 {
+                base = base.lowercased()
+            }
             if let combo = t.transforms[base + s] {
                 replace(r, with: recompose(combo, marks), client); return true
             }
@@ -439,6 +451,18 @@ class InputController: IMKInputController {
               let last = s.last else { return nil }
         return (last, NSRange(location: sel.location - (String(last) as NSString).length,
                               length: (String(last) as NSString).length))
+    }
+
+    /// The grapheme cluster immediately before `range` — the second glyph of
+    /// lookback for shift-chaining (is the char behind a pending capital base a
+    /// special IPA glyph?). Nil at the document start.
+    private func clusterBefore(_ range: NSRange, _ client: IMKTextInput) -> Character? {
+        let end = range.location
+        guard end > 0 else { return nil }
+        let start = max(0, end - 16)
+        var actual = NSRange()
+        return client.string(from: NSRange(location: start, length: end - start),
+                             actualRange: &actual)?.last
     }
 
     private func insert(_ text: String, _ client: IMKTextInput) {

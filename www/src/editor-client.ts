@@ -14,19 +14,16 @@ import {
 
 const ta = document.getElementById("ed") as HTMLTextAreaElement;
 const countEl = document.getElementById("count") as HTMLElement;
-const chainBtn = document.getElementById("chain") as HTMLButtonElement;
 const copyBtn = document.getElementById("copy") as HTMLButtonElement;
 const clearBtn = document.getElementById("clear") as HTMLButtonElement;
 
 const KEY = "ipabet-editor-v1";
-let chain = true;
 try {
 	const s = JSON.parse(localStorage.getItem(KEY) || "null");
 	if (s && typeof s.text === "string") ta.value = s.text;
-	if (s && typeof s.chain === "boolean") chain = s.chain;
 } catch { /* no storage */ }
 function save() {
-	try { localStorage.setItem(KEY, JSON.stringify({text: ta.value, chain})); } catch { /* ignore */ }
+	try { localStorage.setItem(KEY, JSON.stringify({text: ta.value})); } catch { /* ignore */ }
 }
 
 const CODE_KEYS: Record<string, string> = {
@@ -86,20 +83,12 @@ ta.addEventListener("keydown", (e) => {
 	if (k === null) return; // space, enter, arrows, tab… all native
 	e.preventDefault();
 	const before = ta.value.slice(0, ta.selectionStart);
-	const edit = handleKey(before, k, {shiftChain: chain});
+	const edit = handleKey(before, k);
 	applyAtCaret(edit, nativeChar(k));
 });
 
 // paste / native input (mobile, dictation) — keep the count and storage honest
 ta.addEventListener("input", afterChange);
-
-function reflectChain() {
-	chainBtn.setAttribute("aria-pressed", String(chain));
-	chainBtn.title = chain
-		? "Shift-chaining on — hold shift to continue IPA"
-		: "Shift-chaining off — tap shift per modifier";
-}
-chainBtn.addEventListener("click", () => { chain = !chain; reflectChain(); save(); ta.focus(); });
 
 copyBtn.addEventListener("click", async () => {
 	try {
@@ -111,6 +100,5 @@ copyBtn.addEventListener("click", async () => {
 });
 clearBtn.addEventListener("click", () => { ta.value = ""; afterChange(); ta.focus(); });
 
-reflectChain();
 afterChange();
 ta.focus();

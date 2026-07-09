@@ -44,23 +44,31 @@ describe("digraph transforms", () => {
 	});
 });
 
-describe("shift-chaining (opt-in: hold shift to continue IPA)", () => {
-	// With the flag on, a shifted letter right after a *special* (non-ASCII) IPA
-	// glyph continues as a lowercase base, so a held-shift run flows without
-	// releasing. Gated on the previous glyph being special → acronyms never chain.
-	const chain = (...keys: string[]): string => typeKeys(seq(...keys), "", {shiftChain: true});
+describe("shift-chaining (hold shift to continue IPA)", () => {
+	// A capital typed right after a special (non-ASCII) IPA glyph is a *pending
+	// base*: a following modifier lowers+transforms it, but a capital that gets no
+	// modifier stays as typed (it just passed through). Two glyphs of lookback →
+	// stateless, capitals preserved by default, acronyms safe. Always on.
+	const chain = (...keys: string[]): string => typed(...keys);
 
 	test("held run: t ⇧H⇧I⇧H⇧N⇧G → θɪŋ", () =>
 		expect(chain("t", "+h", "+i", "+h", "+n", "+g")).toBe("θɪŋ"));
 	test("held run with bare tail: s ⇧H⇧I⇧H p → ʃɪp", () =>
 		expect(chain("s", "+h", "+i", "+h", "p")).toBe("ʃɪp"));
-	test("chain one base off a special glyph: s ⇧H ⇧I → ʃi", () =>
-		expect(chain("s", "+h", "+i")).toBe("ʃi"));
-	test("non-modifier shifted letter after special chains too: t ⇧H ⇧K → θk", () =>
-		expect(chain("t", "+h", "+k")).toBe("θk"));
+	test("pending base transforms when a modifier follows: s ⇧H ⇧I ⇧H → ʃɪ", () =>
+		expect(chain("s", "+h", "+i", "+h")).toBe("ʃɪ"));
 
-	// Acronyms stay literal even with the flag on — no bare base seeds a special
-	// glyph, so chaining never engages (one-glyph lookback: capital → capital).
+	// The fixed tradeoff: a capital abutting an IPA glyph with NO modifier stays
+	// a capital (as typed) — but transforms if a modifier arrives.
+	test("capital preserved after a glyph (no modifier): s ⇧H ⇧T → ʃT", () =>
+		expect(chain("s", "+h", "+t")).toBe("ʃT"));
+	test("…and transforms if a modifier follows: s ⇧H ⇧T ⇧R → ʃʈ", () =>
+		expect(chain("s", "+h", "+t", "+r")).toBe("ʃʈ"));
+	test("non-digraph capital after a glyph stays capital: t ⇧H ⇧K → θK", () =>
+		expect(chain("t", "+h", "+k")).toBe("θK"));
+
+	// Acronyms stay literal even with the flag on — no special glyph sits behind
+	// them, so the pending-base rule never fires (two-glyph lookback).
 	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
 	// even acronyms whose pairs *would* be digraphs stay literal (SH, PH, TH):
@@ -68,14 +76,14 @@ describe("shift-chaining (opt-in: hold shift to continue IPA)", () => {
 	test("acronym PHP stays PHP", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
 	test("THE (digraph-bearing caps) stays THE", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
 
-	// A plain ASCII base (lowercase i) is not special, so a shifted letter after
-	// it does NOT chain — it's a capital.
+	// A plain ASCII base (lowercase i) is not special, so a capital after it is
+	// just a capital — no chain.
 	test("lowercase base doesn't seed a chain: i ⇧P → iP", () =>
 		expect(chain("i", "+p")).toBe("iP"));
-
-	// Flag off (default) is unchanged: the same held run passes shifts as capitals.
-	test("flag off: t ⇧H⇧I⇧H⇧N⇧G → θIHNG (unchanged)", () =>
-		expect(typed("t", "+h", "+i", "+h", "+n", "+g")).toBe("θIHNG"));
+	// Daily-driver: symbol-prefixed caps keep their capitals (identical to the
+	// pre-chaining keyboard — chaining adds nothing a daily-driver would notice).
+	test("$PATH keeps its caps: ⇧4 ⇧P⇧A⇧T⇧H → ɾPATH", () =>
+		expect(chain("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
 });
 
 describe("clicks (C modifier)", () => {
