@@ -10,6 +10,7 @@ interface Letter { key: string; glyph: string; cp?: string; name?: string }
 interface MarkE {
 	opt: string; mark: string; type: string;
 	double?: string; cycle?: string[]; name?: string;
+	doubleClone?: string; exclusive?: boolean;
 }
 
 const letters = spec.letters as Letter[];
@@ -51,7 +52,10 @@ function segTable(rows: Letter[]): string {
 function markTable(): string {
 	return marks.map((m) => {
 		const shown = m.type === "combining" ? "◌" + m.mark : m.mark;
-		const two = m.double ? " · ⇧ → ◌" + m.double : "";
+		const two = m.double
+			? " · ⇧ → " + (m.type === "combining" ? "◌" : "") + m.double +
+			  (m.exclusive ? " (excl — replaces)" : "")
+			: "";
 		return `<tr><td class="k">⌥${esc(m.opt)}</td><td class="g">${esc(shown)}</td><td class="cp">${cp(m.mark)}</td><td>${esc((m.name ?? "").toLowerCase())}${two}</td></tr>`;
 	}).join("\n");
 }
@@ -120,7 +124,11 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	stack. Spacing marks (length, tone, stress) are <em>postfix</em> — type the
 	base, then the mark. Where a mark has a second form, ⌥⇧+key gives it
 	(⌥⇧n → creaky, ⌥⇧' → secondary stress); pressing the same form again on the
-	pending mark toggles it off.</p>
+	pending mark toggles it off. Where a mark and its ⌥⇧ twin are two values of the
+	<em>same feature</em> — advanced/retracted, apical/laminal, syllabic/non-syllabic —
+	the twin <em>replaces</em> rather than stacks (nothing is both advanced and
+	retracted); these are marked <b>excl</b> below. Twins that are independent
+	features (tilde/creaky, diaeresis/breathy) stack.</p>
 	<div class="tablewrap"><table>${markTable()}</table></div>
 
 	<h2>Tier 2 · superscripts (base + ⌥p)</h2>
