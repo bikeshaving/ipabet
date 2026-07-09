@@ -57,7 +57,7 @@ function markTable(): string {
 }
 
 function supTable(): string {
-	return sups.map((s) => `<tr><td class="k">${esc(s.base)} ⌥4</td><td class="g">${esc(s.sup)}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${esc(s.base)}</td></tr>`).join("\n");
+	return sups.map((s) => `<tr><td class="k">${esc(s.base)} ⌥p</td><td class="g">${esc(s.sup)}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${esc(s.base)}</td></tr>`).join("\n");
 }
 
 const CSS = `
@@ -119,7 +119,7 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	other form (double, positional twin, or cycle); a single-form mark toggles off.</p>
 	<div class="tablewrap"><table>${markTable()}</table></div>
 
-	<h2>Tier 2 · superscripts (base + ⌥4)</h2>
+	<h2>Tier 2 · superscripts (base + ⌥p)</h2>
 	<div class="tablewrap"><table>${supTable()}</table></div>
 
 	<h2>Machine access</h2>

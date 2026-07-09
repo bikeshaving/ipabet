@@ -204,7 +204,7 @@ function applyMark(m: Mark, textBefore: string): Edit {
 	return m.spacing ? applySpacing(m, textBefore) : applyCombining(m, textBefore);
 }
 
-/** ⌥4: superscriptize the previous glyph (`t` `h` ⌥4 → tʰ). */
+/** ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). */
 function superscriptize(textBefore: string): Edit {
 	const p = lastCluster(textBefore);
 	if (p !== undefined) {
@@ -212,7 +212,7 @@ function superscriptize(textBefore: string): Edit {
 		const sup = sups.get(base);
 		if (sup !== undefined) return replaceCluster(p, recompose(sup, marks));
 	}
-	return {type: "insert", text: "4"};
+	return {type: "insert", text: "p"};
 }
 
 // ---------------------------------------------------------------- engine
@@ -241,7 +241,7 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 
 	// Option: the postfix diacritic layer, keyed by the unshifted US char.
 	if (option) {
-		if (key === "4") return superscriptize(textBefore);
+		if (key === "p") return superscriptize(textBefore);
 		const m = optMarks.get(key);
 		if (m !== undefined) return applyMark(m, textBefore);
 		if (/[0-9]/.test(key)) return {type: "insert", text: key};

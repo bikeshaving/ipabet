@@ -909,7 +909,7 @@
    "name": "SOUTH EAST ARROW (global fall)"
   },
   {
-   "opt": "1",
+   "opt": "7",
    "mark": "ꜜ",
    "type": "spacing",
    "group": "Tone",
@@ -917,16 +917,56 @@
    "name": "MODIFIER LETTER RAISED DOWN ARROW (downstep)"
   },
   {
-   "opt": "2",
+   "opt": "8",
    "mark": "ꜛ",
    "type": "spacing",
    "group": "Tone",
    "cp": "U+A71B",
    "name": "MODIFIER LETTER RAISED UP ARROW (upstep)"
+  },
+  {
+   "opt": "1",
+   "mark": "˩",
+   "type": "spacing",
+   "group": "Tone",
+   "cp": "U+02E9",
+   "name": "MODIFIER LETTER EXTRA-LOW TONE BAR (Chao tone letter, level 1 = low)"
+  },
+  {
+   "opt": "2",
+   "mark": "˨",
+   "type": "spacing",
+   "group": "Tone",
+   "cp": "U+02E8",
+   "name": "MODIFIER LETTER LOW TONE BAR (Chao tone letter, level 2)"
+  },
+  {
+   "opt": "3",
+   "mark": "˧",
+   "type": "spacing",
+   "group": "Tone",
+   "cp": "U+02E7",
+   "name": "MODIFIER LETTER MID TONE BAR (Chao tone letter, level 3 = mid)"
+  },
+  {
+   "opt": "4",
+   "mark": "˦",
+   "type": "spacing",
+   "group": "Tone",
+   "cp": "U+02E6",
+   "name": "MODIFIER LETTER HIGH TONE BAR (Chao tone letter, level 4)"
+  },
+  {
+   "opt": "5",
+   "mark": "˥",
+   "type": "spacing",
+   "group": "Tone",
+   "cp": "U+02E5",
+   "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR (Chao tone letter, level 5 = high)"
   }
  ],
  "superscripts": {
-  "operator": "opt+4",
+  "operator": "opt+p",
   "table": [
    {
     "base": "h",

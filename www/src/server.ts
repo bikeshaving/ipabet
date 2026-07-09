@@ -150,7 +150,7 @@ const HTML = `<!DOCTYPE html>
 			<tr><td><kbd>⇧</kbd> + letter</td><td class="desc">modify the previous segment</td>
 				<td class="examples"><span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span> <span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span> <span class="combo"><kbd>n</kbd><kbd>⇧G</kbd><span class="arrow">→</span><b class="ipa">ŋ</b></span></td></tr>
 			<tr><td><kbd>⌥</kbd></td><td class="desc">postfix diacritics &amp; suprasegmentals</td>
-				<td class="examples"><span class="combo"><kbd>a</kbd><kbd>⌥e</kbd><span class="arrow">→</span><b class="ipa">á</b></span> <span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span> <span class="combo"><kbd>h</kbd><kbd>⌥4</kbd><span class="arrow">→</span><b class="ipa">ʰ</b></span></td></tr>
+				<td class="examples"><span class="combo"><kbd>a</kbd><kbd>⌥e</kbd><span class="arrow">→</span><b class="ipa">á</b></span> <span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span> <span class="combo"><kbd>h</kbd><kbd>⌥p</kbd><span class="arrow">→</span><b class="ipa">ʰ</b></span></td></tr>
 			<tr><td><kbd>⌥⇧</kbd></td><td class="desc">raw US escape — the plain character an IPA layer claims</td>
 				<td class="examples"><span class="combo"><kbd>⌥⇧2</kbd><span class="arrow">→</span><b>@</b></span> <span class="combo"><kbd>⌥⇧H</kbd><span class="arrow">→</span><b>H</b></span></td></tr>
 		</table>
@@ -202,7 +202,8 @@ const HTML = `<!DOCTYPE html>
 		characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your
 		transcriptions are searchable, fontable Unicode.</p>
 		<p><b>What does it cover?</b> The full standard IPA chart — every consonant,
-		vowel, click, diacritic, and suprasegmental. Not yet: Chao tone letters and extIPA.</p>
+		vowel, click, diacritic, and suprasegmental, including Chao tone letters
+		(<kbd>⌥1</kbd>–<kbd>⌥5</kbd>). Not yet: extIPA.</p>
 		<p><b>Privacy?</b> IPAbet is fully offline, makes no network connections, and
 		is open source (MIT).</p>
 	</section>

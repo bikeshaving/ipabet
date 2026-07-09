@@ -158,7 +158,7 @@ export const DESIGN_HTML = `<!DOCTYPE html>
 		<p>IPAbet covers every symbol on the standard IPA chart — consonants, vowels,
 		diacritics, suprasegmentals, pulmonic and non-pulmonic — with one deliberate
 		omission: <span class="ipa">ɧ</span>, which has no stable articulation, so its
-		variants are transcribed directly. Chao tone letters and extIPA are not yet covered.
+		variants are transcribed directly. extIPA is not yet covered.
 		The full mapping is on <a href="/chart">the chart</a>, in
 		<a href="/keys">machine-readable form</a>, and as
 		<a href="/ipabet.json">raw JSON</a>.</p>

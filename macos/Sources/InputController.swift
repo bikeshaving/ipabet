@@ -270,11 +270,12 @@ class InputController: IMKInputController {
         }
 
         // Option: the postfix diacritic layer, keyed by the key's unshifted US
-        // character (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥4 → superscript).
+        // character (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥p → superscript,
+        // ⌥1–⌥5 → Chao tone letters ˩˨˧˦˥, ⌥7/⌥8 → downstep/upstep).
         if opt {
             let oc = USLayout.char(event.keyCode, shift: false)
             guard oc.count == 1 else { return false }
-            if oc == "4" { return superscriptize(client) }
+            if oc == "p" { return superscriptize(client) }
             if let m = t.optMarks[oc] { applyMark(m, client); return true }
             if oc.first!.isNumber { insert(oc, client); return true }   // ⌥3/5/7/8 → digit
             return false
@@ -407,8 +408,8 @@ class InputController: IMKInputController {
         insert(m.mark, client)
     }
 
-    /// ⌥4: superscriptize the previous glyph (`t` `h` ⌥4 → tʰ). No
-    /// superscriptable base → the literal digit 4 (never a dead keystroke).
+    /// ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). No
+    /// superscriptable base → the literal letter p (never a dead keystroke).
     private func superscriptize(_ client: IMKTextInput) -> Bool {
         if let (p, r) = lastCluster(client) {
             let (base, marks) = decompose(p)
@@ -416,7 +417,7 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(sup, marks), client); return true
             }
         }
-        insert("4", client); return true
+        insert("p", client); return true
     }
 
     // MARK: - backspace

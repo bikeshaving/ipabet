@@ -92,10 +92,10 @@ describe("clicks (C modifier)", () => {
 	test("pC → ʘ", () => expect(typed("p", "+c")).toBe("ʘ"));
 	test("cC → ǂ", () => expect(typed("c", "+c")).toBe("ǂ"));
 	test("lC → ǁ", () => expect(typed("l", "+c")).toBe("ǁ"));
-	test("nasal click: n ⇧G ⌥4 q ⇧C → ᵑǃ", () =>
-		expect(typed("n", "+g", "~4", "q", "+c")).toBe("ᵑǃ"));
-	test("voiced click: g ⌥4 q ⇧C → ᶢǃ", () =>
-		expect(typed("g", "~4", "q", "+c")).toBe("ᶢǃ"));
+	test("nasal click: n ⇧G ⌥p q ⇧C → ᵑǃ", () =>
+		expect(typed("n", "+g", "~p", "q", "+c")).toBe("ᵑǃ"));
+	test("voiced click: g ⌥p q ⇧C → ᶢǃ", () =>
+		expect(typed("g", "~p", "q", "+c")).toBe("ᶢǃ"));
 });
 
 describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive)", () => {
@@ -195,9 +195,25 @@ describe("ring positioning", () => {
 		expect(typed("n", "~s", "~s")).toBe("n"));
 });
 
-describe("superscript operator ⌥4", () => {
-	test("aspiration: t h ⌥4 → tʰ", () => expect(typed("t", "h", "~4")).toBe("tʰ"));
-	test("no superscriptable base → literal 4", () => expect(typed("~4")).toBe("4"));
+describe("superscript operator ⌥p", () => {
+	test("aspiration: t h ⌥p → tʰ", () => expect(typed("t", "h", "~p")).toBe("tʰ"));
+	test("no superscriptable base → literal p", () => expect(typed("~p")).toBe("p"));
+});
+
+describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
+	test("levels: ⌥1→˩ ⌥2→˨ ⌥3→˧ ⌥4→˦ ⌥5→˥", () => {
+		expect(typed("~1")).toBe("˩");
+		expect(typed("~2")).toBe("˨");
+		expect(typed("~3")).toBe("˧");
+		expect(typed("~4")).toBe("˦");
+		expect(typed("~5")).toBe("˥");
+	});
+	test("contours stack: m a ⌥3 ⌥5 → ma˧˥ (mid-rising)", () =>
+		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥"));
+	test("downstep ⌥7 → ꜜ, upstep ⌥8 → ꜛ", () => {
+		expect(typed("~7")).toBe("ꜜ");
+		expect(typed("~8")).toBe("ꜛ");
+	});
 });
 
 describe("rhotic R", () => {

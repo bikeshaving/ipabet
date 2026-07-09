@@ -229,7 +229,7 @@ function diacritics(): string {
 		})
 		.join("");
 	return `<div class="cols2">${items}</div>
-	<p class="fine">Postfix: type the base, then the ⌥ mark. A second press gives the mark's other form (double, positional twin, or cycle). <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥4</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
+	<p class="fine">Postfix: type the base, then the ⌥ mark. A second press gives the mark's other form (double, positional twin, or cycle). <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
 }
 
 // ------------------------------------------------------ suprasegmentals
