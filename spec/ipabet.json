@@ -974,11 +974,59 @@
    "cp": "U+031A",
    "name": "COMBINING LEFT ANGLE ABOVE (unreleased) — parked, arbitrary",
    "clone": "˺"
+  },
+  {
+   "opt": "h",
+   "mark": "̉",
+   "type": "combining",
+   "group": "Transliteration",
+   "cp": "U+0309",
+   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi tone — Latin tenant, h for hook/hỏi)"
   }
  ],
  "superscripts": {
   "operator": "opt+p",
   "table": [
+   {
+    "base": "0",
+    "sup": "⁰"
+   },
+   {
+    "base": "1",
+    "sup": "¹"
+   },
+   {
+    "base": "2",
+    "sup": "²"
+   },
+   {
+    "base": "3",
+    "sup": "³"
+   },
+   {
+    "base": "4",
+    "sup": "⁴"
+   },
+   {
+    "base": "5",
+    "sup": "⁵"
+   },
+   {
+    "base": "6",
+    "sup": "⁶"
+   },
+   {
+    "base": "7",
+    "sup": "⁷"
+   },
+   {
+    "base": "8",
+    "sup": "⁸"
+   },
+   {
+    "base": "9",
+    "sup": "⁹"
+   },
    {
     "base": "a",
     "sup": "ᵃ"
@@ -1268,7 +1316,7 @@
     "sup": "ᵡ"
    }
   ],
-  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
+  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter (Lm) or superscript digit (No) whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
  },
  "laws": {
   "optShift": [
