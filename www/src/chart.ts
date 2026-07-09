@@ -22,6 +22,7 @@ const marks = spec.marks as {
 	double?: string;
 	cycle?: string[];
 	name: string;
+	exclusive?: boolean;
 }[];
 
 function esc(s: string): string {
@@ -218,14 +219,31 @@ function vowelChart(): string {
 
 // ----------------------------------------------------------- diacritics
 
+/** "COMBINING TILDE (nasalized; ⇧ → creaky)" → ["nasalized", "creaky"] */
+function meanings(name: string): [string, string | undefined] {
+	const m = /\(([^)]*)\)/.exec(name);
+	const inner = m ? m[1] : name.replace(/^COMBINING /, "").toLowerCase();
+	const [first, ...rest] = inner.split(";").map((x) => x.trim());
+	const second = rest.find((r) => r.startsWith("⇧ →"))?.replace(/^⇧ →\s*/, "");
+	return [first, second];
+}
+
 function diacritics(): string {
+	const cell = (glyph: string, keys: string, label: string) =>
+		`<div class="li"><b class="ipa">${esc(glyph)}</b><i>${esc(keys)}</i><span class="nm">${esc(label)}</span></div>`;
+	// Both forms of every mark: the ⌥ primary and, where one exists, the ⌥⇧ twin.
+	// Showing only the primary hid half the layer (creaky, breathy, apical, ATR…).
 	const items = marks
 		.filter((m) => m.type === "combining")
-		.map((m) => {
-			const shown = "◌" + m.mark;
-			// name field reads like "COMBINING RING BELOW (voiceless; …)"
-			const label = m.name.replace(/^COMBINING /, "").toLowerCase();
-			return `<div class="li"><b class="ipa">${esc(shown)}</b><i>⌥${esc(m.opt)}</i><span class="nm">${esc(label)}</span></div>`;
+		.flatMap((m) => {
+			const [first, second] = meanings(m.name);
+			const rows = [cell("◌" + m.mark, "⌥" + m.opt, first)];
+			if (m.double !== undefined) {
+				const note = second ?? "second form";
+				rows.push(cell("◌" + m.double, "⌥⇧" + m.opt,
+					m.exclusive ? `${note} — replaces` : note));
+			}
+			return rows;
 		})
 		.join("");
 	return `<div class="cols2">${items}</div>
@@ -237,9 +255,9 @@ function diacritics(): string {
 function suprasegmentals(): string {
 	const entries: [string, string, string][] = [
 		["ˈ", "⌥'", "Primary stress"],
-		["ˌ", "⌥' ⌥'", "Secondary stress"],
+		["ˌ", "⌥⇧'", "Secondary stress"],
 		["ː", "⌥;", "Long"],
-		["ˑ", "⌥; ⌥;", "Half-long"],
+		["ˑ", "⌥⇧;", "Half-long"],
 		["◌̆", "⌥b", "Extra-short"],
 		["|", "|", "Minor (foot) group"],
 		["‖", "| |", "Major (intonation) group"],
