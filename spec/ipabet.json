@@ -652,6 +652,12 @@
    "glyph": "ʛ",
    "cp": "U+029B",
    "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"
+  },
+  {
+   "key": "1",
+   "glyph": "͡",
+   "cp": "U+0361",
+   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — welds two symbols into one segment)"
   }
  ],
  "marks": [
@@ -663,7 +669,9 @@
    "double": "̋",
    "group": "Tone",
    "cp": "U+0301",
-   "name": "COMBINING ACUTE ACCENT (high tone)"
+   "name": "COMBINING ACUTE ACCENT (high tone)",
+   "doubleClone": "˝",
+   "exclusive": true
   },
   {
    "opt": "`",
@@ -673,12 +681,14 @@
    "double": "̏",
    "group": "Tone",
    "cp": "U+0300",
-   "name": "COMBINING GRAVE ACCENT (low tone)"
+   "name": "COMBINING GRAVE ACCENT (low tone)",
+   "doubleClone": "˵",
+   "exclusive": true
   },
   {
    "opt": "i",
    "mark": "̂",
-   "clone": "^",
+   "clone": "ˆ",
    "type": "combining",
    "group": "Tone",
    "cp": "U+0302",
@@ -692,7 +702,8 @@
    "double": "̬",
    "group": "Tone",
    "cp": "U+030C",
-   "name": "COMBINING CARON (rising tone; ⇧ → voiced)"
+   "name": "COMBINING CARON (rising tone; ⇧ → voiced)",
+   "doubleClone": "ˬ"
   },
   {
    "opt": "a",
@@ -711,7 +722,8 @@
    "double": "̰",
    "group": "Nasalization",
    "cp": "U+0303",
-   "name": "COMBINING TILDE (nasalized; ⇧ → creaky)"
+   "name": "COMBINING TILDE (nasalized; ⇧ → creaky)",
+   "doubleClone": "˷"
   },
   {
    "opt": "u",
@@ -735,7 +747,7 @@
   {
    "opt": "k",
    "mark": "̥",
-   "clone": "˚",
+   "clone": "˳",
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0325",
@@ -760,48 +772,55 @@
    "name": "COMBINING OGONEK"
   },
   {
-   "opt": "d",
+   "opt": "t",
    "mark": "̪",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+032A",
-   "name": "COMBINING BRIDGE BELOW (dental; ⇧ → apical)",
-   "double": "̺"
+   "name": "COMBINING BRIDGE BELOW (dental)"
   },
   {
-   "opt": "y",
-   "mark": "̻",
+   "opt": "d",
+   "mark": "̺",
    "type": "combining",
    "group": "Articulation",
-   "cp": "U+033B",
-   "name": "COMBINING SQUARE BELOW (laminal; ⇧ → linguolabial)",
-   "double": "̼"
+   "cp": "U+033A",
+   "name": "COMBINING INVERTED BRIDGE BELOW (apical — tongue tip; ⇧ → laminal, tongue blade)",
+   "double": "̻",
+   "exclusive": true
   },
   {
    "opt": "=",
-   "mark": "̟",
+   "mark": "̠",
    "type": "combining",
-   "double": "̠",
+   "double": "̟",
    "group": "Articulation",
-   "cp": "U+031F",
-   "name": "COMBINING PLUS SIGN BELOW (advanced; ⇧ → retracted)"
+   "cp": "U+0320",
+   "name": "COMBINING MINUS SIGN BELOW (retracted; ⇧ → advanced, the + pole)",
+   "clone": "˗",
+   "doubleClone": "˖",
+   "exclusive": true
   },
   {
    "opt": "g",
-   "mark": "̚",
+   "mark": "̴",
    "type": "combining",
    "group": "Articulation",
-   "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased)"
+   "cp": "U+0334",
+   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized)",
+   "clone": "˜"
   },
   {
    "opt": ".",
-   "mark": "̝",
+   "mark": "̞",
    "type": "combining",
    "group": "Articulation",
-   "cp": "U+031D",
-   "name": "COMBINING UP TACK BELOW (raised; ⇧ → lowered)",
-   "double": "̞"
+   "cp": "U+031E",
+   "name": "COMBINING DOWN TACK BELOW (lowered; ⇧ → raised, the > pole)",
+   "double": "̝",
+   "clone": "˕",
+   "doubleClone": "˔",
+   "exclusive": true
   },
   {
    "opt": "w",
@@ -810,7 +829,10 @@
    "group": "Articulation",
    "cp": "U+031C",
    "name": "COMBINING LEFT HALF RING BELOW (less rounded; ⇧ → more rounded)",
-   "double": "̹"
+   "double": "̹",
+   "clone": "˓",
+   "doubleClone": "˒",
+   "exclusive": true
   },
   {
    "opt": "s",
@@ -819,16 +841,17 @@
    "group": "Syllabicity",
    "cp": "U+0329",
    "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → non-syllabic; positioned by base)",
-   "double": "̯"
+   "double": "̯",
+   "clone": "ˌ",
+   "exclusive": true
   },
   {
-   "opt": "t",
-   "mark": "͡",
-   "double": "‿",
-   "type": "combining",
+   "opt": "z",
+   "mark": "‿",
+   "type": "spacing",
    "group": "Prosody",
-   "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar; ⇧ → undertie)"
+   "cp": "U+203F",
+   "name": "UNDERTIE (linking, absence of a break)"
   },
   {
    "opt": "x",
@@ -837,15 +860,8 @@
    "double": "̣",
    "group": "Articulation",
    "cp": "U+033D",
-   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below)"
-  },
-  {
-   "opt": "l",
-   "mark": "̴",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+0334",
-   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized)"
+   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below)",
+   "clone": "˟"
   },
   {
    "opt": "q",
@@ -854,7 +870,10 @@
    "group": "Articulation",
    "cp": "U+0318",
    "name": "COMBINING LEFT TACK BELOW (ATR — advanced tongue root; ⇧ → RTR)",
-   "double": "̙"
+   "double": "̙",
+   "clone": "˱",
+   "doubleClone": "˲",
+   "exclusive": true
   },
   {
    "opt": "'",
@@ -938,6 +957,23 @@
    "group": "Tone",
    "cp": "U+02E5",
    "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR (Chao tone letter, level 5 = high)"
+  },
+  {
+   "opt": "9",
+   "mark": "̼",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+033C",
+   "name": "COMBINING SEAGULL BELOW (linguolabial) — parked, arbitrary"
+  },
+  {
+   "opt": "0",
+   "mark": "̚",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+031A",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased) — parked, arbitrary",
+   "clone": "˺"
   }
  ],
  "superscripts": {

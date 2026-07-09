@@ -42,6 +42,9 @@ struct Mark {
     let mark: String
     let spacing: Bool
     let double: String?
+    /// Spacing form of a combining mark (´ for acute) — the dead-key preview
+    /// glyph, and Apple's "terminator" concept. Nil for IPA-only marks.
+    let clone: String?
 }
 
 struct Tables {
@@ -51,6 +54,13 @@ struct Tables {
     let sups: [String: String]
     // transformation index: (previous output glyph + keystroke) → combined glyph
     let transforms: [String: String]
+    /// combining scalar → its spacing form, for the dead-key preview.
+    let clones: [Unicode.Scalar: String]
+    /// Exclusive duals: a mark and its ⌥⇧ twin are the two values of ONE feature
+    /// (advanced/retracted, apical/laminal…). Mutually exclusive, so the twin
+    /// *replaces* rather than stacks. Independent shape-twins (tilde/creaky)
+    /// are absent from this map and stack normally.
+    let exclusiveTwin: [Unicode.Scalar: Unicode.Scalar]
 
     static let shared: Tables = {
         guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
@@ -62,11 +72,24 @@ struct Tables {
             if let k = r["key"] as? String, let g = r["glyph"] as? String { letters[k] = g }
         }
         var optMarks: [String: Mark] = [:]
+        var clones: [Unicode.Scalar: String] = [:]
+        var exclusiveTwin: [Unicode.Scalar: Unicode.Scalar] = [:]
         for r in root["marks"] as? [[String: Any]] ?? [] {
             guard let opt = r["opt"] as? String, let mark = r["mark"] as? String else { continue }
+            let clone = r["clone"] as? String
             optMarks[opt] = Mark(mark: mark,
                                  spacing: (r["type"] as? String) == "spacing",
-                                 double: r["double"] as? String)
+                                 double: r["double"] as? String,
+                                 clone: clone)
+            if let c = clone, let sc = mark.unicodeScalars.first { clones[sc] = c }
+            if let dc = r["doubleClone"] as? String,
+               let ds = (r["double"] as? String)?.unicodeScalars.first { clones[ds] = dc }
+            if r["exclusive"] as? Bool == true,
+               let ms = mark.unicodeScalars.first,
+               let ds = (r["double"] as? String)?.unicodeScalars.first {
+                exclusiveTwin[ms] = ds
+                exclusiveTwin[ds] = ms
+            }
         }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
@@ -79,17 +102,23 @@ struct Tables {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
             if let prev = letters[base] { transforms[prev + mod] = glyph }
         }
-        return Tables(letters: letters, optMarks: optMarks, sups: sups, transforms: transforms)
+        return Tables(letters: letters, optMarks: optMarks, sups: sups,
+                      transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin)
     }()
 }
 
-// The engine mimics Apple's Korean (2-Set) input method, whose exact client
-// protocol we captured with tools/probe.swift: NO marked text, ever. Each
-// keystroke either inserts text at the cursor or rewrites the previous
-// grapheme cluster in place via insertText(_:replacementRange:) — the same
-// call pattern every Mac app must support or Hangul typing would break in it.
-// There is no composition session: no underline, no state to flush on clicks,
-// focus changes, or input-source switches, and nothing for a host to desync.
+// Committed text follows Apple's Korean (2-Set) protocol, captured with
+// tools/probe.swift: each keystroke either inserts at the cursor or rewrites
+// the previous grapheme cluster in place via insertText(_:replacementRange:) —
+// the call pattern every Mac app must support or Hangul typing would break.
+//
+// The one exception is the *pending prefix diacritic*, which is a preview, not
+// document content. It lives in the client's marked-text range (highlighted,
+// uncommitted) exactly as the US layout's ⌥e dead key does — the only correct
+// representation, and the one that works in hosts like Terminal.app where a
+// committed NBSP+combining sequence renders as "<032a>". Composition state is
+// therefore a single [Unicode.Scalar] stack, flushed on commitComposition and
+// deactivateServer.
 //
 // Backspace: stacked combining marks peel off one scalar at a time (rewriting
 // the cluster in place); single-codepoint glyphs are declined so the host
@@ -220,7 +249,15 @@ class InputController: IMKInputController {
         Dbg.log("── activate app=\(clientBundleID()) ──")
     }
 
-    override func commitComposition(_ sender: Any!) {}   // no composition to flush
+    /// The host is taking the composition away (click, focus loss, input-source
+    /// switch). Commit the pending accent rather than stranding it.
+    override func commitComposition(_ sender: Any!) {
+        if let c = (sender as? IMKTextInput) ?? client() { flushPending(c) }
+    }
+
+    override func deactivateServer(_ sender: Any!) {
+        if let c = (sender as? IMKTextInput) ?? client() { flushPending(c) }
+    }
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         guard event.type == .keyDown,
@@ -230,6 +267,7 @@ class InputController: IMKInputController {
         Dbg.log("↓ kc=\(event.keyCode) ch=\(Dbg.str(event.characters)) mods=\(Dbg.mods(flags)) app=\(client.bundleIdentifier() ?? "?")")
         if flags.contains(.command) || flags.contains(.control) {
             Dbg.log("  → pass (cmd/ctrl chord — leader keys land here)")
+            flushPending(client)
             return false
         }
         // Secure input (password fields): the OS already bypasses IMEs here,
@@ -245,12 +283,23 @@ class InputController: IMKInputController {
         // The sticky sibling of the ⌥⇧ escape. One bit of *settings* state;
         // composition remains stateless.
         if opt && shift && event.keyCode == 49 {
+            flushPending(client)
             toggleRaw(for: clientBundleID())
             return true
         }
-        if isRawLocked(for: clientBundleID()) { return false }
+        if isRawLocked(for: clientBundleID()) { flushPending(client); return false }
 
-        if event.keyCode == 51 { return handleBackspace(client) }
+        // Backspace peels the pending accent first (dead key undone), before
+        // touching the document at all.
+        if event.keyCode == 51 {
+            if !pending.isEmpty {
+                pending.removeLast()
+                Dbg.log("  → backspace peels pending")
+                updateMarked(client)
+                return true
+            }
+            return handleBackspace(client)
+        }
 
         // Option-Shift: escape hatch. On letters/digits it inserts the raw-US
         // shifted char (⌥⇧H → H to dodge a transform, ⌥⇧1 → !, ⌥⇧4 → $). On
@@ -265,9 +314,10 @@ class InputController: IMKInputController {
             }
             // otherwise the raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @);
             // punctuation passes so the host's own Option typography survives.
-            guard let c = oc.first, c.isLetter || c.isNumber else { return false }
+            guard let c = oc.first, c.isLetter || c.isNumber else { flushPending(client); return false }
             let raw = USLayout.char(event.keyCode, shift: true)
-            guard !raw.isEmpty else { return false }
+            guard !raw.isEmpty else { flushPending(client); return false }
+            flushPending(client)
             insert(raw, client)
             return true
         }
@@ -278,10 +328,11 @@ class InputController: IMKInputController {
         // PREFIX (dead-key style, é/ñ); spacing marks stay postfix.
         if opt {
             let oc = USLayout.char(event.keyCode, shift: false)
-            guard oc.count == 1 else { return false }
-            if oc == "p" { return superscriptize(client) }
+            guard oc.count == 1 else { flushPending(client); return false }
+            if oc == "p" { flushPending(client); return superscriptize(client) }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
-            if oc.first!.isNumber { insert(oc, client); return true }   // ⌥3/5/7/8 → digit
+            if oc.first!.isNumber { flushPending(client); insert(oc, client); return true }
+            flushPending(client)
             return false
         }
 
@@ -292,6 +343,7 @@ class InputController: IMKInputController {
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
             if shift, let glyph = t.letters[bareKey] { emitBase(glyph, client); return true }
+            flushPending(client)
             return false
         }
 
@@ -301,7 +353,9 @@ class InputController: IMKInputController {
 
         // Shift-letter modifiers transform the previous glyph in place; any
         // combining marks already on it survive the swap (decomposed view).
-        if let (p, r) = lastCluster(client) {
+        // Skipped while an accent is pending — the next base absorbs it instead
+        // of a modifier reaching back past the composition.
+        if pending.isEmpty, let (p, r) = lastCluster(client) {
             let (base0, marks) = decompose(p)
             var base = base0
             // Shift-chaining: a capital typed right after a special (non-ASCII) IPA
@@ -343,27 +397,24 @@ class InputController: IMKInputController {
             Dbg.log("  → emitBase '\(glyph)'")
             emitBase(glyph, client); return true
         }
-        // capitals with no transform, punctuation, digits 8/9/0: type literally
+        // Not a base: a pending accent commits as its spacing form (⌥e space → ´),
+        // then the key passes. Capitals with no transform, punctuation, 8/9/0.
+        flushPending(client)
         Dbg.log("  → pass (literal '\(s)')")
         return false
     }
 
     // MARK: - Option diacritic layer
 
-    private static let nbsp = "\u{00A0}"
-    // A real pending placeholder is NBSP *carrying a combining mark*. A bare
-    // NBSP is not ours — Terminal.app pads the cell before the cursor with
-    // NBSP, and absorbing onto that rewrites terminal content (mangled input,
-    // eaten tmux keys). Require a mark so plain letters insert cleanly there.
-    private func isPending(_ c: Character) -> Bool {
-        let (base, marks) = decompose(c)
-        return base == Self.nbsp && !marks.isEmpty
-    }
-
     /// Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form.
     private func applyMark(_ m: Mark, secondary: Bool, _ client: IMKTextInput) {
         let scalarStr = (secondary ? m.double : nil) ?? m.mark
-        m.spacing ? applySpacing(scalarStr, client) : applyCombining(scalarStr, client)
+        if m.spacing {
+            flushPending(client)          // a pending accent commits before a spacing mark
+            applySpacing(scalarStr, client)
+        } else {
+            applyCombining(scalarStr, client)
+        }
     }
 
     /// IPA bases whose descenders collide with below-marks. Marks with a
@@ -388,37 +439,113 @@ class InputController: IMKInputController {
         return marks.map { desc ? (Self.positional[$0] ?? $0) : (Self.positionalInv[$0] ?? $0) }
     }
 
-    /// Combining ⌥ diacritic, PREFIX (dead-key style, like é/ñ on the US
-    /// keyboard): the mark comes first and the next base absorbs it. Stateless:
-    /// the pending mark rides a real NBSP placeholder; `emitBase` folds the
-    /// accumulated stack onto the base that follows. The same form again peels
-    /// back off — down to a bare NBSP, never an empty replacement (which the
-    /// IMK transport drops). Marks stack and can co-occur.
-    private func applyCombining(_ scalarStr: String, _ client: IMKTextInput) {
-        let scalar = scalarStr.unicodeScalars.first!
-        guard let (p, r) = lastCluster(client), isPending(p) else {
-            insert(Self.nbsp + scalarStr, client); return
+    // MARK: - the pending accent (real marked text, like the US dead keys)
+    //
+    // A prefix diacritic is a *preview*, not document content, so it lives in
+    // the client's marked-text range — highlighted, uncommitted, and owned by
+    // the host. This is what ⌥e does on the US layout (the orange highlight),
+    // and it works everywhere that does, terminals included. The next base
+    // commits it; nothing is ever written to the document until then.
+    //
+    // Guardrails (the real macOS 15 landmines): never updateComposition() or
+    // composedString() — we drive client.setMarkedText directly; and never
+    // insertText("") — clearing is setMarkedText("").
+
+    /// The accumulated prefix diacritics awaiting a base. Empty = no composition.
+    private var pending: [Unicode.Scalar] = []
+
+    /// What the highlighted preview shows: each pending mark as its *spacing*
+    /// glyph when one exists (⌥e → ´, exactly the US dead key's terminator),
+    /// else the bare combining glyph on its own. Never a dotted circle — U+25CC
+    /// renders enormous in some hosts (Google's search field), and Apple's dead
+    /// keys always show a real spacing character.
+    private func previewString() -> String {
+        guard !pending.isEmpty else { return "" }
+        let clones = Tables.shared.clones
+        var s = ""
+        for sc in pending {
+            if let c = clones[sc] { s += c } else { s.unicodeScalars.append(sc) }
         }
-        let marks = decompose(p).marks
-        let next: [Unicode.Scalar] = marks.last == scalar
-            ? Array(marks.dropLast())      // same form again: peel it off
-            : marks + [scalar]             // otherwise stack it
-        replace(r, with: recompose(Self.nbsp, next), client)
+        return s
     }
 
-    /// Emit a base glyph, absorbing any pending prefix diacritics onto it.
+    /// Push `pending` into the client's marked-text range (or clear it).
+    private func updateMarked(_ client: IMKTextInput) {
+        let s = previewString()
+        let none = NSRange(location: NSNotFound, length: 0)
+        guard !s.isEmpty else {
+            Dbg.log("    marked: clear")
+            client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0),
+                                 replacementRange: none)
+            return
+        }
+        // Captured with tools/probe.swift against an instrumented NSTextView:
+        //   Apple's ⌥e (a *layout* dead key, set by TSM directly in the client):
+        //     setMarkedText "´" [U+00B4] sel=(1,0) attrs=<plain String, none>
+        //     → NSTextView draws its yellow dead-key highlight.
+        //   Ours, through the IMK bridge, passing a plain String:
+        //     setMarkedText "´" attrs={NSUnderline=2, NSUnderlineColor=blue, …}
+        //     → IMK *stamps* composition styling on, so we get an underline.
+        // IMK only supplies those as a DEFAULT: our own attributed string wins.
+        // So to be a dead key rather than a composition, we set the highlight
+        // ourselves and suppress the underline. (This is the same lever xkey
+        // uses in reverse — it omits backgroundColor "to prevent highlighting".)
+        let len = (s as NSString).length
+        let attrs: [NSAttributedString.Key: Any] = [
+            .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
+            .foregroundColor: NSColor.textColor,
+            .underlineStyle: 0,
+        ]
+        Dbg.log("    marked: '\(Dbg.str(s))' sel=(\(len),0) hilite=yellow")
+        client.setMarkedText(NSAttributedString(string: s, attributes: attrs),
+                             selectionRange: NSRange(location: len, length: 0),
+                             replacementRange: none)
+    }
+
+    /// Commit a pending accent as literal text (dead key + non-base = the
+    /// spacing accent), clearing the composition. No-op when nothing pends.
+    private func flushPending(_ client: IMKTextInput) {
+        guard !pending.isEmpty else { return }
+        let s = previewString()
+        pending = []
+        Dbg.log("    flush pending → '\(Dbg.str(s))'")
+        insert(s, client)   // insertText over marked text commits & clears it
+    }
+
+    /// Combining ⌥ diacritic, PREFIX (dead-key style): stack the mark into the
+    /// marked-text preview. The same form again peels it back off; emptying the
+    /// stack clears the composition outright — no placeholder, nothing committed.
+    private func applyCombining(_ scalarStr: String, _ client: IMKTextInput) {
+        let scalar = scalarStr.unicodeScalars.first!
+        if pending.last == scalar {
+            pending.removeLast()                       // same form again: peel it off
+        } else {
+            // An exclusive dual replaces its twin — nothing is both advanced and
+            // retracted. Independent shape-twins (tilde/creaky) just stack.
+            if let twin = Tables.shared.exclusiveTwin[scalar] {
+                pending.removeAll { $0 == twin }
+            }
+            pending.append(scalar)
+        }
+        updateMarked(client)
+    }
+
+    /// Emit a base glyph, committing any pending prefix diacritics onto it.
     private func emitBase(_ glyph: String, _ client: IMKTextInput) {
-        guard let (p, r) = lastCluster(client), isPending(p) else {
+        guard !pending.isEmpty else {
             Dbg.log("    emitBase: no pending → insert '\(glyph)'")
             insert(glyph, client); return
         }
-        Dbg.log("    emitBase: absorb onto '\(glyph)'")
-        let marks = decompose(p).marks
+        let marks = pending
+        pending = []
         // dark l: overlay + l is the atomic ɫ, not a ragged l̴
         if marks.count == 1, marks[0] == "\u{0334}", glyph == "l" {
-            replace(r, with: "ɫ", client); return
+            Dbg.log("    emitBase: commit ɫ")
+            insert("ɫ", client); return
         }
-        replace(r, with: recompose(glyph, reposition(glyph, marks)), client)
+        let out = recompose(glyph, reposition(glyph, marks))
+        Dbg.log("    emitBase: commit '\(Dbg.str(out))'")
+        insert(out, client)   // replaces the marked range
     }
 
     /// Spacing mark, one specific form: insert it in place (postfix).

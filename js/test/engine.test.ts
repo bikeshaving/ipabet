@@ -38,9 +38,9 @@ describe("digraph transforms", () => {
 	test("y-vowel: o ⇧Y → ɵ", () => expect(typed("o", "+y")).toBe("ɵ"));
 	test("y-vowel: e ⇧Y → ɘ", () => expect(typed("e", "+y")).toBe("ɘ"));
 	test("strut: u ⇧A → ʌ", () => expect(typed("u", "+a")).toBe("ʌ"));
-	test("marks survive the swap: ⌥d prefixes, s̪ then ⇧H keeps bridge", () => {
+	test("marks survive the swap: ⌥t prefixes, s̪ then ⇧H keeps bridge", () => {
 		// dental prefix, s absorbs it (s̪), then H: ʃ with the bridge preserved
-		expect(typed("~d", "s", "+h")).toBe(nfc("ʃ\u{032A}"));
+		expect(typed("~t", "s", "+h")).toBe(nfc("ʃ\u{032A}"));
 	});
 });
 
@@ -151,7 +151,7 @@ describe("option diacritics (prefix, dead-key style)", () => {
 	test("length is spacing, still postfix: a ⌥; → aː", () => expect(typed("a", "~;")).toBe("aː"));
 	test("no base: a combining mark alone rides its NBSP placeholder", () => {
 		expect(typed("~n")).toBe("\u{00A0}\u{0303}");
-		expect(typed("~d")).toBe("\u{00A0}\u{032A}");
+		expect(typed("~t")).toBe("\u{00A0}\u{032A}");   // ⌥t = dental
 	});
 });
 
@@ -174,9 +174,14 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("a", "~;")).toBe("aː");
 		expect(typed("~+;")).toBe("ˑ");
 	});
-	test("backness ± on ⌥=: advanced ⌥= a → a̟, retracted ⌥⇧= a → a̠", () => {
-		expect(typed("~=", "a")).toBe(nfc("a\u{031F}"));
-		expect(typed("~+=", "a")).toBe(nfc("a\u{0320}"));
+	// ⌥⇧ = the greater pole (shift-= is "+", shift-. is ">").
+	test("backness ± on ⌥=: retracted ⌥= a → a̠, advanced ⌥⇧= a → a̟", () => {
+		expect(typed("~=", "a")).toBe(nfc("a\u{0320}"));
+		expect(typed("~+=", "a")).toBe(nfc("a\u{031F}"));
+	});
+	test("height on ⌥.: lowered ⌥. a → a̞, raised ⌥⇧. a → a̝", () => {
+		expect(typed("~.", "a")).toBe(nfc("a\u{031E}"));
+		expect(typed("~+.", "a")).toBe(nfc("a\u{031D}"));
 	});
 	test("tongue-root on ⌥q (throat): ATR ⌥q a → a̘, RTR ⌥⇧q a → a̙", () => {
 		expect(typed("~q", "a")).toBe(nfc("a\u{0318}"));
@@ -186,18 +191,22 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
 		expect(typed("~+w", "o")).toBe(nfc("o\u{0339}"));
 	});
-	test("freed keys no longer diacritics: ⌥6 → literal 6, ⌥9 → 9", () => {
+	test("freed keys no longer diacritics: ⌥6 → literal 6, ⌥7 → 7", () => {
 		expect(typed("~6")).toBe("6");
-		expect(typed("~9")).toBe("9");
+		expect(typed("~7")).toBe("7");
 	});
 });
 
 describe("dental family — spread across keys, no cycle", () => {
-	test("coronal twins: dental ⌥d / apical ⌥⇧d, laminal ⌥y / linguolabial ⌥⇧y", () => {
-		expect(typed("~d", "d")).toBe(nfc("d\u{032A}"));   // dental (bridge)
-		expect(typed("~+d", "d")).toBe(nfc("d\u{033A}"));  // apical (inverted bridge)
-		expect(typed("~y", "d")).toBe(nfc("d\u{033B}"));   // laminal (square)
-		expect(typed("~+y", "d")).toBe(nfc("d\u{033C}"));  // linguolabial (seagull)
+	// The coronal place diacritics live on the coronal stops: t̪ is the canonical
+	// dental, so ⌥t carries dental/apical; ⌥d carries laminal/linguolabial.
+	// ⌥t = dental (a passive place, single). ⌥d = the active-articulator dual:
+	// apical (tip) vs laminal (blade) — binary, exhaustive, mutually exclusive.
+	test("coronal: dental ⌥t; apical ⌥d / laminal ⌥⇧d", () => {
+		expect(typed("~t", "d")).toBe(nfc("d\u{032A}"));   // dental
+		expect(typed("~d", "d")).toBe(nfc("d\u{033A}"));   // apical (tip)
+		expect(typed("~+d", "d")).toBe(nfc("d\u{033B}"));  // laminal (blade)
+		expect(typed("~9", "d")).toBe(nfc("d\u{033C}"));   // linguolabial (parked)
 	});
 });
 
@@ -214,12 +223,14 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 		expect(typed("~n", "~n", "x")).toBe(NBSP + "x"));
 	test("clone-less single-form toggles too: ⌥. ⌥. → bare NBSP", () =>
 		expect(typed("~.", "~.")).toBe(NBSP));
-	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l (bare NBSP) then l → NBSP l", () => {
-		expect(typed("~l", "l")).toBe("ɫ");
-		expect(typed("~l", "~l", "l")).toBe(NBSP + "l");
+	// velarized moved to ⌥g (⇧G is dorsal/velar); the atomic-ɫ rule keys off the
+	// overlay scalar U+0334, not the key, so it survives the move.
+	test("dark l is atomic: ⌥g l → ɫ; ⌥g ⌥g (bare NBSP) then l → NBSP l", () => {
+		expect(typed("~g", "l")).toBe("ɫ");
+		expect(typed("~g", "~g", "l")).toBe(NBSP + "l");
 	});
-	test("velarization elsewhere stays an overlay: ⌥l t → t̴", () =>
-		expect(typed("~l", "t")).toBe("t\u{0334}"));
+	test("velarization elsewhere stays an overlay: ⌥g t → t̴", () =>
+		expect(typed("~g", "t")).toBe("t\u{0334}"));
 });
 
 describe("terminal safety: only NBSP+mark is a pending placeholder", () => {
@@ -232,6 +243,48 @@ describe("terminal safety: only NBSP+mark is a pending placeholder", () => {
 		expect(typeKeys(seq("x"), "\u{00A0}\u{0303}")).toBe(nfc("x\u{0303}")));
 	test("plain letter before the cursor is untouched: r then k inserts", () =>
 		expect(typeKeys(seq("k"), "r")).toBe("rk"));
+});
+
+describe("the two ⌥⇧ laws", () => {
+	// LAW 1 — exclusive duals: a mark and its ⌥⇧ twin are the two values of ONE
+	// feature, so the twin REPLACES rather than stacks. Nothing is both advanced
+	// and retracted, both apical and laminal, both syllabic and non-syllabic.
+	test("advanced replaces retracted (⌥= then ⌥⇧=)", () =>
+		expect(typed("~=", "~+=", "a")).toBe(nfc("a\u{031F}")));
+	test("retracted replaces advanced (⌥⇧= then ⌥=)", () =>
+		expect(typed("~+=", "~=", "a")).toBe(nfc("a\u{0320}")));
+	test("laminal replaces apical (⌥d then ⌥⇧d)", () =>
+		expect(typed("~d", "~+d", "d")).toBe(nfc("d\u{033B}")));
+	test("raised replaces lowered (⌥. then ⌥⇧.)", () =>
+		expect(typed("~.", "~+.", "a")).toBe(nfc("a\u{031D}")));
+	test("non-syllabic replaces syllabic (⌥s then ⌥⇧s)", () =>
+		expect(typed("~s", "~+s", "n")).toBe(nfc("n\u{032F}")));
+
+	// LAW 2 — shape twins are independent features and DO stack: a vowel can be
+	// nasalized and creaky at once (ã̰), centralized and breathy at once.
+	test("nasalized + creaky stack (⌥n ⌥⇧n a → ã̰)", () => {
+		const r = typed("~n", "~+n", "a");
+		expect([...r.normalize("NFD")].length).toBe(3);
+		expect(r.normalize("NFD")).toContain("\u{0303}");
+		expect(r.normalize("NFD")).toContain("\u{0330}");
+	});
+	test("centralized + breathy stack (⌥u ⌥⇧u a)", () => {
+		const r = typed("~u", "~+u", "a").normalize("NFD");
+		expect(r).toContain("\u{0308}");
+		expect(r).toContain("\u{0324}");
+	});
+});
+
+describe("⇧1 = tie bar (a glyph with no Latin home)", () => {
+	// The tie welds two symbols into ONE segment — hence the digit 1. It attaches
+	// to the glyph BEFORE it and spans forward, so it is postfix by nature.
+	test("affricate t͡ʃ: t ⇧1 s⇧H", () =>
+		expect(typed("t", "+1", "s", "+h")).toBe("t\u{0361}ʃ"));
+	test("affricate t͡s: t ⇧1 s", () => expect(typed("t", "+1", "s")).toBe("t\u{0361}s"));
+	test("affricate d͡ʒ: d ⇧1 z⇧H", () =>
+		expect(typed("d", "+1", "z", "+h")).toBe("d\u{0361}ʒ"));
+	test("untied tʃ stays reachable (the tie is optional in IPA)", () =>
+		expect(typed("t", "s", "+h")).toBe("tʃ"));
 });
 
 describe("ring positioning", () => {

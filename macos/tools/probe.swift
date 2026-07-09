@@ -41,6 +41,27 @@ func fmt(_ s: Any) -> String {
     return "\"\(visible)\"\(cps.isEmpty ? "" : " [\(cps)]")"
 }
 
+/// Dump every attribute run of a marked string — this is how we learn what the
+/// system's own dead keys send (underline? background? clause segment?).
+func attrs(_ s: Any) -> String {
+    guard let a = s as? NSAttributedString else { return "attrs=<plain String, none>" }
+    var out: [String] = []
+    a.enumerateAttributes(in: NSRange(location: 0, length: a.length)) { dict, range, _ in
+        let pairs = dict.map { k, v -> String in
+            let val: String
+            if let c = v as? NSColor {
+                let rgb = c.usingColorSpace(.sRGB)
+                val = rgb.map { String(format: "sRGB(%.3f,%.3f,%.3f,%.3f)", $0.redComponent,
+                                       $0.greenComponent, $0.blueComponent, $0.alphaComponent) }
+                    ?? "\(c)"
+            } else { val = "\(v)" }
+            return "\(k.rawValue)=\(val)"
+        }.sorted().joined(separator: ", ")
+        out.append("  range=\(fmt(range)) { \(pairs.isEmpty ? "∅" : pairs) }")
+    }
+    return "attrs:\n" + out.joined(separator: "\n")
+}
+
 final class ProbeTextView: NSTextView {
     override func keyDown(with event: NSEvent) {
         log("AppKit", "keyDown keyCode=\(event.keyCode)")
@@ -49,6 +70,7 @@ final class ProbeTextView: NSTextView {
     }
     override func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
         log("AppKit", "setMarkedText \(fmt(string)) sel=\(fmt(selectedRange)) repl=\(fmt(replacementRange))")
+        log("AppKit", attrs(string))
         super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
         log("AppKit", "  → hasMarked=\(hasMarkedText()) markedRange=\(fmt(markedRange()))")
     }

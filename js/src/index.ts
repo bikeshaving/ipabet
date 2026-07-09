@@ -44,6 +44,12 @@ for (const e of spec.letters as {key: string; glyph: string}[]) {
 }
 
 const optMarks = new Map<string, Mark>();
+/** Exclusive duals: a mark and its ⌥⇧ twin are the two values of ONE feature
+ *  (advanced/retracted, apical/laminal, syllabic/non-syllabic…). They are
+ *  mutually exclusive, so the twin *replaces* rather than stacks — no segment
+ *  is both advanced and retracted. Shape-twins that are independent features
+ *  (tilde/creaky, diaeresis/breathy) stack, and are absent from this map. */
+const exclusiveTwin = new Map<string, string>();
 for (const e of spec.marks as {
 	opt: string;
 	mark: string;
@@ -51,6 +57,7 @@ for (const e of spec.marks as {
 	double?: string;
 	cycle?: string[];
 	clone?: string;
+	exclusive?: boolean;
 }[]) {
 	optMarks.set(e.opt, {
 		mark: e.mark,
@@ -59,6 +66,10 @@ for (const e of spec.marks as {
 		cycle: e.cycle ?? [],
 		clone: e.clone,
 	});
+	if (e.exclusive === true && e.double !== undefined) {
+		exclusiveTwin.set(e.mark, e.double);
+		exclusiveTwin.set(e.double, e.mark);
+	}
 }
 
 const sups = new Map<string, string>();
@@ -178,9 +189,16 @@ function pendingDiacritic(scalar: string, textBefore: string): Edit {
 	const p = lastCluster(textBefore);
 	if (p !== undefined && isPending(p)) {
 		const {marks} = decompose(p);
-		const next = marks[marks.length - 1] === scalar
-			? marks.slice(0, -1)          // same form again: peel it back off
-			: [...marks, scalar];         // otherwise stack it
+		let next: string[];
+		if (marks[marks.length - 1] === scalar) {
+			next = marks.slice(0, -1);        // same form again: peel it back off
+		} else {
+			// An exclusive dual replaces its twin: nothing is both advanced and
+			// retracted. Shape-twins that are independent features just stack.
+			const twin = exclusiveTwin.get(scalar);
+			const rest = twin !== undefined ? marks.filter((m) => m !== twin) : marks;
+			next = [...rest, scalar];
+		}
 		return replaceCluster(p, recompose(NBSP, next));
 	}
 	return {type: "insert", text: NBSP + scalar};
