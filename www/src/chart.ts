@@ -253,15 +253,15 @@ function suprasegmentals(): string {
 
 function tones(): string {
 	const entries: [string, string, string][] = [
-		["◌̋", "⌥e ⌥e", "Extra high"],
+		["◌̋", "⌥⇧e", "Extra high"],
 		["◌́", "⌥e", "High"],
 		["◌̄", "⌥a", "Mid"],
 		["◌̀", "⌥`", "Low"],
-		["◌̏", "⌥` ⌥`", "Extra low"],
+		["◌̏", "⌥⇧`", "Extra low"],
 		["◌̌", "⌥v", "Rising"],
-		["◌̂", "⌥6", "Falling"],
-		["ꜜ", "⌥1", "Downstep"],
-		["ꜛ", "⌥2", "Upstep"],
+		["◌̂", "⌥i", "Falling"],
+		["ꜜ", "⌥o", "Downstep"],
+		["ꜛ", "⌥⇧o", "Upstep"],
 		["↗", "⌥r", "Global rise"],
 		["↘", "⌥f", "Global fall"],
 	];

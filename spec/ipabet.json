@@ -676,7 +676,7 @@
    "name": "COMBINING GRAVE ACCENT (low tone)"
   },
   {
-   "opt": "6",
+   "opt": "i",
    "mark": "̂",
    "clone": "^",
    "type": "combining",
@@ -692,7 +692,7 @@
    "double": "̬",
    "group": "Tone",
    "cp": "U+030C",
-   "name": "COMBINING CARON (rising tone; ×2 voiced)"
+   "name": "COMBINING CARON (rising tone; ⇧ → voiced)"
   },
   {
    "opt": "a",
@@ -711,7 +711,7 @@
    "double": "̰",
    "group": "Nasalization",
    "cp": "U+0303",
-   "name": "COMBINING TILDE (nasalized; ×2 creaky)"
+   "name": "COMBINING TILDE (nasalized; ⇧ → creaky)"
   },
   {
    "opt": "u",
@@ -721,17 +721,16 @@
    "double": "̤",
    "group": "Articulation",
    "cp": "U+0308",
-   "name": "COMBINING DIAERESIS (centralized; ×2 breathy)"
+   "name": "COMBINING DIAERESIS (centralized; ⇧ → breathy)"
   },
   {
    "opt": "b",
    "mark": "̆",
    "clone": "˘",
    "type": "combining",
-   "double": "̯",
    "group": "Syllabicity",
    "cp": "U+0306",
-   "name": "COMBINING BREVE (extra-short; ×2 non-syllabic)"
+   "name": "COMBINING BREVE (extra-short)"
   },
   {
    "opt": "k",
@@ -741,15 +740,6 @@
    "group": "Phonation",
    "cp": "U+0325",
    "name": "COMBINING RING BELOW (voiceless; positioned by base)"
-  },
-  {
-   "opt": "w",
-   "mark": "̇",
-   "clone": "˙",
-   "type": "combining",
-   "group": "Transliteration",
-   "cp": "U+0307",
-   "name": "COMBINING DOT ABOVE"
   },
   {
    "opt": "c",
@@ -775,15 +765,8 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+032A",
-   "name": "COMBINING BRIDGE BELOW (dental)"
-  },
-  {
-   "opt": "j",
-   "mark": "̺",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+033A",
-   "name": "COMBINING INVERTED BRIDGE BELOW (apical)"
+   "name": "COMBINING BRIDGE BELOW (dental; ⇧ → apical)",
+   "double": "̺"
   },
   {
    "opt": "y",
@@ -791,33 +774,25 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033B",
-   "name": "COMBINING SQUARE BELOW (laminal)"
-  },
-  {
-   "opt": "z",
-   "mark": "̼",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW (linguolabial)"
+   "name": "COMBINING SQUARE BELOW (laminal; ⇧ → linguolabial)",
+   "double": "̼"
   },
   {
    "opt": "=",
    "mark": "̟",
    "type": "combining",
-   "double": "̘",
+   "double": "̠",
    "group": "Articulation",
    "cp": "U+031F",
-   "name": "COMBINING PLUS SIGN BELOW (advanced; ×2 ATR)"
+   "name": "COMBINING PLUS SIGN BELOW (advanced; ⇧ → retracted)"
   },
   {
    "opt": "g",
-   "mark": "̠",
+   "mark": "̚",
    "type": "combining",
-   "double": "̙",
    "group": "Articulation",
-   "cp": "U+0320",
-   "name": "COMBINING MINUS SIGN BELOW (retracted; ⇧ → RTR)"
+   "cp": "U+031A",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased)"
   },
   {
    "opt": ".",
@@ -825,31 +800,17 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031D",
-   "name": "COMBINING UP TACK BELOW (raised)"
+   "name": "COMBINING UP TACK BELOW (raised; ⇧ → lowered)",
+   "double": "̞"
   },
   {
-   "opt": ",",
-   "mark": "̞",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+031E",
-   "name": "COMBINING DOWN TACK BELOW (lowered)"
-  },
-  {
-   "opt": "9",
+   "opt": "w",
    "mark": "̜",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031C",
-   "name": "COMBINING LEFT HALF RING BELOW (less rounded)"
-  },
-  {
-   "opt": "0",
-   "mark": "̹",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+0339",
-   "name": "COMBINING RIGHT HALF RING BELOW (more rounded)"
+   "name": "COMBINING LEFT HALF RING BELOW (less rounded; ⇧ → more rounded)",
+   "double": "̹"
   },
   {
    "opt": "s",
@@ -857,7 +818,8 @@
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0329",
-   "name": "COMBINING VERTICAL LINE BELOW (syllabic; positioned by base)"
+   "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → non-syllabic; positioned by base)",
+   "double": "̯"
   },
   {
    "opt": "t",
@@ -866,7 +828,7 @@
    "type": "combining",
    "group": "Prosody",
    "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar; ×2 undertie)"
+   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar; ⇧ → undertie)"
   },
   {
    "opt": "x",
@@ -875,7 +837,7 @@
    "double": "̣",
    "group": "Articulation",
    "cp": "U+033D",
-   "name": "COMBINING X ABOVE (mid-centralized; ×2 dot below)"
+   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → dot below)"
   },
   {
    "opt": "l",
@@ -887,11 +849,12 @@
   },
   {
    "opt": "q",
-   "mark": "̚",
+   "mark": "̘",
    "type": "combining",
-   "group": "Syllabicity",
-   "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased)"
+   "group": "Articulation",
+   "cp": "U+0318",
+   "name": "COMBINING LEFT TACK BELOW (ATR — advanced tongue root; ⇧ → RTR)",
+   "double": "̙"
   },
   {
    "opt": "'",
@@ -900,7 +863,7 @@
    "double": "ˌ",
    "group": "Prosody",
    "cp": "U+02C8",
-   "name": "MODIFIER LETTER VERTICAL LINE (primary stress; ×2 secondary)"
+   "name": "MODIFIER LETTER VERTICAL LINE (primary stress; ⇧ → secondary)"
   },
   {
    "opt": ";",
@@ -909,7 +872,7 @@
    "double": "ˑ",
    "group": "Length",
    "cp": "U+02D0",
-   "name": "MODIFIER LETTER TRIANGULAR COLON (long; ×2 half-long)"
+   "name": "MODIFIER LETTER TRIANGULAR COLON (long; ⇧ → half-long)"
   },
   {
    "opt": "r",
@@ -933,15 +896,8 @@
    "type": "spacing",
    "group": "Tone",
    "cp": "U+A71C",
-   "name": "MODIFIER LETTER RAISED DOWN ARROW (downstep)"
-  },
-  {
-   "opt": "i",
-   "mark": "ꜛ",
-   "type": "spacing",
-   "group": "Tone",
-   "cp": "U+A71B",
-   "name": "MODIFIER LETTER RAISED UP ARROW (upstep)"
+   "name": "MODIFIER LETTER RAISED DOWN ARROW (downstep; ⇧ → upstep)",
+   "double": "ꜛ"
   },
   {
    "opt": "1",
