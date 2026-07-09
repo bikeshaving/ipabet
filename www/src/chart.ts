@@ -127,7 +127,7 @@ function otherSymbols(): string {
 		["ɕ", "Voiceless alveolo-palatal fricative"],
 		["ʑ", "Voiced alveolo-palatal fricative"],
 		["ɺ", "Voiced alveolar lateral flap"],
-		["t͡s", "Affricate (tie bar)", "t s ⌥t"],
+		["t͡s", "Affricate (tie bar)", "t ⇧1 s"],
 	];
 	entries.push(["ɧ", "Simultaneous ʃ and x"]);
 	return entries
@@ -229,7 +229,7 @@ function diacritics(): string {
 		})
 		.join("");
 	return `<div class="cols2">${items}</div>
-	<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧'</i> → secondary stress). Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
+	<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧'</i> → secondary stress); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
 }
 
 // ------------------------------------------------------ suprasegmentals
@@ -244,7 +244,7 @@ function suprasegmentals(): string {
 		["|", "|", "Minor (foot) group"],
 		["‖", "| |", "Major (intonation) group"],
 		[".", ".", "Syllable break"],
-		["‿", "⌥t ⌥t", "Linking (absence of a break)"],
+		["‿", "⌥z", "Linking (absence of a break)"],
 	];
 	return entries
 		.map(([g, k, name]) => `<div class="li"><b class="ipa">${esc(g)}</b><i>${esc(k)}</i><span class="nm">${name}</span></div>`)
