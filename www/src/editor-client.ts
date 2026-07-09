@@ -7,6 +7,8 @@
 import {
 	handleKey,
 	handleBackspace,
+	previewString,
+	type Pending,
 	nativeChar,
 	type Keystroke,
 	type Edit,
@@ -18,6 +20,20 @@ const copyBtn = document.getElementById("copy") as HTMLButtonElement;
 const clearBtn = document.getElementById("clear") as HTMLButtonElement;
 
 const KEY = "ipabet-editor-v1";
+
+// The dead-key composition. Host state — never written into the textarea, so a
+// user's own NBSP (common in pasted text) can never be mistaken for it. A
+// <textarea> can't style a sub-range, so the preview is a chip, not marked text.
+let pending: Pending = [];
+const chip = document.createElement("span");
+chip.id = "pending-chip";
+chip.hidden = true;
+document.getElementById("pad")?.appendChild(chip);
+function renderPending(): void {
+	const s = previewString(pending);
+	chip.textContent = s;
+	chip.hidden = s === "";
+}
 try {
 	const s = JSON.parse(localStorage.getItem(KEY) || "null");
 	if (s && typeof s.text === "string") ta.value = s.text;
@@ -73,18 +89,23 @@ ta.addEventListener("keydown", (e) => {
 	if (e.key === "Backspace") {
 		if (ta.selectionStart !== ta.selectionEnd) return; // native deletes the selection
 		const before = ta.value.slice(0, ta.selectionStart);
-		const edit = handleBackspace(before);
-		if (edit.type === "pass") return; // bare glyph: native single-char delete
+		const step = handleBackspace(before, pending);
+		pending = step.pending;
+		renderPending();
+		if (step.edit.type === "noop") { e.preventDefault(); return; } // peeled the accent
+		if (step.edit.type === "pass") return; // bare glyph: native single-char delete
 		e.preventDefault();
-		applyAtCaret(edit, "");
+		applyAtCaret(step.edit, "");
 		return;
 	}
 	const k = keyFromEvent(e);
 	if (k === null) return; // space, enter, arrows, tab… all native
 	e.preventDefault();
 	const before = ta.value.slice(0, ta.selectionStart);
-	const edit = handleKey(before, k);
-	applyAtCaret(edit, nativeChar(k));
+	const step = handleKey(before, k, pending);
+	pending = step.pending;
+	renderPending();
+	if (step.edit.type !== "noop") applyAtCaret(step.edit, nativeChar(k));
 });
 
 // paste / native input (mobile, dictation) — keep the count and storage honest

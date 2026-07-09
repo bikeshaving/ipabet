@@ -24,7 +24,25 @@ export type Edit =
 	/** Replace the last `length` UTF-16 units before the cursor with text. */
 	| {type: "replace"; length: number; text: string}
 	/** Defer to the host: native character, native delete, native shortcut. */
-	| {type: "pass"};
+	| {type: "pass"}
+	/** Only the pending composition changed; the document is untouched. The host
+	 *  renders `pending` however it likes (marked text in the IME, a decoration
+	 *  on the web). Nothing is ever written to the document to represent it. */
+	| {type: "noop"};
+
+/**
+ * Diacritics awaiting a base — the dead-key composition, held by the HOST, never
+ * smuggled into the document. (A sentinel character can't work: NBSP, and even
+ * NBSP+combining, occur in real pasted text and would be mistaken for ours.)
+ * The macOS IME renders this as marked text; the web editor draws it itself.
+ */
+export type Pending = readonly string[];
+
+/** What `handleKey`/`handleBackspace` return: an edit, plus the next pending. */
+export interface Step {
+	edit: Edit;
+	pending: Pending;
+}
 
 interface Mark {
 	mark: string;
@@ -50,6 +68,9 @@ const optMarks = new Map<string, Mark>();
  *  is both advanced and retracted. Shape-twins that are independent features
  *  (tilde/creaky, diaeresis/breathy) stack, and are absent from this map. */
 const exclusiveTwin = new Map<string, string>();
+/** combining scalar → its spacing form, for the dead-key preview and for the
+ *  flush that commits an unconsumed accent (⌥e then space → ´). */
+const cloneOf = new Map<string, string>();
 for (const e of spec.marks as {
 	opt: string;
 	mark: string;
@@ -57,6 +78,7 @@ for (const e of spec.marks as {
 	double?: string;
 	cycle?: string[];
 	clone?: string;
+	doubleClone?: string;
 	exclusive?: boolean;
 }[]) {
 	optMarks.set(e.opt, {
@@ -69,6 +91,10 @@ for (const e of spec.marks as {
 	if (e.exclusive === true && e.double !== undefined) {
 		exclusiveTwin.set(e.mark, e.double);
 		exclusiveTwin.set(e.double, e.mark);
+	}
+	if (e.clone !== undefined) cloneOf.set(e.mark, e.clone);
+	if (e.doubleClone !== undefined && e.double !== undefined) {
+		cloneOf.set(e.double, e.doubleClone);
 	}
 }
 
@@ -164,70 +190,66 @@ function replaceCluster(cluster: string, text: string): Edit {
 /**
  * Combining ⌥ diacritics are PREFIX (dead-key style, like é/ñ on the US
  * keyboard): the mark comes first and the next base absorbs it. Statelessly,
- * the pending mark is emitted as a real NBSP placeholder (NBSP + combining
- * mark), and `emitBase` folds the accumulated stack onto the base that follows.
+ * the pending marks live in the HOST's composition state (marked text in the
+ * IME), and `emitBase` folds the accumulated stack onto the base that follows.
  * A form's primary is ⌥, its secondary is ⌥⇧ (the mark's `double`); pressing
  * the same form again on the pending placeholder lifts it off (toggle). Marks
  * are independent and can co-occur (ã̯). Spacing marks (length,
  * tone, stress) are standalone glyphs, not decorations, so they stay postfix.
  */
-const NBSP = "\u{00A0}";
-// A real pending placeholder is NBSP *carrying a combining mark*. A bare NBSP
-// is not ours — terminals (Terminal.app) pad the cell before the cursor with
-// NBSP, and absorbing onto that would rewrite terminal content. Require a mark.
-const isPending = (cluster: string): boolean => {
-	const {base, marks} = decompose(cluster);
-	return base === NBSP && marks.length > 0;
-};
-
-/** Combining diacritic (⌥/⌥⇧): stack a pending mark on an NBSP placeholder in
- *  front of the base that will absorb it. The same mark again lifts it off,
- *  down to a bare NBSP — never an empty replacement, which the macOS 15 IMK
- *  transport silently drops. A bare NBSP is absorbed by the next base, or
- *  deleted natively by backspace if the run is abandoned. */
-function pendingDiacritic(scalar: string, textBefore: string): Edit {
-	const p = lastCluster(textBefore);
-	if (p !== undefined && isPending(p)) {
-		const {marks} = decompose(p);
-		let next: string[];
-		if (marks[marks.length - 1] === scalar) {
-			next = marks.slice(0, -1);        // same form again: peel it back off
-		} else {
-			// An exclusive dual replaces its twin: nothing is both advanced and
-			// retracted. Shape-twins that are independent features just stack.
-			const twin = exclusiveTwin.get(scalar);
-			const rest = twin !== undefined ? marks.filter((m) => m !== twin) : marks;
-			next = [...rest, scalar];
-		}
-		return replaceCluster(p, recompose(NBSP, next));
-	}
-	return {type: "insert", text: NBSP + scalar};
+/** The dead-key preview: each pending mark as its spacing glyph where one
+ *  exists (⌥e → ´, matching the US layout's terminator), else the bare
+ *  combining glyph. Never a dotted circle — U+25CC renders enormous in some
+ *  hosts, and Apple's dead keys always show a real spacing character. */
+export function previewString(pending: Pending): string {
+	return pending.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
-/** Spacing mark (stress, length, tone letter, arrows): insert it in place. */
+/** Commit an unconsumed accent as its spacing form (dead-key convention:
+ *  ⌥e then space → ´), clearing the composition. */
+function flush(pending: Pending): Step {
+	if (pending.length === 0) return {edit: {type: "noop"}, pending: []};
+	return {edit: {type: "insert", text: previewString(pending)}, pending: []};
+}
+
+/** Combining diacritic (⌥/⌥⇧): stack it into the pending composition. The same
+ *  form again peels it off. An exclusive dual replaces its twin — nothing is
+ *  both advanced and retracted; independent shape-twins (tilde/creaky) stack. */
+function pendingDiacritic(scalar: string, pending: Pending): Step {
+	let next: string[];
+	if (pending[pending.length - 1] === scalar) {
+		next = pending.slice(0, -1);
+	} else {
+		const twin = exclusiveTwin.get(scalar);
+		const rest = twin !== undefined ? pending.filter((m) => m !== twin) : [...pending];
+		next = [...rest, scalar];
+	}
+	return {edit: {type: "noop"}, pending: next};
+}
+
+/** Spacing mark (stress, length, tone letter): insert it in place, postfix. */
 function applySpacing(scalar: string): Edit {
 	return {type: "insert", text: scalar};
 }
 
 /** Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form. */
-function applyMark(m: Mark, textBefore: string, secondary = false): Edit {
+function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	const scalar = secondary && m.double !== undefined ? m.double : m.mark;
-	return m.spacing ? applySpacing(scalar) : pendingDiacritic(scalar, textBefore);
+	if (!m.spacing) return pendingDiacritic(scalar, pending);
+	const f = flush(pending);                       // a pending accent commits first
+	const text = (f.edit.type === "insert" ? f.edit.text : "") + scalar;
+	return {edit: {type: "insert", text}, pending: []};
 }
 
-/** Emit a base glyph, absorbing any pending prefix diacritics onto it. */
-function emitBase(glyph: string, textBefore: string): Edit {
-	const p = lastCluster(textBefore);
-	if (p !== undefined && isPending(p)) {
-		const marks = decompose(p).marks;
-		// dark l: overlay + l is the atomic ɫ, not a ragged l̴
-		if (marks.length === 1 && marks[0] === "\u{0334}" && glyph === "l") {
-			return replaceCluster(p, "ɫ");
-		}
-		// ring/line below ride above a descender base
-		return replaceCluster(p, recompose(glyph, reposition(glyph, marks)));
+/** Emit a base glyph, committing any pending prefix diacritics onto it. */
+function emitBase(glyph: string, pending: Pending): Step {
+	if (pending.length === 0) return {edit: {type: "insert", text: glyph}, pending: []};
+	// dark l: overlay + l is the atomic ɫ, not a ragged l̴
+	if (pending.length === 1 && pending[0] === "\u{0334}" && glyph === "l") {
+		return {edit: {type: "insert", text: "ɫ"}, pending: []};
 	}
-	return {type: "insert", text: glyph};
+	const marks = reposition(glyph, [...pending]);
+	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};
 }
 
 /** ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). */
@@ -249,11 +271,24 @@ function superscriptize(textBefore: string): Edit {
  * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → raw-US escape on
  * letters/digits. Command/control chords and anything unmapped pass.
  */
-export function handleKey(textBefore: string, k: Keystroke): Edit {
+export function handleKey(textBefore: string, k: Keystroke, pending: Pending = []): Step {
 	const key = k.key;
 	const shift = k.shift ?? false;
 	const option = k.option ?? false;
-	if (key.length !== 1) return {type: "pass"};
+	/** Any key that neither stacks a diacritic nor absorbs one commits the pending
+	 *  accent first (dead-key convention: ⌥e then space → ´), then does its own
+	 *  thing. A `pass` becomes an insert of accent + the native character, since a
+	 *  single Edit can't both commit and defer. */
+	const withFlush = (edit: Edit): Step => {
+		if (pending.length === 0) return {edit, pending: []};
+		const pre = previewString(pending);
+		if (edit.type === "insert") return {edit: {type: "insert", text: pre + edit.text}, pending: []};
+		if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
+		return {edit, pending: []};
+	};
+	// Non-typing keys (arrows, Enter): defer entirely, and leave the composition
+	// alone — swallowing them to commit an accent would eat navigation.
+	if (key.length !== 1) return {edit: {type: "pass"}, pending};
 
 	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
 	// ⌥⇧' → secondary stress). Where the key holds no such mark it's the
@@ -261,21 +296,21 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 	// so the host's own Option typography (curly quotes, dashes) survives.
 	if (option && shift) {
 		const m2 = optMarks.get(key);
-		if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, textBefore, true);
-		if (/[a-z]/i.test(key)) return {type: "insert", text: key.toUpperCase()};
+		if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
+		if (/[a-z]/i.test(key)) return withFlush({type: "insert", text: key.toUpperCase()});
 		if (/[0-9]/.test(key)) {
-			return {type: "insert", text: SHIFTED_DIGITS[key] ?? key};
+			return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
 		}
-		return {type: "pass"};
+		return withFlush({type: "pass"});
 	}
 
 	// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
 	if (option) {
-		if (key === "p") return superscriptize(textBefore);
 		const m = optMarks.get(key);
-		if (m !== undefined) return applyMark(m, textBefore);
-		if (/[0-9]/.test(key)) return {type: "insert", text: key};
-		return {type: "pass"};
+		if (m !== undefined) return applyMark(m, pending);
+		if (key === "p") return withFlush(superscriptize(textBefore));
+		if (/[0-9]/.test(key)) return withFlush({type: "insert", text: key});
+		return withFlush({type: "pass"});
 	}
 
 	// Number row: bare → native digit; Shift → the IPA glyph (⇧5 → ə);
@@ -283,16 +318,16 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 	if (/[0-9]/.test(key)) {
 		if (shift) {
 			const glyph = letters.get(key);
-			if (glyph !== undefined) return emitBase(glyph, textBefore);
+			if (glyph !== undefined) return emitBase(glyph, pending);
 		}
-		return {type: "pass"};
+		return withFlush({type: "pass"});
 	}
 
 	const s = shift ? key.toUpperCase() : key;
 
 	// Shift-letter modifiers transform the previous glyph in place; any
 	// combining marks already on it survive the swap (decomposed view).
-	const p = lastCluster(textBefore);
+	const p = pending.length === 0 ? lastCluster(textBefore) : undefined;
 	if (p !== undefined) {
 		let {base, marks} = decompose(p);
 		// Shift-chaining: a capital typed right after a special (non-ASCII) IPA
@@ -312,7 +347,9 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 			}
 		}
 		const combo = transforms.get(base + s);
-		if (combo !== undefined) return replaceCluster(p, recompose(combo, reposition(combo, marks)));
+		if (combo !== undefined) {
+			return {edit: replaceCluster(p, recompose(combo, reposition(combo, marks))), pending: []};
+		}
 		// vowel rhoticization: R after any vowel. ə and ɜ have precomposed
 		// rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞.
 		if (s === "R" && base.length > 0 && VOWELS.includes(base[0])) {
@@ -320,37 +357,40 @@ export function handleKey(textBefore: string, k: Keystroke): Edit {
 			if (base === "ə") out = recompose("ɚ", marks);
 			else if (base === "ɜ") out = recompose("ɝ", marks);
 			else out = recompose(base, marks) + "˞";
-			return replaceCluster(p, out);
+			return {edit: replaceCluster(p, out), pending: []};
 		}
 		// ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
 		// Open class, guarded like R; a non-obstruent falls through to a literal X.
 		if (s === "X" && base.length > 0 && VOICELESS_OBSTRUENTS.includes(base[0])) {
-			return replaceCluster(p, recompose(base, marks) + "\u{02BC}");
+			return {edit: replaceCluster(p, recompose(base, marks) + "\u{02BC}"), pending: []};
 		}
 	}
 
-	// letter / click base glyph — absorbing any pending prefix diacritics
+	// letter / click base glyph — committing any pending prefix diacritics
 	const glyph = letters.get(s);
-	if (glyph !== undefined) return emitBase(glyph, textBefore);
+	if (glyph !== undefined) return emitBase(glyph, pending);
 
 	// capitals with no transform, punctuation: native. Under shift-chaining this
 	// is also how a chained base is emitted — a capital, pending a modifier that
 	// may lower+transform it (handled above via two-glyph lookback).
-	return {type: "pass"};
+	return withFlush({type: "pass"});
 }
 
 /**
  * Backspace: peel the last combining mark off the previous cluster (é → e,
  * n̥ → n); a bare glyph passes so the host deletes it natively.
  */
-export function handleBackspace(textBefore: string): Edit {
+export function handleBackspace(textBefore: string, pending: Pending = []): Step {
+	// Backspace peels the pending accent first — the dead key is undone before
+	// the document is touched at all.
+	if (pending.length > 0) return {edit: {type: "noop"}, pending: pending.slice(0, -1)};
 	const p = lastCluster(textBefore);
-	if (p === undefined) return {type: "pass"};
+	if (p === undefined) return {edit: {type: "pass"}, pending: []};
 	const {base, marks} = decompose(p);
-	if (marks.length === 0) return {type: "pass"};
+	if (marks.length === 0) return {edit: {type: "pass"}, pending: []};
 	// orphan combining mark: let the host delete the whole cluster
-	if (base.length === 0) return {type: "pass"};
-	return replaceCluster(p, recompose(base, marks.slice(0, -1)));
+	if (base.length === 0) return {edit: {type: "pass"}, pending: []};
+	return {edit: replaceCluster(p, recompose(base, marks.slice(0, -1))), pending: []};
 }
 
 /**
@@ -365,6 +405,8 @@ export function applyEdit(text: string, edit: Edit, native = ""): string {
 			return text.slice(0, text.length - edit.length) + edit.text;
 		case "pass":
 			return text + native;
+		case "noop":
+			return text;   // only the composition changed
 	}
 }
 
@@ -383,16 +425,21 @@ export function nativeChar(k: Keystroke): string {
  */
 export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let text = initial;
+	let pending: Pending = [];
 	for (const k of keys) {
-		const edit =
-			k.key === "⌫" ? handleBackspace(text) : handleKey(text, k);
-		if (k.key === "⌫" && edit.type === "pass") {
+		const step =
+			k.key === "⌫" ? handleBackspace(text, pending) : handleKey(text, k, pending);
+		pending = step.pending;
+		if (k.key === "⌫" && step.edit.type === "pass") {
 			// native delete: drop the last grapheme cluster
 			const p = lastCluster(text);
 			text = p === undefined ? text : text.slice(0, text.length - p.length);
 		} else {
-			text = applyEdit(text, edit, nativeChar(k));
+			text = applyEdit(text, step.edit, nativeChar(k));
 		}
 	}
+	// An accent still pending at the end commits as its spacing form — what the
+	// IME does on commitComposition when focus leaves.
+	if (pending.length > 0) text += previewString(pending);
 	return text;
 }

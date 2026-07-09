@@ -6,6 +6,7 @@
 import {
 	handleKey,
 	handleBackspace,
+	type Pending,
 	applyEdit,
 	nativeChar,
 	type Keystroke,
@@ -130,13 +131,18 @@ function check() {
 }
 
 // ------------------------------------------------------------ input core
+let pending: Pending = [];
 function doBackspace() {
-	const edit = handleBackspace(buffer);
-	buffer = edit.type === "pass" ? dropLastCluster(buffer) : applyEdit(buffer, edit);
+	const step = handleBackspace(buffer, pending);
+	pending = step.pending;
+	if (step.edit.type === "noop") { render(); return; }
+	buffer = step.edit.type === "pass" ? dropLastCluster(buffer) : applyEdit(buffer, step.edit);
 	render();
 }
 function sendKey(k: Keystroke) {
-	buffer = applyEdit(buffer, handleKey(buffer, k), nativeChar(k));
+	const step = handleKey(buffer, k, pending);
+	pending = step.pending;
+	buffer = applyEdit(buffer, step.edit, nativeChar(k));
 	render();
 	check();
 }

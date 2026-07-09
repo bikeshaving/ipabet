@@ -136,10 +136,10 @@ describe("shifted number row", () => {
 		expect(typed("+5", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
 	test("bare digits pass natively", () => expect(typed("1", "2")).toBe("12"));
 	test("⇧9 passes (native paren)", () => {
-		expect(handleKey("", {key: "9", shift: true})).toEqual({type: "pass"});
+		expect(handleKey("", {key: "9", shift: true}).edit).toEqual({type: "pass"});
 	});
 	test("⇧8 passes now (solidus removed — type / manually)", () => {
-		expect(handleKey("", {key: "8", shift: true})).toEqual({type: "pass"});
+		expect(handleKey("", {key: "8", shift: true}).edit).toEqual({type: "pass"});
 	});
 });
 
@@ -149,10 +149,15 @@ describe("option diacritics (prefix, dead-key style)", () => {
 	test("señor tilde: ⌥n n → ñ", () => expect(typed("s", "e", "~n", "n")).toBe(nfc("señ")));
 	test("acute: ⌥e e → é", () => expect(typed("~e", "e")).toBe(nfc("é")));
 	test("length is spacing, still postfix: a ⌥; → aː", () => expect(typed("a", "~;")).toBe("aː"));
-	test("no base: a combining mark alone rides its NBSP placeholder", () => {
-		expect(typed("~n")).toBe("\u{00A0}\u{0303}");
-		expect(typed("~t")).toBe("\u{00A0}\u{032A}");   // ⌥t = dental
+	// A pending accent is never written to the document. Left unconsumed it
+	// commits as its spacing form (⌥e then nothing → ´), like a real dead key.
+	test("no base: an unconsumed accent commits as its spacing form", () => {
+		expect(typed("~n")).toBe("˜");
+		expect(typed("~e")).toBe("´");
+		expect(typed("~t")).toBe("\u{032A}");   // dental has no spacing form
 	});
+	test("dead-key release: ⌥e then a non-base commits ´ then the char", () =>
+		expect(typed("~e", ",")).toBe("´,"));
 });
 
 describe("second forms on ⌥⇧ (no cycling)", () => {
@@ -211,37 +216,37 @@ describe("dental family — spread across keys, no cycle", () => {
 });
 
 describe("toggle-off (press the same form again on the pending mark)", () => {
-	// Peeling the last mark leaves a *bare* NBSP (never an empty edit — the IMK
-	// transport drops those). A bare NBSP is inert: it is NOT a pending
-	// placeholder, so a following base does not absorb it. This is what keeps
-	// terminals safe — Terminal.app pads the cell before the cursor with NBSP.
-	const NBSP = "\u{00A0}";
-	test("⌥n ⌥n → bare NBSP (form lifts off before any base)", () => expect(typed("~n", "~n")).toBe(NBSP));
-	test("⌥⇧n ⌥⇧n → bare NBSP (second form toggles too)", () => expect(typed("~+n", "~+n")).toBe(NBSP));
-	test("single-form macron: ⌥a ⌥a → bare NBSP", () => expect(typed("~a", "~a")).toBe(NBSP));
-	test("a peeled (bare) NBSP is inert — the next base does NOT absorb it", () =>
-		expect(typed("~n", "~n", "x")).toBe(NBSP + "x"));
-	test("clone-less single-form toggles too: ⌥. ⌥. → bare NBSP", () =>
-		expect(typed("~.", "~.")).toBe(NBSP));
-	// velarized moved to ⌥g (⇧G is dorsal/velar); the atomic-ɫ rule keys off the
-	// overlay scalar U+0334, not the key, so it survives the move.
-	test("dark l is atomic: ⌥g l → ɫ; ⌥g ⌥g (bare NBSP) then l → NBSP l", () => {
+	// Pending lives in host state, not the document. Peeling the last mark leaves
+	// an EMPTY composition — nothing is written, so there is no sentinel to
+	// collide with a user's real NBSP.
+	test("⌥n ⌥n → nothing committed", () => expect(typed("~n", "~n")).toBe(""));
+	test("⌥⇧n ⌥⇧n → nothing committed", () => expect(typed("~+n", "~+n")).toBe(""));
+	test("single-form macron: ⌥a ⌥a → nothing", () => expect(typed("~a", "~a")).toBe(""));
+	test("a peeled composition leaves the next base untouched: ⌥n ⌥n x → x", () =>
+		expect(typed("~n", "~n", "x")).toBe("x"));
+	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
+		expect(typed("~.", "~.")).toBe(""));
+	test("dark l is atomic: ⌥g l → ɫ; ⌥g ⌥g l → l (velarization lifted)", () => {
 		expect(typed("~g", "l")).toBe("ɫ");
-		expect(typed("~g", "~g", "l")).toBe(NBSP + "l");
+		expect(typed("~g", "~g", "l")).toBe("l");
 	});
 	test("velarization elsewhere stays an overlay: ⌥g t → t̴", () =>
 		expect(typed("~g", "t")).toBe("t\u{0334}"));
+	test("backspace peels the pending accent before touching the document", () => {
+		expect(typed("~n", "⌫")).toBe("");
+		expect(typed("~n", "~e", "⌫", "a")).toBe(nfc("ã"));
+	});
 });
 
-describe("terminal safety: only NBSP+mark is a pending placeholder", () => {
-	// Terminal.app hands the IME an NBSP as the cell before the cursor. A bare
-	// NBSP must NOT be treated as ours, or every letter would rewrite terminal
-	// content. Only NBSP carrying a combining mark is a real pending diacritic.
-	test("bare NBSP before the cursor: x inserts, not absorbs", () =>
+describe("no sentinel: a user's NBSP is just text", () => {
+	// The old engine wrote NBSP+combining into the document to represent a pending
+	// accent. NBSP — and even NBSP+combining — occur in real pasted text, so it
+	// could be mistaken for ours. Pending is host state now; nothing to confuse.
+	test("a bare NBSP before the cursor is untouched", () =>
 		expect(typeKeys(seq("x"), "\u{00A0}")).toBe("\u{00A0}x"));
-	test("real pending (NBSP + tilde): x absorbs the mark", () =>
-		expect(typeKeys(seq("x"), "\u{00A0}\u{0303}")).toBe(nfc("x\u{0303}")));
-	test("plain letter before the cursor is untouched: r then k inserts", () =>
+	test("a pasted NBSP+tilde is NOT absorbed", () =>
+		expect(typeKeys(seq("x"), "\u{00A0}\u{0303}")).toBe("\u{00A0}\u{0303}x"));
+	test("a plain letter before the cursor is untouched", () =>
 		expect(typeKeys(seq("k"), "r")).toBe("rk"));
 });
 
@@ -303,8 +308,8 @@ describe("ring positioning", () => {
 		expect(typed("~s", "n")).toBe(nfc("n\u{0329}"));
 		expect(typed("~s", "n", "+g")).toBe(nfc("ŋ\u{030D}"));
 	});
-	test("syllabic is single-form now: ⌥s ⌥s repeat toggles off to bare NBSP", () =>
-		expect(typed("~s", "~s")).toBe("\u{00A0}"));
+	test("syllabic toggles off cleanly: ⌥s ⌥s → nothing committed", () =>
+		expect(typed("~s", "~s")).toBe(""));
 });
 
 describe("superscript operator ⌥p", () => {
@@ -341,7 +346,7 @@ describe("option-shift raw escape", () => {
 	test("⌥⇧2 → @", () => expect(typed("~+2")).toBe("@"));
 	test("⌥⇧h → H (dodges the transform)", () => expect(typed("s", "~+h")).toBe("sH"));
 	test("⌥⇧[ passes (native typography)", () =>
-		expect(handleKey("", {key: "[", shift: true, option: true})).toEqual({type: "pass"}));
+		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });
 
 describe("backspace peel", () => {
@@ -349,7 +354,7 @@ describe("backspace peel", () => {
 	test("stacked marks peel one at a time", () =>
 		expect(typed("~n", "~e", "a", "⌫")).toBe(nfc("ã")));
 	test("bare glyph passes to native delete", () => {
-		expect(handleBackspace("sa")).toEqual({type: "pass"});
+		expect(handleBackspace("sa").edit).toEqual({type: "pass"});
 	});
 	test("precomposed é (NFC input) still peels", () => {
 		expect(typeKeys(seq("⌫"), "caf\u{00E9}")).toBe("cafe");
@@ -362,6 +367,6 @@ describe("daily-driver invariants", () => {
 	test("capitals with no transform pass as capitals", () =>
 		expect(typed("+t", "h", "e")).toBe("The"));
 	test("punctuation passes", () => {
-		expect(handleKey("", {key: ","})).toEqual({type: "pass"});
+		expect(handleKey("", {key: ","}).edit).toEqual({type: "pass"});
 	});
 });
