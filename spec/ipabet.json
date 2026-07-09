@@ -669,7 +669,7 @@
    "double": "̋",
    "group": "Tone",
    "cp": "U+0301",
-   "name": "COMBINING ACUTE ACCENT (high tone)",
+   "name": "COMBINING ACUTE ACCENT (high tone; ⇧ → extra-high tone)",
    "doubleClone": "˝",
    "exclusive": true
   },
@@ -681,7 +681,7 @@
    "double": "̏",
    "group": "Tone",
    "cp": "U+0300",
-   "name": "COMBINING GRAVE ACCENT (low tone)",
+   "name": "COMBINING GRAVE ACCENT (low tone; ⇧ → extra-low tone)",
    "doubleClone": "˵",
    "exclusive": true
   },
