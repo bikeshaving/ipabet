@@ -105,7 +105,8 @@ export const KEYS_HTML = `<!DOCTYPE html>
 </head>
 <body>
 <main>
-	<h1>IPAbet keystroke reference</h1>
+	<h1>IPAbet keystroke reference <span style="font-size:.5em;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--k);border:1.5px solid var(--k);border-radius:999px;padding:.1em .55em;vertical-align:middle">beta</span></h1>
+	<p style="color:var(--dim);font-style:italic;font-size:.9rem">Provisional: the layout is still being refined and these keystrokes may change between releases.</p>
 	<p>The complete keystroke → IPA mapping, generated from the canonical
 	<a href="/ipabet.json"><code>ipabet.json</code></a> (raw JSON, served verbatim).
 	Notation: <code>⇧</code> = Shift, <code>⌥</code> = Option; a space separates

@@ -31,6 +31,28 @@ header h1 { font-size: 2.6rem; letter-spacing: -0.02em; }
 header h1 .ipa { color: var(--accent); }
 .tagline { font-size: 1.3rem; margin-top: 0.5rem; }
 .trust { color: var(--dim); margin-top: 0.75rem; font-size: 0.95rem; }
+.beta {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--accent);
+	border: 1.5px solid var(--accent);
+	border-radius: 999px;
+	padding: 0.08em 0.6em;
+	margin-left: 0.4rem;
+}
+.provisional {
+	color: var(--dim);
+	margin-top: 0.6rem;
+	font-size: 0.85rem;
+	font-style: italic;
+	max-width: 34rem;
+	margin-left: auto;
+	margin-right: auto;
+}
 
 #demo {
 	background: var(--card); border: 1px solid var(--line); border-radius: 12px;
