@@ -185,8 +185,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~+=", "a")).toBe(nfc("a\u{031F}"));
 	});
 	test("height on ⌥.: lowered ⌥. a → a̞, raised ⌥⇧. a → a̝", () => {
-		expect(typed("~.", "a")).toBe(nfc("a\u{031E}"));
-		expect(typed("~+.", "a")).toBe(nfc("a\u{031D}"));
+		expect(typed("~g", "a")).toBe(nfc("a\u{031E}"));
+		expect(typed("~+g", "a")).toBe(nfc("a\u{031D}"));
 	});
 	// ⌥q matches ⌥='s polarity: shift is the *advanced* pole on both keys.
 	test("tongue-root on ⌥q (throat): RTR ⌥q a → a̙, ATR ⌥⇧q a → a̘", () => {
@@ -197,10 +197,12 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
 		expect(typed("~+w", "o")).toBe(nfc("o\u{0339}"));
 	});
-	test("free digit keys stay literal: ⌥7 → 7, ⌥8 → 8", () => {
-		expect(typed("~7")).toBe("7");
-		expect(typed("~8")).toBe("8");
-	});
+	// ⌥7 now carries ʿayn; the free slots are ⌥8 and (since cedilla moved to
+	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
+	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
+	test("free digit ⌥8 stays literal", () => expect(typed("~8")).toBe("8"));
+	test("freed ⌥c passes to the host", () =>
+		expect(handleKey("", {key: "c", option: true}, []).edit.type).toBe("pass"));
 });
 
 describe("dental family — spread across keys, no cycle", () => {
@@ -226,7 +228,7 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	test("a peeled composition leaves the next base untouched: ⌥n ⌥n x → x", () =>
 		expect(typed("~n", "~n", "x")).toBe("x"));
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
-		expect(typed("~.", "~.")).toBe(""));
+		expect(typed("~g", "~g")).toBe(""));
 	// velarized lives on ⌥l: U+0334 is velarized OR pharyngealized, so ⌥g would be
 	// cross-tier-consistent for only half the mark, while ⌥l keeps ɫ = l + overlay.
 	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l l → l (velarization lifted)", () => {
@@ -264,7 +266,7 @@ describe("the two ⌥⇧ laws", () => {
 	test("laminal replaces apical (⌥d then ⌥⇧d)", () =>
 		expect(typed("~d", "~+d", "d")).toBe(nfc("d\u{033B}")));
 	test("raised replaces lowered (⌥. then ⌥⇧.)", () =>
-		expect(typed("~.", "~+.", "a")).toBe(nfc("a\u{031D}")));
+		expect(typed("~g", "~+g", "a")).toBe(nfc("a\u{031D}")));
 	test("non-syllabic replaces syllabic (⌥s then ⌥⇧s)", () =>
 		expect(typed("~s", "~+s", "n")).toBe(nfc("n\u{032F}")));
 
@@ -317,7 +319,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 		expect(typed("~`", "+a")).toBe(nfc("À"));
 		expect(typed("~i", "+e")).toBe(nfc("Ê"));
 		expect(typed("~n", "+n")).toBe(nfc("Ñ"));
-		expect(typed("~c", "+c")).toBe(nfc("Ç"));
+		expect(typed("~,", "+c")).toBe(nfc("Ç"));
 	});
 	// It must fire ONLY while an accent pends — acronyms and shift-chaining intact.
 	test("acronyms and chaining are untouched", () => {
@@ -330,16 +332,16 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 
 describe("dot-above / dot-below (⌥g, a Latin-tenant shape twin)", () => {
 	test("dot above: ż ṅ ṁ ė", () => {
-		expect(typed("~g", "z")).toBe(nfc("ż"));   // Polish
-		expect(typed("~g", "n")).toBe(nfc("ṅ"));   // IAST velar nasal
-		expect(typed("~g", "e")).toBe(nfc("ė"));   // Lithuanian
+		expect(typed("~.", "z")).toBe(nfc("ż"));   // Polish
+		expect(typed("~.", "n")).toBe(nfc("ṅ"));   // IAST velar nasal
+		expect(typed("~.", "e")).toBe(nfc("ė"));   // Lithuanian
 	});
 	test("dot below: ḥ ṭ ṣ ṛ", () => {
-		expect(typed("~+g", "h")).toBe(nfc("ḥ"));
-		expect(typed("~+g", "t")).toBe(nfc("ṭ"));
-		expect(typed("~+g", "r")).toBe(nfc("ṛ"));
+		expect(typed("~+.", "h")).toBe(nfc("ḥ"));
+		expect(typed("~+.", "t")).toBe(nfc("ṭ"));
+		expect(typed("~+.", "r")).toBe(nfc("ṛ"));
 	});
-	test("dot above on a capital: Ż", () => expect(typed("~g", "+z")).toBe(nfc("Ż")));
+	test("dot above on a capital: Ż", () => expect(typed("~.", "+z")).toBe(nfc("Ż")));
 	test("palatalize series is complete: t ⇧J → c", () => expect(typed("t", "+j")).toBe("c"));
 });
 
@@ -347,10 +349,10 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 	// ⌥c s used to give ş (cedilla, U+015F) where Romanian needs ș (U+0219).
 	// Silent corruption — it looked right. The two below-hooks now share ⌥c.
 	test("Romanian comma-below vs Turkish cedilla are distinct", () => {
-		expect(typed("~+c", "s")).toBe(nfc("ș"));   // U+0219 Romanian
-		expect(typed("~+c", "t")).toBe(nfc("ț"));   // U+021B
-		expect(typed("~c", "s")).toBe(nfc("ş"));    // U+015F Turkish
-		expect(typed("~c", "c")).toBe(nfc("ç"));
+		expect(typed("~+,", "s")).toBe(nfc("ș"));   // U+0219 Romanian
+		expect(typed("~+,", "t")).toBe(nfc("ț"));   // U+021B
+		expect(typed("~,", "s")).toBe(nfc("ş"));    // U+015F Turkish
+		expect(typed("~,", "c")).toBe(nfc("ç"));
 	});
 	test("Vietnamese horn, and horn stacking with tone", () => {
 		expect(typed("~y", "o")).toBe(nfc("ơ"));
@@ -359,9 +361,9 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~h", "~y", "o")).toBe(nfc("ở"));   // hỏi + horn
 	});
 	test("Semitic half-rings: ʿayn and ʾhamza (NOT the superscripts ˤ ˀ)", () => {
-		expect(typed("~,")).toBe("\u{02BF}");
-		expect(typed("~+,")).toBe("\u{02BE}");
-		expect(typed("~,", "a", "r", "a", "b", "~a", "i")).toBe(nfc("ʿarabī"));
+		expect(typed("~7")).toBe("\u{02BF}");
+		expect(typed("~+7")).toBe("\u{02BE}");
+		expect(typed("~7", "a", "r", "a", "b", "~a", "i")).toBe(nfc("ʿarabī"));
 	});
 	test("German ß", () => {
 		expect(typed("~6")).toBe("ß");
@@ -395,7 +397,7 @@ describe("East Asian coverage", () => {
 		expect(typed("~`", "a")).toBe(nfc("à"));
 		expect(typed("~h", "a")).toBe(nfc("ả"));   // hỏi, U+0309
 		expect(typed("~n", "a")).toBe(nfc("ã"));
-		expect(typed("~+g", "a")).toBe(nfc("ạ"));
+		expect(typed("~+.", "a")).toBe(nfc("ạ"));
 	});
 	test("Vietnamese implosive: b ⇧P → ɓ", () => expect(typed("b", "+p")).toBe("ɓ"));
 

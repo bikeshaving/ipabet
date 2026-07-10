@@ -760,13 +760,13 @@
    "name": "COMBINING RING BELOW (voiceless; positioned by base)"
   },
   {
-   "opt": "c",
+   "opt": ",",
    "mark": "̧",
    "clone": "¸",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA (Latin tenant: ç ş; ⇧ → comma below: ș ț — Romanian)",
+   "name": "COMBINING CEDILLA (Latin tenant: ç ş; ⇧ → comma below: ș ț — Romanian). The comma key carries the comma-shaped marks.",
    "double": "̦",
    "ipa": false,
    "beyond": "tenant"
@@ -822,12 +822,12 @@
    "clone": "˜"
   },
   {
-   "opt": ".",
+   "opt": "g",
    "mark": "̞",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031E",
-   "name": "COMBINING DOWN TACK BELOW (lowered; ⇧ → raised, the > pole)",
+   "name": "COMBINING DOWN TACK BELOW (lowered; ⇧ → raised). Tongue-height sibling of ⌥q ATR/RTR and ⌥= advanced/retracted.",
    "double": "̝",
    "clone": "˕",
    "doubleClone": "˔",
@@ -1007,14 +1007,14 @@
    "beyond": "tradition"
   },
   {
-   "opt": "g",
+   "opt": ".",
    "mark": "̇",
    "clone": "˙",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0307",
    "double": "̣",
-   "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ)",
+   "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ). The period key carries the dot-shaped marks; ⇧ relocates the dot below.",
    "ipa": false,
    "beyond": "tenant"
   },
@@ -1029,13 +1029,13 @@
    "beyond": "tenant"
   },
   {
-   "opt": ",",
+   "opt": "7",
    "mark": "ʿ",
    "type": "spacing",
    "group": "Transliteration",
    "cp": "U+02BF",
    "double": "ʾ",
-   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant",
+   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant, arbitrary key, parked.",
    "ipa": false,
    "beyond": "tenant"
   },
