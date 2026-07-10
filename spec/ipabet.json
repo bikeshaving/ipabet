@@ -677,7 +677,8 @@
    "cp": "U+0301",
    "name": "COMBINING ACUTE ACCENT (high tone; ⇧ → extra-high tone)",
    "doubleClone": "˝",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "extreme"
   },
   {
    "opt": "`",
@@ -689,7 +690,8 @@
    "cp": "U+0300",
    "name": "COMBINING GRAVE ACCENT (low tone; ⇧ → extra-low tone)",
    "doubleClone": "˵",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "extreme"
   },
   {
    "opt": "i",
@@ -709,7 +711,8 @@
    "group": "Tone",
    "cp": "U+030C",
    "name": "COMBINING CARON (rising tone; ⇧ → voiced)",
-   "doubleClone": "ˬ"
+   "doubleClone": "ˬ",
+   "shiftSense": "below"
   },
   {
    "opt": "a",
@@ -729,7 +732,8 @@
    "group": "Nasalization",
    "cp": "U+0303",
    "name": "COMBINING TILDE (nasalized; ⇧ → creaky)",
-   "doubleClone": "˷"
+   "doubleClone": "˷",
+   "shiftSense": "below"
   },
   {
    "opt": "u",
@@ -739,7 +743,8 @@
    "double": "̤",
    "group": "Articulation",
    "cp": "U+0308",
-   "name": "COMBINING DIAERESIS (centralized; ⇧ → breathy)"
+   "name": "COMBINING DIAERESIS (centralized; ⇧ → breathy)",
+   "shiftSense": "below"
   },
   {
    "opt": "b",
@@ -769,7 +774,8 @@
    "name": "COMBINING CEDILLA (Latin tenant: ç ş; ⇧ → comma below: ș ț — Romanian). The comma key carries the comma-shaped marks.",
    "double": "̦",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "shiftSense": "twin"
   },
   {
    "opt": "m",
@@ -798,7 +804,8 @@
    "cp": "U+033A",
    "name": "COMBINING INVERTED BRIDGE BELOW (apical — tongue tip; ⇧ → laminal, tongue blade)",
    "double": "̻",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "arbitrary"
   },
   {
    "opt": "=",
@@ -810,7 +817,8 @@
    "name": "COMBINING MINUS SIGN BELOW (retracted; ⇧ → advanced, the + pole)",
    "clone": "˗",
    "doubleClone": "˖",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "greater"
   },
   {
    "opt": "l",
@@ -831,7 +839,8 @@
    "double": "̝",
    "clone": "˕",
    "doubleClone": "˔",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "greater"
   },
   {
    "opt": "w",
@@ -843,7 +852,8 @@
    "double": "̹",
    "clone": "˓",
    "doubleClone": "˒",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "greater"
   },
   {
    "opt": "s",
@@ -854,7 +864,8 @@
    "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → non-syllabic; positioned by base)",
    "double": "̯",
    "clone": "ˌ",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "arbitrary"
   },
   {
    "opt": "z",
@@ -863,7 +874,8 @@
    "group": "Prosody",
    "cp": "U+203F",
    "name": "UNDERTIE (linking, absence of a break; ⇧ → ‖ major intonation group)",
-   "double": "‖"
+   "double": "‖",
+   "shiftSense": "twin"
   },
   {
    "opt": "x",
@@ -884,7 +896,8 @@
    "double": "̘",
    "clone": "˲",
    "doubleClone": "˱",
-   "exclusive": true
+   "exclusive": true,
+   "shiftSense": "greater"
   },
   {
    "opt": "'",
@@ -893,7 +906,8 @@
    "double": "ˌ",
    "group": "Prosody",
    "cp": "U+02C8",
-   "name": "MODIFIER LETTER VERTICAL LINE (primary stress; ⇧ → secondary)"
+   "name": "MODIFIER LETTER VERTICAL LINE (primary stress; ⇧ → secondary)",
+   "shiftSense": "lesser"
   },
   {
    "opt": ";",
@@ -902,7 +916,8 @@
    "double": "ˑ",
    "group": "Length",
    "cp": "U+02D0",
-   "name": "MODIFIER LETTER TRIANGULAR COLON (long; ⇧ → half-long)"
+   "name": "MODIFIER LETTER TRIANGULAR COLON (long; ⇧ → half-long)",
+   "shiftSense": "lesser"
   },
   {
    "opt": "r",
@@ -927,7 +942,8 @@
    "group": "Tone",
    "cp": "U+A71C",
    "name": "MODIFIER LETTER RAISED DOWN ARROW (downstep; ⇧ → upstep)",
-   "double": "ꜛ"
+   "double": "ꜛ",
+   "shiftSense": "greater"
   },
   {
    "opt": "1",
@@ -975,7 +991,8 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW (linguolabial) — parked, arbitrary"
+   "name": "COMBINING SEAGULL BELOW (linguolabial) — parked, arbitrary",
+   "arbitraryKey": true
   },
   {
    "opt": "j",
@@ -984,7 +1001,8 @@
    "group": "Articulation",
    "cp": "U+031A",
    "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; arbitrary key, placed on frequency)",
-   "clone": "˺"
+   "clone": "˺",
+   "arbitraryKey": true
   },
   {
    "opt": "h",
@@ -1004,7 +1022,8 @@
    "cp": "U+0348",
    "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)",
    "ipa": false,
-   "beyond": "tradition"
+   "beyond": "tradition",
+   "arbitraryKey": true
   },
   {
    "opt": ".",
@@ -1016,7 +1035,8 @@
    "double": "̣",
    "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ). The period key carries the dot-shaped marks; ⇧ relocates the dot below.",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "shiftSense": "below"
   },
   {
    "opt": "y",
@@ -1026,7 +1046,8 @@
    "cp": "U+031B",
    "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant, arbitrary key)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "arbitraryKey": true
   },
   {
    "opt": "7",
@@ -1037,7 +1058,9 @@
    "double": "ʾ",
    "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant, arbitrary key, parked.",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "shiftSense": "twin",
+   "arbitraryKey": true
   },
   {
    "opt": "6",
@@ -1047,7 +1070,8 @@
    "cp": "U+00DF",
    "name": "LATIN SMALL LETTER SHARP S (German ß — Latin tenant, arbitrary key)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "arbitraryKey": true
   }
  ],
  "superscripts": {
@@ -1385,16 +1409,28 @@
   "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter (Lm) or superscript digit (No) whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
  },
  "laws": {
-  "optShift": [
-   "Exclusivity, not duality: marks on the SAME dimension replace each other (`exclusive: true`); marks on INDEPENDENT dimensions stack. Tone level is a five-way scale (mid on ⌥a), so exclusive pairs need not be binary or exhaustive.",
-   "⌥⇧ has three senses, not one: (a) the greater pole — ⌥= ⌥. ⌥w ⌥o ⌥q; (b) the more extreme value — ⌥e ⌥`; (c) the same glyph relocated below — ⌥n ⌥v ⌥u.",
-   "Unpolarized duals (⌥s syllabic/non-syllabic, ⌥d apical/laminal) fall under none of the three: their shift assignment is arbitrary and is labelled as such."
-  ],
-  "keyClasses": [
-   "IPA marks — earn a key by cross-tier phonetics (B), shape identity (C), or convention (A).",
-   "Latin tenants — ⌥c cedilla, ⌥m ogonek, ⌥⇧x dot-below. No IPA meaning; kept so the layout can also type transliteration. They cohabit with IPA marks and are not pairs.",
-   "Parked — no letter or shape claims them; assigned to mediocre reaches and labelled arbitrary rather than given a fake mnemonic. (⌥o, ⌥z, ⌥9, ⌥0)"
-  ],
-  "numberRow": "IPA *characters* with no Latin home — standalone glyphs (⇧2 ʔ, ⇧5 ə) and the tie bar ⇧1, which is a transformer, not an insertion."
+  "optShift": "⌥ gives a mark's primary form, ⌥⇧ its `double`. ⌥⇧ has no single meaning: see `classes.shiftSense` for the six, and `classes.exclusive` for whether a pair replaces or stacks. Both are recorded per-mark.",
+  "keyClasses": "A key earns its mark by cross-tier phonetics, by shape identity (the comma key carries the comma-shaped marks; the period key the dot-shaped ones), or by convention (the five universal dead keys ⌥e ⌥i ⌥u ⌥n ⌥`). Where none of the three applies the mark is parked and flagged `arbitraryKey`. Marks outside the IPA are flagged `ipa: false`; see `classes.beyond`.",
+  "numberRow": "IPA *characters* with no Latin home — standalone glyphs (⇧2 ʔ, ⇧5 ə) and the tie bar ⇧1, which is a transformer, not an insertion.",
+  "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=."
+ },
+ "classes": {
+  "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
+  "ipa": "Absent or true: the mark is on the official IPA chart, and appears on /chart and /chart.json. `false`: it is not, and `beyond` names the tradition it answers to. Non-IPA marks are fully typeable and are listed on /keys.",
+  "beyond": {
+   "tenant": "Not IPA and never was. Carried so the layout can also write real Latin orthographies and romanizations — Romanian, Vietnamese, Polish, German, Semitic transliteration. Tenants cohabit with IPA marks on the Option layer; they are not their neighbours' pairs.",
+   "tradition": "Standard within a phonological tradition but absent from the IPA chart — e.g. the Korean fortis mark. Real notation, wrong chart."
+  },
+  "arbitraryKey": "The key claims the mark by neither phonetics, shape, nor convention. Assigned to a mediocre reach and labelled arbitrary rather than given a fake mnemonic.",
+  "shiftSense": {
+   "about": "What ⌥⇧ means for a mark that has a `double`. The sense is a property of the pair, not a single rule: six exist. Orthogonal to `exclusive`, which says whether the two forms replace each other.",
+   "greater": "⌥⇧ is the greater pole of one dimension: advanced, raised, more rounded, ATR, upstep.",
+   "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
+   "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
+   "below": "⌥⇧ is the same glyph relocated below the base: tilde, caron, diaeresis, dot.",
+   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (cedilla/comma-below, ʿayn/hamza, undertie/‖.)",
+   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (syllabic/non-syllabic, apical/laminal.)"
+  },
+  "exclusive": "The two forms are values of the SAME dimension, so ⌥⇧ replaces rather than stacks — nothing is both advanced and retracted. Marks on INDEPENDENT dimensions stack (nasalized + creaky). Tone level is a five-way scale, so an exclusive pair need not be binary or exhaustive."
  }
 }

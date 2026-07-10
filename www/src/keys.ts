@@ -11,6 +11,7 @@ interface MarkE {
 	opt: string; mark: string; type: string;
 	double?: string; cycle?: string[]; name?: string;
 	doubleClone?: string; exclusive?: boolean;
+	ipa?: boolean; beyond?: string; shiftSense?: string; arbitraryKey?: boolean;
 }
 
 const letters = spec.letters as Letter[];
@@ -49,12 +50,22 @@ function segTable(rows: Letter[]): string {
 
 // ---- Tier 2: diacritics ----------------------------------------------
 
-function markTable(): string {
-	return marks.map((m) => {
+// /chart shows only the IPA's own marks. The Option layer also carries marks
+// the IPA chart has no cell for — this is the page where they live, so split
+// them out and say which tradition each answers to. Both the split and the
+// labels come from the spec's `ipa`/`beyond` flags, not from a list here.
+const classes = spec.classes as {beyond: Record<string, string>};
+const ipaMarks = marks.filter((m) => m.ipa !== false);
+const beyondMarks = marks.filter((m) => m.ipa === false);
+
+function markTable(rows: MarkE[] = marks): string {
+	return rows.map((m) => {
 		const shown = m.type === "combining" ? "◌" + m.mark : m.mark;
+		// Say what ⌥⇧ *means* for this mark, not merely that it exists. The sense
+		// is a per-mark fact (six of them); `exclusive` is the orthogonal one.
 		const two = m.double
 			? " · ⇧ → " + (m.type === "combining" ? "◌" : "") + m.double +
-			  (m.exclusive ? " (excl — replaces)" : "")
+			  ` (${m.shiftSense}${m.exclusive ? ", replaces" : ""})`
 			: "";
 		return `<tr><td class="k">⌥${esc(m.opt)}</td><td class="g">${esc(shown)}</td><td class="cp">${cp(m.mark)}</td><td>${esc((m.name ?? "").toLowerCase())}${two}</td></tr>`;
 	}).join("\n");
@@ -124,12 +135,30 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	stack. Spacing marks (length, tone, stress) are <em>postfix</em> — type the
 	base, then the mark. Where a mark has a second form, ⌥⇧+key gives it
 	(⌥⇧n → creaky, ⌥⇧' → secondary stress); pressing the same form again on the
-	pending mark toggles it off. Where a mark and its ⌥⇧ twin are two values of the
-	<em>same feature</em> — advanced/retracted, apical/laminal, syllabic/non-syllabic —
-	the twin <em>replaces</em> rather than stacks (nothing is both advanced and
-	retracted); these are marked <b>excl</b> below. Twins that are independent
-	features (tilde/creaky, diaeresis/breathy) stack.</p>
-	<div class="tablewrap"><table>${markTable()}</table></div>
+	pending mark toggles it off. Where the two forms are values of the
+	<em>same dimension</em> — advanced/retracted, apical/laminal, syllabic/non-syllabic —
+	the second <em>replaces</em> the first rather than stacking (nothing is both
+	advanced and retracted). Forms on independent dimensions (tilde/creaky,
+	diaeresis/breathy) stack.</p>
+	<div class="tablewrap"><table>${markTable(ipaMarks)}</table></div>
+	<p>Each ⌥⇧ form is annotated with what ⌥⇧ <em>means</em> for that mark —
+	<code>greater</code> pole, more <code>extreme</code> value, <code>lesser</code>
+	value, same glyph relocated <code>below</code>, an independent <code>twin</code>,
+	or an <code>arbitrary</code> pick between two unpolarized duals. <code>replaces</code>
+	marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of
+	stacking. These are per-mark fields in <a href="/ipabet.json"><code>ipabet.json</code></a>.</p>
+
+	<h2>Tier 2 · beyond the IPA</h2>
+	<p>Marks the IPA chart has no cell for, kept because the layout should be able
+	to write real orthographies and not only transcribe them. They are fully
+	typeable and stack like any other mark; they are simply absent from
+	<a href="/chart">the chart</a>. Each carries <code>"ipa": false</code> and a
+	<code>beyond</code> value in the spec.</p>
+	${Object.entries(classes.beyond).map(([k, desc]) => {
+		const rows = beyondMarks.filter((m) => m.beyond === k);
+		return `<h3><code>${esc(k)}</code></h3><p>${esc(desc)}</p>
+		<div class="tablewrap"><table>${markTable(rows)}</table></div>`;
+	}).join("\n")}
 
 	<h2>Tier 2 · superscripts (base + ⌥p)</h2>
 	<div class="tablewrap"><table>${supTable()}</table></div>
