@@ -13,6 +13,7 @@
 
 import {describe, expect, test} from "bun:test";
 import spec from "../../spec/ipabet.json";
+import schema from "../../spec/ipabet.schema.json";
 
 interface Mark {
 	opt: string;
@@ -121,5 +122,46 @@ describe("spec · the moved keys", () => {
 	test("⌥8 and ⌥c are the free keys", () => {
 		expect(byOpt.has("8")).toBe(false);
 		expect(byOpt.has("c")).toBe(false);
+	});
+});
+
+// spec/ipabet.schema.json documents the file for outside consumers. A schema
+// nobody runs is just more prose, and adding a validator dependency to ship one
+// assertion is not worth it — so enforce its structural claims about `marks`
+// directly. Full Draft 2020-12 validation still passes; this keeps it true.
+describe("spec · matches its published schema", () => {
+	const markSchema = (schema as any).$defs.mark;
+	const allowed = new Set(Object.keys(markSchema.properties));
+	const required: string[] = markSchema.required;
+	const dependents: Record<string, string[]> = markSchema.dependentRequired;
+
+	test("no mark carries a field the schema doesn't declare", () => {
+		for (const m of marks as unknown as Record<string, unknown>[]) {
+			for (const k of Object.keys(m)) expect(allowed, `⌥${m.opt}.${k}`).toContain(k);
+		}
+	});
+
+	test("every mark carries the schema's required fields", () => {
+		for (const m of marks as unknown as Record<string, unknown>[]) {
+			for (const k of required) expect(m[k], `⌥${m.opt}.${k}`).toBeDefined();
+		}
+	});
+
+	test("dependentRequired holds: double↔shiftSense, ipa↔beyond, exclusive→double", () => {
+		for (const m of marks as unknown as Record<string, unknown>[]) {
+			for (const [field, needs] of Object.entries(dependents)) {
+				if (m[field] === undefined) continue;
+				for (const n of needs) expect(m[n], `⌥${m.opt}: ${field} requires ${n}`).toBeDefined();
+			}
+		}
+	});
+
+	test("enum-valued flags stay inside their enums", () => {
+		for (const m of marks as unknown as Record<string, any>[]) {
+			for (const f of ["type", "group", "shiftSense", "beyond"]) {
+				if (m[f] === undefined) continue;
+				expect(markSchema.properties[f].enum, `⌥${m.opt}.${f}`).toContain(m[f]);
+			}
+		}
 	});
 });

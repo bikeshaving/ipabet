@@ -1,4 +1,5 @@
 import spec from "../../spec/ipabet.json";
+import schema from "../../spec/ipabet.schema.json";
 
 // /keys — the complete keystroke → glyph mapping as machine-readable tables,
 // generated from spec/ipabet.json so it can never drift. Built for scrapers
@@ -164,6 +165,11 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	<div class="tablewrap"><table>${supTable()}</table></div>
 
 	<h2>Machine access</h2>
+	<p><code>GET /ipabet.schema.json</code> is the JSON Schema (Draft 2020-12) for
+	<code>ipabet.json</code>: every field, its meaning, and the invariants that hold
+	between them (a mark has a <code>shiftSense</code> exactly when it has a
+	<code>double</code>; <code>ipa: false</code> and <code>beyond</code> imply each
+	other).</p>
 	<p><code>GET /chart.json</code> returns the IPA chart as structured data —
 	every symbol with its codepoint, keystrokes, and place/manner or vowel
 	coordinates. <code>GET /ipabet.json</code> returns the canonical mapping verbatim
@@ -176,3 +182,4 @@ export const KEYS_HTML = `<!DOCTYPE html>
 </html>`;
 
 export const SPEC_JSON = JSON.stringify(spec, null, "\t");
+export const SCHEMA_JSON = JSON.stringify(schema, null, "\t");

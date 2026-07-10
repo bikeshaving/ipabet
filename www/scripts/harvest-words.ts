@@ -18,9 +18,31 @@ type K = {key:string;shift:boolean;option:boolean};
 const keysFor = (k:string):K[] => [...k].map(c => /[A-Z]/.test(c)?{key:c.toLowerCase(),shift:true,option:false}:/[0-9]/.test(c)?{key:c,shift:true,option:false}:{key:c,shift:false,option:false});
 const label = (k:K) => (k.option?"⌥":"")+(k.shift?"⇧":"")+(k.shift&&/[a-z]/.test(k.key)?k.key.toUpperCase():k.key);
 const glyphKeys = new Map<string,K[]>(); for (const e of spec.letters as any[]) if(!glyphKeys.has(e.glyph)) glyphKeys.set(e.glyph, keysFor(e.key));
-const markKeys = new Map<string,K[]>(); for (const m of spec.marks as any[]) if(!markKeys.has(m.mark)) markKeys.set(m.mark, [{key:m.opt,shift:false,option:true}]);
+// Combining marks: primary on ⌥key, secondary (the `double`) on ⌥⇧key.
+// Spacing marks (ː ˈ) are postfix and keyed the same way.
+const markKeys = new Map<string,K[]>(); const spacingKeys = new Map<string,K[]>();
+for (const m of spec.marks as any[]) {
+  const into = m.type === "combining" ? markKeys : spacingKeys;
+  if(!into.has(m.mark)) into.set(m.mark, [{key:m.opt,shift:false,option:true}]);
+  if(m.double && !into.has(m.double)) into.set(m.double, [{key:m.opt,shift:true,option:true}]);
+}
 function normalize(ipa:string){ return ipa.replace(/\s+/g,"").replace(/ɡ/g,"g").replace(/[ˈˌ]/g,"").replace(/[͜͡‿.|‖]/g,"").normalize("NFD"); }
-function convert(ipa:string):K[]|null{ const ks:K[]=[]; for(const ch of ipa){ if(glyphKeys.has(ch)) ks.push(...glyphKeys.get(ch)!); else if(markKeys.has(ch)) ks.push(...markKeys.get(ch)!); else return null; } return ks; }
+// Combining diacritics are PREFIX (dead-key): ⌥mark comes before its base.
+// Emitting them in string order would type the mark onto the *previous* glyph.
+function convert(ipa:string):K[]|null{
+  const ks:K[]=[]; const chars=[...ipa]; let i=0;
+  while(i<chars.length){
+    const base=chars[i++];
+    if(!glyphKeys.has(base)) return null;
+    const pre:K[]=[]; const post:K[]=[];
+    while(i<chars.length && (markKeys.has(chars[i]) || spacingKeys.has(chars[i]))){
+      const ch=chars[i++];
+      if(markKeys.has(ch)) pre.push(...markKeys.get(ch)!); else post.push(...spacingKeys.get(ch)!);
+    }
+    ks.push(...pre, ...glyphKeys.get(base)!, ...post);
+  }
+  return ks;
+}
 const isComb=(cp:number)=>(cp>=0x0300&&cp<=0x036f)||(cp>=0x1dc0&&cp<=0x1dff)||(cp>=0x02b0&&cp<=0x02ff&&cp!==0x02bc);
 const baseGlyphs=(s:string)=>[...new Set([...s.normalize("NFD")].filter(ch=>!isComb(ch.codePointAt(0)!)))];
 function loadFreq(file:string){ const m=new Map<string,number>(); const lines=fs.readFileSync(`${DIR}/${file}`,"utf8").split("\n"); lines.forEach((ln,i)=>{ const w=ln.trim().split(/\s+/)[0]; if(w && !m.has(w.toLowerCase())) m.set(w.toLowerCase(), i); }); return m; }

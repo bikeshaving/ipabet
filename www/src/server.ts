@@ -3,7 +3,7 @@ import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
 import {CHART_HTML, CHART_JSON} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
-import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
+import {KEYS_HTML, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
 import {DESIGN_HTML} from "./design.ts";
 import {EDITOR_HTML} from "./editor.ts";
 import {CHART_CSS} from "./chart-style.ts";
@@ -281,6 +281,15 @@ router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
 		headers: {
 			"Content-Type": "application/json; charset=utf-8",
+			"Access-Control-Allow-Origin": "*",
+		},
+	});
+});
+
+router.route("/ipabet.schema.json").get(() => {
+	return new Response(SCHEMA_JSON, {
+		headers: {
+			"Content-Type": "application/schema+json; charset=utf-8",
 			"Access-Control-Allow-Origin": "*",
 		},
 	});
