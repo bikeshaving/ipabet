@@ -767,7 +767,9 @@
    "group": "Transliteration",
    "cp": "U+0327",
    "name": "COMBINING CEDILLA (Latin tenant: ç ş; ⇧ → comma below: ș ț — Romanian)",
-   "double": "̦"
+   "double": "̦",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "m",
@@ -776,7 +778,9 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",
-   "name": "COMBINING OGONEK (Latin tenant — transliteration, not IPA)"
+   "name": "COMBINING OGONEK (Latin tenant — transliteration, not IPA)",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "t",
@@ -988,7 +992,9 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0309",
-   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi tone — Latin tenant, h for hook/hỏi)"
+   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi tone — Latin tenant, h for hook/hỏi)",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "0",
@@ -996,7 +1002,9 @@
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0348",
-   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)"
+   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)",
+   "ipa": false,
+   "beyond": "tradition"
   },
   {
    "opt": "g",
@@ -1006,7 +1014,9 @@
    "group": "Transliteration",
    "cp": "U+0307",
    "double": "̣",
-   "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ)"
+   "name": "COMBINING DOT ABOVE (Latin tenant: ż ġ ṅ ṁ ė; ⇧ → dot below: ṭ ḥ ṣ ṛ)",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "y",
@@ -1014,7 +1024,9 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+031B",
-   "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant, arbitrary key)"
+   "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant, arbitrary key)",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": ",",
@@ -1023,7 +1035,9 @@
    "group": "Transliteration",
    "cp": "U+02BF",
    "double": "ʾ",
-   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant"
+   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "6",
@@ -1031,7 +1045,9 @@
    "type": "spacing",
    "group": "Transliteration",
    "cp": "U+00DF",
-   "name": "LATIN SMALL LETTER SHARP S (German ß — Latin tenant, arbitrary key)"
+   "name": "LATIN SMALL LETTER SHARP S (German ß — Latin tenant, arbitrary key)",
+   "ipa": false,
+   "beyond": "tenant"
   }
  ],
  "superscripts": {
