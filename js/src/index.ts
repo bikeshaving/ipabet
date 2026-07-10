@@ -300,7 +300,26 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
 	// so the host's own Option typography (curly quotes, dashes) survives.
 		if (option && shift) {
 			const m2 = optMarks.get(key);
-			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
+			if (m2 !== undefined && m2.double !== undefined) {
+				// The escape, sharing the chord with the mark. ⇧<letter> transforms the
+				// glyph before it (t ⇧H → θ), so a capital that forms a digraph is
+				// otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is that
+				// escape — but on these keys it is already the mark's second form.
+				//
+				// So: press it again. The first press leaves the mark PENDING and emits
+				// nothing; the second commits the raw capital instead. Nothing is lost,
+				// because a second press used to empty pending and emit nothing at all,
+				// and backspace still cancels a pending mark silently.
+				//
+				// Spacing marks never go pending, so they have no second press to read.
+				// Only when that mark is the whole composition — a half-built stack of
+				// diacritics is not an escape, and unwinding one from the middle has
+				// no sensible marked-text rendering.
+				if (!m2.spacing && pending.length === 1 && pending[0] === m2.double) {
+					return {edit: {type: "insert", text: key.toUpperCase()}, pending: []};
+				}
+				return applyMark(m2, pending, true);
+			}
 			if (/[a-z]/i.test(key)) return withFlush({type: "insert", text: key.toUpperCase()});
 			if (/[0-9]/.test(key)) {
 				// A slot spent deliberately (⌥⇧1 → ¡, ⌥⇧6 → ß).

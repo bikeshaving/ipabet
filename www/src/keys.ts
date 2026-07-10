@@ -135,8 +135,11 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	keyboard: press ⌥+key, then the base absorbs the mark (⌥n then n → ñ). They
 	stack. Spacing marks (length, tone, stress) are <em>postfix</em> — type the
 	base, then the mark. Where a mark has a second form, ⌥⇧+key gives it
-	(⌥⇧n → creaky, ⌥⇧' → secondary stress); pressing the same form again on the
-	pending mark toggles it off. Where the two forms are values of the
+	(⌥⇧n → creaky, ⌥⇧' → secondary stress). Pressing it a <em>second</em> time
+	commits the raw capital instead — that is the escape, because ⇧ transforms
+	the glyph before it and "GitHub" would otherwise come out "Giθub". Keys with
+	no second form escape on the first press. Backspace cancels a pending mark.
+	Where the two forms are values of the
 	<em>same dimension</em> — advanced/retracted, apical/laminal, syllabic/non-syllabic —
 	the second <em>replaces</em> the first rather than stacking (nothing is both
 	advanced and retracted). Forms on independent dimensions (tilde/creaky,

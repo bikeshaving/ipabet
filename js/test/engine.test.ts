@@ -241,7 +241,9 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	// an EMPTY composition — nothing is written, so there is no sentinel to
 	// collide with a user's real NBSP.
 	test("⌥n ⌥n → nothing committed", () => expect(typed("~n", "~n")).toBe(""));
-	test("⌥⇧n ⌥⇧n → nothing committed", () => expect(typed("~+n", "~+n")).toBe(""));
+	// The ⌥⇧ second press is no longer a toggle: it is the escape (see below).
+	// Toggle-off on the PRIMARY ⌥ form is untouched, and backspace still cancels.
+	test("⌥⇧n ⌥⇧n → escapes to a raw N", () => expect(typed("~+n", "~+n")).toBe("N"));
 	test("single-form macron: ⌥a ⌥a → nothing", () => expect(typed("~a", "~a")).toBe(""));
 	test("a peeled composition leaves the next base untouched: ⌥n ⌥n x → x", () =>
 		expect(typed("~n", "~n", "x")).toBe("x"));
@@ -451,6 +453,46 @@ describe("ring positioning", () => {
 	});
 	test("syllabic toggles off cleanly: ⌥s ⌥s → nothing committed", () =>
 		expect(typed("~s", "~s")).toBe(""));
+});
+
+// ⇧<letter> transforms the glyph before it (t ⇧H → θ), so a capital that forms a
+// digraph is otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is the
+// escape. On keys whose ⌥⇧ already holds a mark's second form, the FIRST press
+// leaves that mark pending and emits nothing; a SECOND press commits the raw
+// capital instead. Nothing is lost: a second press used to empty pending and emit
+// nothing at all, and backspace still cancels a pending mark silently.
+describe("⌥⇧ escape: the raw capital shares the chord with the mark", () => {
+	const spell = (w: string) => [...w].map((c) => (/[A-Z]/.test(c) ? "+" + c.toLowerCase() : c));
+
+	test("a key with no mark escapes on the first press: GitHub", () =>
+		expect(typed(...spell("Git"), "~+h", ...spell("ub"))).toBe("GitHub"));
+
+	test("without the escape, ⇧H transforms: GitHub → Giθub", () =>
+		expect(typed(...spell("GitHub"))).toBe("Giθub"));
+
+	test("a key with a mark escapes on the second press: newWidget", () =>
+		expect(typed(...spell("new"), "~+w", "~+w", ...spell("idget"))).toBe("newWidget"));
+
+	test("first press is still the mark: a ⌥⇧e b → ab̋", () =>
+		expect(typed("a", "~+e", "b")).toBe(nfc("ab\u{030B}")));
+
+	test("second press commits the capital: a ⌥⇧e ⌥⇧e → aE", () =>
+		expect(typed("a", "~+e", "~+e")).toBe("aE"));
+
+	test("escaping only unwinds a lone mark, never a stack: ⌥n ⌥⇧e ⌥⇧e a → ã", () =>
+		expect(typed("~n", "~+e", "~+e", "a")).toBe(nfc("\u{00E3}")));
+
+	test("primary ⌥ toggle-off is untouched: a ⌥e ⌥e → a", () =>
+		expect(typed("a", "~e", "~e")).toBe("a"));
+
+	test("backspace still cancels a pending mark silently", () =>
+		expect(typed("a", "~+e", "⌫", "b")).toBe("ab"));
+
+	// Spacing marks insert immediately, so there is no pending state to read and
+	// no second press to detect. ⌥⇧c (hamza) is the only such key whose capital
+	// is also a transformer — it has no escape.
+	test("spacing second forms are unaffected: ⌥⇧c → ʾ", () =>
+		expect(typed("~+c")).toBe("\u{02BE}"));
 });
 
 describe("superscript operator ⌥p", () => {

@@ -320,7 +320,27 @@ class InputController: IMKInputController {
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary stress)
-            if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
+            if oc.count == 1, let m = t.optMarks[oc], let dbl = m.double {
+                // The escape, sharing the chord with the mark. ⇧<letter> transforms the
+                // glyph before it (t ⇧H → θ), so a capital that forms a digraph is
+                // otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is that
+                // escape — but on these keys it already holds the mark's second form.
+                //
+                // So: press it again. The first press leaves the mark PENDING and emits
+                // nothing; the second commits the raw capital instead. Nothing is lost —
+                // a second press used to empty pending and emit nothing at all, and
+                // backspace still cancels a pending mark silently.
+                //
+                // Spacing marks never go pending, so they have no second press to read.
+                // Only when that mark is the whole composition — a half-built stack of
+                // diacritics is not an escape, and unwinding one from the middle has
+                // no sensible marked-text rendering.
+                if !m.spacing, let ds = dbl.unicodeScalars.first, pending == [ds] {
+                    pending = []
+                    updateMarked(client)          // tear the composition down first
+                    insert(oc.uppercased(), client)
+                    return true
+                }
                 applyMark(m, secondary: true, client); return true
             }
             guard let c = oc.first, c.isLetter || c.isNumber else { flushPending(client); return false }
