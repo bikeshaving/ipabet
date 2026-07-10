@@ -658,6 +658,18 @@
    "glyph": "c",
    "cp": "U+0063",
    "name": "LATIN SMALL LETTER C (voiceless palatal stop — palatalized t)"
+  },
+  {
+   "key": "6",
+   "glyph": "͡",
+   "cp": "U+0361",
+   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — welds two symbols into one segment: t ⇧6 s → t͡s)"
+  },
+  {
+   "key": "sS",
+   "glyph": "ß",
+   "cp": "U+00DF",
+   "name": "LATIN SMALL LETTER SHARP S (German ß — the ſs/ſz ligature, built from ss, its official fallback spelling)"
   }
  ],
  "marks": [
@@ -1036,28 +1048,6 @@
    "ipa": false,
    "beyond": "tenant",
    "arbitraryKey": true
-  },
-  {
-   "opt": "c",
-   "mark": "ʿ",
-   "type": "spacing",
-   "group": "Transliteration",
-   "cp": "U+02BF",
-   "double": "ʾ",
-   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza U+02BE) — Latin tenant, arbitrary key, parked.",
-   "ipa": false,
-   "beyond": "tenant",
-   "shiftSense": "twin",
-   "arbitraryKey": true
-  },
-  {
-   "opt": "8",
-   "mark": "͡",
-   "type": "spacing",
-   "group": "Articulation",
-   "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — welds two symbols into one segment: t ⌥8 s → t͡s). Postfix, typed between the pair. Arbitrary key: it was on ⇧1, where it forced ! onto ⌥⇧1; a ⇧-letter is impossible because an unguarded transformer would fire inside acronyms ($PATH).",
-   "arbitraryKey": true
   }
  ],
  "superscripts": {
@@ -1397,10 +1387,10 @@
  "laws": {
   "optShift": "⌥ gives a mark's primary form, ⌥⇧ its `double`. ⌥⇧ has no single meaning: see `classes.shiftSense` for the six, and `classes.exclusive` for whether a pair replaces or stacks. Both are recorded per-mark.",
   "keyClasses": "A key earns its mark by cross-tier phonetics, by shape identity (the comma key carries the comma-shaped marks; the period key the dot-shaped ones), or by convention (the five universal dead keys ⌥e ⌥i ⌥u ⌥n ⌥`). Where none of the three applies the mark is parked and flagged `arbitraryKey`. Marks outside the IPA are flagged `ipa: false`; see `classes.beyond`.",
-  "numberRow": "⇧<digit> is an IPA *character* with no Latin home (⇧2 ʔ, ⇧5 ə) — nothing else. Transformers are ⇧-letters guarded by phonetic class (⇧R vowels, ⇧X voiceless obstruents); an unguarded one would fire inside acronyms, which is why the tie bar is an ⌥ mark and not ⇧T.",
+  "numberRow": "⇧<digit> carries an IPA glyph with no Latin home (⇧2 ʔ, ⇧5 ə). The one exception is the tie bar on ⇧6 — a combining joiner (t ⇧6 s → t͡s), contrastive and frequent, so it earns a single-modifier key. It lives on the number row, not on a ⇧-letter, because an unguarded ⇧-letter joiner would fire inside acronyms ($PATH). Because ⇧6 is thereby claimed, its raw-US ^ moves to the option-shift escape, exactly as @ sits on the ⇧2 escape.",
   "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=.",
   "punctuation": "The host's orthographic punctuation is reserved, like the dashes. ⌥[ ⌥] ⌥\\ carry “ ” ‘ ’ « » and ⌥⇧/ carries ¿ — these keys are never claimed. An unassigned ⌥<key> passes to the host, digits included, so its typography survives. An ⌥⇧<digit> escapes to raw US only where ⇧<digit> is an IPA glyph; otherwise it passes or is spent deliberately (see `optShift`).",
-  "escape": "⇧<letter> transforms the glyph before it, so a capital that forms a digraph is otherwise untypeable (\"GitHub\" → \"Giθub\"). ⌥⇧<letter> is the escape: it commits the raw capital. Where that chord already holds a mark's `double`, the first press leaves the mark pending and the SECOND press commits the capital — nothing is lost, because a second press previously emptied pending and emitted nothing, and backspace still cancels a pending mark. Only a lone pending mark unwinds this way, never one from the middle of a stack. Spacing marks never go pending, so ⌥⇧c (hamza) has no second press to read and no escape; it is the only spacing second-form whose capital is a transformer. ⌥⇧<digit> is a different job: reachability, not escaping (⇧2 is ʔ, so @ lives on ⌥⇧2)."
+  "escape": "⇧<letter> transforms the glyph before it, so a capital that forms a digraph is otherwise untypeable (\"GitHub\" → \"Giθub\"). ⌥⇧<letter> is the escape: it commits the raw capital. Where that chord already holds a mark's `double`, the first press leaves the mark pending and the SECOND press commits the capital — nothing is lost, because a second press previously emptied pending and emitted nothing, and backspace still cancels a pending mark. Only a lone pending mark unwinds this way, never one from the middle of a stack. Spacing marks never go pending, so a spacing second-form has no second press to read; but none of them sit on a transformer-capital, so none needs the escape. ⌥⇧<digit> is a different job: reachability, not escaping (⇧2 is ʔ, so @ lives on ⌥⇧2)."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
@@ -1423,7 +1413,6 @@
  },
  "optShift": {
   "about": "⌥⇧<digit> normally escapes to the raw US character, because ⇧<digit> is claimed by an IPA glyph and would otherwise be unreachable (⌥⇧2 → @). Where ⇧<digit> is NOT claimed the escape is redundant, and the slot is free. These are the two we spend; the rest of the unclaimed slots (⌥⇧8 ⌥⇧9 ⌥⇧0) pass to the host so its ° · ‚ survive.",
-  "1": "¡",
-  "6": "ß"
+  "1": "¡"
  }
 }

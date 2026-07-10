@@ -16,6 +16,11 @@ export interface Keystroke {
 	key: string;
 	shift?: boolean;
 	option?: boolean;
+	/** Shift was physically RELEASED between the previous keystroke and this one.
+	 *  The IME reads this from flagsChanged; it's what tells a held IPA chain
+	 *  (ʃ⇧I⇧H → ʃɪ, shift never lifted) apart from a glyph followed by a fresh
+	 *  capital (ʃ, release, ⇧I⇧H → ʃIH). A release breaks the chain. */
+	shiftBroke?: boolean;
 }
 
 export type Edit =
@@ -38,10 +43,13 @@ export type Edit =
  */
 export type Pending = readonly string[];
 
-/** What `handleKey`/`handleBackspace` return: an edit, plus the next pending. */
+/** What `handleKey`/`handleBackspace` return: an edit, the next pending, and
+ *  whether an IPA chain is live (shift held continuously since a segment). The
+ *  whether an IPA chain was broken by a shift release. Caller threads it. */
 export interface Step {
 	edit: Edit;
 	pending: Pending;
+	chainBroken?: boolean;
 }
 
 interface Mark {
@@ -275,7 +283,33 @@ function superscriptize(textBefore: string): Edit {
  * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → raw-US escape on
  * letters/digits. Command/control chords and anything unmapped pass.
  */
-export function handleKey(textBefore: string, k: Keystroke, pending: Pending = []): Step {
+/**
+ * Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ). The gate
+ * is a *broken* flag, threaded by the caller: a shift RELEASE breaks the chain,
+ * so a capital typed after releasing-and-repressing shift stays literal (ʃ,
+ * release, ⇧I⇧H → ʃIH) — that is how you escape a chain to type a real capital.
+ * Producing a fresh IPA segment (a transform, or a non-ASCII base/diacritic —
+ * including the ⌥8 tie, which is unshifted) re-arms it. Note: a release DISARMS,
+ * an unshifted key does NOT — the tie and the Option diacritics are IPA too.
+ * This owns the flag; `handleKeyCore` only reads whether the chain is live.
+ */
+export function handleKey(
+	textBefore: string,
+	k: Keystroke,
+	pending: Pending = [],
+	chainBroken = false,
+): Step {
+	const brokenIn = chainBroken || (k.shiftBroke ?? false);
+	const step = handleKeyCore(textBefore, k, pending, !brokenIn);
+	// A fresh IPA glyph clears the break and starts a new live chain: a transform
+	// (`replace`) or an inserted non-ASCII glyph (⇧5 → ə, the ⌥8 tie). A literal
+	// capital or ASCII base is neither, so it carries the flag unchanged.
+	const e = step.edit;
+	const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
+	return {...step, chainBroken: seg ? false : brokenIn};
+}
+
+function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chainLive: boolean): Step {
 	const key = k.key;
 	const shift = k.shift ?? false;
 	const option = k.option ?? false;
@@ -362,19 +396,23 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
 	const p = pending.length === 0 ? lastCluster(textBefore) : undefined;
 	if (p !== undefined) {
 		let {base, marks} = decompose(p);
-		// Shift-chaining: a capital typed right after a special (non-ASCII) IPA
-		// glyph is a *pending base* — lower it so a following modifier transforms
-		// it, while a capital that never gets a modifier simply stays as typed
-		// (it already passed through natively). Two glyphs of lookback keep this
-		// stateless and preserve caps by default: "ʃ⇧T" → ʃT, but "ʃ⇧T⇧R" → ʃʈ.
-		// Acronyms never have a special glyph behind them, so they stay literal.
-		if (shift && /^[A-Z]$/.test(base)) {
-			// Is the glyph behind this pending capital IPA content? Test the WHOLE
-			// cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
-			// and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
-			// base-only test would break the chain right after ⇧1 or a diacritic.
+		// Shift-chaining: a capital right after an IPA segment, with shift still
+		// held, is a *pending base* — lower it so this modifier transforms it
+		// (ʃ⇧T⇧R → ʃʈ). Two gates, both required:
+		//   chainLive — the chain has not been broken by a shift release since the
+		//              last segment. Releasing shift after ʃ makes ⇧I⇧H literal: ʃIH.
+		//   p2       — the char before the capital is a real IPA segment, not the
+		//              previous LITERAL capital. This is what keeps $PATH → ɾPATH:
+		//              the final T is preceded by A, so the run breaks there.
+		// A capital that never gets a modifier stays as typed (ʃ⇧T → ʃT).
+		if (shift && chainLive && /^[A-Z]$/.test(base)) {
+			// The segment test is a non-ASCII letter or combining mark — NOT merely
+			// non-ASCII. A terminal reports the empty start-of-line cell as U+00A0
+			// NBSP (160 > 127); the old bare `> 127` read that as a segment and
+			// rebased every start-of-line "TH" into θ. Whole cluster, not just the
+			// base: "t͡" is ASCII t carrying a tie (U+0361), plainly IPA.
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
-			if (p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127)) {
+			if (p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c))) {
 				base = base.toLowerCase();
 			}
 		}
@@ -466,10 +504,12 @@ export function nativeChar(k: Keystroke): string {
 export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let text = initial;
 	let pending: Pending = [];
+	let chainBroken = false;
 	for (const k of keys) {
 		const step =
-			k.key === "⌫" ? handleBackspace(text, pending) : handleKey(text, k, pending);
+			k.key === "⌫" ? handleBackspace(text, pending) : handleKey(text, k, pending, chainBroken);
 		pending = step.pending;
+		chainBroken = step.chainBroken ?? false;
 		if (k.key === "⌫" && step.edit.type === "pass") {
 			// native delete: drop the last grapheme cluster
 			const p = lastCluster(text);

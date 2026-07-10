@@ -405,7 +405,7 @@ class InputController: IMKInputController {
             // base-only test would break the chain right after ⇧1 or a diacritic.
             if shift, base.count == 1, let bc = base.unicodeScalars.first,
                (65...90).contains(bc.value), let p2 = clusterBefore(r, client),
-               String(p2).unicodeScalars.contains(where: { $0.value > 127 }) {
+               String(p2).unicodeScalars.contains(where: isSegmentScalar) {
                 base = base.lowercased()
             }
             if let combo = t.transforms[base + s] {
@@ -656,6 +656,23 @@ class InputController: IMKInputController {
     }
 
     /// The grapheme cluster immediately before `range` — the second glyph of
+    /// A chain-seeding IPA segment: a non-ASCII letter or combining mark (ʃ, ə, or
+    /// an ASCII base carrying a tie/diacritic). NOT merely non-ASCII — a terminal
+    /// reports the empty cell before the cursor as U+00A0 NBSP (160 > 127), and the
+    /// old bare > 127 test read that as a segment, rebasing every start-of-line
+    /// capital: "TH" → θ. NBSP, quotes, dashes, tone letters, and arrows are excluded.
+    private func isSegmentScalar(_ u: Unicode.Scalar) -> Bool {
+        guard u.value > 127 else { return false }
+        switch u.properties.generalCategory {
+        case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter,
+             .modifierLetter, .otherLetter,
+             .nonspacingMark, .spacingMark, .enclosingMark:
+            return true
+        default:
+            return false
+        }
+    }
+
     /// lookback for shift-chaining (is the char behind a pending capital base a
     /// special IPA glyph?). Nil at the document start.
     private func clusterBefore(_ range: NSRange, _ client: IMKTextInput) -> Character? {

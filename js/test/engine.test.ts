@@ -6,18 +6,21 @@ import {describe, expect, test} from "bun:test";
 import {typeKeys, handleKey, handleBackspace, type Keystroke} from "../src/index.ts";
 
 // Compact keystroke notation: "s" bare, "+H" shift, "~n" option, "~+2"
-// option-shift, "⌫" backspace.
+// option-shift, "^" prefix = shift was RELEASED before this key (breaks a
+// chain), "⌫" backspace.
 function seq(...keys: string[]): Keystroke[] {
 	return keys.map((k) => {
 		let shift = false;
 		let option = false;
+		let shiftBroke = false;
 		let key = k;
-		while (key[0] === "+" || key[0] === "~") {
+		while (key[0] === "+" || key[0] === "~" || key[0] === "^") {
 			if (key[0] === "+") shift = true;
-			else option = true;
+			else if (key[0] === "~") option = true;
+			else shiftBroke = true;
 			key = key.slice(1);
 		}
-		return {key, shift, option};
+		return {key, shift, option, shiftBroke};
 	});
 }
 
@@ -215,10 +218,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~+2")).toBe("@");
 		expect(typed("~+7")).toBe("&");
 	});
-	test("spent ⌥⇧ digit slots: ⌥⇧1 → ¡, ⌥⇧6 → ß", () => {
-		expect(typed("~+1")).toBe("¡");
-		expect(typed("~+6")).toBe("ß");
-	});
+	test("the one spent ⌥⇧ digit slot: ⌥⇧1 → ¡", () => expect(typed("~+1")).toBe("¡"));
+	test("⌥⇧6 is the ^ escape now that ⇧6 is the tie", () => expect(typed("~+6")).toBe("^"));
 	test("⇧1 is ! again, now the tie bar left the number row", () =>
 		expect(typed("+1")).toBe("!"));
 });
@@ -305,22 +306,22 @@ describe("the two ⌥⇧ laws", () => {
 	});
 });
 
-describe("⇧T = tie bar (a glyph with no Latin home)", () => {
-	// The tie welds two symbols into ONE segment — hence the digit 1. It attaches
-	// to the glyph BEFORE it and spans forward, so it is postfix by nature.
-	test("affricate t͡ʃ: t ⌥8 s⇧H", () =>
-		expect(typed("t", "~8", "s", "+h")).toBe("t\u{0361}ʃ"));
-	test("affricate t͡s: t ⌥8 s", () => expect(typed("t", "~8", "s")).toBe("t\u{0361}s"));
-	test("affricate d͡ʒ: d ⇧T z⇧H", () =>
-		expect(typed("d", "~8", "z", "+h")).toBe("d\u{0361}ʒ"));
+describe("⇧6 = tie bar (welds two segments)", () => {
+	// The tie welds two symbols into ONE segment (postfix, attaching to the glyph
+	// before it). It lives on ⇧6, a number-row glyph — an unguarded ⇧-letter
+	// joiner would fire inside acronyms.
+	test("affricate t͡ʃ: t ⇧6 s⇧H", () =>
+		expect(typed("t", "+6", "s", "+h")).toBe("t\u{0361}ʃ"));
+	test("affricate t͡s: t ⇧6 s", () => expect(typed("t", "+6", "s")).toBe("t\u{0361}s"));
+	test("affricate d͡ʒ: d ⇧6 z⇧H", () =>
+		expect(typed("d", "+6", "z", "+h")).toBe("d\u{0361}ʒ"));
 	test("untied tʃ stays reachable (the tie is optional in IPA)", () =>
 		expect(typed("t", "s", "+h")).toBe("tʃ"));
 
-	// The tie must not break a held-shift run. Shift-chaining asks whether the
-	// glyph behind a pending capital is IPA content — testing only its BASE would
-	// judge "t͡" (ASCII t + U+0361) ordinary and strand the chain.
-	test("held-shift affricate: t ⌥8 ⇧S ⇧H → t͡ʃ", () =>
-		expect(typed("t", "~8", "+s", "+h")).toBe("t\u{0361}ʃ"));
+	// The tie must not break a held-shift run: "t͡" (ASCII t + U+0361) is IPA, so a
+	// following ⇧S⇧H still chains.
+	test("held-shift affricate: t ⇧6 ⇧S ⇧H → t͡ʃ", () =>
+		expect(typed("t", "+6", "+s", "+h")).toBe("t\u{0361}ʃ"));
 	test("a diacritic-bearing ASCII base still continues the chain: ⌥t s ⇧H ⇧I ⇧H", () =>
 		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
@@ -380,14 +381,14 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~`", "~y", "u")).toBe(nfc("ừ"));   // huyền + horn
 		expect(typed("~h", "~y", "o")).toBe(nfc("ở"));   // hỏi + horn
 	});
-	test("Semitic half-rings: ʿayn and ʾhamza (NOT the superscripts ˤ ˀ)", () => {
-		expect(typed("~c")).toBe("\u{02BF}");
-		expect(typed("~+c")).toBe("\u{02BE}");
-		expect(typed("~c", "a", "r", "a", "b", "~a", "i")).toBe(nfc("ʿarabī"));
-	});
-	test("German ß", () => {
-		expect(typed("~+6")).toBe("ß");
-		expect(typed("+s", "t", "r", "a", "~+6", "e")).toBe("Straße");
+	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
+	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c now passes to host.
+	test("ʿayn is gone; ⌥c passes to the host", () =>
+		expect(handleKey("", {key: "c", option: true}, []).edit.type).toBe("pass"));
+	test("German ß is the s⇧S ligature digraph", () => {
+		expect(typed("s", "+s")).toBe("ß");
+		expect(typed("+s", "t", "r", "a", "s", "+s", "e")).toBe("Straße");
+		expect(typed("s", "s")).toBe("ss"); // lowercase ss is untouched
 	});
 	test("prosodic boundaries: ‿ linking, ‖ major group", () => {
 		expect(typed("~z")).toBe("‿");
@@ -404,9 +405,9 @@ describe("East Asian coverage", () => {
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
 		expect(typed("m", "a", "2", "~p", "1", "~p", "4", "~p")).toBe("ma²¹⁴"));
 
-	test("Chinese affricates: t ⌥8 s⇧J → t͡ɕ, t ⌥8 s⇧R → t͡ʂ", () => {
-		expect(typed("t", "~8", "s", "+j")).toBe("t\u{0361}ɕ");
-		expect(typed("t", "~8", "s", "+r")).toBe("t\u{0361}ʂ");
+	test("Chinese affricates: t ⇧6 s⇧J → t͡ɕ, t ⇧6 s⇧R → t͡ʂ", () => {
+		expect(typed("t", "+6", "s", "+j")).toBe("t\u{0361}ɕ");
+		expect(typed("t", "+6", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
 	test("aspiration via ⌥p: k h ⌥p → kʰ", () => expect(typed("k", "h", "~p")).toBe("kʰ"));
 
@@ -431,8 +432,8 @@ describe("East Asian coverage", () => {
 		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
 		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
 	});
-	test("fortis affricate stacks with the tie: t ⌥8 ⌥0 s⇧J → t͡ɕ͈", () =>
-		expect(typed("t", "~8", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
+	test("fortis affricate stacks with the tie: t ⇧6 ⌥0 s⇧J → t͡ɕ͈", () =>
+		expect(typed("t", "+6", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
 
 	// Vowels East Asianists need, one digraph each.
 	test("ɨ ɯ ɤ ʌ are single digraphs", () => {
@@ -488,11 +489,50 @@ describe("⌥⇧ escape: the raw capital shares the chord with the mark", () => 
 	test("backspace still cancels a pending mark silently", () =>
 		expect(typed("a", "~+e", "⌫", "b")).toBe("ab"));
 
-	// Spacing marks insert immediately, so there is no pending state to read and
-	// no second press to detect. ⌥⇧c (hamza) is the only such key whose capital
-	// is also a transformer — it has no escape.
-	test("spacing second forms are unaffected: ⌥⇧c → ʾ", () =>
-		expect(typed("~+c")).toBe("\u{02BE}"));
+	// A key with no mark on ⌥⇧ escapes to the raw capital on the first press (there
+	// is nothing to be pending). ⌥c is unassigned since ʿayn was dropped.
+	test("a mark-free ⌥⇧ letter is the capital escape: ⌥⇧c → C", () =>
+		expect(typed("~+c")).toBe("C"));
+});
+
+// Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
+// a non-ASCII letter or combining mark. Terminals report the empty cell before
+// the cursor as U+00A0 NBSP; the old "non-ASCII" test read that as a segment and
+// rebased every start-of-line capital, so "TH" became θ. (typeKeys(seq, initial)
+// seeds the buffer, standing in for what the app reports before the cursor.)
+describe("chaining seeds only on a real segment, not any non-ASCII char", () => {
+	const withInitial = (init: string, ...ks: string[]) => typeKeys(seq(...ks), init);
+
+	test("NBSP before ⇧T⇧H stays literal (the terminal bug)", () =>
+		expect(withInitial("\u00A0", "+t", "+h")).toBe("\u00A0TH"));
+	test("curly quote before ⇧T⇧H stays literal", () =>
+		expect(withInitial("\u201C", "+t", "+h")).toBe("\u201CTH"));
+	test("em dash before ⇧T⇧H stays literal", () =>
+		expect(withInitial("\u2014", "+t", "+h")).toBe("\u2014TH"));
+	test("a real segment still seeds the chain: ʃ⇧T⇧R → ʃʈ", () =>
+		expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
+	test("an ASCII base carrying a tie still seeds it: t ⇧6 s ⇧X → t͡sʼ", () =>
+		expect(typed("t", "+6", "s", "+x")).toBe(nfc("t\u{0361}s\u{02BC}")));
+});
+
+// Shift-chaining continues a transcription with held shift (ʃ⇧I⇧H → ʃɪ). The
+// chain breaks on a shift RELEASE, so releasing and re-pressing shift types a
+// literal capital after an IPA glyph — the natural escape. A held run keeps
+// chaining. ("^" marks a release before that keystroke.)
+describe("shift-release escapes a chain to a literal capital", () => {
+	test("held: ʃ⇧I⇧H → ʃɪ", () => expect(typed("s", "+h", "+i", "+h")).toBe(nfc("ʃɪ")));
+	test("released: ʃ ^⇧I ⇧H → ʃIH (literal)", () =>
+		expect(typed("s", "+h", "^+i", "+h")).toBe("ʃIH"));
+	test("held: ʃ⇧T⇧R → ʃʈ", () => expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
+	test("released: ʃ ^⇧T ⇧R → ʃTR (literal)", () =>
+		expect(typed("s", "+h", "^+t", "+r")).toBe("ʃTR"));
+	// A release disarms; an unshifted IPA-producing key does NOT. An Option
+	// diacritic (⌥t dental, no shift) leaves s̪ live, so ⇧H still chains to ʃ.
+	test("an unshifted diacritic keeps the chain live: ⌥t s ⇧H → ʃ̪", () =>
+		expect(typed("~t", "s", "+h")).toBe(nfc("ʃ\u{032A}")));
+	// $PATH stays literal with or without releases: the final T is preceded by a
+	// literal A, not an IPA segment, so the run breaks there regardless.
+	test("$PATH → ɾPATH", () => expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
 });
 
 describe("superscript operator ⌥p", () => {
