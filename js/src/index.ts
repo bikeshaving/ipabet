@@ -120,6 +120,10 @@ const SHIFTED_DIGITS: Record<string, string> = {
 	"6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
 };
 
+// ⌥⇧<digit> slots spent on a character rather than the raw-US escape.
+const optShiftDigits: Record<string, string> =
+	(spec as {optShift?: Record<string, string>}).optShift ?? {};
+
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 
 // Voiceless obstruents — the ejectivizable set (⇧P). Plosives + oral
@@ -294,24 +298,33 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
 	// ⌥⇧' → secondary stress). Where the key holds no such mark it's the
 	// raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @); punctuation passes
 	// so the host's own Option typography (curly quotes, dashes) survives.
-	if (option && shift) {
-		const m2 = optMarks.get(key);
-		if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
-		if (/[a-z]/i.test(key)) return withFlush({type: "insert", text: key.toUpperCase()});
-		if (/[0-9]/.test(key)) {
-			return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
+		if (option && shift) {
+			const m2 = optMarks.get(key);
+			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
+			if (/[a-z]/i.test(key)) return withFlush({type: "insert", text: key.toUpperCase()});
+			if (/[0-9]/.test(key)) {
+				// A slot spent deliberately (⌥⇧1 → ¡, ⌥⇧6 → ß).
+				const over = optShiftDigits[key];
+				if (over !== undefined) return withFlush({type: "insert", text: over});
+				// The raw-US escape exists only because ⇧<digit> is an IPA glyph, leaving
+				// the shifted character otherwise unreachable (⇧2 is ʔ, so @ lives here).
+				// Where ⇧<digit> is unclaimed the escape is redundant — pass, and the
+				// host's own ⌥⇧8 ° ⌥⇧9 · ⌥⇧0 ‚ survive.
+				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
+			}
+			return withFlush({type: "pass"});
 		}
-		return withFlush({type: "pass"});
-	}
 
-	// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
-	if (option) {
-		const m = optMarks.get(key);
-		if (m !== undefined) return applyMark(m, pending);
-		if (key === "p") return withFlush(superscriptize(textBefore));
-		if (/[0-9]/.test(key)) return withFlush({type: "insert", text: key});
-		return withFlush({type: "pass"});
-	}
+		// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
+		// An unassigned key passes — digits included, so the host's ⌥6 §, ⌥7 ¶, ⌥8 •
+		// survive. (This used to insert the bare digit, destroying them to produce a
+		// character the unshifted digit key already types.)
+		if (option) {
+			const m = optMarks.get(key);
+			if (m !== undefined) return applyMark(m, pending);
+			if (key === "p") return withFlush(superscriptize(textBefore));
+			return withFlush({type: "pass"});
+		}
 
 	// Number row: bare → native digit; Shift → the IPA glyph (⇧5 → ə);
 	// number keys with no glyph (9, 0) pass so ( and ) stay native.

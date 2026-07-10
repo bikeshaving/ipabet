@@ -200,9 +200,27 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥7 now carries ʿayn; the free slots are ⌥8 and (since cedilla moved to
 	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
 	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
-	test("free digit ⌥8 stays literal", () => expect(typed("~8")).toBe("8"));
-	test("freed ⌥c passes to the host", () =>
-		expect(handleKey("", {key: "c", option: true}, []).edit.type).toBe("pass"));
+	// Unassigned ⌥ keys pass, digits included, so the host's own Option typography
+	// survives: ⌥6 §, ⌥7 ¶, ⌥8 •. And the ⌥⇧ escape only exists where ⇧<digit> is
+	// an IPA glyph — ⌥⇧8/9/0 pass, leaving the host's ° · ‚ alone.
+	test("unassigned ⌥ digits pass to the host", () => {
+		for (const d of ["6", "7"])
+			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).toBe("pass");
+	});
+	test("redundant ⌥⇧ digit escapes pass to the host", () => {
+		for (const d of ["8", "9", "0"])
+			expect(handleKey("", {key: d, option: true, shift: true}, []).edit.type, `⌥⇧${d}`).toBe("pass");
+	});
+	test("load-bearing ⌥⇧ digit escapes survive (⇧2 is ʔ, so @ lives here)", () => {
+		expect(typed("~+2")).toBe("@");
+		expect(typed("~+7")).toBe("&");
+	});
+	test("spent ⌥⇧ digit slots: ⌥⇧1 → ¡, ⌥⇧6 → ß", () => {
+		expect(typed("~+1")).toBe("¡");
+		expect(typed("~+6")).toBe("ß");
+	});
+	test("⇧1 is ! again, now the tie bar left the number row", () =>
+		expect(typed("+1")).toBe("!"));
 });
 
 describe("dental family — spread across keys, no cycle", () => {
@@ -285,22 +303,22 @@ describe("the two ⌥⇧ laws", () => {
 	});
 });
 
-describe("⇧1 = tie bar (a glyph with no Latin home)", () => {
+describe("⇧T = tie bar (a glyph with no Latin home)", () => {
 	// The tie welds two symbols into ONE segment — hence the digit 1. It attaches
 	// to the glyph BEFORE it and spans forward, so it is postfix by nature.
-	test("affricate t͡ʃ: t ⇧1 s⇧H", () =>
-		expect(typed("t", "+1", "s", "+h")).toBe("t\u{0361}ʃ"));
-	test("affricate t͡s: t ⇧1 s", () => expect(typed("t", "+1", "s")).toBe("t\u{0361}s"));
-	test("affricate d͡ʒ: d ⇧1 z⇧H", () =>
-		expect(typed("d", "+1", "z", "+h")).toBe("d\u{0361}ʒ"));
+	test("affricate t͡ʃ: t ⌥8 s⇧H", () =>
+		expect(typed("t", "~8", "s", "+h")).toBe("t\u{0361}ʃ"));
+	test("affricate t͡s: t ⌥8 s", () => expect(typed("t", "~8", "s")).toBe("t\u{0361}s"));
+	test("affricate d͡ʒ: d ⇧T z⇧H", () =>
+		expect(typed("d", "~8", "z", "+h")).toBe("d\u{0361}ʒ"));
 	test("untied tʃ stays reachable (the tie is optional in IPA)", () =>
 		expect(typed("t", "s", "+h")).toBe("tʃ"));
 
 	// The tie must not break a held-shift run. Shift-chaining asks whether the
 	// glyph behind a pending capital is IPA content — testing only its BASE would
 	// judge "t͡" (ASCII t + U+0361) ordinary and strand the chain.
-	test("held-shift affricate: t ⇧1 ⇧S ⇧H → t͡ʃ", () =>
-		expect(typed("t", "+1", "+s", "+h")).toBe("t\u{0361}ʃ"));
+	test("held-shift affricate: t ⌥8 ⇧S ⇧H → t͡ʃ", () =>
+		expect(typed("t", "~8", "+s", "+h")).toBe("t\u{0361}ʃ"));
 	test("a diacritic-bearing ASCII base still continues the chain: ⌥t s ⇧H ⇧I ⇧H", () =>
 		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
@@ -361,13 +379,13 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~h", "~y", "o")).toBe(nfc("ở"));   // hỏi + horn
 	});
 	test("Semitic half-rings: ʿayn and ʾhamza (NOT the superscripts ˤ ˀ)", () => {
-		expect(typed("~7")).toBe("\u{02BF}");
-		expect(typed("~+7")).toBe("\u{02BE}");
-		expect(typed("~7", "a", "r", "a", "b", "~a", "i")).toBe(nfc("ʿarabī"));
+		expect(typed("~c")).toBe("\u{02BF}");
+		expect(typed("~+c")).toBe("\u{02BE}");
+		expect(typed("~c", "a", "r", "a", "b", "~a", "i")).toBe(nfc("ʿarabī"));
 	});
 	test("German ß", () => {
-		expect(typed("~6")).toBe("ß");
-		expect(typed("+s", "t", "r", "a", "~6", "e")).toBe("Straße");
+		expect(typed("~+6")).toBe("ß");
+		expect(typed("+s", "t", "r", "a", "~+6", "e")).toBe("Straße");
 	});
 	test("prosodic boundaries: ‿ linking, ‖ major group", () => {
 		expect(typed("~z")).toBe("‿");
@@ -384,9 +402,9 @@ describe("East Asian coverage", () => {
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
 		expect(typed("m", "a", "2", "~p", "1", "~p", "4", "~p")).toBe("ma²¹⁴"));
 
-	test("Chinese affricates: t ⇧1 s⇧J → t͡ɕ, t ⇧1 s⇧R → t͡ʂ", () => {
-		expect(typed("t", "+1", "s", "+j")).toBe("t\u{0361}ɕ");
-		expect(typed("t", "+1", "s", "+r")).toBe("t\u{0361}ʂ");
+	test("Chinese affricates: t ⌥8 s⇧J → t͡ɕ, t ⌥8 s⇧R → t͡ʂ", () => {
+		expect(typed("t", "~8", "s", "+j")).toBe("t\u{0361}ɕ");
+		expect(typed("t", "~8", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
 	test("aspiration via ⌥p: k h ⌥p → kʰ", () => expect(typed("k", "h", "~p")).toBe("kʰ"));
 
@@ -411,8 +429,8 @@ describe("East Asian coverage", () => {
 		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
 		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
 	});
-	test("fortis affricate stacks with the tie: t ⇧1 ⌥0 s⇧J → t͡ɕ͈", () =>
-		expect(typed("t", "+1", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
+	test("fortis affricate stacks with the tie: t ⌥8 ⌥0 s⇧J → t͡ɕ͈", () =>
+		expect(typed("t", "~8", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
 
 	// Vowels East Asianists need, one digraph each.
 	test("ɨ ɯ ɤ ʌ are single digraphs", () => {

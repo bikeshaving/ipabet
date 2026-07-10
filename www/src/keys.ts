@@ -24,7 +24,7 @@ function esc(s: string): string {
 	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// "sH" → "s ⇧H", "5" → "⇧5", "1W" → "⇧1 ⇧W", "s" → "s".
+// "sH" → "s ⇧H", "5" → "⇧5", "s" → "s".
 function keystrokes(key: string): string {
 	return [...key]
 		.map((c) => (/[0-9A-Z]/.test(c) ? "⇧" + c : c))

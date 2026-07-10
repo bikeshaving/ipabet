@@ -119,9 +119,17 @@ describe("spec · the moved keys", () => {
 		expect(g.shiftSense).toBe("greater");
 	});
 
-	test("⌥8 and ⌥c are the free keys", () => {
-		expect(byOpt.has("8")).toBe(false);
-		expect(byOpt.has("c")).toBe(false);
+	test("the tie bar is an ⌥ mark, never a ⇧-letter transformer", () => {
+		expect(byOpt.get("8")!.mark).toBe("\u{0361}");
+		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
+	});
+
+	test("⌥⇧ digit slots are spent only where the escape is redundant", () => {
+		const letters = new Set((spec.letters as {key: string}[]).map((l) => l.key));
+		for (const d of Object.keys(spec.optShift as Record<string, string>)) {
+			if (d === "about") continue;
+			expect(letters.has(d), `⇧${d} is claimed; its escape is load-bearing`).toBe(false);
+		}
 	});
 });
 

@@ -61,6 +61,9 @@ struct Tables {
     /// *replaces* rather than stacks. Independent shape-twins (tilde/creaky)
     /// are absent from this map and stack normally.
     let exclusiveTwin: [Unicode.Scalar: Unicode.Scalar]
+    /// ⌥⇧<digit> slots spent on a character instead of the raw-US escape
+    /// (⌥⇧1 → ¡, ⌥⇧6 → ß). See spec `optShift`.
+    let optShiftDigits: [String: String]
 
     static let shared: Tables = {
         guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
@@ -91,6 +94,10 @@ struct Tables {
                 exclusiveTwin[ds] = ms
             }
         }
+        var optShiftDigits: [String: String] = [:]
+        for (k, v) in root["optShift"] as? [String: Any] ?? [:] {
+            if k.count == 1, k.first!.isNumber, let ch = v as? String { optShiftDigits[k] = ch }
+        }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
             for r in s["table"] as? [[String: Any]] ?? [] {
@@ -103,7 +110,8 @@ struct Tables {
             if let prev = letters[base] { transforms[prev + mod] = glyph }
         }
         return Tables(letters: letters, optMarks: optMarks, sups: sups,
-                      transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin)
+                      transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
+                      optShiftDigits: optShiftDigits)
     }()
 }
 
@@ -301,20 +309,25 @@ class InputController: IMKInputController {
             return handleBackspace(client)
         }
 
-        // Option-Shift: escape hatch. On letters/digits it inserts the raw-US
-        // shifted char (⌥⇧H → H to dodge a transform, ⌥⇧1 → !, ⌥⇧4 → $). On
-        // punctuation it DECLINES, so Mac's own Option-layer typography passes
-        // through untouched (⌥⇧[ → “, ⌥⇧] → ’, ⌥⇧- → em-dash). Inserting the
-        // plain shifted char there would clobber curly quotes and dashes.
+        // Option-Shift: escape hatch. On letters it inserts the raw-US shifted
+        // char (⌥⇧H → H, to dodge a transform). On digits the escape exists only
+        // because ⇧<digit> is an IPA glyph, leaving the shifted character
+        // otherwise unreachable (⇧2 is ʔ, so @ lives here) — where ⇧<digit> is
+        // unclaimed the escape is redundant and we DECLINE, so the host's ⌥⇧8 °,
+        // ⌥⇧9 ·, ⌥⇧0 ‚ survive. Two digit slots are spent deliberately on
+        // characters (⌥⇧1 → ¡, ⌥⇧6 → ß). On punctuation it always declines, so
+        // Mac's own Option typography passes through (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary stress)
             if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
                 applyMark(m, secondary: true, client); return true
             }
-            // otherwise the raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @);
-            // punctuation passes so the host's own Option typography survives.
             guard let c = oc.first, c.isLetter || c.isNumber else { flushPending(client); return false }
+            if c.isNumber {
+                if let spent = t.optShiftDigits[oc] { flushPending(client); insert(spent, client); return true }
+                guard t.letters[oc] != nil else { flushPending(client); return false }
+            }
             let raw = USLayout.char(event.keyCode, shift: true)
             guard !raw.isEmpty else { flushPending(client); return false }
             flushPending(client)
@@ -331,7 +344,9 @@ class InputController: IMKInputController {
             guard oc.count == 1 else { flushPending(client); return false }
             if oc == "p" { flushPending(client); return superscriptize(client) }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
-            if oc.first!.isNumber { flushPending(client); insert(oc, client); return true }
+            // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
+            // ⌥7 ¶, ⌥8 • survive. (This used to insert the bare digit, destroying
+            // them to produce a character the unshifted digit key already types.)
             flushPending(client)
             return false
         }

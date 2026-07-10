@@ -20,7 +20,7 @@ function esc(s: string): string {
 	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-/** "sH" → "s H", "5" → "⇧5", "1W" → "⇧1 W" (digits are shifted; a trailing
+/** "sH" → "s H", "5" → "⇧5" (digits are shifted; a trailing
  * capital is the shift-modifier letter, shown bare to stay compact). */
 function keyText(key: string): string {
 	return [...key].map((c) => (/[0-9]/.test(c) ? "⇧" + c : c)).join("");
@@ -102,7 +102,7 @@ const OTHER: [string, string, string?][] = [
 	["ɕ", "Voiceless alveolo-palatal fricative"],
 	["ʑ", "Voiced alveolo-palatal fricative"],
 	["ɺ", "Voiced alveolar lateral flap"],
-	["t͡s", "Affricate (tie bar)", "t ⇧1 s"],
+	["t͡s", "Affricate (tie bar)", "t ⌥8 s"],
 	["ɧ", "Simultaneous ʃ and x"],
 ];
 
