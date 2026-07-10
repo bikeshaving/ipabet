@@ -267,7 +267,33 @@ class InputController: IMKInputController {
         if let c = (sender as? IMKTextInput) ?? client() { flushPending(c) }
     }
 
+    // Shift-chaining state. The chain is BROKEN by a shift release (so releasing
+    // and re-pressing shift types a literal capital: ʃ ⟨let go⟩ ⇧I⇧H → ʃIH) and
+    // re-armed by producing an IPA segment. `chainBroken` persists across
+    // keystrokes; `shiftReleased` is set from flagsChanged when shift lifts
+    // between keyDowns — the one thing a plain keyDown can't tell you, since two
+    // ⇧-keydowns look identical whether or not shift bounced between them.
+    private var shiftWasDown = false
+    private var shiftReleased = false
+    private var chainBroken = false
+
+    // Ask the system for flagsChanged too, not just keyDown — that's how we see
+    // a shift release land between two keystrokes.
+    override func recognizedEvents(_ sender: Any!) -> Int {
+        return Int(NSEvent.EventTypeMask.keyDown.rawValue | NSEvent.EventTypeMask.flagsChanged.rawValue)
+    }
+
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
+        // Track shift up/down transitions without ever consuming the event.
+        if event.type == .flagsChanged {
+            let nowShift = event.modifierFlags.contains(.shift)
+            if shiftWasDown && !nowShift {
+                shiftReleased = true                                // a release
+                Dbg.log("⇧ released")
+            }
+            shiftWasDown = nowShift
+            return false
+        }
         guard event.type == .keyDown,
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
@@ -296,6 +322,12 @@ class InputController: IMKInputController {
             return true
         }
         if isRawLocked(for: clientBundleID()) { flushPending(client); return false }
+
+        // Fold a pending shift release into the chain state: once broken, it stays
+        // broken until a segment re-arms it (see the transform section). chainLive
+        // gates the capital rebase and the capital-digraph rule below.
+        if shiftReleased { chainBroken = true; shiftReleased = false }
+        let chainLive = !chainBroken
 
         // Backspace peels the pending accent first (dead key undone), before
         // touching the document at all.
@@ -403,14 +435,33 @@ class InputController: IMKInputController {
             // cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
             // and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
             // base-only test would break the chain right after ⇧1 or a diacritic.
-            if shift, base.count == 1, let bc = base.unicodeScalars.first,
-               (65...90).contains(bc.value), let p2 = clusterBefore(r, client),
-               String(p2).unicodeScalars.contains(where: isSegmentScalar) {
-                base = base.lowercased()
+            // A shifted (capital) base has one question: are we in a LIVE chain —
+            // shift held continuously since an IPA segment? If so, this capital
+            // CONTINUES it in lowercase (ʃ⇧I⇧H → ʃɪ, Ɣ⇧G⇧H → Ɣɣ). Otherwise — a
+            // fresh word, or the chain was ended by a shift release — it is a fresh
+            // capital DIGRAPH (⇧A⇧E → Æ, ⇧N⇧G → Ŋ, phantom ⇧S⇧H → Ʃ). Release ends
+            // the chain, it does NOT escape to literal (that is Ctrl+Shift). Greek
+            // (θ→Θ) and ASCII (tJ→c→C) uppercases are excluded.
+            if shift, base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
+                let p2Segment = clusterBefore(r, client).map {
+                    String($0).unicodeScalars.contains(where: isSegmentScalar)
+                } ?? false
+                if p2Segment, chainLive {
+                    base = base.lowercased()
+                } else if let low = t.transforms[base.lowercased() + s] {
+                    let up = low.uppercased()
+                    if up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
+                       u.value > 0x7f, !(0x370...0x3ff).contains(u.value) {
+                        Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
+                        replace(r, with: recompose(up, reposition(up, marks)), client)
+                        chainBroken = false; return true
+                    }
+                }
             }
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
-                replace(r, with: recompose(combo, reposition(combo, marks)), client); return true
+                replace(r, with: recompose(combo, reposition(combo, marks)), client)
+                chainBroken = false; return true
             }
             // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
             // rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞,
@@ -422,19 +473,24 @@ class InputController: IMKInputController {
                 case "ɜ": out = recompose("ɝ", marks)
                 default:  out = recompose(base, marks) + "\u{02DE}"
                 }
-                replace(r, with: out, client); return true
+                replace(r, with: out, client)
+                chainBroken = false; return true
             }
             // ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
             // Open class — any voiceless obstruent, matching the chart's "p t k s …".
             // Guarded like R; a non-obstruent falls through to a literal X.
             if s == "X", let b = base.first, "ptʈckqɸfθsʃʂçxχɬ".contains(b) {
-                replace(r, with: recompose(base, marks) + "\u{02BC}", client); return true
+                replace(r, with: recompose(base, marks) + "\u{02BC}", client)
+                chainBroken = false; return true
             }
         }
         // letter base glyph — absorbing any pending prefix diacritics
         if let glyph = t.letters[s] {
             Dbg.log("  → emitBase '\(glyph)'")
-            emitBase(glyph, client); return true
+            emitBase(glyph, client)
+            // A non-ASCII base (⇧5 → ə) is an IPA segment and re-arms the chain.
+            if glyph.unicodeScalars.contains(where: { $0.value > 127 }) { chainBroken = false }
+            return true
         }
         // A pending accent absorbs onto a CAPITAL base: ⌥u ⇧A → Ä. The letters
         // table is lowercase-keyed, so without this the capital misses and the
@@ -664,6 +720,9 @@ class InputController: IMKInputController {
     private func isSegmentScalar(_ u: Unicode.Scalar) -> Bool {
         guard u.value > 127 else { return false }
         switch u.properties.generalCategory {
+        // Any non-ASCII letter or combining mark is chain content — including an
+        // uppercase Æ/Ŋ, so a held run continues in lowercase (Ɣ⇧G⇧H → Ɣɣ). A
+        // release, not the letter's case, is what ends the chain.
         case .uppercaseLetter, .lowercaseLetter, .titlecaseLetter,
              .modifierLetter, .otherLetter,
              .nonspacingMark, .spacingMark, .enclosingMark:

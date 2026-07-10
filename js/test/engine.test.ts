@@ -78,8 +78,12 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// SHA → ƩA — because capital digraphs are always-on; literal comes from a
 	// shift release (or the raw-lock). Greek-uppercase (TH→Θ) and ASCII pairs
 	// stay literal, so THE and PHP are safe untouched.
-	test("held SHA forms the digraph: ⇧S⇧H⇧A → ƩA", () => expect(chain("+s", "+h", "+a")).toBe("ƩA"));
-	test("released SHA stays literal: ⇧S ^⇧H ⇧A → SHA", () => expect(chain("+s", "^+h", "+a")).toBe("SHA"));
+	// SHA: ⇧S⇧H is a fresh capital digraph Ʃ whether held or (released → still a
+	// fresh capital), then ⇧A appends. Literal "SHA" comes from Ctrl+Shift, not a
+	// shift release.
+	test("⇧S⇧H⇧A → ƩA (capital digraph)", () => expect(chain("+s", "+h", "+a")).toBe("ƩA"));
+	test("released is still a fresh capital: ⇧S ^⇧H ⇧A → ƩA", () =>
+		expect(chain("+s", "^+h", "+a")).toBe("ƩA"));
 	test("PHP stays PHP (pH is not a digraph)", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
 	test("THE stays THE (tH→θ→Θ is Greek, excluded)", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
 
@@ -349,7 +353,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 	// It must fire ONLY while an accent pends — acronyms and shift-chaining intact.
 	test("acronyms and chaining are untouched", () => {
 		expect(typed("+u", "+r", "+l")).toBe("URL");
-		expect(typed("+s", "^+h", "+a")).toBe("SHA"); // release escapes the capital digraph
+		expect(typed("+s", "^+h", "+a")).toBe("ƩA"); // fresh capital digraph, not literal
 		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ");
 		expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
 	});
@@ -523,13 +527,19 @@ describe("chaining seeds only on a real segment, not any non-ASCII char", () => 
 // chain breaks on a shift RELEASE, so releasing and re-pressing shift types a
 // literal capital after an IPA glyph — the natural escape. A held run keeps
 // chaining. ("^" marks a release before that keystroke.)
-describe("shift-release escapes a chain to a literal capital", () => {
-	test("held: ʃ⇧I⇧H → ʃɪ", () => expect(typed("s", "+h", "+i", "+h")).toBe(nfc("ʃɪ")));
-	test("released: ʃ ^⇧I ⇧H → ʃIH (literal)", () =>
-		expect(typed("s", "+h", "^+i", "+h")).toBe("ʃIH"));
-	test("held: ʃ⇧T⇧R → ʃʈ", () => expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
-	test("released: ʃ ^⇧T ⇧R → ʃTR (literal)", () =>
-		expect(typed("s", "+h", "^+t", "+r")).toBe("ʃTR"));
+// Hold shift to continue a chain in LOWERCASE; a release ends the chain, so the
+// next shifted digraph is a fresh CAPITAL. Release is NOT a literal-escape (that
+// is Ctrl+Shift) — it just resets to capital. (A prior "ʃIH literal via release"
+// is gone; literal capitals after IPA will come from Ctrl+Shift.)
+describe("shift release ends the chain → next digraph is a fresh capital", () => {
+	test("held: ʃ⇧I⇧H → ʃɪ (lowercase continuation)", () =>
+		expect(typed("s", "+h", "+i", "+h")).toBe(nfc("ʃɪ")));
+	test("released: ʃ ^⇧I ⇧H → ʃꞮ (fresh capital)", () =>
+		expect(typed("s", "+h", "^+i", "+h")).toBe(nfc("ʃꞮ")));
+	test("held: ʃ⇧T⇧R → ʃʈ (lowercase continuation)", () =>
+		expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
+	test("released: ʃ ^⇧T ⇧R → ʃƮ (fresh capital)", () =>
+		expect(typed("s", "+h", "^+t", "+r")).toBe(nfc("ʃƮ")));
 	// A release disarms; an unshifted IPA-producing key does NOT. An Option
 	// diacritic (⌥t dental, no shift) leaves s̪ live, so ⇧H still chains to ʃ.
 	test("an unshifted diacritic keeps the chain live: ⌥t s ⇧H → ʃ̪", () =>
@@ -540,7 +550,7 @@ describe("shift-release escapes a chain to a literal capital", () => {
 });
 
 // Capital digraphs: capitalize the base, capitalize the result. Held shift forms
-// them (⇧A⇧E → Æ), a shift release escapes to literal. Every real Latin-Extended
+// them (⇧A⇧E → Æ); a shift release just ends the chain. Every real Latin-Extended
 // uppercase is reachable — orthographic (Ŋ Ɛ Ɔ) and phantom (Ʃ Ʈ) alike; only
 // Greek uppercases (θ→Θ) and plain-ASCII ones (tJ→c→C) are excluded, being
 // nonsense in a Latin word. The IPA has no capitals, so this is purely an
@@ -569,10 +579,31 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+t", "+h")).toBe("TH"));
 	test("ASCII uppercase excluded: ⇧T⇧J → TJ (not C)", () =>
 		expect(typed("+t", "+j")).toBe("TJ"));
-	test("shift release escapes to literal: ⇧A ^⇧E → AE", () =>
-		expect(typed("+a", "^+e")).toBe("AE"));
+	test("a release starts a fresh capital, not a literal: ⇧A ^⇧E → Æ", () =>
+		expect(typed("+a", "^+e")).toBe("Æ"));
 	test("does not disturb a lowercase chain: ə ⇧O⇧H → əɔ", () =>
 		expect(typed("+5", "+o", "+h")).toBe(nfc("əɔ")));
+	// A release BEFORE the capital (from typing the previous lowercase word) must
+	// NOT break the digraph — only a release BETWEEN base and modifier does. So the
+	// digraph gates on heldFromPrev (previous key), not the persistent chain state:
+	// "The Æble" works, while ʃ⟨release⟩⇧I⇧H is still the chain escape.
+	test("release before the capital is fine: The ⇧A⇧E → The Æ", () =>
+		expect(typed("+t", "h", "e", " ", "^+a", "+e")).toBe("The Æ"));
+	test("a release ends the chain → fresh capital: ʃ ⟨release⟩ ⇧I⇧H → ʃꞮ", () =>
+		expect(typed("s", "+h", "^+i", "+h")).toBe(nfc("ʃꞮ")));
+	// Hold shift and the run continues in LOWERCASE (Ɣɣɣ: first fresh capital,
+	// then chained lowercase). A release ends the chain, so the next digraph is a
+	// fresh capital again — you can always type another capital after releasing.
+	test("held run: ⇧G⇧H⇧G⇧H⇧G⇧H → Ɣɣɣ", () =>
+		expect(typed("+g", "+h", "+g", "+h", "+g", "+h")).toBe(nfc("Ɣɣɣ")));
+	test("release starts a fresh capital: ⇧G⇧H g⇧H ^⇧G⇧H → ƔɣƔ", () =>
+		expect(typed("+g", "+h", "g", "+h", "^+g", "+h")).toBe(nfc("ƔɣƔ")));
+	test("two capitals across a release: ⇧A⇧E ^⇧N⇧G → ÆŊ", () =>
+		expect(typed("+a", "+e", "^+n", "+g")).toBe(nfc("ÆŊ")));
+	// A prior capital digraph's uppercase (Æ, Ŋ) is orthographic, not chain content,
+	// so a second capital digraph after it works even across a shift release.
+	test("consecutive capital digraphs: ⇧A⇧E ⟨release⟩ ⇧N⇧G → ÆŊ", () =>
+		expect(typed("+a", "+e", "^+n", "+g")).toBe("ÆŊ"));
 });
 
 describe("superscript operator ⌥p", () => {

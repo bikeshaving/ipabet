@@ -412,32 +412,32 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		//              previous LITERAL capital. This is what keeps $PATH → ɾPATH:
 		//              the final T is preceded by A, so the run breaks there.
 		// A capital that never gets a modifier stays as typed (ʃ⇧T → ʃT).
-		if (shift && chainLive && /^[A-Z]$/.test(base)) {
-			// The segment test is a non-ASCII letter or combining mark — NOT merely
-			// non-ASCII. A terminal reports the empty start-of-line cell as U+00A0
-			// NBSP (160 > 127); the old bare `> 127` read that as a segment and
-			// rebased every start-of-line "TH" into θ. Whole cluster, not just the
-			// base: "t͡" is ASCII t carrying a tie (U+0361), plainly IPA.
+		// A shifted (capital) modifier-base has exactly one question: are we in a
+		// LIVE chain — shift held continuously since an IPA segment? If so, this
+		// capital CONTINUES the chain and is lowered so the modifier transforms it
+		// (hold shift to keep transcribing: ʃ⇧I⇧H → ʃɪ, and Ɣ⇧G⇧H → Ɣɣ). Otherwise
+		// — a fresh word, or the chain was ended by a shift release — it is a fresh
+		// capital DIGRAPH: ⇧A⇧E → Æ, ⇧N⇧G → Ŋ. Release doesn't escape to literal
+		// (that is Ctrl+Shift); it just ends the chain, so the next capital is
+		// capital again. The segment test is a non-ASCII letter or combining mark,
+		// NOT merely non-ASCII: a terminal reports the empty start-of-line cell as
+		// U+00A0 NBSP (160 > 127), which the old bare `> 127` rebased into θ.
+		if (shift && /^[A-Z]$/.test(base)) {
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
-			if (p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c))) {
-				base = base.toLowerCase();
-			}
-		}
-		// Capital digraph: the base is STILL a capital (not lowered into a chain
-		// above), shift is held (chainLive — releasing it escapes to literal, ⇧A
-		// ⟨let go⟩ ⇧E → AE), and the digraph's glyph has a LATIN uppercase. Then it
-		// is the capital form: ⇧A⇧E → Æ, ⇧N⇧G → Ŋ. The uppercase face of the same
-		// digraph, gated by the same release law as lowercase chaining. Greek
-		// uppercases (θχβ → ΘΧΒ) fall through, which also keeps "THE" literal.
-		if (shift && chainLive && /^[A-Z]$/.test(base)) {
-			const low = transforms.get(base.toLowerCase() + s);
-			if (low !== undefined) {
-				const up = low.toUpperCase();
-				// A real Latin-Extended capital — orthographic (Ŋ Ɛ) or phantom (Ʃ Ʈ),
-				// both are legitimate letters to want. Excluded: Greek uppercases (θ→Θ,
-				// wrong script) and plain ASCII (tJ→c→C, which would make ⇧T⇧J → "C").
-				if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
-					return {edit: replaceCluster(p, recompose(up, reposition(up, marks))), pending: []};
+			const p2Segment =
+				p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c));
+			if (p2Segment && chainLive) {
+				base = base.toLowerCase(); // live chain → lowercase continuation
+			} else {
+				const low = transforms.get(base.toLowerCase() + s);
+				if (low !== undefined) {
+					const up = low.toUpperCase();
+					// A real Latin-Extended capital — orthographic (Ŋ Ɛ) or phantom (Ʃ
+					// Ʈ). Excluded: Greek uppercases (θ→Θ, wrong script, keeps "THE"
+					// literal) and plain ASCII (tJ→c→C, so ⇧T⇧J stays "TJ").
+					if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
+						return {edit: replaceCluster(p, recompose(up, reposition(up, marks))), pending: []};
+					}
 				}
 			}
 		}
