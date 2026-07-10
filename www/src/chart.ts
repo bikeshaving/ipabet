@@ -2,6 +2,7 @@ import spec from "../../spec/ipabet.json";
 // @ts-ignore — Shovel rewrites this to a hashed asset URL at build time.
 import chartPdf from "./chart.pdf" with {assetBase: "/assets/"};
 import {AUDIO} from "./audio-map.ts";
+import {DIACRITICS, SUPRASEGMENTALS, TONES, type ChartEntry} from "./chart-data.ts";
 
 // The IPAbet chart: the IPA chart (layout derived from the official 2015
 // sheet, CC BY-SA) with the IPAbet keystrokes printed beside every symbol —
@@ -14,16 +15,6 @@ for (const e of spec.letters as {key: string; glyph: string}[]) {
 	if (!reverse.has(e.glyph)) reverse.set(e.glyph, e.key);
 }
 reverse.set("ɡ", reverse.get("g") ?? "g"); // the chart's script ɡ is our g
-
-const marks = spec.marks as {
-	opt: string;
-	mark: string;
-	type: string;
-	double?: string;
-	cycle?: string[];
-	name: string;
-	exclusive?: boolean;
-}[];
 
 function esc(s: string): string {
 	return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -95,12 +86,28 @@ function pulmonicTable(): string {
 
 // ---------------------------------------------- non-pulmonic consonants
 
+const CLICKS: [string, string][] = [["ʘ", "Bilabial"], ["ǀ", "Dental"], ["ǃ", "(Post)alveolar"], ["ǂ", "Palatoalveolar"], ["ǁ", "Alveolar lateral"]];
+const IMPLOSIVES: [string, string][] = [["ɓ", "Bilabial"], ["ɗ", "Dental/alveolar"], ["ʄ", "Palatal"], ["ɠ", "Velar"], ["ʛ", "Uvular"]];
+// Ejectives are base + ⇧X (eXplosive; open class — any voiceless obstruent);
+// the ʼ is U+02BC, not a curly quote. Keystrokes shown as fallbacks.
+const EJECTIVES: [string, string, string][] = [["pʼ", "Bilabial", "p ⇧X"], ["tʼ", "Dental/alveolar", "t ⇧X"], ["kʼ", "Velar", "k ⇧X"], ["sʼ", "Alveolar fricative", "s ⇧X"]];
+
+const OTHER: [string, string, string?][] = [
+	["ʍ", "Voiceless labial-velar fricative"],
+	["w", "Voiced labial-velar approximant"],
+	["ɥ", "Voiced labial-palatal approximant"],
+	["ʜ", "Voiceless epiglottal fricative"],
+	["ʢ", "Voiced epiglottal fricative"],
+	["ʡ", "Epiglottal plosive"],
+	["ɕ", "Voiceless alveolo-palatal fricative"],
+	["ʑ", "Voiced alveolo-palatal fricative"],
+	["ɺ", "Voiced alveolar lateral flap"],
+	["t͡s", "Affricate (tie bar)", "t ⇧1 s"],
+	["ɧ", "Simultaneous ʃ and x"],
+];
+
 function nonPulmonic(): string {
-	const clicks: [string, string][] = [["ʘ", "Bilabial"], ["ǀ", "Dental"], ["ǃ", "(Post)alveolar"], ["ǂ", "Palatoalveolar"], ["ǁ", "Alveolar lateral"]];
-	const impl: [string, string][] = [["ɓ", "Bilabial"], ["ɗ", "Dental/alveolar"], ["ʄ", "Palatal"], ["ɠ", "Velar"], ["ʛ", "Uvular"]];
-	// Ejectives are base + ⇧X (eXplosive; open class — any voiceless obstruent);
-	// the ʼ is U+02BC, not a curly quote. Keystrokes shown as fallbacks.
-	const ej: [string, string, string][] = [["pʼ", "Bilabial", "p ⇧X"], ["tʼ", "Dental/alveolar", "t ⇧X"], ["kʼ", "Velar", "k ⇧X"], ["sʼ", "Alveolar fricative", "s ⇧X"]];
+	const [clicks, impl, ej] = [CLICKS, IMPLOSIVES, EJECTIVES];
 	const col = (title: string, entries: [string, string][]) =>
 		`<div><h4>${title}</h4>${entries
 			.map(([g, name]) => `<div class="li"${audioAttr(g)}>${G(g)}<span class="nm">${name}</span></div>`)
@@ -118,20 +125,7 @@ function nonPulmonic(): string {
 // -------------------------------------------------------- other symbols
 
 function otherSymbols(): string {
-	const entries: [string, string, string?][] = [
-		["ʍ", "Voiceless labial-velar fricative"],
-		["w", "Voiced labial-velar approximant"],
-		["ɥ", "Voiced labial-palatal approximant"],
-		["ʜ", "Voiceless epiglottal fricative"],
-		["ʢ", "Voiced epiglottal fricative"],
-		["ʡ", "Epiglottal plosive"],
-		["ɕ", "Voiceless alveolo-palatal fricative"],
-		["ʑ", "Voiced alveolo-palatal fricative"],
-		["ɺ", "Voiced alveolar lateral flap"],
-		["t͡s", "Affricate (tie bar)", "t ⇧1 s"],
-	];
-	entries.push(["ɧ", "Simultaneous ʃ and x"]);
-	return entries
+	return OTHER
 		.map(([g, name, fb]) => `<div class="li"${audioAttr(g)}>${G(g, fb)}<span class="nm">${name}</span></div>`)
 		.join("");
 }
@@ -220,72 +214,54 @@ function vowelChart(): string {
 // ----------------------------------------------------------- diacritics
 
 /** "COMBINING TILDE (nasalized; ⇧ → creaky)" → ["nasalized", "creaky"] */
-function meanings(name: string): [string, string | undefined] {
-	const m = /\(([^)]*)\)/.exec(name);
-	const inner = m ? m[1] : name.replace(/^COMBINING /, "").toLowerCase();
-	const [first, ...rest] = inner.split(";").map((x) => x.trim());
-	const second = rest.find((r) => r.startsWith("⇧ →"))?.replace(/^⇧ →\s*/, "");
-	return [first, second];
+// The three non-grid sections come from chart-data.ts: the official chart's
+// own 31 diacritics, 9 suprasegmentals, and 16 tone marks, in its order and
+// its wording. They are NOT generated from spec/ipabet.json's `marks`, which
+// is a superset — it also carries the Latin tenants (cedilla, ogonek, horn,
+// hỏi hook, dot-above, ß, the Semitic half-rings) and the Korean fortis mark.
+// Those are typeable and are documented on /keys; they just aren't on the IPA
+// chart, and printing them here made this sheet a chart of something else.
+// js/test/chart.test.ts types every row below through the engine.
+
+/** "~+w" → "⌥⇧w"; "g +H ~p" → "g ⇧H ⌥p". */
+function display(keys: string): string {
+	return keys
+		.split(" ")
+		.map((k) => k.replace(/~/g, "⌥").replace(/\+/g, "⇧"))
+		.join(" ");
+}
+
+function cp(glyph: string): string {
+	return [...glyph]
+		.map((c) => "U+" + c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0"))
+		.join(" ");
+}
+
+/** One entry, carrying its own data on the element for scrapers. */
+function cell(e: ChartEntry, note = ""): string {
+	const shown = e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph;
+	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
+	const label = note ? `${e.name} — ${note}` : e.name;
+	return `<div class="li" data-glyph="${esc(bare)}" data-cp="${cp(bare)}" data-keys="${esc(display(e.keys))}" data-name="${esc(e.name)}">` +
+		`<b class="ipa">${esc(shown)}</b><i>${esc(display(e.keys))}</i>` +
+		`<span class="nm">${esc(label)}</span></div>`;
+}
+
+function list(entries: ChartEntry[]): string {
+	return entries.map((e) => cell(e)).join("");
 }
 
 function diacritics(): string {
-	const cell = (glyph: string, keys: string, label: string) =>
-		`<div class="li"><b class="ipa">${esc(glyph)}</b><i>${esc(keys)}</i><span class="nm">${esc(label)}</span></div>`;
-	// Both forms of every mark: the ⌥ primary and, where one exists, the ⌥⇧ twin.
-	// Showing only the primary hid half the layer (creaky, breathy, apical, ATR…).
-	const items = marks
-		.filter((m) => m.type === "combining")
-		.flatMap((m) => {
-			const [first, second] = meanings(m.name);
-			const rows = [cell("◌" + m.mark, "⌥" + m.opt, first)];
-			if (m.double !== undefined) {
-				const note = second ?? "second form";
-				rows.push(cell("◌" + m.double, "⌥⇧" + m.opt,
-					m.exclusive ? `${note} — replaces` : note));
-			}
-			return rows;
-		})
-		.join("");
-	return `<div class="cols2">${items}</div>
-	<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧'</i> → secondary stress); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>R</i>.</p>`;
+	return `<div class="cols2">${list(DIACRITICS)}</div>
+	<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧n</i> → creaky); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥p</i>. Rhoticity <b class="ipa">˞</b>: vowel then <i>⇧R</i>. Diacritics beyond the IPA — cedilla, ogonek, horn, ß — are on <a href="/keys">/keys</a>.</p>`;
 }
 
-// ------------------------------------------------------ suprasegmentals
-
 function suprasegmentals(): string {
-	const entries: [string, string, string][] = [
-		["ˈ", "⌥'", "Primary stress"],
-		["ˌ", "⌥⇧'", "Secondary stress"],
-		["ː", "⌥;", "Long"],
-		["ˑ", "⌥⇧;", "Half-long"],
-		["◌̆", "⌥b", "Extra-short"],
-		["|", "|", "Minor (foot) group"],
-		["‖", "| |", "Major (intonation) group"],
-		[".", ".", "Syllable break"],
-		["‿", "⌥z", "Linking (absence of a break)"],
-	];
-	return entries
-		.map(([g, k, name]) => `<div class="li"><b class="ipa">${esc(g)}</b><i>${esc(k)}</i><span class="nm">${name}</span></div>`)
-		.join("");
+	return list(SUPRASEGMENTALS);
 }
 
 function tones(): string {
-	const entries: [string, string, string][] = [
-		["◌̋", "⌥⇧e", "Extra high"],
-		["◌́", "⌥e", "High"],
-		["◌̄", "⌥a", "Mid"],
-		["◌̀", "⌥`", "Low"],
-		["◌̏", "⌥⇧`", "Extra low"],
-		["◌̌", "⌥v", "Rising"],
-		["◌̂", "⌥i", "Falling"],
-		["ꜜ", "⌥o", "Downstep"],
-		["ꜛ", "⌥⇧o", "Upstep"],
-		["↗", "⌥r", "Global rise"],
-		["↘", "⌥f", "Global fall"],
-	];
-	return entries
-		.map(([g, k, name]) => `<div class="li"><b class="ipa">${esc(g)}</b><i>${esc(k)}</i><span class="nm">${name}</span></div>`)
-		.join("");
+	return list(TONES);
 }
 
 // --------------------------------------------------------------- sheet
@@ -389,6 +365,7 @@ export const CHART_HTML = `<!DOCTYPE html>
 	${diacritics()}
 
 	<p class="attrib">Click any symbol to hear it. Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; combining ⌥ marks are typed before their base (dead-key style), spacing marks after.
+	This chart as data: <a href="/chart.json">chart.json</a> · every keystroke: <a href="/keys">keys</a>.
 	Audio: Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses, re-hosted with attribution.
 	Layout derived from <a href="https://www.internationalphoneticassociation.org/content/ipa-chart">The International Phonetic Alphabet (revised to 2015)</a>,
 	© 2015 International Phonetic Association, CC BY-SA 3.0. This sheet is likewise CC BY-SA · <a href="https://ipabet.org">ipabet.org</a></p>
@@ -405,3 +382,79 @@ document.addEventListener("click", (e) => {
 </script>
 </body>
 </html>`;
+
+// ------------------------------------------------------- machine-readable
+
+// GET /chart.json — the same sheet as structured data. The HTML above and this
+// object are rendered from the same tables, so a symbol cannot appear on one
+// and not the other. Keystrokes resolve exactly as `G()` resolves them for the
+// page: reverse-looked-up from spec/ipabet.json, with an explicit fallback for
+// the few glyphs typed as sequences rather than table entries (ejectives, the
+// tie-bar affricate). `keys: null` means the glyph has no IPAbet keystroke.
+//
+// Complements the two other machine surfaces: /ipabet.json is the canonical
+// notation spec, /keys is every keystroke. This one is the IPA chart itself.
+
+interface JsonSymbol {
+	glyph: string;
+	cp: string;
+	keys: string | null;
+	name?: string;
+}
+
+function sym(glyph: string, name?: string, fallback?: string): JsonSymbol {
+	const key = reverse.get(glyph);
+	const keys = key !== undefined ? keyText(key) : (fallback ?? null);
+	return name === undefined ? {glyph, cp: cp(glyph), keys} : {glyph, cp: cp(glyph), keys, name};
+}
+
+function jsonEntry(e: ChartEntry) {
+	return {
+		glyph: e.glyph,
+		cp: cp(e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph),
+		keys: display(e.keys),
+		name: e.name,
+		combining: e.glyph.startsWith("◌"),
+		...(e.on === undefined ? {} : {shownOn: e.on}),
+	};
+}
+
+export const CHART_JSON = JSON.stringify(
+	{
+		about:
+			"The IPA chart (2015, CC BY-SA) with IPAbet keystrokes. " +
+			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes typed in " +
+			"sequence. Combining diacritics are typed before their base (dead-key " +
+			"style); spacing marks after. Canonical spec: /ipabet.json.",
+		pulmonic: {
+			places: PLACES,
+			manners: PULMONIC.map(([manner, cells]) => ({
+				manner,
+				cells: cells.map((c) => ({
+					span: c.span ?? 1,
+					impossible: c.sh === true,
+					voiceless: c.vl === undefined ? null : sym(c.vl),
+					voiced: c.vd === undefined ? null : sym(c.vd),
+				})),
+			})),
+		},
+		clicks: CLICKS.map(([g, n]) => sym(g, n)),
+		implosives: IMPLOSIVES.map(([g, n]) => sym(g, n)),
+		ejectives: {
+			rule: "any voiceless obstruent + ⇧X",
+			examples: EJECTIVES.map(([g, n, k]) => sym(g, n, k)),
+		},
+		other: OTHER.map(([g, n, fb]) => sym(g, n, fb)),
+		vowels: VOWELS.map((v) => ({
+			...sym(v.g),
+			height: v.row,
+			backness: v.col,
+			rounded: v.round,
+		})),
+		diacritics: DIACRITICS.map(jsonEntry),
+		suprasegmentals: SUPRASEGMENTALS.map(jsonEntry),
+		tones: TONES.map(jsonEntry),
+	},
+	null,
+	"\t",
+);

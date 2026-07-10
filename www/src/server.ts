@@ -1,7 +1,7 @@
 import {Router} from "@b9g/router";
 import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
-import {CHART_HTML} from "./chart.ts";
+import {CHART_HTML, CHART_JSON} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {KEYS_HTML, SPEC_JSON} from "./keys.ts";
 import {DESIGN_HTML} from "./design.ts";
@@ -274,6 +274,15 @@ router.route("/keys").get(() => {
 router.route("/design").get(() => {
 	return new Response(DESIGN_HTML, {
 		headers: {"Content-Type": "text/html; charset=utf-8"},
+	});
+});
+
+router.route("/chart.json").get(() => {
+	return new Response(CHART_JSON, {
+		headers: {
+			"Content-Type": "application/json; charset=utf-8",
+			"Access-Control-Allow-Origin": "*",
+		},
 	});
 });
 

@@ -135,7 +135,9 @@ export const KEYS_HTML = `<!DOCTYPE html>
 	<div class="tablewrap"><table>${supTable()}</table></div>
 
 	<h2>Machine access</h2>
-	<p><code>GET /ipabet.json</code> returns the canonical mapping verbatim
+	<p><code>GET /chart.json</code> returns the IPA chart as structured data —
+	every symbol with its codepoint, keystrokes, and place/manner or vowel
+	coordinates. <code>GET /ipabet.json</code> returns the canonical mapping verbatim
 	(the source of every row above). The <code>letters</code> array is the
 	base/digraph list (<code>key</code> is the keystroke sequence, <code>glyph</code>
 	the output); <code>marks</code> is the Option layer; <code>modifiers</code>

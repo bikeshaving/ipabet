@@ -1,0 +1,95 @@
+// The IPA chart's non-grid sections, as data.
+//
+// /chart is the official IPA chart (2015, CC BY-SA) with IPAbet keystrokes
+// printed beside every symbol. It therefore contains IPA symbols and nothing
+// else: no Latin tenants (cedilla, ogonek, dot-above, horn, hỏi hook, ß, the
+// Semitic half-rings) and no extra-IPA tradition marks (Korean fortis). Those
+// are real and typeable — they're listed on /keys and in ipabet.json, where
+// they carry `"ipa": false` — but they are not on the chart the chart is of.
+//
+// These live in data, not markup, for two reasons: `/chart.json` serves them
+// verbatim to machines, and js/test/chart.test.ts types every `keys` string
+// through the engine to prove the label produces the glyph. Hardcoded labels
+// silently drifted twice before this existed (secondary stress and half-long
+// still described the double-press cycling we retired in 2024).
+
+export interface ChartEntry {
+	/** the IPA symbol, with ◌ where it's a combining mark */
+	glyph: string;
+	/** the keystrokes, space-separated. "~x"=⌥x, "~+x"=⌥⇧x, "+x"=⇧x, "x"=x */
+	keys: string;
+	/** what it means, as the IPA chart names it */
+	name: string;
+	/** the base glyph the mark is demonstrated on, as the chart prints it */
+	on?: string;
+	/** keystrokes producing `on`. Defaults to `on` itself when it's its own key. */
+	onKeys?: string;
+}
+
+/** The 31 diacritics of the official chart, in its order. */
+export const DIACRITICS: ChartEntry[] = [
+	{glyph: "◌̥", keys: "~k", name: "Voiceless", on: "n"},
+	{glyph: "◌̬", keys: "~+v", name: "Voiced", on: "d"},
+	{glyph: "ʰ", keys: "h ~p", name: "Aspirated", on: "t"},
+	{glyph: "◌̹", keys: "~+w", name: "More rounded", on: "ɔ", onKeys: "o +H"},
+	{glyph: "◌̜", keys: "~w", name: "Less rounded", on: "ɔ", onKeys: "o +H"},
+	{glyph: "◌̟", keys: "~+=", name: "Advanced", on: "u"},
+	{glyph: "◌̠", keys: "~=", name: "Retracted", on: "e"},
+	{glyph: "◌̈", keys: "~u", name: "Centralized", on: "e"},
+	{glyph: "◌̽", keys: "~x", name: "Mid-centralized", on: "e"},
+	{glyph: "◌̩", keys: "~s", name: "Syllabic", on: "n"},
+	{glyph: "◌̯", keys: "~+s", name: "Non-syllabic", on: "e"},
+	// ⇧5 ⇧R and ⇧5 ⇧H ⇧R give the precomposed ɚ/ɝ; every other vowel takes the
+	// bare hook, so `a` is the honest base to demonstrate the mark on.
+	{glyph: "˞", keys: "+R", name: "Rhoticity", on: "a"},
+	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
+	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
+	{glyph: "◌̼", keys: "~9", name: "Linguolabial", on: "t"},
+	{glyph: "ʷ", keys: "w ~p", name: "Labialized", on: "t"},
+	{glyph: "ʲ", keys: "j ~p", name: "Palatalized", on: "t"},
+	{glyph: "ˠ", keys: "g +H ~p", name: "Velarized", on: "t"},
+	{glyph: "ˤ", keys: "+3 ~p", name: "Pharyngealized", on: "t"},
+	{glyph: "◌̴", keys: "~l", name: "Velarized or pharyngealized", on: "t"},
+	{glyph: "◌̝", keys: "~+.", name: "Raised", on: "e"},
+	{glyph: "◌̞", keys: "~.", name: "Lowered", on: "e"},
+	{glyph: "◌̘", keys: "~+q", name: "Advanced tongue root", on: "e"},
+	{glyph: "◌̙", keys: "~q", name: "Retracted tongue root", on: "e"},
+	{glyph: "◌̪", keys: "~t", name: "Dental", on: "t"},
+	{glyph: "◌̺", keys: "~d", name: "Apical", on: "t"},
+	{glyph: "◌̻", keys: "~+d", name: "Laminal", on: "t"},
+	{glyph: "◌̃", keys: "~n", name: "Nasalized", on: "e"},
+	{glyph: "ⁿ", keys: "n ~p", name: "Nasal release", on: "d"},
+	{glyph: "ˡ", keys: "l ~p", name: "Lateral release", on: "d"},
+	{glyph: "◌̚", keys: "~j", name: "No audible release", on: "d"},
+];
+
+export const SUPRASEGMENTALS: ChartEntry[] = [
+	{glyph: "ˈ", keys: "~'", name: "Primary stress"},
+	{glyph: "ˌ", keys: "~+'", name: "Secondary stress"},
+	{glyph: "ː", keys: "~;", name: "Long"},
+	{glyph: "ˑ", keys: "~+;", name: "Half-long"},
+	{glyph: "◌̆", keys: "~b", name: "Extra-short", on: "e"},
+	{glyph: "|", keys: "|", name: "Minor (foot) group"},
+	{glyph: "‖", keys: "~+z", name: "Major (intonation) group"},
+	{glyph: ".", keys: ".", name: "Syllable break"},
+	{glyph: "‿", keys: "~z", name: "Linking (absence of a break)"},
+];
+
+export const TONES: ChartEntry[] = [
+	{glyph: "◌̋", keys: "~+e", name: "Extra high", on: "e"},
+	{glyph: "◌́", keys: "~e", name: "High", on: "e"},
+	{glyph: "◌̄", keys: "~a", name: "Mid", on: "e"},
+	{glyph: "◌̀", keys: "~`", name: "Low", on: "e"},
+	{glyph: "◌̏", keys: "~+`", name: "Extra low", on: "e"},
+	{glyph: "◌̌", keys: "~v", name: "Rising", on: "e"},
+	{glyph: "◌̂", keys: "~i", name: "Falling", on: "e"},
+	{glyph: "˥", keys: "~5", name: "Extra high (tone letter)"},
+	{glyph: "˦", keys: "~4", name: "High (tone letter)"},
+	{glyph: "˧", keys: "~3", name: "Mid (tone letter)"},
+	{glyph: "˨", keys: "~2", name: "Low (tone letter)"},
+	{glyph: "˩", keys: "~1", name: "Extra low (tone letter)"},
+	{glyph: "ꜜ", keys: "~o", name: "Downstep"},
+	{glyph: "ꜛ", keys: "~+o", name: "Upstep"},
+	{glyph: "↗", keys: "~r", name: "Global rise"},
+	{glyph: "↘", keys: "~f", name: "Global fall"},
+];
