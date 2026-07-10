@@ -2,10 +2,10 @@
 //
 // /chart is the official IPA chart (2015, CC BY-SA) with IPAbet keystrokes
 // printed beside every symbol. It therefore contains IPA symbols and nothing
-// else: no Latin tenants (cedilla, ogonek, dot-above, horn, hỏi hook, ß, the
-// Semitic half-rings) and no extra-IPA tradition marks (Korean fortis). Those
-// are real and typeable — they're listed on /keys and in ipabet.json, where
-// they carry `"ipa": false` — but they are not on the chart the chart is of.
+// else: no Latin tenants (cedilla, ogonek, dot-above, horn, hỏi hook) and no
+// extra-IPA tradition marks (Korean fortis). Those are real and typeable —
+// they're on /keys and in ipabet.json with `"ipa": false` — but not on the
+// chart the chart is of. (ß is the s⇧S ligature digraph, a segment not a mark.)
 //
 // These live in data, not markup, for two reasons: `/chart.json` serves them
 // verbatim to machines, and js/test/chart.test.ts types every `keys` string
