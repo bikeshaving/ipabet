@@ -914,20 +914,14 @@
    "shiftSense": "lesser"
   },
   {
-   "opt": "r",
-   "mark": "↗",
-   "type": "spacing",
-   "group": "Tone",
-   "cp": "U+2197",
-   "name": "NORTH EAST ARROW (global rise)"
-  },
-  {
    "opt": "f",
    "mark": "↘",
    "type": "spacing",
    "group": "Tone",
    "cp": "U+2198",
-   "name": "SOUTH EAST ARROW (global fall)"
+   "name": "SOUTH EAST ARROW (global fall; ⇧ → ↗ global rise, the greater pole). Standalone characters over a phrase, not marks — they attach to nothing. Paired like ⌥o downstep/upstep.",
+   "double": "↗",
+   "shiftSense": "greater"
   },
   {
    "opt": "o",
