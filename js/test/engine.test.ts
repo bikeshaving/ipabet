@@ -74,10 +74,14 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// them, so the pending-base rule never fires (two-glyph lookback).
 	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
-	// even acronyms whose pairs *would* be digraphs stay literal (SH, PH, TH):
-	test("acronym SHA stays SHA", () => expect(chain("+s", "+h", "+a")).toBe("SHA"));
-	test("acronym PHP stays PHP", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
-	test("THE (digraph-bearing caps) stays THE", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
+	// Held-shift acronyms whose pair is a Latin-uppercase digraph now FORM it —
+	// SHA → ƩA — because capital digraphs are always-on; literal comes from a
+	// shift release (or the raw-lock). Greek-uppercase (TH→Θ) and ASCII pairs
+	// stay literal, so THE and PHP are safe untouched.
+	test("held SHA forms the digraph: ⇧S⇧H⇧A → ƩA", () => expect(chain("+s", "+h", "+a")).toBe("ƩA"));
+	test("released SHA stays literal: ⇧S ^⇧H ⇧A → SHA", () => expect(chain("+s", "^+h", "+a")).toBe("SHA"));
+	test("PHP stays PHP (pH is not a digraph)", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
+	test("THE stays THE (tH→θ→Θ is Greek, excluded)", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
 
 	// A plain ASCII base (lowercase i) is not special, so a capital after it is
 	// just a capital — no chain.
@@ -345,7 +349,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 	// It must fire ONLY while an accent pends — acronyms and shift-chaining intact.
 	test("acronyms and chaining are untouched", () => {
 		expect(typed("+u", "+r", "+l")).toBe("URL");
-		expect(typed("+s", "+h", "+a")).toBe("SHA");
+		expect(typed("+s", "^+h", "+a")).toBe("SHA"); // release escapes the capital digraph
 		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ");
 		expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
 	});
@@ -533,6 +537,42 @@ describe("shift-release escapes a chain to a literal capital", () => {
 	// $PATH stays literal with or without releases: the final T is preceded by a
 	// literal A, not an IPA segment, so the run breaks there regardless.
 	test("$PATH → ɾPATH", () => expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
+});
+
+// Capital digraphs: capitalize the base, capitalize the result. Held shift forms
+// them (⇧A⇧E → Æ), a shift release escapes to literal. Every real Latin-Extended
+// uppercase is reachable — orthographic (Ŋ Ɛ Ɔ) and phantom (Ʃ Ʈ) alike; only
+// Greek uppercases (θ→Θ) and plain-ASCII ones (tJ→c→C) are excluded, being
+// nonsense in a Latin word. The IPA has no capitals, so this is purely an
+// orthographic courtesy for European and African writing systems.
+describe("capital digraphs (capitalize the base → capitalize the result)", () => {
+	test("European: Æ Œ Ø", () => {
+		expect(typed("+a", "+e")).toBe("Æ");
+		expect(typed("+o", "+e")).toBe("Œ");
+		expect(typed("+e", "+w")).toBe(nfc("Ø"));
+	});
+	test("African: Ɛ Ɔ Ŋ Ɖ", () => {
+		expect(typed("+e", "+h")).toBe("Ɛ");
+		expect(typed("+o", "+h")).toBe("Ɔ");
+		expect(typed("+n", "+g")).toBe("Ŋ");
+		expect(typed("+d", "+r")).toBe("Ɖ");
+	});
+	test("phantom Latin capitals are reachable too: Ʃ Ʈ", () => {
+		expect(typed("+s", "+h")).toBe("Ʃ");
+		expect(typed("+t", "+r")).toBe("Ʈ");
+	});
+	test("lowercase base → lowercase result: a⇧E → æ", () =>
+		expect(typed("a", "+e")).toBe("æ"));
+	test("Title Case is safe (modifier not shifted): ⇧S h i p → Ship", () =>
+		expect(typed("+s", "h", "i", "p")).toBe("Ship"));
+	test("Greek uppercase excluded: ⇧T⇧H → TH (not Θ)", () =>
+		expect(typed("+t", "+h")).toBe("TH"));
+	test("ASCII uppercase excluded: ⇧T⇧J → TJ (not C)", () =>
+		expect(typed("+t", "+j")).toBe("TJ"));
+	test("shift release escapes to literal: ⇧A ^⇧E → AE", () =>
+		expect(typed("+a", "^+e")).toBe("AE"));
+	test("does not disturb a lowercase chain: ə ⇧O⇧H → əɔ", () =>
+		expect(typed("+5", "+o", "+h")).toBe(nfc("əɔ")));
 });
 
 describe("superscript operator ⌥p", () => {

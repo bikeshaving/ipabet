@@ -132,6 +132,13 @@ const SHIFTED_DIGITS: Record<string, string> = {
 const optShiftDigits: Record<string, string> =
 	(spec as {optShift?: Record<string, string>}).optShift ?? {};
 
+// A capital digraph's uppercase must be LATIN — θ/χ/β uppercase into Greek
+// Θ/Χ/Β, which is never wanted in a Latin/IPA context (and keeps "THE" literal).
+const isGreekUpper = (c: string): boolean => {
+	const n = c.codePointAt(0)!;
+	return n >= 0x370 && n <= 0x3ff;
+};
+
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 
 // Voiceless obstruents — the ejectivizable set (⇧P). Plosives + oral
@@ -414,6 +421,24 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
 			if (p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c))) {
 				base = base.toLowerCase();
+			}
+		}
+		// Capital digraph: the base is STILL a capital (not lowered into a chain
+		// above), shift is held (chainLive — releasing it escapes to literal, ⇧A
+		// ⟨let go⟩ ⇧E → AE), and the digraph's glyph has a LATIN uppercase. Then it
+		// is the capital form: ⇧A⇧E → Æ, ⇧N⇧G → Ŋ. The uppercase face of the same
+		// digraph, gated by the same release law as lowercase chaining. Greek
+		// uppercases (θχβ → ΘΧΒ) fall through, which also keeps "THE" literal.
+		if (shift && chainLive && /^[A-Z]$/.test(base)) {
+			const low = transforms.get(base.toLowerCase() + s);
+			if (low !== undefined) {
+				const up = low.toUpperCase();
+				// A real Latin-Extended capital — orthographic (Ŋ Ɛ) or phantom (Ʃ Ʈ),
+				// both are legitimate letters to want. Excluded: Greek uppercases (θ→Θ,
+				// wrong script) and plain ASCII (tJ→c→C, which would make ⇧T⇧J → "C").
+				if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
+					return {edit: replaceCluster(p, recompose(up, reposition(up, marks))), pending: []};
+				}
 			}
 		}
 		const combo = transforms.get(base + s);
