@@ -287,9 +287,3 @@ your ears, and your transcription, must not.`,
 		],
 	},
 ];
-
-export const COMING = [
-	"4 · Diphthongs, rhotics, and stress (eɪ aɪ ɔɪ aʊ oʊ, ɚ ɝ, ˈ and ˌ)",
-	"5 · Narrow transcription: aspiration, flapping, and the [brackets]",
-	"6 · Beyond English: new sounds for new languages",
-];

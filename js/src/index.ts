@@ -246,11 +246,6 @@ function pendingDiacritic(scalar: string, pending: Pending): Step {
 	return {edit: {type: "noop"}, pending: next};
 }
 
-/** Spacing mark (stress, length, tone letter): insert it in place, postfix. */
-function applySpacing(scalar: string): Edit {
-	return {type: "insert", text: scalar};
-}
-
 /** Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form. */
 function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	const scalar = secondary && m.double !== undefined ? m.double : m.mark;
