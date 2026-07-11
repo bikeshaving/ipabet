@@ -159,7 +159,7 @@ function keystrokeFromLabel(lab: string): Keystroke {
 }
 function simulate(labels: string[], upto: number): string {
 	let b = "";
-	for (let i = 0; i < upto; i++) { const k = keystrokeFromLabel(labels[i]); b = applyEdit(b, handleKey(b, k), nativeChar(k)); }
+	for (let i = 0; i < upto; i++) { const k = keystrokeFromLabel(labels[i]); b = applyEdit(b, handleKey(b, k).edit, nativeChar(k)); }
 	return b;
 }
 function nextKeystroke(): Keystroke | null {
