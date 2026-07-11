@@ -299,15 +299,33 @@ class InputController: IMKInputController {
         let t = Tables.shared
         let flags = event.modifierFlags
         Dbg.log("↓ kc=\(event.keyCode) ch=\(Dbg.str(event.characters)) mods=\(Dbg.mods(flags)) app=\(client.bundleIdentifier() ?? "?")")
-        if flags.contains(.command) || flags.contains(.control) {
-            Dbg.log("  → pass (cmd/ctrl chord — leader keys land here)")
+        // Secure input (password fields): the OS already bypasses IMEs here, but
+        // decline explicitly in case a host leaks events — never transform, and
+        // never run the escape below, into a password.
+        if inSecureContext(client.bundleIdentifier() ?? "") { return false }
+        // Command chords always pass (app shortcuts). Control chords pass too —
+        // they are leader keys (tmux ^b, emacs ^x) — with ONE exception:
+        // Ctrl+Shift+<letter> is the escape to a literal capital. It emits the raw
+        // capital and bypasses everything downstream — the ⇧-modifier transforms,
+        // the shift-chain, and the capital-digraph rule — so "GitHub" stays GitHub
+        // (not Giθub) and ⌃⇧A ⌃⇧E is a literal "AE" (not Æ). Letters only:
+        // Ctrl+Shift+<digit/punct> keeps its native chord.
+        if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flushPending(client); return false }
+        if flags.contains(.control) {
+            if flags.contains(.shift) {
+                let oc = USLayout.char(event.keyCode, shift: false)
+                if oc.count == 1, oc.first!.isLetter {
+                    flushPending(client)
+                    let cap = oc.uppercased()
+                    insert(cap, client)
+                    Dbg.log("  → ⌃⇧ escape → literal '\(cap)'")
+                    return true
+                }
+            }
+            Dbg.log("  → pass (ctrl chord — leader keys land here)")
             flushPending(client)
             return false
         }
-        // Secure input (password fields): the OS already bypasses IMEs here,
-        // but decline explicitly in case a host leaks events — never
-        // transform what someone types into a password.
-        if inSecureContext(client.bundleIdentifier() ?? "") { return false }
 
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
@@ -341,45 +359,31 @@ class InputController: IMKInputController {
             return handleBackspace(client)
         }
 
-        // Option-Shift: escape hatch. On letters it inserts the raw-US shifted
-        // char (⌥⇧H → H, to dodge a transform). On digits the escape exists only
-        // because ⇧<digit> is an IPA glyph, leaving the shifted character
-        // otherwise unreachable (⇧2 is ʔ, so @ lives here) — where ⇧<digit> is
-        // unclaimed the escape is redundant and we DECLINE, so the host's ⌥⇧8 °,
-        // ⌥⇧9 ·, ⌥⇧0 ‚ survive. Two digit slots are spent deliberately on
-        // characters (⌥⇧1 → ¡, ⌥⇧6 → ß). On punctuation it always declines, so
-        // Mac's own Option typography passes through (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
+        // Option-Shift: the raw-US escape on the number row. The letter escape
+        // moved to Ctrl+Shift (see handle()'s top); ⌥⇧<letter> now declines, so
+        // the host's own Option typography passes through. On digits the escape
+        // exists only because ⇧<digit> is an IPA glyph, leaving the shifted
+        // character otherwise unreachable (⇧2 is ʔ, so @ lives here) — where
+        // ⇧<digit> is unclaimed the escape is redundant and we DECLINE, so the
+        // host's ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ survive. Two digit slots are spent
+        // deliberately on characters (⌥⇧1 → ¡, ⌥⇧6 → ß). On punctuation it always
+        // declines, so Mac's Option typography passes (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
-            // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary stress)
-            if oc.count == 1, let m = t.optMarks[oc], let dbl = m.double {
-                // The escape, sharing the chord with the mark. ⇧<letter> transforms the
-                // glyph before it (t ⇧H → θ), so a capital that forms a digraph is
-                // otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is that
-                // escape — but on these keys it already holds the mark's second form.
-                //
-                // So: press it again. The first press leaves the mark PENDING and emits
-                // nothing; the second commits the raw capital instead. Nothing is lost —
-                // a second press used to empty pending and emit nothing at all, and
-                // backspace still cancels a pending mark silently.
-                //
-                // Spacing marks never go pending, so they have no second press to read.
-                // Only when that mark is the whole composition — a half-built stack of
-                // diacritics is not an escape, and unwinding one from the middle has
-                // no sensible marked-text rendering.
-                if !m.spacing, let ds = dbl.unicodeScalars.first, pending == [ds] {
-                    pending = []
-                    updateMarked(client)          // tear the composition down first
-                    insert(oc.uppercased(), client)
-                    return true
-                }
+            // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
+            // stress). A capital that forms a digraph ("GitHub" → Giθub) is escaped
+            // with Ctrl+Shift now (see handle()'s top), so this no longer competes
+            // with a raw-capital escape — it just applies the mark's second form.
+            if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
                 applyMark(m, secondary: true, client); return true
             }
-            guard let c = oc.first, c.isLetter || c.isNumber else { flushPending(client); return false }
-            if c.isNumber {
-                if let spent = t.optShiftDigits[oc] { flushPending(client); insert(spent, client); return true }
-                guard t.letters[oc] != nil else { flushPending(client); return false }
-            }
+            // The raw-US escape survives only on the number row: ⇧<digit> is an IPA
+            // glyph, so the shifted symbol is otherwise unreachable (⌥⇧2 → @). A
+            // letter here declines (the guard rejects it), letting the host's ⌥⇧
+            // typography pass — the capital escape lives on Ctrl+Shift.
+            guard let c = oc.first, c.isNumber else { flushPending(client); return false }
+            if let spent = t.optShiftDigits[oc] { flushPending(client); insert(spent, client); return true }
+            guard t.letters[oc] != nil else { flushPending(client); return false }
             let raw = USLayout.char(event.keyCode, shift: true)
             guard !raw.isEmpty else { flushPending(client); return false }
             flushPending(client)
