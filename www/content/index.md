@@ -30,6 +30,10 @@ Unshifted keys are 100% native US. Every key always emits something, and <kbd>âŒ
 
 ## The layers
 
+Type into the box â€” the same engine as the keyboard runs on every keystroke.
+
+<LayersTry/>
+
 <LayersTable/>
 
 ## Typing IPA has a history

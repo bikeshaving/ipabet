@@ -14,6 +14,8 @@ import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import landingClient from "./landing-client.ts" with {assetBase: "/assets/"};
 // @ts-ignore
+import layersClient from "./layers-client.ts" with {assetBase: "/assets/"};
+// @ts-ignore
 import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 
 // / — the landing page. Prose lives as a document (content/index.md); this page
@@ -40,6 +42,11 @@ const landingComponents = {
 	...components,
 	Cards: ({children}: any) => jsx`<div class="cards">${children}</div>`,
 	Card: ({token, children}: any) => jsx`<div class="card"><h3>${token.title}</h3>${children}</div>`,
+	LayersTry: () => jsx`
+		<div class="layers-try">
+			<textarea id="layers-try" rows="1" spellcheck="false" autocapitalize="off" autocomplete="off"
+				placeholder="Try it — type s⇧H, then ⇧5, then ⌥n n… the layers transform live"></textarea>
+		</div>`,
 	LayersTable: () => jsx`
 		<div class="tablewrap"><table>
 			<tr><th>Layer</th><th>Meaning</th><th>Examples</th></tr>
@@ -90,6 +97,7 @@ export function Landing() {
 			</main>
 			<${SerializeScript} name="__DEMO" value=${DEMO} />
 			<script type="module" src=${landingClient}></script>
+			<script type="module" src=${layersClient}></script>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
 			<script type="module" src=${chartViz}></script>
 		<//>`;
