@@ -2,3 +2,6 @@ build/
 *.icns
 .DS_Store
 node_modules/
+
+# generated at build time by scripts/bake-content.ts
+www/src/content.gen.ts

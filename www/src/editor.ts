@@ -1,10 +1,15 @@
+import {jsx} from "@b9g/crank/jsx-tag";
 import {CSS} from "./style.ts";
+import {Layout} from "./layout.ts";
 // Shovel rewrites this import to a hashed URL string at build time.
 // @ts-ignore
 import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
 
 // /type — a freeform IPA scratchpad. The real engine runs on every keystroke,
 // so you can transcribe directly in the browser without installing the IME.
+// This page is authored as a Crank server component (rendered to a string in the
+// worker); the interactive island stays vanilla — editor-client.ts attaches to
+// the #ed / #pad DOM below exactly as before, so no framework ships to the client.
 
 const EDITOR_CSS = `
 #pad { display: flex; flex-direction: column; gap: .9rem; margin: 1.5rem 0; }
@@ -32,52 +37,48 @@ const EDITOR_CSS = `
 .tips .combo { white-space: nowrap; }
 `;
 
-export const EDITOR_HTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Type IPA — IPAbet scratchpad</title>
-<meta name="description" content="A freeform IPA scratchpad: type the International Phonetic Alphabet directly in your browser with the real IPAbet engine — no install. Digraphs, diacritics, and the shifted number row, then copy the Unicode out.">
-<style>${CSS}${EDITOR_CSS}</style>
-</head>
-<body>
-<main>
-	<header style="padding-bottom:1rem">
-		<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
-		<p class="tagline" style="font-size:1.05rem">A scratchpad. Type IPA right here.</p>
-		<p class="trust">The real engine, in the browser — no install. <span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span> Copy the Unicode out when you're done.</p>
-	</header>
+const DESC =
+	"A freeform IPA scratchpad: type the International Phonetic Alphabet directly in your browser with the real IPAbet engine — no install. Digraphs, diacritics, and the shifted number row, then copy the Unicode out.";
 
-	<div id="pad">
-		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"
-			placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · ⌥n n → ñ"></textarea>
-		<div id="bar2">
-			<span id="count">0</span>
-			<span class="grow"></span>
-			<button id="clear">Clear</button>
-			<button id="copy">Copy</button>
-		</div>
-		<p class="tips">
-			Bare keys type plain US; the IPA lives on the shifted positions.
-			<span class="combo"><kbd>⇧</kbd>+letter</span> transforms the segment before the cursor
-			(<span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span>),
-			<span class="combo"><kbd>⇧</kbd>+number</span> gives the homeless glyphs
-			(<span class="combo"><kbd>⇧2</kbd><span class="arrow">→</span><b class="ipa">ʔ</b></span>),
-			<span class="combo"><kbd>⌥</kbd></span> adds diacritics
-			(<span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span>),
-			and <span class="combo"><kbd>⌥⇧</kbd></span> escapes to raw US. The
-			<a href="/chart">full chart</a> has every key.
-		</p>
-	</div>
+export function Type() {
+	return jsx`
+		<${Layout} title="Type IPA — IPAbet scratchpad" desc=${DESC} css=${CSS + EDITOR_CSS}>
+			<main>
+				<header style="padding-bottom:1rem">
+					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
+					<p class="tagline" style="font-size:1.05rem">A scratchpad. Type IPA right here.</p>
+					<p class="trust">The real engine, in the browser — no install. <span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span> Copy the Unicode out when you're done.</p>
+				</header>
 
-	<footer>
-		<a href="/">← IPAbet</a>
-		<a href="/chart">The chart</a>
-		<a href="/learn">Learn</a>
-		<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
-	</footer>
-</main>
-<script type="module" src="${editorClient}"></script>
-</body>
-</html>`;
+				<div id="pad">
+					<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"
+						placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · ⌥n n → ñ"></textarea>
+					<div id="bar2">
+						<span id="count">0</span>
+						<span class="grow"></span>
+						<button id="clear">Clear</button>
+						<button id="copy">Copy</button>
+					</div>
+					<p class="tips">
+						Bare keys type plain US; the IPA lives on the shifted positions.
+						<span class="combo"><kbd>⇧</kbd>+letter</span> transforms the segment before the cursor
+						(<span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span>),
+						<span class="combo"><kbd>⇧</kbd>+number</span> gives the homeless glyphs
+						(<span class="combo"><kbd>⇧2</kbd><span class="arrow">→</span><b class="ipa">ʔ</b></span>),
+						<span class="combo"><kbd>⌥</kbd></span> adds diacritics
+						(<span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span>),
+						and <span class="combo"><kbd>⌥⇧</kbd></span> escapes to raw US. The
+						<a href="/chart">full chart</a> has every key.
+					</p>
+				</div>
+
+				<footer>
+					<a href="/">← IPAbet</a>
+					<a href="/chart">The chart</a>
+					<a href="/learn">Learn</a>
+					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
+				</footer>
+			</main>
+			<script type="module" src=${editorClient}></script>
+		<//>`;
+}

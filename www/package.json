@@ -5,15 +5,20 @@
   "description": "ipabet.org — IPAbet, type IPA at typing speed",
   "type": "module",
   "scripts": {
+    "bake": "bun run scripts/bake-content.ts",
+    "predevelop": "npm run bake",
     "develop": "shovel develop src/server.ts --platform cloudflare",
+    "prebuild": "npm run bake",
     "build": "shovel build src/server.ts --platform cloudflare",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@b9g/assets": "^0.2.1",
     "@b9g/crank": "^0.7.9",
+    "@b9g/crankdown": "^0.1.2",
     "@b9g/router": "^0.2.5",
-    "@b9g/shovel": "^0.2.19"
+    "@b9g/shovel": "^0.2.20",
+    "front-matter": "^4.0.2"
   },
   "devDependencies": {
     "wrangler": "^4.69.0"

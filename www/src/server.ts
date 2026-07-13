@@ -1,11 +1,13 @@
 import {Router} from "@b9g/router";
+import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
 import {CHART_HTML, CHART_JSON} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
 import {KEYS_HTML, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
-import {DESIGN_HTML} from "./design.ts";
-import {EDITOR_HTML} from "./editor.ts";
+import {Design} from "./design.ts";
+import {Type} from "./editor.ts";
+import {page} from "./layout.ts";
 import {CHART_CSS} from "./chart-style.ts";
 import {AUDIO} from "./audio-map.ts";
 // Shovel rewrites this import to a hashed URL string at build time.
@@ -272,11 +274,7 @@ router.route("/keys").get(() => {
 	});
 });
 
-router.route("/design").get(() => {
-	return new Response(DESIGN_HTML, {
-		headers: {"Content-Type": "text/html; charset=utf-8"},
-	});
-});
+router.route("/design").get(() => page(jsx`<${Design} />`));
 
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
@@ -311,11 +309,7 @@ router.route("/learn").get(() => {
 	});
 });
 
-router.route("/type").get(() => {
-	return new Response(EDITOR_HTML, {
-		headers: {"Content-Type": "text/html; charset=utf-8"},
-	});
-});
+router.route("/type").get(() => page(jsx`<${Type} />`));
 
 self.addEventListener("fetch", (event) => {
 	event.respondWith(router.handle(event.request));
