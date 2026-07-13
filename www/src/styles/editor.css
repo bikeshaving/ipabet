@@ -1,0 +1,23 @@
+#pad { display: flex; flex-direction: column; gap: .9rem; margin: 1.5rem 0; }
+#ed {
+	width: 100%; min-height: 48vh; resize: vertical;
+	background: var(--card); color: var(--fg);
+	border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem;
+	font-family: "Charis SIL","Doulos SIL","Times New Roman",serif;
+	font-size: 1.5rem; line-height: 1.7; letter-spacing: .01em;
+	outline: none; transition: border-color .15s;
+}
+#ed:focus { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+#ed::placeholder { color: var(--dim); opacity: .7; }
+#bar2 { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+#bar2 .grow { flex: 1; }
+#bar2 button {
+	font: .82rem ui-monospace, Menlo, monospace; padding: .4rem .85rem;
+	border-radius: 999px; border: 1px solid var(--line); background: var(--bg);
+	color: var(--fg); cursor: pointer; transition: color .15s, border-color .15s, background .15s;
+}
+#bar2 button:hover { border-color: var(--accent); color: var(--accent); }
+#count { color: var(--dim); font: .78rem ui-monospace, Menlo, monospace; }
+.tips { color: var(--dim); font-size: .9rem; line-height: 1.6; }
+.tips kbd { font-size: .82rem; }
+.tips .combo { white-space: nowrap; }

@@ -1,7 +1,3 @@
-/* Markdown documents render without <section> wrappers, so headings carry the
-   section spacing that global.css puts on <section>. */
-main h2 { margin-top: 4rem; }
-
 .lede { font-size: 1.15rem; }
 ol.constraints { list-style: none; margin: 1.5rem 0 0; counter-reset: c; }
 ol.constraints > li {

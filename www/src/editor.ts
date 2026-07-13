@@ -1,7 +1,10 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import {CSS} from "./style.ts";
 import {Layout} from "./layout.ts";
-// Shovel rewrites this import to a hashed URL string at build time.
+import {Combo} from "./components/ui.ts";
+// @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
+import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
+// @ts-ignore
+import editorCss from "./styles/editor.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
 
@@ -11,43 +14,17 @@ import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
 // worker); the interactive island stays vanilla — editor-client.ts attaches to
 // the #ed / #pad DOM below exactly as before, so no framework ships to the client.
 
-const EDITOR_CSS = `
-#pad { display: flex; flex-direction: column; gap: .9rem; margin: 1.5rem 0; }
-#ed {
-	width: 100%; min-height: 48vh; resize: vertical;
-	background: var(--card); color: var(--fg);
-	border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem;
-	font-family: "Charis SIL","Doulos SIL","Times New Roman",serif;
-	font-size: 1.5rem; line-height: 1.7; letter-spacing: .01em;
-	outline: none; transition: border-color .15s;
-}
-#ed:focus { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
-#ed::placeholder { color: var(--dim); opacity: .7; }
-#bar2 { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
-#bar2 .grow { flex: 1; }
-#bar2 button {
-	font: .82rem ui-monospace, Menlo, monospace; padding: .4rem .85rem;
-	border-radius: 999px; border: 1px solid var(--line); background: var(--bg);
-	color: var(--fg); cursor: pointer; transition: color .15s, border-color .15s, background .15s;
-}
-#bar2 button:hover { border-color: var(--accent); color: var(--accent); }
-#count { color: var(--dim); font: .78rem ui-monospace, Menlo, monospace; }
-.tips { color: var(--dim); font-size: .9rem; line-height: 1.6; }
-.tips kbd { font-size: .82rem; }
-.tips .combo { white-space: nowrap; }
-`;
-
 const DESC =
 	"A freeform IPA scratchpad: type the International Phonetic Alphabet directly in your browser with the real IPAbet engine — no install. Digraphs, diacritics, and the shifted number row, then copy the Unicode out.";
 
 export function Type() {
 	return jsx`
-		<${Layout} title="Type IPA — IPAbet scratchpad" desc=${DESC} css=${CSS + EDITOR_CSS}>
+		<${Layout} title="Type IPA — IPAbet scratchpad" desc=${DESC} styles=${[globalCss, editorCss]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
 					<p class="tagline" style="font-size:1.05rem">A scratchpad. Type IPA right here.</p>
-					<p class="trust">The real engine, in the browser — no install. <span class="combo"><kbd>s</kbd><kbd>⇧H</kbd><span class="arrow">→</span><b class="ipa">ʃ</b></span> Copy the Unicode out when you're done.</p>
+					<p class="trust">The real engine, in the browser — no install. <${Combo} keys="s ⇧H" out="ʃ" /> Copy the Unicode out when you're done.</p>
 				</header>
 
 				<div id="pad">
@@ -62,11 +39,11 @@ export function Type() {
 					<p class="tips">
 						Bare keys type plain US; the IPA lives on the shifted positions.
 						<span class="combo"><kbd>⇧</kbd>+letter</span> transforms the segment before the cursor
-						(<span class="combo"><kbd>t</kbd><kbd>⇧R</kbd><span class="arrow">→</span><b class="ipa">ʈ</b></span>),
+						(<${Combo} keys="t ⇧R" out="ʈ" />),
 						<span class="combo"><kbd>⇧</kbd>+number</span> gives the homeless glyphs
-						(<span class="combo"><kbd>⇧2</kbd><span class="arrow">→</span><b class="ipa">ʔ</b></span>),
+						(<${Combo} keys="⇧2" out="ʔ" />),
 						<span class="combo"><kbd>⌥</kbd></span> adds diacritics
-						(<span class="combo"><kbd>a</kbd><kbd>⌥;</kbd><span class="arrow">→</span><b class="ipa">aː</b></span>),
+						(<${Combo} keys="a ⌥;" out="aː" />),
 						and <span class="combo"><kbd>⌥⇧</kbd></span> escapes to raw US. The
 						<a href="/chart">full chart</a> has every key.
 					</p>
