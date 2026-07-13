@@ -40,16 +40,10 @@
 	margin-left: 2px; animation: blink 1.1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 #typedwrap.good { border-color: #1a7f37; background: color-mix(in srgb, #1a7f37 9%, transparent); }
-#typedwrap.bad { border-color: #c43a3a; background: color-mix(in srgb, #c43a3a 12%, transparent);
-	animation: shake .42s cubic-bezier(.36,.07,.19,.97); }
+/* Wrongness reads as a red state, not motion — no shake. */
+#typedwrap.bad { border-color: #c43a3a; background: color-mix(in srgb, #c43a3a 12%, transparent); }
 #typedwrap.bad #typed { color: #c43a3a; }
 #typedwrap.bad .caret { opacity: 0; }
-@keyframes shake {
-	10%, 90% { transform: translateX(-1px); }
-	20%, 80% { transform: translateX(2px); }
-	30%, 50%, 70% { transform: translateX(-6px); }
-	40%, 60% { transform: translateX(6px); }
-}
 #typedwrap.good .caret { opacity: 0; }
 
 #hint { height: 2.4rem; margin-top: 1.1rem; display: flex; align-items: center; justify-content: center; gap: .25rem; }

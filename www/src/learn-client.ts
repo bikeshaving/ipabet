@@ -125,7 +125,7 @@ function check() {
 		if (simulate(labels, p).normalize("NFC") === b) return; // on-path, still typing
 	misses += 1;
 	const w = $("#typedwrap");
-	w.classList.remove("bad"); void w.offsetWidth; w.classList.add("bad"); // restart the shake on each fresh deviation
+	w.classList.add("bad"); // flag the miss with a red state (no motion — see learn.css)
 	setTimeout(() => w.classList.remove("bad"), 420);
 	renderHint();
 }
