@@ -1,0 +1,15 @@
+:root { --bg:#fff; --fg:#111; --dim:#666; --line:#ddd; --k:#2555c4; }
+@media (prefers-color-scheme: dark){:root{--bg:#101012;--fg:#e8e8e6;--dim:#909090;--line:#2a2a2e;--k:#7aa2ff;}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
+main{max-width:52rem;margin:0 auto;padding:2rem 1.25rem 5rem}
+h1{font-size:1.8rem}h2{font-size:1.2rem;margin:2rem 0 .5rem}
+p{margin:.5rem 0;color:var(--dim);font-size:.95rem}
+a{color:var(--k)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem;margin-top:.5rem}
+td{padding:.3rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+td.k{font-family:ui-monospace,Menlo,monospace;color:var(--k);white-space:nowrap}
+td.g{font-family:"Charis SIL","Doulos SIL","Times New Roman",serif;font-size:1.15rem}
+td.cp{font-family:ui-monospace,Menlo,monospace;color:var(--dim);font-size:.8rem;white-space:nowrap}

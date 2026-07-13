@@ -1,0 +1,58 @@
+:root { --fg: #111; --dim: #555; --line: #222; --shade: #c8c8c8; --key: #4455aa; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: #e8e8e6; }
+body { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; color: var(--fg); }
+.sheet {
+	background: #fff; width: 8.5in; min-height: 11in; margin: 1rem auto;
+	padding: 0.45in 0.5in; box-shadow: 0 2px 14px rgba(0,0,0,0.18);
+	font-size: 9.5pt; line-height: 1.25;
+}
+h1 { font-size: 14pt; text-align: center; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 0.15in; }
+h1 i { font-style: normal; color: var(--key); }
+h3 { font-size: 9.5pt; font-weight: 700; letter-spacing: 0.04em; margin: 0.16in 0 0.06in; }
+h4 { font-size: 8.5pt; font-weight: 700; margin-bottom: 0.04in; }
+.ipa { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-weight: 400; }
+i { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; font-size: 6.4pt; color: var(--key); }
+
+table.grid { border-collapse: collapse; width: 100%; table-layout: fixed; }
+table.grid th, table.grid td { border: 0.75pt solid var(--line); padding: 1.5pt 2pt; text-align: center; }
+table.grid tr:first-child th { font-size: 7pt; font-weight: 400; }
+table.grid tr th:first-child { text-align: left; font-size: 7pt; font-weight: 400; width: 0.72in; border: none; padding-right: 3pt; }
+table.grid tr:first-child th:first-child { border: none; }
+table.grid td { height: 0.34in; }
+table.grid td .u { display: inline-flex; flex-direction: column; align-items: center; width: 50%; }
+table.grid td .u .ipa { font-size: 12pt; }
+table.grid td.sh { background: var(--shade); }
+table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(--shade) 50%); }
+
+.row { display: flex; gap: 0.3in; align-items: flex-start; }
+.row > div { flex: 1; }
+.cols3 { display: flex; gap: 0.18in; }
+.cols3 > div { flex: 1; }
+.cols2 { columns: 2; column-gap: 0.2in; }
+.li { display: flex; align-items: baseline; gap: 4pt; break-inside: avoid; padding: 0.6pt 0; }
+.li .ipa { font-size: 11pt; min-width: 14pt; text-align: center; }
+.li .nm { font-size: 7.5pt; }
+.fine { font-size: 7pt; color: var(--dim); margin-top: 3pt; }
+
+svg { width: 100%; height: auto; }
+svg .vgrid line { stroke: var(--line); stroke-width: 1; }
+svg circle { fill: var(--fg); }
+/* White halo lifts the glyph/keystroke off the trapezoid lines so the rules
+   don't read as strike-throughs. paint-order draws the stroke behind the fill. */
+svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); paint-order: stroke; stroke: #fff; stroke-width: 2.5px; stroke-linejoin: round; }
+svg text.axis { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+svg text.axis { font-size: 9px; fill: var(--dim); }
+
+.attrib { font-size: 6.5pt; color: var(--dim); margin-top: 0.14in; text-align: center; }
+.attrib a { color: var(--dim); }
+[data-audio] { cursor: pointer; }
+[data-audio]:hover .g, svg text.v[data-audio]:hover { fill: var(--key); color: var(--key); }
+.webnav { text-align: center; font-family: -apple-system, sans-serif; font-size: 0.85rem; padding: 0.75rem; }
+@media print {
+	html { background: #fff; }
+	.sheet { box-shadow: none; margin: 0; width: auto; min-height: auto; padding: 0; zoom: 0.78; }
+	.webnav { display: none; }
+	@page { size: letter portrait; margin: 0.35in; }
+}

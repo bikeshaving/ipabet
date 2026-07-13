@@ -2,9 +2,9 @@ import {Router} from "@b9g/router";
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 import {CSS} from "./style.ts";
-import {CHART_HTML, CHART_JSON} from "./chart.ts";
+import {Chart, CHART_JSON} from "./chart.ts";
 import {LEARN_HTML} from "./learn.ts";
-import {KEYS_HTML, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
+import {Keys, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
 import {Design} from "./design.ts";
 import {Type} from "./editor.ts";
 import {page} from "./layout.ts";
@@ -262,17 +262,9 @@ router.route("/").get(() => {
 	});
 });
 
-router.route("/chart").get(() => {
-	return new Response(CHART_HTML, {
-		headers: {"Content-Type": "text/html; charset=utf-8"},
-	});
-});
+router.route("/chart").get(() => page(jsx`<${Chart} />`));
 
-router.route("/keys").get(() => {
-	return new Response(KEYS_HTML, {
-		headers: {"Content-Type": "text/html; charset=utf-8"},
-	});
-});
+router.route("/keys").get(() => page(jsx`<${Keys} />`));
 
 router.route("/design").get(() => page(jsx`<${Design} />`));
 
