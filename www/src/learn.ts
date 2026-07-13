@@ -36,6 +36,11 @@ const doc = docs.learn;
 // and builds #kbd itself, so it must NOT be pre-populated here.
 const Scaffold = () => jsx`
 	<div id="controls">
+		<div id="lessonnav">
+			<button id="prevlesson" aria-label="Previous lesson" title="Previous lesson">◀</button>
+			<select id="lessonpick" aria-label="Jump to lesson"></select>
+			<button id="nextlesson" aria-label="Next lesson" title="Next lesson">▶</button>
+		</div>
 		<button id="ear" aria-pressed="false" title="Hide the symbol and type from the sound alone">
 			<span class="dot"></span>Ear training</button>
 	</div>
@@ -66,5 +71,6 @@ export function Learn() {
 			</main>
 			<${SerializeScript} name="__CURRICULUM" value=${LESSONS} />
 			<script type="module" src=${learnClient}></script>
-		<//>`;
+		<//>
+	`;
 }

@@ -90,6 +90,21 @@ function render() {
 	$("#barfill").style.width = lesson().words.length ? `${((wi + 1) / lesson().words.length) * 100}%` : "0";
 	renderHint();
 	highlightKeyboard();
+	syncNav();
+}
+// Jump to a lesson (prev/next buttons or the picker). Clamped; resets to the
+// lesson's first word.
+function goLesson(n: number) {
+	const clamped = Math.min(Math.max(n, 0), LESSONS.length - 1);
+	if (clamped === li && wi === 0) return;
+	li = clamped; wi = 0; save();
+	goWord(true);
+}
+function syncNav() {
+	const pick = document.querySelector("#lessonpick") as HTMLSelectElement | null;
+	if (pick && pick.value !== String(li)) pick.value = String(li);
+	(document.querySelector("#prevlesson") as HTMLButtonElement | null)?.toggleAttribute("disabled", li === 0);
+	(document.querySelector("#nextlesson") as HTMLButtonElement | null)?.toggleAttribute("disabled", li === LESSONS.length - 1);
 }
 function goWord(newLesson: boolean) {
 	buffer = ""; misses = 0; shown = false;
@@ -212,6 +227,16 @@ window.addEventListener("keydown", (e) => {
 });
 
 buildKeyboard();
+
+// Lesson navigation: populate the picker and wire prev/next + jump.
+const pick = document.querySelector("#lessonpick") as HTMLSelectElement | null;
+if (pick) {
+	pick.innerHTML = LESSONS.map((l, i) => `<option value="${i}">${i + 1}. ${l.title}</option>`).join("");
+	pick.addEventListener("change", () => goLesson(+pick.value));
+}
+document.querySelector("#prevlesson")?.addEventListener("click", () => goLesson(li - 1));
+document.querySelector("#nextlesson")?.addEventListener("click", () => goLesson(li + 1));
+
 $("#target").addEventListener("click", playWord);
 document.querySelector("#say")?.addEventListener("click", playWord);
 const earBtn = document.querySelector("#ear");
