@@ -24,7 +24,7 @@ A real input method, not a website or palette: type IPA directly into Word, Praa
 Digraphs follow pinyin/ITRANS-style romanization; diacritics sit on Apple's ABC&nbsp;Extended keys; the glyphs with no Latin letter live on the shifted number row.
 </Card>
 <Card title="Your keyboard stays yours">
-Unshifted keys are 100% native US. Every key always emits something, and <kbd>⌥⇧</kbd> is a raw-US escape for anything the IPA layer claims.
+Unshifted keys are 100% native US — Caps Lock included, so capitals stay capitals. Every key always emits something, and there is an escape for anything the IPA layer claims.
 </Card>
 </Cards>
 
@@ -52,7 +52,7 @@ IPAbet is in active development ahead of its first signed release. To build from
 
 ## FAQ
 
-**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US. What the IPA layer claims is _shifted_ positions: the number row's symbols (typing <kbd>@</kbd> gives ʔ, <kbd>%</kbd> gives ə) and capital modifiers right after a letter (typing "GitHub" gives Giθub). <kbd>⌥⇧</kbd> escapes any single one, and <kbd>⌥⇧Space</kbd> is the **Raw-US Lock**: one press makes the keyboard fully native (write code, paste in a terminal, type camelCase), one press brings the IPA back. Leave IPAbet on all day; lock and unlock as you switch registers.
+**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US. What the IPA layer claims is _shifted_ positions: the number row's symbols (typing <kbd>@</kbd> gives ʔ, <kbd>%</kbd> gives ə) and capital modifiers right after a letter (typing "GitHub" gives Giθub). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub), <kbd>⌥⇧</kbd>+digit gives the number row's raw symbol, Caps Lock types literal capitals, and <kbd>⌥⇧Space</kbd> is the **Raw-US Lock**: one press makes the keyboard fully native (write code, paste in a terminal, type camelCase), one press brings the IPA back. Leave IPAbet on all day; lock and unlock as you switch registers.
 
 **Are the symbols real IPA codepoints?** Yes — IPAbet emits the true characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your transcriptions are searchable, fontable Unicode.
 

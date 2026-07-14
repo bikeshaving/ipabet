@@ -27,9 +27,12 @@ class FakeField {
 }
 
 function ev(over: Record<string, unknown> = {}) {
+	const caps = !!(over as any).capsLock;
 	return {
 		code: "", key: "", shiftKey: false, altKey: false, metaKey: false, ctrlKey: false,
 		isComposing: false, keyCode: 0, inputType: "", data: null,
+		// Caps Lock is invisible to e.shiftKey — only getModifierState reports it.
+		getModifierState: (m: string) => (m === "CapsLock" ? caps : false),
 		defaultPrevented: false,
 		preventDefault() { (this as any).defaultPrevented = true; },
 		...over,
@@ -41,7 +44,8 @@ const KEY: Record<string, {code: string; key: string}> = {
 	s: {code: "KeyS", key: "s"}, e: {code: "KeyE", key: "e"}, n: {code: "KeyN", key: "n"},
 	o: {code: "KeyO", key: "o"}, r: {code: "KeyR", key: "r"}, i: {code: "KeyI", key: "i"},
 	p: {code: "KeyP", key: "p"}, h: {code: "KeyH", key: "h"}, t: {code: "KeyT", key: "t"},
-	g: {code: "KeyG", key: "g"}, "5": {code: "Digit5", key: "5"},
+	g: {code: "KeyG", key: "g"}, a: {code: "KeyA", key: "a"}, u: {code: "KeyU", key: "u"},
+	"5": {code: "Digit5", key: "5"},
 };
 
 function setup() {
@@ -49,7 +53,7 @@ function setup() {
 	const ipa = bindIPAInput(f as any, () => {});
 	const press = (
 		ch: string,
-		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number} = {},
+		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number; capsLock?: boolean} = {},
 	) => {
 		f.dispatch("keydown", ev({
 			...KEY[ch],
@@ -57,6 +61,7 @@ function setup() {
 			altKey: !!mods.option,
 			isComposing: !!mods.isComposing,
 			keyCode: mods.keyCode ?? 0,
+			capsLock: !!mods.capsLock,
 		}));
 		// the caret always trails the text in these sequences
 		f.selectionStart = f.selectionEnd = f.value.length;
@@ -179,5 +184,42 @@ test("reset() drops an armed accent", () => {
 	press("n", {option: true});
 	expect(ipa.pendingText()).toBe("˜");
 	ipa.reset();
+	expect(ipa.pendingText()).toBe("");
+});
+
+// ---------------------------------------------------------------- caps lock
+
+test("Caps Lock types a CAPITAL — the bare layer is native US", () => {
+	const {f, press} = setup();
+	press("h", {capsLock: true});
+	expect(f.value).toBe("H"); // not "h", and not a transform
+});
+
+test("REGRESSION: Caps Lock is a LOCK, not the ⇧ modifier — T then H is TH, not θ", () => {
+	// Caps Lock was read nowhere: we derived shift from the shift flag alone, so a
+	// letter emitted its lowercase base and Caps Lock did nothing at all. It must
+	// now type capitals — but it must NEVER act as the modifier.
+	const {f, press} = setup();
+	press("t", {capsLock: true});
+	press("h", {capsLock: true});
+	expect(f.value).toBe("TH"); // ⇧ transforms; Caps Lock does not
+});
+
+test("a capital is inert: ⇧H after a locked T is still TH, never θ", () => {
+	// The modifier table is lowercase-keyed on purpose — that is the same
+	// acronym-safety the Ctrl+Shift literal escape relies on. A capital is text,
+	// not a transformable glyph, so nothing can reach back and eat it.
+	const {f, press} = setup();
+	press("t", {capsLock: true});              // literal T
+	press("h", {capsLock: true, shift: true}); // ⇧H finds no T rule → native H
+	expect(f.value).toBe("TH");
+});
+
+test("a pending accent still absorbs onto a Caps Lock capital: ⌥u then A → Ä", () => {
+	const {f, ipa, press} = setup();
+	f.dispatch("keydown", ev({code: "KeyU", key: "u", altKey: true})); // ⌥u — diaeresis
+	expect(ipa.pendingText()).toBe("¨");
+	press("a", {capsLock: true});
+	expect(f.value).toBe("Ä");
 	expect(ipa.pendingText()).toBe("");
 });

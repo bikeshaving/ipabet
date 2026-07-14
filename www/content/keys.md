@@ -5,7 +5,7 @@ description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables:
 
 <p style="color:var(--dim);font-style:italic;font-size:.9rem">Provisional: the layout is still being refined and these keystrokes may change between releases.</p>
 
-The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option; a space separates keystrokes typed in sequence. [Visual chart](/chart) · [home](/).
+The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. [Visual chart](/chart) · [home](/).
 
 ## Tier 1 · base letters (identity)
 
@@ -29,9 +29,20 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 <RulesTable/>
 
+## Tier 1 · escapes (getting a literal character back)
+
+⇧+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off:
+
+| Keystroke | Effect |
+| --- | --- |
+| ⌃⇧+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
+| Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). ⇧ still means the modifier while locked. |
+| ⌥⇧+digit | The number row's raw shifted symbol (⌥⇧2 → @), which ⇧+digit claims for IPA. |
+| ⌥⇧Space | The **Raw-US Lock**: the whole keyboard goes native until pressed again. |
+
 ## Tier 2 · diacritics & suprasegmentals (Option layer)
 
-Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press ⌥+key, then the base absorbs the mark (⌥n then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, ⌥⇧+key gives it (⌥⇧n → creaky, ⌥⇧' → secondary stress). Pressing it a _second_ time commits the raw capital instead — that is the escape, because ⇧ transforms the glyph before it and "GitHub" would otherwise come out "Giθub". Keys with no second form escape on the first press. Backspace cancels a pending mark. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
+Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press ⌥+key, then the base absorbs the mark (⌥n then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, ⌥⇧+key gives it (⌥⇧n → creaky, ⌥⇧' → secondary stress). Backspace cancels a pending mark. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
 
 <MarkTable kind="ipa"/>
 

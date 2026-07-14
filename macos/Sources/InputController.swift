@@ -418,6 +418,22 @@ class InputController: IMKInputController {
             return false
         }
 
+        // Caps Lock is a LOCK, not a modifier. The bare layer is native US and Caps
+        // Lock belongs to it: a letter types its CAPITAL, literally. It must never
+        // act as ⇧ — Caps-Lock T then H is "TH", not θ — and the capital it types is
+        // inert text downstream (the modifier tables are lowercase-keyed), the same
+        // acronym safety the ⌃⇧ escape relies on. ⇧ still means the modifier while
+        // locked, and a pending accent still absorbs onto the capital (⌥u then a
+        // locked A → Ä), which emitBase does.
+        if flags.contains(.capsLock), !shift {
+            let oc = USLayout.char(event.keyCode, shift: false)
+            if oc.count == 1, oc.first!.isLetter {
+                Dbg.log("  → caps lock → literal '\(oc.uppercased())'")
+                emitBase(oc.uppercased(), client)
+                return true
+            }
+        }
+
         // Decode the physical key through US for the ASCII-keyed tables.
         let s = USLayout.char(event.keyCode, shift: shift)
         guard s.count == 1 else { return false }

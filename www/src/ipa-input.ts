@@ -23,14 +23,22 @@ const CODE_KEYS: Record<string, string> = {
 	Backslash: "\\", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/",
 };
 
-/** Desktop: the physical key, from e.code. Gives us ⇧ and ⌥ exactly. */
+/** Desktop: the physical key, from e.code. Gives us ⇧ and ⌥ exactly — and Caps
+ *  Lock, which is a lock rather than a modifier (the engine types the capital
+ *  literally and never treats it as ⇧). getModifierState is the only way to see
+ *  it: e.shiftKey stays false under Caps Lock. */
 export function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 	let key: string | undefined;
 	if (/^Key[A-Z]$/.test(e.code)) key = e.code[3].toLowerCase();
 	else if (/^Digit[0-9]$/.test(e.code)) key = e.code[5];
 	else key = CODE_KEYS[e.code];
 	if (key === undefined) return null;
-	return {key, shift: e.shiftKey, option: e.altKey};
+	return {
+		key,
+		shift: e.shiftKey,
+		option: e.altKey,
+		capsLock: typeof e.getModifierState === "function" && e.getModifierState("CapsLock"),
+	};
 }
 
 const SHIFTED_DIGIT: Record<string, string> = {

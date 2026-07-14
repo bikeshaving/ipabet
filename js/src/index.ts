@@ -21,6 +21,10 @@ export interface Keystroke {
 	 *  (ʃ⇧I⇧H → ʃɪ, shift never lifted) apart from a glyph followed by a fresh
 	 *  capital (ʃ, release, ⇧I⇧H → ʃIH). A release breaks the chain. */
 	shiftBroke?: boolean;
+	/** Caps Lock is engaged. It is a LOCK, not a modifier: a letter types its
+	 *  CAPITAL literally (the bare layer is native US) and never acts as the ⇧
+	 *  modifier. Shift still wins — ⇧ is always the modifier, Caps Lock never is. */
+	capsLock?: boolean;
 }
 
 export type Edit =
@@ -389,6 +393,18 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			if (glyph !== undefined) return emitBase(glyph, pending);
 		}
 		return withFlush({type: "pass"});
+	}
+
+	// Caps Lock is a LOCK, not a modifier. With it engaged (and shift not held) a
+	// letter types its CAPITAL, literally — the bare layer is native US, and every
+	// other app types capitals here. It must NOT act as the ⇧ modifier: ⇧ is the
+	// modifier, always, and Caps Lock never is (so Caps-Lock T then H is "TH", not
+	// θ). A pending accent still absorbs onto the capital (⌥u then Caps-Lock a → Ä).
+	//
+	// Without this we read only the shift flag, so the key emitted its lowercase
+	// base and Caps Lock did nothing at all — you could not type a capital.
+	if (k.capsLock && !shift && /^[a-z]$/.test(key)) {
+		return emitBase(key.toUpperCase(), pending);
 	}
 
 	const s = shift ? key.toUpperCase() : key;
