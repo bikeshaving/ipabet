@@ -28,7 +28,7 @@ export interface ChartEntry {
 
 /** The 31 diacritics of the official chart, in its order. */
 export const DIACRITICS: ChartEntry[] = [
-	{glyph: "◌̥", keys: "~k", name: "Voiceless", on: "n"},
+	{glyph: "◌̊", keys: "~k", name: "Voiceless", on: "n"},
 	{glyph: "◌̬", keys: "~+v", name: "Voiced", on: "d"},
 	{glyph: "ʰ", keys: "h ~p", name: "Aspirated", on: "t"},
 	{glyph: "◌̹", keys: "~+w", name: "More rounded", on: "ɔ", onKeys: "o +H"},

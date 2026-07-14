@@ -101,9 +101,13 @@ describe("spec · prose does not hardcode membership", () => {
 });
 
 describe("spec · the moved keys", () => {
-	test("comma carries the comma-shaped marks", () => {
-		expect(byOpt.get(",")!.mark).toBe("̧"); // cedilla
-		expect(byOpt.get(",")!.double).toBe("̦"); // comma below
+	test("the comma key carries the comma-shaped mark — at last", () => {
+		// The cedilla used to squat here on its comma shape, which left the actual
+		// comma-below mark riding shotgun on ⌥⇧. The cedilla went home to ⌥c (ABC
+		// Extended's key, and the letter it is named for), so shape identity holds.
+		expect(byOpt.get(",")!.mark).toBe("̦");        // comma below — ș ț
+		expect(byOpt.get(",")!.double).toBeUndefined();
+		expect(byOpt.get("c")!.mark).toBe("̧");        // cedilla — ç ş ţ ģ ņ
 	});
 
 	test("period carries the dot-shaped marks, ⇧ relocating below", () => {

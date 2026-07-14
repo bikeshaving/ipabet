@@ -351,7 +351,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 		expect(typed("~`", "+a")).toBe(nfc("À"));
 		expect(typed("~i", "+e")).toBe(nfc("Ê"));
 		expect(typed("~n", "+n")).toBe(nfc("Ñ"));
-		expect(typed("~,", "+c")).toBe(nfc("Ç"));
+		expect(typed("~c", "+c")).toBe(nfc("Ç"));   // cedilla lives on ⌥c now
 	});
 	// It must fire ONLY while an accent pends — acronyms and shift-chaining intact.
 	test("acronyms and chaining are untouched", () => {
@@ -380,11 +380,14 @@ describe("dot-above / dot-below (⌥g, a Latin-tenant shape twin)", () => {
 describe("Latin tenants: orthography the layout must not silently corrupt", () => {
 	// ⌥c s used to give ş (cedilla, U+015F) where Romanian needs ș (U+0219).
 	// Silent corruption — it looked right. The two below-hooks now share ⌥c.
-	test("Romanian comma-below vs Turkish cedilla are distinct", () => {
-		expect(typed("~+,", "s")).toBe(nfc("ș"));   // U+0219 Romanian
-		expect(typed("~+,", "t")).toBe(nfc("ț"));   // U+021B
-		expect(typed("~,", "s")).toBe(nfc("ş"));    // U+015F Turkish
-		expect(typed("~,", "c")).toBe(nfc("ç"));
+	test("Romanian comma-below vs Turkish cedilla are distinct — each on its own key", () => {
+		// The cedilla went home to ⌥c: ABC Extended's cedilla key, and the letter the
+		// mark is named for. That finally let the comma key carry the comma-shaped mark.
+		expect(typed("~,", "s")).toBe(nfc("ș"));    // U+0219 Romanian — comma below, ⌥,
+		expect(typed("~,", "t")).toBe(nfc("ț"));    // U+021B
+		expect(typed("~c", "s")).toBe(nfc("ş"));    // U+015F Turkish — cedilla, ⌥c
+		expect(typed("~c", "c")).toBe(nfc("ç"));    // exactly what ABC Extended types
+		expect(typed("~c", "e")).toBe(nfc("ȩ"));    // a general cedilla, not a ç key
 	});
 	test("Vietnamese horn, and horn stacking with tone", () => {
 		expect(typed("~y", "o")).toBe(nfc("ơ"));
@@ -393,9 +396,12 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~h", "~y", "o")).toBe(nfc("ở"));   // hỏi + horn
 	});
 	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
-	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c now passes to host.
-	test("ʿayn is gone; ⌥c passes to the host", () =>
-		expect(handleKey("", {key: "c", option: true}, []).edit.type).toBe("pass"));
+	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c is the cedilla now.
+	test("⌥c is the cedilla — a dead key, exactly as on ABC Extended", () => {
+		const step = handleKey("", {key: "c", option: true}, []);
+		expect(step.edit.type).toBe("noop");        // a dead key writes nothing…
+		expect(step.pending).toEqual(["\u0327"]);   // …it arms the cedilla
+	});
 	test("German ß is the s⇧S ligature digraph", () => {
 		expect(typed("s", "+s")).toBe("ß");
 		expect(typed("+s", "t", "r", "a", "s", "+s", "e")).toBe("Straße");
@@ -458,20 +464,29 @@ describe("East Asian coverage", () => {
 describe("placement is the transcriber's, not the engine's", () => {
 	// The engine used to choose above-vs-below by looking the base up in a hardcoded
 	// set of "glyphs with descenders" — a typography model inside a notation engine.
-	// It was wrong in both directions: it pushed an explicit ring back below (so å, a
-	// LETTER, could not be typed at all), and its list was missing ɲ ʎ ɸ β ç ʑ ɧ, so
-	// it buried rings in their tails regardless. Now every placement is a keystroke.
-	test("⌥k puts the ring below — always, whatever the base", () => {
-		expect(typed("~k", "n")).toBe(nfc("n\u{0325}"));
-		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u{0325}")); // no longer raised for you
+	// It was wrong both ways: it shoved an explicit ring back below (so å, a LETTER,
+	// could not be typed at all), and the list was missing ɲ ʎ ɸ β ç ʑ and ɧ.
+	//
+	// The RING now defaults ABOVE, because that is ABC Extended's ring key and every
+	// Mac finger already knows it. The LINE defaults BELOW, because n̩ l̩ m̩ r̩ are what
+	// anyone actually types. Each follows its own frequency; there is no shape rule.
+	test("⌥k is the ring ABOVE — always, whatever the base", () => {
+		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u030A"));  // ŋ̊
+		expect(typed("~k", "j")).toBe(nfc("j\u030A"));        // j̊
 	});
-	test("⌥⇧k puts it above — always, whatever the base", () => {
-		expect(typed("~+k", "n", "+g")).toBe(nfc("ŋ\u{030A}")); // ŋ̊: you asked, so it is above
-		expect(typed("~+k", "a")).toBe("å");                     // and it stays there: å, a letter
+	test("so å comes back on one modifier, exactly as on ABC Extended", () => {
+		expect(typed("~k", "a")).toBe("å");
+		expect(typed("~k", "+a")).toBe("Å");
 	});
+	test("⌥⇧k is the ring BELOW — the placement for a base with no descender", () => {
+		expect(typed("~+k", "n")).toBe(nfc("n\u0325"));       // n̥
+		expect(typed("~+k", "i")).toBe(nfc("i\u0325"));       // i̥ — Japanese
+	});
+	test("the two placements are exclusive: one ring, never two", () =>
+		expect(typed("~k", "~+k", "n")).toBe(nfc("n\u0325")));
 	test("⌥s / ⌥⇧s are the syllabic line's two placements", () => {
-		expect(typed("~s", "n")).toBe(nfc("n\u{0329}"));
-		expect(typed("~+s", "n", "+g")).toBe(nfc("ŋ\u{030D}")); // ŋ̍
+		expect(typed("~s", "n")).toBe(nfc("n\u0329"));        // n̩ — button
+		expect(typed("~+s", "n", "+g")).toBe(nfc("ŋ\u030D"));// ŋ̍
 	});
 	test("syllabic toggles off cleanly: ⌥s ⌥s → nothing committed", () =>
 		expect(typed("~s", "~s")).toBe(""));
@@ -709,29 +724,3 @@ describe("heng", () => {
 		expect(typed("x", "+h")).toBe("ɧ"));
 });
 
-// ------------------------------------------------- the ring, both placements
-
-describe("ring above (⌥⇧k) pairs with ring below (⌥k)", () => {
-	// The voiceless ring has two placements on the chart, and the engine used to own
-	// that choice entirely. ⌥⇧k gives it back — which is also the only way to type
-	// å/Å, since the ⌥ layer destroyed macOS's ⌥a.
-	test("⌥k is the ring below: voiceless a → ḁ", () =>
-		expect(typed("~k", "a")).toBe(nfc("a\u{0325}")));
-
-	test("⌥⇧k is the ring ABOVE, explicitly — and it survives on a plain base", () =>
-		// the whole point: without this the auto-placement flips it back below (ḁ)
-		expect(typed("~+k", "a")).toBe("å"));
-
-	test("Å too — the capital the Option layer destroyed", () =>
-		expect(typed("~+k", "+a")).toBe("Å"));
-
-	test("voiceless above where you want it, not where the engine guesses: ⌥⇧k t → t̊", () =>
-		expect(typed("~+k", "t")).toBe(nfc("t\u{030A}")));
-
-	test("the two placements are exclusive — the second replaces the first", () =>
-		// one ring, not two: ⌥k then ⌥⇧k is still a single mark
-		expect(typed("~k", "~+k", "a")).toBe("å"));
-
-	test("the spacing form still flushes: ⌥⇧k then space → ˚", () =>
-		expect(typed("~+k", " ")).toBe("˚ "));
-});

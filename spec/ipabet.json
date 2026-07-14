@@ -772,29 +772,38 @@
   },
   {
    "opt": "k",
-   "mark": "̥",
-   "clone": "˳",
-   "double": "̊",
-   "doubleClone": "˚",
+   "mark": "̊",
+   "clone": "˚",
+   "double": "̥",
+   "doubleClone": "˳",
    "exclusive": true,
-   "shiftSense": "above",
+   "shiftSense": "placement",
    "type": "combining",
    "group": "Phonation",
-   "cp": "U+0325",
-   "name": "COMBINING RING BELOW (voiceless; ⇧ → the ring ABOVE, U+030A — the chart's own second placement, for bases whose descenders collide with a ring below: ŋ̊ j̊. The engine places the ring for you, so ⌥⇧k is for when you want to say WHERE it goes — and it is the only way to type å/Å, which the ⌥ layer destroyed)"
+   "cp": "U+030A",
+   "name": "COMBINING RING ABOVE (voiceless, above the base: ŋ̊ j̊ ɡ̊; ⇧ → the SAME mark below, U+0325, the placement for a base with no descender: n̥ l̥ m̥ i̥. Placement carries no meaning — it is typography, and it is the transcriber's. The ring sits in THIS plane because that is where ABC Extended puts its ring key, and muscle memory beat a weak frequency edge; it is also what makes å one modifier again: ⌥k then a)"
   },
   {
-   "opt": ",",
+   "opt": "c",
    "mark": "̧",
    "clone": "¸",
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA (Latin tenant: ç ş; ⇧ → comma below: ș ț — Romanian). The comma key carries the comma-shaped marks.",
-   "double": "̦",
+   "name": "COMBINING CEDILLA (Latin tenant: ç ş ţ ģ ņ. It sits on ⌥c because that is ABC Extended's cedilla key and the c is what the mark is named for. It used to squat on ⌥, for its comma shape alone, which cost the comma key its own mark. ç is two keystrokes now — exactly what é has always cost on a Mac)",
    "ipa": false,
-   "beyond": "tenant",
-   "shiftSense": "twin"
+   "beyond": "tenant"
+  },
+  {
+   "opt": ",",
+   "mark": "̦",
+   "clone": "ʻ",
+   "type": "combining",
+   "group": "Transliteration",
+   "cp": "U+0326",
+   "name": "COMBINING COMMA BELOW (Latin tenant: ș ț — Romanian. The comma key carries the comma-shaped mark, which is the spec's own shape-identity rule; it could not, while the cedilla was sitting here)",
+   "ipa": false,
+   "beyond": "tenant"
   },
   {
    "opt": "m",
@@ -880,12 +889,12 @@
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0329",
-   "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → the line ABOVE, U+030D — the chart's second placement, for bases whose descenders a line below collides with: n̩ but ŋ̍. The engine used to pick this for you from a hardcoded list of which glyphs have tails; now you say it. The non-syllabic mark moved to ⌥⇧b, the key whose shape it actually is)",
+   "name": "COMBINING VERTICAL LINE BELOW (syllabic, below the base: n̩ l̩ m̩ r̩ — button, bottle, rhythm; ⇧ → the SAME mark above, U+030D, for a base with a descender: ŋ̍. Below is the default here and ABOVE is the default on the ring: each follows its own frequency, because the law is 'the common form is unshifted', not a shape rule)",
    "double": "̍",
    "clone": "ˌ",
    "doubleClone": "ˈ",
    "exclusive": true,
-   "shiftSense": "above"
+   "shiftSense": "placement"
   },
   {
    "opt": "z",
@@ -1408,7 +1417,8 @@
   "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=.",
   "punctuation": "The host's orthographic punctuation is reserved, like the dashes. ⌥[ ⌥] ⌥\\ carry “ ” ‘ ’ « » and ⌥⇧/ carries ¿ — these keys are never claimed. An unassigned ⌥<key> passes to the host, digits included, so its typography survives. An ⌥⇧<digit> escapes to raw US only where ⇧<digit> is an IPA glyph; otherwise it passes or is spent deliberately (see `optShift`).",
   "escape": "⇧<letter> transforms the glyph before it, so a capital that forms a digraph is otherwise untypeable (\"GitHub\" → \"Giθub\"). ⌃⇧<letter> is the escape: it commits the raw capital and bypasses everything downstream — the ⇧-modifier transforms, the shift-chain, the capital-digraph rule — so ⌃⇧G ⌃⇧H is a literal \"GH\" and ⌃⇧A ⌃⇧E a literal \"AE\". It sits on Control because Control is inert here: ⌃ chords are leader keys (tmux ^b, emacs ^x) and pass untouched, and ⌃⇧<letter> is a chord almost no host claims. Letters only — ⌃⇧<digit/punct> keeps its native chord. Moving the escape here freed the whole ⌥⇧<letter> layer, which formerly had to hold it and so could never be spent freely. ⌥⇧<digit> is a different job: reachability, not escaping (⇧2 is ʔ, so @ lives on ⌥⇧2).",
-  "capsLock": "Caps Lock is a LOCK, not a modifier. The bare layer is native US and Caps Lock belongs to it: a letter types its CAPITAL, literally. It never acts as ⇧ (a locked T then H is \"TH\", not θ), and the capital it types is inert text downstream — the modifier tables are lowercase-keyed — which is the same acronym safety ⌃⇧ relies on. ⇧ still means the modifier while locked, and a pending mark still absorbs onto the capital (⌥u then a locked A → Ä)."
+  "capsLock": "Caps Lock is a LOCK, not a modifier. The bare layer is native US and Caps Lock belongs to it: a letter types its CAPITAL, literally. It never acts as ⇧ (a locked T then H is \"TH\", not θ), and the capital it types is inert text downstream — the modifier tables are lowercase-keyed — which is the same acronym safety ⌃⇧ relies on. ⇧ still means the modifier while locked, and a pending mark still absorbs onto the capital (⌥u then a locked A → Ä).",
+  "planes": "WHICH form of a pair gets the unshifted ⌥ key, and which gets ⌥⇧. In priority order: (1) DON'T FIGHT THE HOST — if the mark exists on ABC Extended, keep its key AND its plane; Mac muscle memory is an asset we did not build and cannot buy, and violating it costs every user forever (this is why the voiceless ring defaults ABOVE, against a weak frequency edge, and why the cedilla is on ⌥c). (2) FREQUENCY — the form you type more often is unshifted (long ː over half-long ˑ, primary stress over secondary, syllabic-below over syllabic-above). (3) PRECEDENCE — when frequency is a wash and the pair has a natural order, the opening/first/lesser member is unshifted: “ before ”, ‘ before ’, « before », – before —, acute before double-acute. (4) IPA OVER TENANT — where an IPA mark and a Latin-orthography tenant want the same slot, the IPA meaning wins the unshifted plane, unless (1) says otherwise. Key CHOICE is a separate question with its own rules — see keyClasses."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
@@ -1423,10 +1433,10 @@
    "greater": "⌥⇧ is the greater pole of one dimension: advanced, raised, more rounded, ATR, upstep.",
    "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
    "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
-   "below": "⌥⇧ is the same glyph relocated below the base: tilde, caron, diaeresis, dot, breve.",
-  "above": "⌥⇧ is the same glyph relocated ABOVE the base — the mirror of `below`: the voiceless ring and the syllabic line. The chart gives the voiceless ring two placements (n̥ but ŋ̊, j̊) and the engine normally picks by descender; ⌥⇧ is how you say where it goes yourself. It is also the only way to type å/Å, whose native ⌥a the diacritic layer destroyed.",
-   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (cedilla/comma-below, ʿayn/hamza, undertie/‖.)",
-   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)"
+   "below": "⌥⇧ is a DIFFERENT diacritic that shares this glyph's shape, sitting below the base: tilde/creaky, diaeresis/breathy, caron/voiced, dot/dot, breve/non-syllabic. The shape is a memory hook, not a meaning — ⌥⇧n is not 'a lower tilde', it is creaky voice.",
+   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (ʿayn/hamza, undertie/‖.)",
+   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)",
+   "placement": "⌥⇧ is the SAME mark on the other side of the base. The meaning is identical; placement is typography and the transcriber owns it (laws.placement). The direction differs per mark because each follows its own frequency: the ring defaults ABOVE (ŋ̊ j̊ ɡ̊, and ABC Extended's ring key), the syllabic line BELOW (n̩ l̩ m̩ r̩)."
   },
   "exclusive": "The two forms are values of the SAME dimension, so ⌥⇧ replaces rather than stacks — nothing is both advanced and retracted. Marks on INDEPENDENT dimensions stack (nasalized + creaky). Tone level is a five-way scale, so an exclusive pair need not be binary or exhaustive."
  },
