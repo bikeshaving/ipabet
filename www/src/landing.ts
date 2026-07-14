@@ -71,7 +71,9 @@ export function Landing() {
 					<p class="provisional">Provisional — the keyboard layout is still being refined, and keystrokes may change between releases.</p>
 				</header>
 
-				<div id="demo" role="textbox" aria-label="Type IPA — click and type it yourself">
+				<div id="demo">
+					<textarea id="demoinput" aria-label="Type IPA — tap and type it yourself"
+						spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
 					<div class="keys"></div>
 					<div class="out"><span class="text ipa"></span><span class="caret"></span></div>
 					<div class="word"></div>
