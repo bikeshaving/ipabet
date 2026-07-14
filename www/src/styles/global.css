@@ -58,37 +58,37 @@ header h1 .ipa { color: var(--accent); }
 	padding: 1.5rem; margin: 2rem 0; text-align: center; cursor: text;
 	transition: border-color 0.15s;
 }
-/* A real, invisible <textarea> covering the hero. A focusable <div> does NOT
-   raise the soft keyboard on iOS/Android — only an editable element does — so
-   the input must be genuine. It stays empty; we paint the bars/output ourselves.
-   16px font-size stops iOS zooming the page on focus. */
+/* The input IS the output. A real input holds the text, so the caret, selection,
+   editing and the mobile soft keyboard all come from the browser instead of
+   being reinvented. Only the bars, the word and the armed dead-key are drawn. */
 #demoinput {
-	position: absolute; inset: 0; width: 100%; height: 100%;
-	opacity: 0; border: none; outline: none; resize: none; padding: 0; margin: 0;
-	background: transparent; color: transparent; caret-color: transparent;
-	font-size: 16px;
+	width: 100%; border: none; outline: none; padding: 0; margin: 0;
+	background: transparent; color: var(--fg); text-align: center;
+	caret-color: var(--accent);
+	font-size: 2.4rem; line-height: 3.6rem; height: 3.6rem;
 }
+#demoinput::placeholder { color: var(--dim); opacity: 0.6; }
 /* Fixed heights on every row: the demo cycles words of different lengths
    and the word caption appears late — nothing here may reflow the page. */
 #demo .keys { height: 2rem; overflow: hidden; white-space: nowrap; }
 #demo .keys kbd { font-size: 1rem; margin: 0 0.15rem; opacity: 0.35; transition: opacity 0.15s; }
 #demo .keys kbd.hit { opacity: 1; border-color: var(--accent); }
 #demo .out {
-	font-size: 2.4rem; height: 3.6rem; line-height: 3.6rem;
-	margin-top: 0.5rem; overflow: hidden; white-space: nowrap;
+	display: flex; align-items: center; justify-content: center;
+	height: 3.6rem; margin-top: 0.5rem;
 }
+#demokeys { height: 2rem; overflow: hidden; white-space: nowrap; }
+#demokeys kbd { font-size: 1rem; margin: 0 0.15rem; opacity: 0.35; transition: opacity 0.15s; }
+#demokeys kbd.hit { opacity: 1; border-color: var(--accent); }
+#demoword { color: var(--dim); font-size: 0.9rem; height: 1.4rem; margin-top: 0.25rem; }
 /* An armed dead-key accent (⌥n → ˜) waiting for its base. It isn't text yet, so
    it reads as pending: accent-coloured, underlined, not part of the output. */
 #demo .out .pend {
 	color: var(--accent); opacity: 0.85;
 	border-bottom: 2px dashed var(--accent); margin-left: 0.05em; padding: 0 0.06em;
 }
-#demo .out .caret {
-	display: inline-block; width: 2px; height: 2.2rem; background: var(--accent);
-	vertical-align: -0.35rem; animation: blink 1s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
-#demo .word { color: var(--dim); font-size: 0.9rem; height: 1.4rem; margin-top: 0.25rem; }
+/* The fake .caret and .word are gone: the input has a real caret, and the word
+   label is #demoword. */
 #demo.live { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
 
 /* Cycle through the target words; lives outside #demo so it can't steal focus. */

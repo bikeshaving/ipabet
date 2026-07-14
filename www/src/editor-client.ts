@@ -132,7 +132,10 @@ ta.addEventListener("keydown", (e) => {
 	// any Korean/Japanese/pinyin IME) — let it own the text; running our engine
 	// too would double-transform (s ⇧H → sʃh). isComposing covers marked-text
 	// IMEs; keyCode 229 covers immediate-commit ones like IPAbet.
-	if (e.isComposing || e.keyCode === 229) return;
+	// …EXCEPT when Option is held: macOS treats ⌥+letter as its own dead key
+	// (⌥n → ˜) and flags the keydown as composition, which would swallow our
+	// entire diacritic layer. ⌥ is our modifier; it is never the OS's.
+	if (!e.altKey && (e.isComposing || e.keyCode === 229)) return;
 	if (e.key === "Backspace") {
 		consumed = true; // we own this key whatever we decide inside
 		engineBackspace(e);

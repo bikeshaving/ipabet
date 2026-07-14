@@ -109,9 +109,13 @@ export function Landing() {
 				</header>
 
 				<div id="demo">
-					<textarea id="demoinput" aria-label="Type IPA — tap and type it yourself"
-						spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
-					<div id="demoview"></div>
+					<div id="demokeys"></div>
+					<div class="out">
+						<input id="demoinput" class="ipa" aria-label="Type IPA — click and type it yourself"
+							spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" />
+						<span id="demopend"></span>
+					</div>
+					<div id="demoword"></div>
 				</div>
 				<div id="demonav">
 					<button id="demoprev" aria-label="Previous word" title="Previous word">◀</button>
