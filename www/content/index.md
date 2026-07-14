@@ -56,6 +56,6 @@ IPAbet is in active development ahead of its first signed release. To build from
 
 **Are the symbols real IPA codepoints?** Yes — IPAbet emits the true characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your transcriptions are searchable, fontable Unicode.
 
-**What does it cover?** The full standard IPA chart — every consonant, vowel, click, diacritic, and suprasegmental, including Chao tone letters (<kbd>⌥1</kbd>–<kbd>⌥5</kbd>). Not yet: extIPA.
+**What does it cover?** The full standard IPA chart — every consonant, vowel, click, diacritic, and suprasegmental, including Chao tone letters (<kbd>⌥1</kbd>–<kbd>⌥5</kbd>) and both tie bars. Not yet: extIPA, the extensions for disordered speech.
 
 **Privacy?** IPAbet is fully offline, makes no network connections, and is open source (MIT).
