@@ -8,6 +8,7 @@
 // renders empty #drill / #kbd mounts and Crank owns everything inside them.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
+import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
 import {
 	handleKey,
 	handleBackspace,
@@ -67,18 +68,9 @@ const playSound = () => play(lesson().audio); // the lesson's isolated phoneme (
 const playWord = () => play(word().audio);    // the current word, baked from its IPA (Polly)
 
 // ------------------------------------------------------------ keyboard IO
-const CODE_KEYS: Record<string, string> = {
-	Backquote: "`", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]",
-	Backslash: "\\", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/",
-};
-function keyFromEvent(e: KeyboardEvent): Keystroke | null {
-	let key: string | undefined;
-	if (/^Key[A-Z]$/.test(e.code)) key = e.code[3].toLowerCase();
-	else if (/^Digit[0-9]$/.test(e.code)) key = e.code[5];
-	else key = CODE_KEYS[e.code];
-	if (key === undefined) return null;
-	return {key, shift: e.shiftKey, option: e.altKey};
-}
+// keyFromEvent is the shared derivation (ipa-input.ts) — /learn has no text
+// field of its own (it reads the window and has an on-screen keyboard), but the
+// keystroke rules must not be a second, drifting copy.
 const segmenter = new Intl.Segmenter();
 function dropLastCluster(text: string): string {
 	let last = "";
@@ -286,6 +278,7 @@ function tapChar(ch: string) {
 // -------------------------------------------------------- physical keys
 window.addEventListener("keydown", (e) => {
 	if (e.metaKey || e.ctrlKey) return;
+	if (mediatedByIME(e)) return; // a real IME owns this keystroke
 	if (e.key === "Backspace") { e.preventDefault(); doBackspace(); return; }
 	const k = keyFromEvent(e);
 	if (k === null) return;
