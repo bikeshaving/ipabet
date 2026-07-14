@@ -2,9 +2,10 @@
   "name": "ipabet-org",
   "private": true,
   "version": "0.1.0",
-  "description": "ipabet.org — IPAbet, type IPA at typing speed",
+  "description": "ipabet.org \u2014 IPAbet, type IPA at typing speed",
   "type": "module",
   "scripts": {
+    "test": "bun test",
     "bake": "bun run scripts/bake-content.ts",
     "predevelop": "npm run bake",
     "develop": "shovel develop src/server.ts --platform cloudflare",
