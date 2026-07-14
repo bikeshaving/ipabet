@@ -65,6 +65,11 @@ interface Mark {
 	mark: string;
 	spacing: boolean;
 	double?: string;
+	/** The ⌥⇧ form is spacing even though the ⌥ form is combining. A key can carry
+	 *  one of each: ⌥9 is the linguolabial seagull (combining, prefix), and ⌥⇧9 is
+	 *  extIPA's pre-voicing bracket ₍ (a standalone character, postfix). Spacing is
+	 *  a property of the FORM, not of the key. */
+	doubleSpacing?: boolean;
 	cycle: string[];
 	/** Spacing clone (´, ^): the mark's standalone form. No clone → the
 	 * combining mark rides a no-break space. */
@@ -93,6 +98,7 @@ for (const e of spec.marks as {
 	mark: string;
 	type: string;
 	double?: string;
+	doubleSpacing?: boolean;
 	cycle?: string[];
 	clone?: string;
 	doubleClone?: string;
@@ -102,6 +108,7 @@ for (const e of spec.marks as {
 		mark: e.mark,
 		spacing: e.type === "spacing",
 		double: e.double,
+		doubleSpacing: e.doubleSpacing === true,
 		cycle: e.cycle ?? [],
 		clone: e.clone,
 	});
@@ -258,7 +265,10 @@ function pendingDiacritic(scalar: string, pending: Pending): Step {
 /** Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form. */
 function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	const scalar = secondary && m.double !== undefined ? m.double : m.mark;
-	if (!m.spacing) return pendingDiacritic(scalar, pending);
+	// Spacing belongs to the FORM, not the key: ⌥9 is a combining seagull (prefix),
+	// while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
+	const spacing = secondary && m.double !== undefined ? m.doubleSpacing === true : m.spacing;
+	if (!spacing) return pendingDiacritic(scalar, pending);
 	const f = flush(pending);                       // a pending accent commits first
 	const text = (f.edit.type === "insert" ? f.edit.text : "") + scalar;
 	return {edit: {type: "insert", text}, pending: []};

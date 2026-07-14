@@ -213,17 +213,19 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥7 now carries ʿayn; the free slots are ⌥8 and (since cedilla moved to
 	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
 	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
-	// Unassigned ⌥ keys pass, digits included, so the host's own Option typography
-	// survives: ⌥6 §, ⌥8 •. (⌥7 is the horn now — Vietnamese VNI's own key for it.)
-	// And the ⌥⇧ escape only exists where ⇧<digit> is an IPA glyph — ⌥⇧8/9/0 pass,
-	// leaving the host's ° · ‚ alone.
-	test("unassigned ⌥ digits pass to the host", () => {
-		for (const d of ["6", "8"])
-			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).toBe("pass");
+	// The ⌥ number row is now FULL: ⌥1–⌥5 Chao tone bars, ⌥6 velopharyngeal friction,
+	// ⌥7 horn (VNI's own key), ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to
+	// leave ⌥6 §, ⌥7 ¶, ⌥8 • to the host — a lawyer's row, not a phonetician's.
+	test("the ⌥ number row is fully claimed", () => {
+		for (const d of "1234567890")
+			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
-	test("redundant ⌥⇧ digit escapes pass to the host", () => {
-		for (const d of ["8", "9", "0"])
-			expect(handleKey("", {key: d, option: true, shift: true}, []).edit.type, `⌥⇧${d}`).toBe("pass");
+	// ⌥⇧<digit> is the raw-US escape only where ⇧<digit> is an IPA glyph (⌥⇧2 → @).
+	// Where it is not, the slot was free: ⌥⇧8 is nasal escape, ⌥⇧9/⌥⇧0 the voicing
+	// brackets (the ( and ) keys, by shape).
+	test("⌥⇧ digits are escapes where ⇧digit is IPA, marks where it is not", () => {
+		expect(typeKeys(seq("~+2"))).toBe("@");   // ⇧2 is ʔ, so @ must live here
+		expect(typeKeys(seq("~+9"))).toBe("₍");   // ⇧9 is not IPA — the slot was free
 	});
 	test("load-bearing ⌥⇧ digit escapes survive (⇧2 is ʔ, so @ lives here)", () => {
 		expect(typed("~+2")).toBe("@");
@@ -728,3 +730,37 @@ describe("heng", () => {
 		expect(typed("x", "+h")).toBe("ɧ"));
 });
 
+
+// ---------------------------------------------- extIPA, placed by shape not by meaning
+
+describe("extIPA marks land on the keys their SHAPE claims", () => {
+	// The four that derive. Each is one glyph already in the layout, relocated — so
+	// the key was never a choice, and none of them needed an invented mnemonic.
+	test("⌥⇧j is WEAK — U+0349 is a left angle BELOW, and ⌥j is the left angle ABOVE", () =>
+		// It would have sat beside `strong` on ⌥⇧0 by meaning. Shape is the rule the
+		// layout actually follows, and obeying it freed the paren keys for the brackets.
+		expect(typed("~+j", "t")).toBe(nfc("t͉")));
+
+	test("⌥⇧t is DENTOLABIAL — the dental bridge, relocated above", () =>
+		expect(typed("~+t", "t")).toBe(nfc("t͆")));
+
+	test("⌥⇧x is FRICTIONAL — the X, relocated below", () =>
+		expect(typed("~+x", "s")).toBe(nfc("s͓")));
+
+	test("the voicing brackets are on the ( and ) keys", () => {
+		// ₍ and ₎ carry extIPA's whole (de)voicing system: ₍z, z̥₎, ₍z̥₎.
+		expect(typed("~+9")).toBe("₍");
+		expect(typed("~+0")).toBe("₎");
+	});
+
+	test("a bracket is SPACING though its key's ⌥ mark is combining", () => {
+		// ⌥9 is the linguolabial seagull — a prefix dead key, absorbed by the base.
+		// ⌥⇧9 is a standalone character that just lands. Spacing is a property of the
+		// FORM, not the key, which the engine did not model until these two arrived.
+		expect(typed("~9", "t")).toBe(nfc("t̼"));   // prefix: the base absorbs it
+		expect(typed("~+9", "z")).toBe("₍z");            // postfix: it precedes the text
+	});
+
+	test("strong keeps ⌥0, and says so: its partner lives on the angle key", () =>
+		expect(typed("~0", "k")).toBe(nfc("k͈")));
+});

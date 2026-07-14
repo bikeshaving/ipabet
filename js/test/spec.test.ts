@@ -126,7 +126,7 @@ describe("spec · the moved keys", () => {
 	test("the tie bar is a number-row glyph on ⇧6, not a mark or a ⇧-letter", () => {
 		const six = (spec.letters as {key: string; glyph: string}[]).find((l) => l.key === "6");
 		expect(six?.glyph).toBe("\u{0361}");
-		expect(byOpt.has("8")).toBe(false); // ⌥8 unassigned
+		expect(byOpt.get("8")!.cp).toBe("U+034A"); // ⌥8 is the denasal mark, not the tie
 		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
 	});
 

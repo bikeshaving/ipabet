@@ -42,6 +42,11 @@ struct Mark {
     let mark: String
     let spacing: Bool
     let double: String?
+    /// The ⌥⇧ form is SPACING even though the ⌥ form is combining. A key can carry
+    /// one of each: ⌥9 is the linguolabial seagull (combining, prefix), while ⌥⇧9 is
+    /// extIPA's pre-voicing bracket ₍ — a standalone character that lands postfix.
+    /// Spacing is a property of the FORM, not of the key.
+    let doubleSpacing: Bool
     /// Spacing form of a combining mark (´ for acute) — the dead-key preview
     /// glyph, and Apple's "terminator" concept. Nil for IPA-only marks.
     let clone: String?
@@ -83,6 +88,7 @@ struct Tables {
             optMarks[opt] = Mark(mark: mark,
                                  spacing: (r["type"] as? String) == "spacing",
                                  double: r["double"] as? String,
+                                 doubleSpacing: r["doubleSpacing"] as? Bool == true,
                                  clone: clone)
             if let c = clone, let sc = mark.unicodeScalars.first { clones[sc] = c }
             if let dc = r["doubleClone"] as? String,
@@ -548,7 +554,10 @@ class InputController: IMKInputController {
     /// Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form.
     private func applyMark(_ m: Mark, secondary: Bool, _ client: IMKTextInput) {
         let scalarStr = (secondary ? m.double : nil) ?? m.mark
-        if m.spacing {
+        // Spacing belongs to the FORM, not the key: ⌥9 is a combining seagull (prefix)
+        // while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
+        let spacing = (secondary && m.double != nil) ? m.doubleSpacing : m.spacing
+        if spacing {
             flushPending(client)          // a pending accent commits before a spacing mark
             applySpacing(scalarStr, client)
         } else {

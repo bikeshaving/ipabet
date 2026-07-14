@@ -822,7 +822,9 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+032A",
-   "name": "COMBINING BRIDGE BELOW (dental)"
+   "name": "COMBINING BRIDGE BELOW (dental; ⇧ → the SAME bridge ABOVE, U+0346, which is extIPA's DENTOLABIAL — routine in cleft-palate transcription. One shape, two sides, one key)",
+   "double": "͆",
+   "shiftSense": "placement"
   },
   {
    "opt": "d",
@@ -912,8 +914,10 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033D",
-   "name": "COMBINING X ABOVE (mid-centralized)",
-   "clone": "˟"
+   "name": "COMBINING X ABOVE (mid-centralized; ⇧ → the SAME X BELOW, U+0353, which is extIPA's FRICTIONAL articulation. One shape, two sides, one key)",
+   "clone": "˟",
+   "double": "͓",
+   "shiftSense": "placement"
   },
   {
    "opt": "q",
@@ -1009,13 +1013,39 @@
    "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR (Chao tone letter, level 5 = high)"
   },
   {
+   "opt": "6",
+   "mark": "͌",
+   "type": "combining",
+   "group": "Articulation",
+   "cp": "U+034C",
+   "name": "COMBINING ALMOST EQUAL TO ABOVE (extIPA VELOPHARYNGEAL FRICTION — routine in cleft-palate transcription. Arbitrary key on an unearned slot: § is a lawyer's mark, not a phonetician's)",
+   "ipa": false,
+   "beyond": "extIPA",
+   "arbitraryKey": true
+  },
+  {
+   "opt": "8",
+   "mark": "͊",
+   "type": "combining",
+   "group": "Nasalization",
+   "cp": "U+034A",
+   "name": "COMBINING NOT TILDE ABOVE (extIPA DENASAL — hyponasality, the blocked nose; ⇧ → ͋ U+034B, NASAL ESCAPE, air leaking through the nose. One key, one dimension: ⌥ is too little nasal airflow, ⌥⇧ is too much. The KEY is arbitrary — nothing claims `8` — but it is an unearned slot (• is nobody's), which is what laws.arbitraryKeys asks of an arbitrary mark",
+   "double": "͋",
+   "shiftSense": "greater",
+   "ipa": false,
+   "beyond": "extIPA"
+  },
+  {
    "opt": "9",
    "mark": "̼",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW (linguolabial) — parked, arbitrary",
-   "arbitraryKey": true
+   "name": "COMBINING SEAGULL BELOW (linguolabial) — arbitrary key, parked on an unearned slot; ⇧ → ₍ U+208D, extIPA's PRE-VOICING bracket, which is on this key by shape identity: the 9 key is the ( key",
+   "arbitraryKey": true,
+   "double": "₍",
+   "shiftSense": "twin",
+   "doubleSpacing": true
   },
   {
    "opt": "j",
@@ -1023,9 +1053,12 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; arbitrary key, placed on frequency)",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; ⇧ → the SAME angle BELOW, U+0349, which is extIPA's WEAK articulation. The key is still arbitrary — nothing claims `j` — but the plane is not: the two marks are one shape, relocated. Weak was going to sit beside `strong` on ⌥⇧0 by meaning; it sits here by shape, which is the rule the layout actually follows, and that left the paren keys free for the voicing brackets)",
    "clone": "˺",
-   "arbitraryKey": true
+   "arbitraryKey": true,
+   "double": "͉",
+   "doubleClone": "˹",
+   "shiftSense": "placement"
   },
   {
    "opt": "h",
@@ -1043,10 +1076,13 @@
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0348",
-   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, parked)",
+   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, on an unearned slot per laws.arbitraryKeys. It is also extIPA's STRONG articulation; its partner WEAK is not here but on ⌥⇧j, with the angle it shares a shape with. On the Korean 2-set keyboard ⇧ is itself what makes a consonant fortis, which is a convention about the PLANE, not about this key; ⇧ → ₎ U+208E, extIPA's POST-VOICING bracket — shape identity, the 0 key is the ) key)",
    "ipa": false,
    "beyond": "tradition",
-   "arbitraryKey": true
+   "arbitraryKey": true,
+   "double": "₎",
+   "shiftSense": "twin",
+   "doubleSpacing": true
   },
   {
    "opt": ".",
@@ -1425,7 +1461,8 @@
   "ipa": "Absent or true: the mark is on the official IPA chart, and appears on /chart and /chart.json. `false`: it is not, and `beyond` names the tradition it answers to. Non-IPA marks are fully typeable and are listed on /keys.",
   "beyond": {
    "tenant": "Not IPA and never was. Carried so the layout can also write real Latin orthographies and romanizations — Romanian, Vietnamese, Polish, German, Semitic transliteration. Tenants cohabit with IPA marks on the Option layer; they are not their neighbours' pairs.",
-   "tradition": "Standard within a phonological tradition but absent from the IPA chart — e.g. the Korean fortis mark. Real notation, wrong chart."
+   "tradition": "Standard within a phonological tradition but absent from the IPA chart — e.g. the Korean fortis mark. Real notation, wrong chart.",
+   "extIPA": "Extensions to the IPA, for disordered speech (the 2015 chart). Not IPA proper, but the same transcribers need it — cleft palate, lisps, denasality. Flagged ipa:false like any other tenant."
   },
   "arbitraryKey": "The key claims the mark by neither phonetics, shape, nor convention. Assigned to a mediocre reach and labelled arbitrary rather than given a fake mnemonic.",
   "shiftSense": {
@@ -1434,7 +1471,7 @@
    "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
    "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
    "below": "⌥⇧ is a DIFFERENT diacritic that shares this glyph's shape, sitting below the base: tilde/creaky, diaeresis/breathy, caron/voiced, dot/dot, breve/non-syllabic. The shape is a memory hook, not a meaning — ⌥⇧n is not 'a lower tilde', it is creaky voice.",
-   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (ʿayn/hamza, undertie/‖.)",
+   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (ʿayn/hamza, undertie/‖, and the two voicing brackets, which are one system split across the ( and ) keys.)",
    "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)",
    "placement": "⌥⇧ is the SAME mark on the other side of the base. The meaning is identical; placement is typography and the transcriber owns it (laws.placement). The direction differs per mark because each follows its own frequency: the ring defaults ABOVE (ŋ̊ j̊ ɡ̊, and ABC Extended's ring key), the syllabic line BELOW (n̩ l̩ m̩ r̩)."
   },

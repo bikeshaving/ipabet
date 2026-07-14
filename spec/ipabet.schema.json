@@ -86,7 +86,7 @@
 				"beyond": {
 					"description": "One entry per allowed `beyond` value. A mark's `beyond` MUST be a key of this object.",
 					"type": "object",
-					"required": ["tenant", "tradition"],
+					"required": ["tenant", "tradition", "extIPA"],
 					"additionalProperties": {"type": "string"}
 				},
 				"shiftSense": {
@@ -127,6 +127,10 @@
 					"type": "string",
 					"minLength": 1
 				},
+				"doubleSpacing": {
+					"description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining — spacing is a property of the form, not the key. (⌥9 is the combining seagull; ⌥⇧9 is the ₍ voicing bracket, a standalone character.) Requires `double`.",
+					"type": "boolean"
+				},
 				"type": {
 					"description": "combining = prefix dead-key, absorbed by the next base. spacing = postfix, inserted in place.",
 					"enum": ["combining", "spacing"]
@@ -161,7 +165,7 @@
 				},
 				"beyond": {
 					"description": "Which tradition a non-IPA mark answers to. Present iff `ipa` is false. See classes.beyond.",
-					"enum": ["tenant", "tradition"]
+					"enum": ["tenant", "tradition", "extIPA"]
 				},
 				"arbitraryKey": {
 					"description": "The key claims this mark by neither phonetics, shape, nor convention.",
@@ -173,6 +177,7 @@
 				"double": ["shiftSense"],
 				"shiftSense": ["double"],
 				"doubleClone": ["double"],
+				"doubleSpacing": ["double"],
 				"exclusive": ["double"],
 				"ipa": ["beyond"],
 				"beyond": ["ipa"]
