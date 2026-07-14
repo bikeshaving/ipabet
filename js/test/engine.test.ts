@@ -664,3 +664,28 @@ describe("daily-driver invariants", () => {
 		expect(handleKey("", {key: ","}).edit).toEqual({type: "pass"});
 	});
 });
+
+// ------------------------------------------------------- the tie bar's two forms
+
+describe("tie bar", () => {
+	test("⇧6 ties above: t ⇧6 s → t͡s", () =>
+		expect(typed("t", "+6", "s")).toBe("t\u{0361}s"));
+
+	test("⇧6 again flips the tie below — the form for colliding descenders", () =>
+		// The below-form is the same mark, not a second one, so it gets no key:
+		// press ⇧6 twice. d͜ʒ instead of d͡ʒ, where the bar would hit the ʒ's tail.
+		expect(typed("d", "+6", "+6", "z", "+h")).toBe("d\u{035C}ʒ"));
+
+	test("a third press flips it back — the toggle is reversible", () =>
+		expect(typed("t", "+6", "+6", "+6", "s")).toBe("t\u{0361}s"));
+
+	test("⇧6 with no tie behind it still just ties", () =>
+		expect(typed("k", "+6", "p")).toBe("k\u{0361}p"));
+});
+
+// -------------------------------------------------------------- the last chart hole
+
+describe("heng", () => {
+	test("x ⇧H → ɧ, the Swedish sj-sound (simultaneous ʃ and x)", () =>
+		expect(typed("x", "+h")).toBe("ɧ"));
+});

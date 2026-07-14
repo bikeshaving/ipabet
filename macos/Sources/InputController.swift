@@ -413,6 +413,20 @@ class InputController: IMKInputController {
         // (! @ # …) live on ⌥⇧.
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
+            // The tie bar owns its own second form. ⇧6 is the tie ABOVE (t͡s); the chart
+            // also sanctions the tie BELOW where descenders collide (t͜ɕ, d͜ʒ). It is the
+            // same mark, so it gets no key of its own: press ⇧6 again while a tie sits
+            // before the cursor and it flips. Stateless — the document holds the tie.
+            if shift, bareKey == "6", pending.isEmpty, let (p, r) = lastCluster(client) {
+                let scalars = Array(String(p).unicodeScalars)
+                if let last = scalars.last, last == Self.tieAbove || last == Self.tieBelow {
+                    var flipped = String.UnicodeScalarView(scalars.dropLast())
+                    flipped.append(last == Self.tieAbove ? Self.tieBelow : Self.tieAbove)
+                    Dbg.log("  → ⇧6 flips the tie")
+                    replace(r, with: String(flipped), client)
+                    return true
+                }
+            }
             if shift, let glyph = t.letters[bareKey] { emitBase(glyph, client); return true }
             flushPending(client)
             return false
@@ -578,6 +592,10 @@ class InputController: IMKInputController {
 
     /// The accumulated prefix diacritics awaiting a base. Empty = no composition.
     private var pending: [Unicode.Scalar] = []
+
+    /// The tie bar (⇧6) and the below-form it flips to. See `laws.tieBar`.
+    private static let tieAbove: Unicode.Scalar = "\u{0361}"
+    private static let tieBelow: Unicode.Scalar = "\u{035C}"
 
     /// What the highlighted preview shows: each pending mark as its *spacing*
     /// glyph when one exists (⌥e → ´, exactly the US dead key's terminator),

@@ -486,6 +486,12 @@
    "name": "GREEK SMALL LETTER CHI"
   },
   {
+   "key": "xH",
+   "glyph": "ɧ",
+   "cp": "U+0267",
+   "name": "LATIN SMALL LETTER HENG WITH HOOK (simultaneous ʃ and x — the Swedish sj-sound; ⇧H is the hushing digraph, so x hushed is the ʃ⊕x blend)"
+  },
+  {
    "key": "rB",
    "glyph": "ʙ",
    "cp": "U+0299",
@@ -1388,6 +1394,8 @@
   "optShift": "⌥ gives a mark's primary form, ⌥⇧ its `double`. ⌥⇧ has no single meaning: see `classes.shiftSense` for the six, and `classes.exclusive` for whether a pair replaces or stacks. Both are recorded per-mark.",
   "keyClasses": "A key earns its mark by cross-tier phonetics, by shape identity (the comma key carries the comma-shaped marks; the period key the dot-shaped ones), or by convention (the five universal dead keys ⌥e ⌥i ⌥u ⌥n ⌥`). Where none of the three applies the mark is parked and flagged `arbitraryKey`. Marks outside the IPA are flagged `ipa: false`; see `classes.beyond`.",
   "numberRow": "⇧<digit> carries an IPA glyph with no Latin home (⇧2 ʔ, ⇧5 ə). The one exception is the tie bar on ⇧6 — a combining joiner (t ⇧6 s → t͡s), contrastive and frequent, so it earns a single-modifier key. It lives on the number row, not on a ⇧-letter, because an unguarded ⇧-letter joiner would fire inside acronyms ($PATH). Because ⇧6 is thereby claimed, its raw-US ^ moves to the option-shift escape, exactly as @ sits on the ⇧2 escape.",
+  "tieBar": "⇧6 is the tie ABOVE (U+0361, t͡s). The chart also sanctions the tie BELOW (U+035C) for when descenders collide with a bar above — t͜ɕ, d͜ʒ, k͜p — and it is the same mark, not a second one. So it gets no key: press ⇧6 AGAIN while a tie sits before the cursor and it flips, above ⇄ below. Stateless (the document holds the tie, not the engine), reversible, and it spends no keyboard real estate, which is the only reason the below-form fits at all.",
+  "scriptG": "IPAbet types g as U+0067, not U+0261 LATIN SMALL LETTER SCRIPT G. The IPA sanctions both shapes and every IPA font draws them alike, but U+0261 is the codepoint the chart specifies — so this is a deliberate, known non-conformance, bought by the bare-layer law (an unshifted key is native US, and the native g key is U+0067). It is invisible to a reader and visible to a grep: corpus work that diffs against reference transcriptions must normalize. U+0261 still appears in the tables as a lookup key (superscripts, descenders), so text pasted in with a script g behaves correctly.",
   "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=.",
   "punctuation": "The host's orthographic punctuation is reserved, like the dashes. ⌥[ ⌥] ⌥\\ carry “ ” ‘ ’ « » and ⌥⇧/ carries ¿ — these keys are never claimed. An unassigned ⌥<key> passes to the host, digits included, so its typography survives. An ⌥⇧<digit> escapes to raw US only where ⇧<digit> is an IPA glyph; otherwise it passes or is spent deliberately (see `optShift`).",
   "escape": "⇧<letter> transforms the glyph before it, so a capital that forms a digraph is otherwise untypeable (\"GitHub\" → \"Giθub\"). ⌃⇧<letter> is the escape: it commits the raw capital and bypasses everything downstream — the ⇧-modifier transforms, the shift-chain, the capital-digraph rule — so ⌃⇧G ⌃⇧H is a literal \"GH\" and ⌃⇧A ⌃⇧E a literal \"AE\". It sits on Control because Control is inert here: ⌃ chords are leader keys (tmux ^b, emacs ^x) and pass untouched, and ⌃⇧<letter> is a chord almost no host claims. Letters only — ⌃⇧<digit/punct> keeps its native chord. Moving the escape here freed the whole ⌥⇧<letter> layer, which formerly had to hold it and so could never be spent freely. ⌥⇧<digit> is a different job: reachability, not escaping (⇧2 is ʔ, so @ lives on ⌥⇧2).",

@@ -48,8 +48,9 @@ export type Edit =
 export type Pending = readonly string[];
 
 /** What `handleKey`/`handleBackspace` return: an edit, the next pending, and
- *  whether an IPA chain is live (shift held continuously since a segment). The
- *  whether an IPA chain was broken by a shift release. Caller threads it. */
+ *  whether an IPA chain was broken by a shift release. The engine owns the chain
+ *  RULE but not its FLAG — only the caller can see a release, so the caller
+ *  threads `chainBroken` back in (the IME from flagsChanged, the web from keyup). */
 export interface Step {
 	edit: Edit;
 	pending: Pending;
@@ -144,6 +145,11 @@ const isGreekUpper = (c: string): boolean => {
 };
 
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
+
+// The tie bar (⇧6) and its second form. The chart sanctions both: the tie goes
+// BELOW when the glyphs' descenders would collide with one above (t͜ɕ, d͜ʒ, k͜p).
+const TIE = "͡";
+const TIE_BELOW = "͜";
 
 // Voiceless obstruents — the ejectivizable set (⇧P). Plosives + oral
 // fricatives; ejectives need voicelessness (sealed glottis) and a closure.
@@ -389,6 +395,17 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// number keys with no glyph (9, 0) pass so ( and ) stay native.
 	if (/[0-9]/.test(key)) {
 		if (shift) {
+			// The tie bar toggles its own second form. ⇧6 is the tie ABOVE (t͡s); the
+			// chart also sanctions a tie BELOW for when descenders collide (t͜ɕ, d͜ʒ),
+			// and it had no key at all. Rather than spend one, press ⇧6 again while a
+			// tie sits before the cursor and it flips — above ⇄ below. Stateless (the
+			// document holds the tie), reversible, and it costs no keyboard real
+			// estate, which is why the below-form gets in at all.
+			if (key === "6" && pending.length === 0 &&
+				(textBefore.endsWith(TIE) || textBefore.endsWith(TIE_BELOW))) {
+				const flipped = textBefore.endsWith(TIE) ? TIE_BELOW : TIE;
+				return {edit: {type: "replace", length: 1, text: flipped}, pending: []};
+			}
 			const glyph = letters.get(key);
 			if (glyph !== undefined) return emitBase(glyph, pending);
 		}
