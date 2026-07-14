@@ -25,6 +25,10 @@ export interface Keystroke {
 	 *  CAPITAL literally (the bare layer is native US) and never acts as the ⇧
 	 *  modifier. Shift still wins — ⇧ is always the modifier, Caps Lock never is. */
 	capsLock?: boolean;
+	/** Control is held. Only ⌃⇧<letter> means anything here — the literal-capital
+	 *  escape. Every other ⌃ chord is a leader key (tmux ^b, emacs ^x) and the host
+	 *  keeps it, so callers pass those straight through and never reach the engine. */
+	control?: boolean;
 }
 
 export type Edit =
@@ -340,33 +344,36 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// alone — swallowing them to commit an accent would eat navigation.
 	if (key.length !== 1) return {edit: {type: "pass"}, pending};
 
+	// ⌃⇧<letter> — the literal-capital escape. ⇧<letter> transforms the glyph before
+	// it, so a capital that forms a digraph is otherwise untypeable ("GitHub" comes
+	// out "Giθub"). This commits the raw capital and bypasses everything downstream:
+	// the ⇧-modifier transforms, the shift-chain, the capital-digraph rule. So
+	// ⌃⇧G ⌃⇧H is a literal "GH" and ⌃⇧A ⌃⇧E a literal "AE".
+	//
+	// It lives on Control because Control is inert here — ⌃ chords are leader keys
+	// and the host keeps them, so nothing else competes. Letters only. It used to
+	// live on ⌥⇧<letter>, which is why that layer could never be spent; the IME
+	// moved years of logic here and this engine was left behind, so the website had
+	// no escape at all (⇧-digraph capitals were simply untypeable on /type).
+	if (k.control === true) {
+		if (shift && /^[a-z]$/.test(key)) {
+			return withFlush({type: "insert", text: key.toUpperCase()});
+		}
+		return {edit: {type: "pass"}, pending}; // leader keys: the host owns them
+	}
+
 	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
-	// ⌥⇧' → secondary stress). Where the key holds no such mark it's the
-	// raw-US escape on letters/digits (⌥⇧H → H, ⌥⇧2 → @); punctuation passes
-	// so the host's own Option typography (curly quotes, dashes) survives.
+	// ⌥⇧' → secondary stress), and on the number row the raw-US escape.
+	//
+	// It is NOT the literal-capital escape any more — that moved to ⌃⇧<letter>,
+	// which the browser owns and the IME implements. This engine still carried the
+	// retired version (⌥⇧H → H, plus a double-press-on-a-pending-mark hack to share
+	// the chord with a mark's second form), so the web and the IME disagreed: the
+	// same keystroke escaped on one and applied a mark on the other. A ⌥⇧<letter>
+	// with no second form now DECLINES, so the host's own Option typography passes.
 		if (option && shift) {
 			const m2 = optMarks.get(key);
-			if (m2 !== undefined && m2.double !== undefined) {
-				// The escape, sharing the chord with the mark. ⇧<letter> transforms the
-				// glyph before it (t ⇧H → θ), so a capital that forms a digraph is
-				// otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is that
-				// escape — but on these keys it is already the mark's second form.
-				//
-				// So: press it again. The first press leaves the mark PENDING and emits
-				// nothing; the second commits the raw capital instead. Nothing is lost,
-				// because a second press used to empty pending and emit nothing at all,
-				// and backspace still cancels a pending mark silently.
-				//
-				// Spacing marks never go pending, so they have no second press to read.
-				// Only when that mark is the whole composition — a half-built stack of
-				// diacritics is not an escape, and unwinding one from the middle has
-				// no sensible marked-text rendering.
-				if (!m2.spacing && pending.length === 1 && pending[0] === m2.double) {
-					return {edit: {type: "insert", text: key.toUpperCase()}, pending: []};
-				}
-				return applyMark(m2, pending, true);
-			}
-			if (/[a-z]/i.test(key)) return withFlush({type: "insert", text: key.toUpperCase()});
+			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
 				// A slot spent deliberately (⌥⇧1 → ¡, ⌥⇧6 → ß).
 				const over = optShiftDigits[key];

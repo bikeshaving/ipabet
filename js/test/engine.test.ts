@@ -14,13 +14,15 @@ function seq(...keys: string[]): Keystroke[] {
 		let option = false;
 		let shiftBroke = false;
 		let key = k;
-		while (key[0] === "+" || key[0] === "~" || key[0] === "^") {
+		let control = false;
+		while (key[0] === "+" || key[0] === "~" || key[0] === "^" || key[0] === "!") {
 			if (key[0] === "+") shift = true;
 			else if (key[0] === "~") option = true;
+			else if (key[0] === "!") control = true;   // "!+h" = ⌃⇧H, the escape
 			else shiftBroke = true;
 			key = key.slice(1);
 		}
-		return {key, shift, option, shiftBroke};
+		return {key, shift, option, shiftBroke, control};
 	});
 }
 
@@ -250,9 +252,9 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	// an EMPTY composition — nothing is written, so there is no sentinel to
 	// collide with a user's real NBSP.
 	test("⌥n ⌥n → nothing committed", () => expect(typed("~n", "~n")).toBe(""));
-	// The ⌥⇧ second press is no longer a toggle: it is the escape (see below).
-	// Toggle-off on the PRIMARY ⌥ form is untouched, and backspace still cancels.
-	test("⌥⇧n ⌥⇧n → escapes to a raw N", () => expect(typed("~+n", "~+n")).toBe("N"));
+	// The ⌥⇧ second press toggles, exactly like the primary form — it stopped being
+	// the escape when the escape moved to ⌃⇧.
+	test("⌥⇧n ⌥⇧n → nothing committed", () => expect(typed("~+n", "~+n")).toBe(""));
 	test("single-form macron: ⌥a ⌥a → nothing", () => expect(typed("~a", "~a")).toBe(""));
 	test("a peeled composition leaves the next base untouched: ⌥n ⌥n x → x", () =>
 		expect(typed("~n", "~n", "x")).toBe("x"));
@@ -470,37 +472,43 @@ describe("ring positioning", () => {
 // leaves that mark pending and emits nothing; a SECOND press commits the raw
 // capital instead. Nothing is lost: a second press used to empty pending and emit
 // nothing at all, and backspace still cancels a pending mark silently.
-describe("⌥⇧ escape: the raw capital shares the chord with the mark", () => {
+describe("⌃⇧ escape: the literal capital", () => {
 	const spell = (w: string) => [...w].map((c) => (/[A-Z]/.test(c) ? "+" + c.toLowerCase() : c));
 
-	test("a key with no mark escapes on the first press: GitHub", () =>
-		expect(typed(...spell("Git"), "~+h", ...spell("ub"))).toBe("GitHub"));
-
-	test("without the escape, ⇧H transforms: GitHub → Giθub", () =>
+	test("without an escape, ⇧H transforms: GitHub → Giθub", () =>
 		expect(typed(...spell("GitHub"))).toBe("Giθub"));
 
-	test("a key with a mark escapes on the second press: newWidget", () =>
-		expect(typed(...spell("new"), "~+w", "~+w", ...spell("idget"))).toBe("newWidget"));
+	test("⌃⇧H commits the raw capital: GitHub", () =>
+		expect(typed(...spell("Git"), "!+h", ...spell("ub"))).toBe("GitHub"));
 
-	test("first press is still the mark: a ⌥⇧e b → ab̋", () =>
+	test("it bypasses the capital digraph too: ⌃⇧A ⌃⇧E → AE, not Æ", () =>
+		expect(typed("!+a", "!+e")).toBe("AE"));
+
+	test("⌃⇧G ⌃⇧H → a literal GH", () => expect(typed("!+g", "!+h")).toBe("GH"));
+
+	test("a plain ⌃ chord is a leader key — the engine declines it", () =>
+		// `pass` = "host, this key is yours" (tmux ^b, emacs ^x). typeKeys simulates a
+		// pass by inserting the plain US character, so assert the EDIT, not the text.
+		expect(handleKey("", seq("!b")[0]).edit.type).toBe("pass"));
+
+	test("the escape flushes a pending mark first: ⌥e ⌃⇧A → ´A", () =>
+		expect(typed("~e", "!+a")).toBe("´A"));
+});
+
+// ⌥⇧<letter> USED to be the escape (and shared the chord with a mark's second form
+// via a double-press hack). It moved to ⌃⇧, which freed the layer: a ⌥⇧<letter>
+// with no second form now DECLINES, so the host's own Option typography survives.
+describe("⌥⇧ is not an escape any more", () => {
+	test("a key whose mark has a second form still applies it: a ⌥⇧e b → ab̋", () =>
 		expect(typed("a", "~+e", "b")).toBe(nfc("ab\u{030B}")));
 
-	test("second press commits the capital: a ⌥⇧e ⌥⇧e → aE", () =>
-		expect(typed("a", "~+e", "~+e")).toBe("aE"));
+	test("pressing it twice toggles the mark off, it does NOT escape", () =>
+		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
-	test("escaping only unwinds a lone mark, never a stack: ⌥n ⌥⇧e ⌥⇧e a → ã", () =>
-		expect(typed("~n", "~+e", "~+e", "a")).toBe(nfc("\u{00E3}")));
-
-	test("primary ⌥ toggle-off is untouched: a ⌥e ⌥e → a", () =>
-		expect(typed("a", "~e", "~e")).toBe("a"));
-
-	test("backspace still cancels a pending mark silently", () =>
-		expect(typed("a", "~+e", "⌫", "b")).toBe("ab"));
-
-	// A key with no mark on ⌥⇧ escapes to the raw capital on the first press (there
-	// is nothing to be pending). ⌥c is unassigned since ʿayn was dropped.
-	test("a mark-free ⌥⇧ letter is the capital escape: ⌥⇧c → C", () =>
-		expect(typed("~+c")).toBe("C"));
+	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
+		// Declining is a `pass`: on macOS the host then types its own Ó. (typeKeys
+		// simulates a pass with the plain US character, hence the edit-level assert.)
+		expect(handleKey("", seq("~+h")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —

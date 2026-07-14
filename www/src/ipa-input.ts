@@ -37,6 +37,7 @@ export function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 		key,
 		shift: e.shiftKey,
 		option: e.altKey,
+		control: e.ctrlKey,
 		capsLock: typeof e.getModifierState === "function" && e.getModifierState("CapsLock"),
 	};
 }
@@ -141,7 +142,12 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 	el.addEventListener("keydown", (ev) => {
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
-		if (e.metaKey || e.ctrlKey) return; // native shortcuts (copy, paste, undo…)
+		// ⌘ chords are the host's (copy, paste, undo). ⌃ chords are too — EXCEPT
+		// ⌃⇧<letter>, the literal-capital escape, which is the only way to type a
+		// capital that would otherwise be eaten by the ⇧-modifier ("GitHub" → Giθub).
+		// The engine owns that rule; we just have to stop swallowing the keystroke.
+		if (e.metaKey) return;
+		if (e.ctrlKey && !(e.shiftKey && /^Key[A-Z]$/.test(e.code))) return;
 		if (mediatedByIME(e)) return;
 		if (e.key === "Backspace") { consumed = true; engineBackspace(e); return; }
 		const k = keyFromEvent(e);

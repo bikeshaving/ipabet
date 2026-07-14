@@ -53,7 +53,8 @@ function setup() {
 	const ipa = bindIPAInput(f as any, () => {});
 	const press = (
 		ch: string,
-		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number; capsLock?: boolean} = {},
+		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number;
+			capsLock?: boolean; control?: boolean} = {},
 	) => {
 		f.dispatch("keydown", ev({
 			...KEY[ch],
@@ -62,6 +63,7 @@ function setup() {
 			isComposing: !!mods.isComposing,
 			keyCode: mods.keyCode ?? 0,
 			capsLock: !!mods.capsLock,
+			ctrlKey: !!mods.control,
 		}));
 		// the caret always trails the text in these sequences
 		f.selectionStart = f.selectionEnd = f.value.length;
@@ -260,4 +262,23 @@ test("a fresh IPA segment re-arms the chain after a break", () => {
 	press("i", {shift: true});
 	press("h", {shift: true});
 	expect(f.value).toBe("ʃθɪ");
+});
+
+// -------------------------------------------------------------- ⌃⇧ escape
+
+test("REGRESSION: the web had NO escape — ⌃⇧ letter commits the literal capital", () => {
+	// The escape moved from ⌥⇧ to ⌃⇧ in the IME, but the browser binding dropped
+	// every ⌃ chord, so on the site a ⇧-digraph capital was simply untypeable:
+	// "GitHub" came out Giθub with no way out.
+	const {f, press} = setup();
+	press("g"); press("i"); press("t");
+	press("h", {control: true, shift: true}); // ⌃⇧H — literal, no θ
+	expect(f.value).toBe("gitH");
+});
+
+test("a plain ⌃ chord is still the host's (leader keys, shortcuts)", () => {
+	const {f} = setup();
+	const e = f.dispatch("keydown", ev({code: "KeyB", key: "b", ctrlKey: true}));
+	expect(f.value).toBe("");         // ^b never reached the engine…
+	expect(e.defaultPrevented).toBe(false); // …and tmux still gets it
 });
