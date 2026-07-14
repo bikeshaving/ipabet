@@ -27,11 +27,29 @@ One sharp asymmetry: **`͈` U+0348 "strong articulation" already works** (⌥0) 
 the spec ships it as the Korean fortis mark, `ipa: false`. Its partner `͉`
 U+0349 "weak" does not exist. Same chart, same row, one of the two typeable.
 
-## The free slots
+## The free slots — and what they are not
 
 `⌥⇧` + `a b h i j k l m t x y` (the ⌥ key has a mark, but no second form) plus
-`c r` (no mark at all) and the digit slots `⌥⇧9 ⌥⇧0`, which today decline so
-macOS's `·` and `‚` survive.
+`c r` and the digit slots `⌥⇧8 ⌥⇧9 ⌥⇧0`. Twenty-two slots in all, counting
+punctuation.
+
+**None of them is empty.** I dumped the real US layout from the system to check,
+and every one of these currently types something on macOS: `⌥⇧a` Å, `⌥⇧h` Ó,
+`⌥⇧t` ˇ, `⌥⇧i` ˆ, `⌥⇧l` Ò, `⌥⇧m` Â, `⌥⇧8` °, `⌥⇧9` ·, `⌥⇧0` ‚. Even `⌥⇧k`, which
+looks blank, is the Apple logo (U+F8FF). So "free" means *cheap*, not *free* —
+spending a slot always destroys a character, and the Option layer has already
+destroyed 27 of them (€ £ ¥ ¢ … © ™ µ π å ≈ ≠ ≤ ≥ ± and the math set).
+
+That is the real budget question, and it is why this file exists rather than a
+commit.
+
+## An unrelated win, while we are here
+
+`⌥⇧k` (the Apple logo, the cheapest character on the board) could hold COMBINING
+RING ABOVE. That gives back **å and Å** — which the Option layer destroyed, and
+which phonetics needs constantly for Scandinavian names and journals — plus
+explicit control of ring placement, which the engine currently infers from
+descenders. Nothing to do with extIPA; just the best trade available.
 
 ## Proposed assignments
 

@@ -468,7 +468,7 @@ class InputController: IMKInputController {
             // Is the glyph behind this pending capital IPA content? Test the WHOLE
             // cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
             // and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
-            // base-only test would break the chain right after ⇧1 or a diacritic.
+            // base-only test would break the chain right after ⇧6 or a diacritic.
             // A shifted (capital) base has one question: are we in a LIVE chain —
             // shift held continuously since an IPA segment? If so, this capital
             // CONTINUES it in lowercase (ʃ⇧I⇧H → ʃɪ, Ɣ⇧G⇧H → Ɣɣ). Otherwise — a

@@ -28,7 +28,7 @@ composition session: no underline, no state to flush on clicks/focus
 changes/input-source switches, and nothing for a host to desync.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
-`⇧R`, ejective `⇧X`, superscript `⌥4`, postfix marks, backspace) operate on
+`⇧R`, ejective `⇧X`, superscript `⌥p`, spacing marks, backspace) operate on
 the **decomposed view** of the cluster — base glyph + combining marks split
 via NFD — and
 recompose to NFC on write. NFC fusion (é is one codepoint, n̥ is two) therefore
@@ -106,10 +106,19 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
 - **Shift** — US shift, overridden where IPA needs it: **number keys → the IPA
   glyph with no Latin home** (⇧5 → ə, ⇧2 → ʔ…); a letter right after a glyph →
   an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ).
-- **Option** — postfix diacritics (Apple's ABC Extended layout: `a` `⌥e` → á),
-  plus IPA-only marks; `⌥4` superscriptizes the previous glyph (`t` `h` `⌥4` → tʰ).
-- **Option-Shift** — the raw US shifted character, for a symbol an IPA layer
-  claims (`⌥⇧4` → `$`, `⌥⇧1` → `!`).
+- **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
+  style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
+  tone, stress — stay postfix (`a` `⌥;` → aː). `⌥p` superscriptizes the previous
+  glyph (`h` `⌥p` → ʰ). Chao tone letters on `⌥1`–`⌥5`.
+- **Option-Shift** — a mark's second form (`⌥⇧n` → creaky). On the number row it
+  is the raw-US escape instead, because `⇧<digit>` is an IPA glyph and the shifted
+  symbol would otherwise be unreachable (`⌥⇧2` → `@`); two slots are spent
+  deliberately on characters (`⌥⇧1` → ¡, `⌥⇧6` → ß).
+- **Ctrl-Shift-letter** — the literal capital. `⇧<letter>` transforms the glyph
+  before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H` and
+  bypasses every transform. Plain `⌃` chords stay leader keys (tmux `^b`).
+- **Caps Lock** — a lock, not a modifier: letters type literal capitals and never
+  transform (a locked `T` then `H` is "TH", not θ). Shift is still the modifier.
 - **⌥⇧Space** — the raw-US lock: toggles the whole IME transparent (for code,
   camelCase, shifted symbols) until pressed again. Cleared on switching to
   IPAbet; a Per-App Lock option (input menu) remembers it per app.
