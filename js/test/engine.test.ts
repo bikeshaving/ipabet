@@ -214,10 +214,11 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
 	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
 	// Unassigned ⌥ keys pass, digits included, so the host's own Option typography
-	// survives: ⌥6 §, ⌥7 ¶, ⌥8 •. And the ⌥⇧ escape only exists where ⇧<digit> is
-	// an IPA glyph — ⌥⇧8/9/0 pass, leaving the host's ° · ‚ alone.
+	// survives: ⌥6 §, ⌥8 •. (⌥7 is the horn now — Vietnamese VNI's own key for it.)
+	// And the ⌥⇧ escape only exists where ⇧<digit> is an IPA glyph — ⌥⇧8/9/0 pass,
+	// leaving the host's ° · ‚ alone.
 	test("unassigned ⌥ digits pass to the host", () => {
-		for (const d of ["6", "7"])
+		for (const d of ["6", "8"])
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).toBe("pass");
 	});
 	test("redundant ⌥⇧ digit escapes pass to the host", () => {
@@ -390,10 +391,13 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~c", "e")).toBe(nfc("ȩ"));    // a general cedilla, not a ç key
 	});
 	test("Vietnamese horn, and horn stacking with tone", () => {
-		expect(typed("~y", "o")).toBe(nfc("ơ"));
-		expect(typed("~y", "u")).toBe(nfc("ư"));
-		expect(typed("~`", "~y", "u")).toBe(nfc("ừ"));   // huyền + horn
-		expect(typed("~h", "~y", "o")).toBe(nfc("ở"));   // hỏi + horn
+		// the horn is on ⌥7 — Vietnamese VNI encodes it as the digit 7 (ơ = o7, ư = u7),
+		// so the key is one a Vietnamese typist already knows. It used to be parked on
+		// ⌥y, an arbitrary key that was also destroying ¥.
+		expect(typed("~7", "o")).toBe(nfc("ơ"));
+		expect(typed("~7", "u")).toBe(nfc("ư"));
+		expect(typed("~`", "~7", "u")).toBe(nfc("ừ"));   // huyền + horn
+		expect(typed("~h", "~7", "o")).toBe(nfc("ở"));   // hỏi + horn
 	});
 	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
 	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c is the cedilla now.
