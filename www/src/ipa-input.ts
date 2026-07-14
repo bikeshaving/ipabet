@@ -88,6 +88,14 @@ export interface IPAInput {
  *  fires after every engine edit, carrying the pending accent to display. */
 export function bindIPAInput(el: Field, onChange: (pendingText: string) => void = () => {}): IPAInput {
 	let pending: Pending = [];
+	// The shift-chain: hold ⇧ across a run and each capital is a base for the next
+	// modifier (s⇧H⇧I⇧H → ʃɪ); RELEASE ⇧ and the chain breaks, so the next capitals
+	// are literal or a fresh digraph (⇧A⇧E → Æ). The engine owns the rule but not
+	// the flag — the caller threads it, because only the caller can see the release.
+	// The IME reads it from flagsChanged; in a browser that is keyup on Shift.
+	// Without this the chain here was permanently live: a release did nothing, and
+	// no capital digraph could ever fire after a special glyph.
+	let chainBroken = false;
 	// True when keydown already owned the event, so the beforeinput that follows
 	// must not handle it twice. Left false for keys keydown couldn't resolve — a
 	// native key (space, enter) or a soft keyboard.
@@ -112,7 +120,8 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 	}
 
 	function sendKeystroke(k: Keystroke) {
-		const step = handleKey(el.value.slice(0, caret()), k, pending);
+		const step = handleKey(el.value.slice(0, caret()), k, pending, chainBroken);
+		chainBroken = step.chainBroken ?? false;
 		pending = step.pending;
 		if (step.edit.type !== "noop") applyAtCaret(step.edit, nativeChar(k));
 		fire();
@@ -154,10 +163,14 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 		}
 	});
 
+	el.addEventListener("keyup", (ev) => {
+		if ((ev as KeyboardEvent).key === "Shift") chainBroken = true;
+	});
+
 	el.addEventListener("input", fire); // paste / dictation — keep the host honest
 
 	return {
 		pendingText: () => previewString(pending),
-		reset: () => { pending = []; fire(); },
+		reset: () => { pending = []; chainBroken = false; fire(); },
 	};
 }

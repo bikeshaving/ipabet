@@ -72,7 +72,9 @@ function setup() {
 		f.dispatch("beforeinput", ev({inputType: "insertText", data}));
 		f.selectionStart = f.selectionEnd = f.value.length;
 	};
-	return {f, ipa, press, tap};
+	/** Let go of shift — the only thing that breaks an IPA chain. */
+	const shiftUp = () => f.dispatch("keyup", ev({key: "Shift"}));
+	return {f, ipa, press, tap, shiftUp};
 }
 
 // -------------------------------------------------------------------- bare
@@ -222,4 +224,40 @@ test("a pending accent still absorbs onto a Caps Lock capital: ⌥u then A → �
 	press("a", {capsLock: true});
 	expect(f.value).toBe("Ä");
 	expect(ipa.pendingText()).toBe("");
+});
+
+// -------------------------------------------------------------- shift chain
+
+test("hold ⇧ and the chain continues: s ⇧H⇧I⇧H → ʃɪ", () => {
+	const {f, press} = setup();
+	press("s");
+	press("h", {shift: true}); // → ʃ
+	press("i", {shift: true}); // a capital, pending a modifier
+	press("h", {shift: true}); // …which lowers and transforms it
+	expect(f.value).toBe("ʃɪ");
+});
+
+test("REGRESSION: releasing ⇧ breaks the chain — the browser must see the keyup", () => {
+	// The engine owns the rule but not the flag: the caller threads chainBroken,
+	// because only the caller can see the release. The web binding never did, so
+	// the chain was permanently live here — a release did nothing and no capital
+	// digraph could fire after a special glyph. The IME reads it from flagsChanged.
+	const {f, press, shiftUp} = setup();
+	press("s");
+	press("h", {shift: true}); // → ʃ
+	shiftUp();                 // chain broken: what follows is a FRESH capital run
+	press("a", {shift: true});
+	press("e", {shift: true}); // ⇧A⇧E is the capital digraph, not a chain
+	expect(f.value).toBe("ʃÆ");
+});
+
+test("a fresh IPA segment re-arms the chain after a break", () => {
+	const {f, press, shiftUp} = setup();
+	press("s"); press("h", {shift: true}); // ʃ
+	shiftUp();
+	press("t");                            // bare base — chain still broken
+	press("h", {shift: true});             // a transform: θ, and the chain re-arms
+	press("i", {shift: true});
+	press("h", {shift: true});
+	expect(f.value).toBe("ʃθɪ");
 });

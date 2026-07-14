@@ -31,6 +31,8 @@ const indexEl = document.getElementById("lessonindex");
 // ---------------------------------------------------------------- state
 const KEY = "ipabet-learn-course-v1";
 let li = 0, wi = 0, buffer = "", misses = 0, streak = 0, hinted = false;
+// The shift-chain flag: the engine owns the rule, the caller owns the flag.
+let chainBroken = false;
 let ear = false, shown = false; // ear-training: hide the target, type from sound; `shown` = revealed this word
 let flash: "good" | "bad" | null = null; // the transient correct/wrong state on #typedwrap
 let shiftArmed = false, optArmed = false;
@@ -204,7 +206,7 @@ function syncNav() {
 
 // ------------------------------------------------------------ progression
 function goWord(newLesson: boolean) {
-	buffer = ""; misses = 0; shown = false; flash = null; pending = [];
+	buffer = ""; misses = 0; shown = false; flash = null; pending = []; chainBroken = false;
 	hinted = !ear && wi === 0;   // first word of a lesson shows its keys — but never in ear mode
 	render();
 	if (ear) playWord();                              // ear mode: always play the thing to transcribe
@@ -257,7 +259,12 @@ function doBackspace() {
 	render();
 }
 function sendKey(k: Keystroke) {
-	const step = handleKey(buffer, k, pending);
+	// Thread the shift-chain, exactly as bindIPAInput and the IME do: hold ⇧ across
+	// a run and each capital rebases for the next modifier; release ⇧ and the chain
+	// breaks. The engine owns the rule but not the flag — only the caller sees the
+	// release, so a caller that drops it leaves the chain permanently live.
+	const step = handleKey(buffer, k, pending, chainBroken);
+	chainBroken = step.chainBroken ?? false;
 	pending = step.pending;
 	buffer = applyEdit(buffer, step.edit, nativeChar(k));
 	render();
@@ -270,6 +277,9 @@ function tapChar(ch: string) {
 }
 
 // -------------------------------------------------------- physical keys
+window.addEventListener("keyup", (e) => {
+	if (e.key === "Shift") chainBroken = true; // letting go ends the IPA chain
+});
 window.addEventListener("keydown", (e) => {
 	if (e.metaKey || e.ctrlKey) return;
 	if (mediatedByIME(e)) return; // a real IME owns this keystroke
