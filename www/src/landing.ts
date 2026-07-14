@@ -1,6 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
+import {handleKey, applyEdit, nativeChar, type Keystroke, type Pending} from "../../js/src/index.ts";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
 import {components} from "./marked-components.ts";
@@ -22,14 +23,48 @@ import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 
 const doc = docs.index;
 
-// The hero demo: real keystroke sequences from the notation, animated by the
-// landing-client island. Every sequence here is verified against ipabet.json.
+// The hero demo. Authored as KEYSTROKES; the cumulative output after each one is
+// computed by the real engine, exactly like curriculum.ts and the chart — so the
+// demo cannot drift from the notation. It had: the old hand-written steps still
+// typed "señor" with a POSTFIX ⌥n (s e n ⌥n o r), retroactively tilde-ing the n.
+// Combining marks are prefix dead-keys — ⌥n comes BEFORE its base.
+//
+// Compact keystroke notation (as curriculum.ts): "s" bare · "+h" ⇧ · "~n" ⌥.
+function parseKey(k: string): Keystroke {
+	let shift = false, option = false, key = k;
+	while (key[0] === "+" || key[0] === "~") {
+		if (key[0] === "+") shift = true; else option = true;
+		key = key.slice(1);
+	}
+	return {key, shift, option};
+}
+function keyLabel(k: string): string {
+	const {key, shift, option} = parseKey(k);
+	return (option ? "⌥" : "") + (shift ? "⇧" : "") + (shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
+}
+/** Run the keystrokes through the engine, capturing the output after each one.
+ *  A pending dead-key yields a `noop`, so the output simply holds until its base
+ *  lands — which is exactly what the animation should show. */
+function demo(word: string, ...keys: string[]) {
+	let buffer = "";
+	let pending: Pending = [];
+	const steps: [string, string][] = [];
+	for (const kk of keys) {
+		const k = parseKey(kk);
+		const step = handleKey(buffer, k, pending);
+		pending = step.pending;
+		buffer = applyEdit(buffer, step.edit, nativeChar(k));
+		steps.push([keyLabel(kk), buffer]);
+	}
+	return {word, steps};
+}
+
 const DEMO = [
-	{word: "ship", steps: [["s", "s"], ["⇧H", "ʃ"], ["i", "ʃi"], ["⇧H", "ʃɪ"], ["p", "ʃɪp"]]},
-	{word: "thing", steps: [["t", "t"], ["⇧H", "θ"], ["i", "θi"], ["⇧H", "θɪ"], ["n", "θɪn"], ["⇧G", "θɪŋ"]]},
-	{word: "about", steps: [["⇧5", "ə"], ["b", "əb"], ["a", "əba"], ["u", "əbau"], ["⇧H", "əbaʊ"], ["t", "əbaʊt"]]},
-	{word: "señor", steps: [["s", "s"], ["e", "se"], ["n", "sen"], ["⌥n", "señ"], ["o", "seño"], ["r", "señor"]]},
-	{word: "click", steps: [["q", "q"], ["⇧C", "ǃ"], ["a", "ǃa"]]},
+	demo("ship", "s", "+h", "i", "+h", "p"),
+	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
+	demo("about", "+5", "b", "a", "u", "+h", "t"),
+	demo("señor", "s", "e", "~n", "n", "o", "r"),
+	demo("click", "q", "+c", "a"),
 ];
 
 // ⇧ + number row: the IPA glyphs with no Latin home, from the spec.
