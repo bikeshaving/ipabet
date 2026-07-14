@@ -47,8 +47,8 @@ const landingComponents = {
 				<td class="examples"><${Combo} keys="s" out="s"/> <${Combo} keys="1" out="1" plain/></td></tr>
 			<tr><td><kbd>⇧</kbd> + number</td><td class="desc">the IPA glyphs with no Latin home</td>
 				<td class="examples">${shiftNumbers.map((l) => jsx`<${Combo} keys=${"⇧" + l.key} out=${l.glyph}/>`)}</td></tr>
-			<tr><td><kbd>⇧</kbd> + letter</td><td class="desc">modify the previous segment</td>
-				<td class="examples"><${Combo} keys="s ⇧H" out="ʃ"/> <${Combo} keys="t ⇧R" out="ʈ"/> <${Combo} keys="n ⇧G" out="ŋ"/></td></tr>
+			<tr><td><kbd>⇧</kbd> + letter</td><td class="desc">modify the previous segment — consonants <em>and</em> vowels</td>
+				<td class="examples"><${Combo} keys="s ⇧H" out="ʃ"/> <${Combo} keys="t ⇧R" out="ʈ"/> <${Combo} keys="n ⇧G" out="ŋ"/> <${Combo} keys="i ⇧H" out="ɪ"/> <${Combo} keys="u ⇧H" out="ʊ"/> <${Combo} keys="e ⇧H" out="ɛ"/></td></tr>
 			<tr><td><kbd>⌥</kbd></td><td class="desc">diacritics (prefix, dead-key style) &amp; suprasegmentals</td>
 				<td class="examples"><${Combo} keys="⌥e a" out="á"/> <${Combo} keys="a ⌥;" out="aː"/> <${Combo} keys="h ⌥p" out="ʰ"/></td></tr>
 			<tr><td><kbd>⌥⇧</kbd></td><td class="desc">raw US escape — the plain character an IPA layer claims</td>

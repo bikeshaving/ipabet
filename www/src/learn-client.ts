@@ -24,7 +24,7 @@ declare global { interface Window { __CURRICULUM: Lesson[]; } }
 const LESSONS = window.__CURRICULUM;
 const drillEl = document.getElementById("drill");
 const kbdEl = document.getElementById("kbd");
-const pickEl = document.getElementById("lessonpick") as HTMLSelectElement | null;
+const indexEl = document.getElementById("lessonindex");
 
 // ---------------------------------------------------------------- state
 const KEY = "ipabet-learn-course-v1";
@@ -33,9 +33,21 @@ let ear = false, shown = false; // ear-training: hide the target, type from soun
 let flash: "good" | "bad" | null = null; // the transient correct/wrong state on #typedwrap
 let shiftArmed = false, optArmed = false;
 let pending: Pending = [];
+let indexOpen = false;  // the lesson index panel
+let reached = 0;        // furthest lesson opened — marks the index
 
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s.li === "number") li = Math.min(Math.max(s.li, 0), LESSONS.length - 1); if (s && s.ear) ear = true; } catch { /* no storage */ }
-function save() { try { localStorage.setItem(KEY, JSON.stringify({li, ear})); } catch { /* ignore */ } }
+const clampLesson = (n: number) => Math.min(Math.max(n, 0), LESSONS.length - 1);
+try {
+	const s = JSON.parse(localStorage.getItem(KEY) || "null");
+	if (s && typeof s.li === "number") li = clampLesson(s.li);
+	if (s && typeof s.reached === "number") reached = clampLesson(s.reached);
+	if (s && s.ear) ear = true;
+} catch { /* no storage */ }
+reached = Math.max(reached, li); // older saves carried no `reached`
+function save() {
+	reached = Math.max(reached, li);
+	try { localStorage.setItem(KEY, JSON.stringify({li, ear, reached})); } catch { /* ignore */ }
+}
 const lesson = () => LESSONS[li];
 const word = () => lesson().words[wi];
 
@@ -168,20 +180,40 @@ function Keyboard() {
 		</div>`;
 }
 
-function LessonOptions() {
-	return LESSONS.map((l, i) => jsx`<option value=${String(i)}>${i + 1}. ${l.title}</option>`);
+/** The lesson index: every lesson in the course, visible at once. The one you're
+ *  on is marked; anything you've already reached is shown as visited, so a
+ *  31-lesson course is browsable instead of a linear tunnel. */
+function LessonIndex() {
+	if (!indexOpen) return null;
+	return jsx`
+		<ol class="lessonlist">
+			${LESSONS.map((l, i) => {
+				const cls = "lessonitem"
+					+ (i === li ? " current" : "")
+					+ (i <= reached ? " visited" : "");
+				return jsx`
+					<li>
+						<button class=${cls} onclick=${() => { indexOpen = false; goLesson(i); render(); }}>
+							<span class="n">${i + 1}</span>
+							<span class="t">${l.title}</span>
+							${l.sound ? jsx`<span class="s ipa">/${l.sound}/</span>` : null}
+						</button>
+					</li>`;
+			})}
+		</ol>`;
 }
 
 // ---------------------------------------------------------------- render
 function render() {
 	if (drillEl) renderer.render(jsx`<${Drill} />`, drillEl);
 	if (kbdEl) renderer.render(jsx`<${Keyboard} />`, kbdEl);
+	if (indexEl) renderer.render(jsx`<${LessonIndex} />`, indexEl);
 	syncNav();
 }
 function syncNav() {
-	if (pickEl && pickEl.value !== String(li)) pickEl.value = String(li);
 	(document.getElementById("prevlesson") as HTMLButtonElement | null)?.toggleAttribute("disabled", li === 0);
 	(document.getElementById("nextlesson") as HTMLButtonElement | null)?.toggleAttribute("disabled", li === LESSONS.length - 1);
+	document.getElementById("indextoggle")?.setAttribute("aria-expanded", String(indexOpen));
 }
 
 // ------------------------------------------------------------ progression
@@ -262,10 +294,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 // --------------------------------------------------------------- wiring
-if (pickEl) {
-	renderer.render(jsx`<${LessonOptions} />`, pickEl);
-	pickEl.addEventListener("change", () => goLesson(+pickEl.value));
-}
+document.getElementById("indextoggle")?.addEventListener("click", () => { indexOpen = !indexOpen; render(); });
 document.getElementById("prevlesson")?.addEventListener("click", () => goLesson(li - 1));
 document.getElementById("nextlesson")?.addEventListener("click", () => goLesson(li + 1));
 

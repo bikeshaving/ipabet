@@ -77,9 +77,28 @@
 	transition: color .15s, border-color .15s; }
 #lessonnav button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
 #lessonnav button:disabled { opacity: .35; cursor: default; }
-#lessonpick { max-width: 15rem; font-size: .78rem; color: var(--dim); background: var(--bg);
-	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .7rem; cursor: pointer;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+#indextoggle { font-size: .74rem; letter-spacing: .02em; color: var(--dim); background: var(--bg);
+	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .85rem; cursor: pointer;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	transition: color .15s, border-color .15s; }
+#indextoggle:hover, #indextoggle[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+
+/* The lesson index — the whole course, visible at once. */
+.lessonlist { list-style: none; margin: 1.25rem 0 0; padding: .5rem; display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .25rem;
+	background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+	max-height: 22rem; overflow-y: auto; }
+.lessonitem { display: flex; align-items: baseline; gap: .55rem; width: 100%; text-align: left;
+	background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+	padding: .45rem .6rem; color: var(--dim); font-size: .86rem;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	transition: color .12s, background .12s, border-color .12s; }
+.lessonitem:hover { color: var(--fg); border-color: var(--line); background: var(--bg); }
+.lessonitem .n { font: .72rem ui-monospace, Menlo, monospace; opacity: .6; min-width: 1.4rem; }
+.lessonitem .t { flex: 1; }
+.lessonitem .s { color: var(--accent); font-size: 1rem; }
+.lessonitem.visited { color: var(--fg); }
+.lessonitem.current { color: var(--accent); border-color: var(--accent); background: var(--bg); font-weight: 600; }
 #ear { display: inline-flex; align-items: center; gap: .45rem; font-size: .74rem;
 	letter-spacing: .02em; color: var(--dim); background: var(--bg);
 	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem;
