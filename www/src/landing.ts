@@ -1,7 +1,8 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
-import {handleKey, applyEdit, nativeChar, previewString, type Keystroke, type Pending} from "../../js/src/index.ts";
+import {handleKey, applyEdit, nativeChar, previewString, type Pending} from "../../js/src/index.ts";
+import {parseKey, formatKey as keyLabel} from "./keystrokes.ts";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
 import {components} from "./marked-components.ts";
@@ -30,18 +31,6 @@ const doc = docs.index;
 // Combining marks are prefix dead-keys — ⌥n comes BEFORE its base.
 //
 // Compact keystroke notation (as curriculum.ts): "s" bare · "+h" ⇧ · "~n" ⌥.
-function parseKey(k: string): Keystroke {
-	let shift = false, option = false, key = k;
-	while (key[0] === "+" || key[0] === "~") {
-		if (key[0] === "+") shift = true; else option = true;
-		key = key.slice(1);
-	}
-	return {key, shift, option};
-}
-function keyLabel(k: string): string {
-	const {key, shift, option} = parseKey(k);
-	return (option ? "⌥" : "") + (shift ? "⇧" : "") + (shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
-}
 /** Run the keystrokes through the engine, capturing the output AND the pending
  *  dead-key after each one. A dead key yields a `noop` — the buffer doesn't move
  *  — so the pending accent is the only evidence the keystroke landed. Carrying it

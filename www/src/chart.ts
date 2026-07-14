@@ -1,6 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 import {Layout} from "./layout.ts";
+import {keyText, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.
 import chartPdf from "./chart.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -22,11 +23,6 @@ for (const e of spec.letters as {key: string; glyph: string}[]) {
 }
 reverse.set("ɡ", reverse.get("g") ?? "g"); // the chart's script ɡ is our g
 
-/** "sH" → "s H", "5" → "⇧5" (digits are shifted; a trailing
- * capital is the shift-modifier letter, shown bare to stay compact). */
-function keyText(key: string): string {
-	return [...key].map((c) => (/[0-9]/.test(c) ? "⇧" + c : c)).join("");
-}
 
 /** A glyph with its keystrokes beneath. `fallback` annotates glyphs typed
  * outside the letters table (native keys, mark sequences). */
@@ -211,10 +207,6 @@ function VowelChart() {
 
 // ----------------------------------------------------------- diacritics
 
-/** "~+w" → "⌥⇧w"; "g +H ~p" → "g ⇧H ⌥p". */
-function display(keys: string): string {
-	return keys.split(" ").map((k) => k.replace(/~/g, "⌥").replace(/\+/g, "⇧")).join(" ");
-}
 
 function cp(glyph: string): string {
 	return [...glyph].map((c) => "U+" + c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")).join(" ");

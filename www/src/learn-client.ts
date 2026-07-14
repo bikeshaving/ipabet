@@ -9,6 +9,7 @@
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
+import {keystrokeFromLabel} from "./keystrokes.ts";
 import {
 	handleKey,
 	handleBackspace,
@@ -79,13 +80,6 @@ function dropLastCluster(text: string): string {
 }
 
 // ------------------------------------------------------------ path walking
-function keystrokeFromLabel(lab: string): Keystroke {
-	const option = lab.includes("⌥");
-	const shift = lab.includes("⇧");
-	let key = lab.replace(/[⌥⇧]/g, "");
-	if (key.length === 1 && /[A-Z]/.test(key)) key = key.toLowerCase();
-	return {key, shift, option};
-}
 function simulate(labels: string[], upto: number): string {
 	let b = "";
 	for (let i = 0; i < upto; i++) { const k = keystrokeFromLabel(labels[i]); b = applyEdit(b, handleKey(b, k).edit, nativeChar(k)); }

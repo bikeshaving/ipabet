@@ -3,6 +3,7 @@ import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
 import schema from "../../spec/ipabet.schema.json";
 import {Layout} from "./layout.ts";
+import {keySpelled as keystrokes} from "./keystrokes.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.gen.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
@@ -28,10 +29,6 @@ const sups = (spec.superscripts as {table: {base: string; sup: string}[]}).table
 const classes = spec.classes as {beyond: Record<string, string>};
 const doc = docs.keys;
 
-// "sH" → "s ⇧H", "5" → "⇧5", "s" → "s".
-function keystrokes(key: string): string {
-	return [...key].map((c) => (/[0-9A-Z]/.test(c) ? "⇧" + c : c)).join(" ");
-}
 
 function cp(glyph: string): string {
 	return [...glyph].map((c) => "U+" + c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")).join(" ");

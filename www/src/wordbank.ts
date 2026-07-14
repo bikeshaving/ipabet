@@ -1,4 +1,5 @@
-import {typeKeys, type Keystroke} from "../../js/src/index.ts";
+import {typeKeys} from "../../js/src/index.ts";
+import {seq, formatKey as label} from "./keystrokes.ts";
 
 // The /learn word bank. Words are authored as KEYSTROKE sequences; the engine
 // computes the IPA (so every entry is guaranteed typeable and correct), and a
@@ -7,24 +8,6 @@ import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 // falls out of the data instead of being hand-tagged.
 
 // Compact keystroke notation: "s" bare · "+h" ⇧ · "~n" ⌥ · "~+2" ⌥⇧.
-function seq(...keys: string[]): Keystroke[] {
-	return keys.map((k) => {
-		let shift = false, option = false, key = k;
-		while (key[0] === "+" || key[0] === "~") {
-			if (key[0] === "+") shift = true; else option = true;
-			key = key.slice(1);
-		}
-		return {key, shift, option};
-	});
-}
-function label(k: string): string {
-	let shift = false, option = false, key = k;
-	while (key[0] === "+" || key[0] === "~") {
-		if (key[0] === "+") shift = true; else option = true;
-		key = key.slice(1);
-	}
-	return (option ? "⌥" : "") + (shift ? "⇧" : "") + (shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
-}
 
 // ---- Syllabus: each stage unlocks a set of glyphs. Order = teaching order.
 // (Judgment call on boundaries — tune freely; the machinery doesn't care.)

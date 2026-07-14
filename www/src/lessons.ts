@@ -1,4 +1,5 @@
-import {typeKeys, type Keystroke} from "../../js/src/index.ts";
+import {typeKeys} from "../../js/src/index.ts";
+import {seq, formatKey as label} from "./keystrokes.ts";
 
 // The transcription curriculum (English speakers' track). Lessons are DATA:
 // prose sections, multiple-choice checks, and transcription tests whose
@@ -6,28 +7,7 @@ import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 // untypeable answer. Broad transcription, General American reference
 // accent (stated in lesson 1).
 
-function seq(...keys: string[]): Keystroke[] {
-	return keys.map((k) => {
-		let shift = false, option = false, key = k;
-		while (key[0] === "+" || key[0] === "~") {
-			if (key[0] === "+") shift = true;
-			else option = true;
-			key = key.slice(1);
-		}
-		return {key, shift, option};
-	});
-}
 
-function label(k: string): string {
-	let shift = false, option = false, key = k;
-	while (key[0] === "+" || key[0] === "~") {
-		if (key[0] === "+") shift = true;
-		else option = true;
-		key = key.slice(1);
-	}
-	return (option ? "⌥" : "") + (shift ? "⇧" : "") +
-		(shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
-}
 
 export interface Choice {
 	text: string;
