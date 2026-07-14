@@ -1,11 +1,11 @@
-// The hero: a mini drill, not a carousel.
+// The hero: a carousel you can take over.
 //
-// It holds one TARGET word at a time (window.__DEMO), showing that word's
-// keystrokes as bars that light up as the sequence is walked. It demos the
-// current word on its own, but never auto-advances — you cycle targets with the
-// arrows. Tap/click in and you take over: your keystrokes run through the real
-// engine, the bars light as you match the target, and whatever text is already
-// there is kept rather than cleared.
+// Attract mode rotates through the target words (window.__DEMO), typing each
+// one out with its keystrokes as bars that light up as the sequence is walked.
+// The arrows jump between targets. Tap/click in and you take over: rotation
+// stops, your keystrokes run through the real engine, the bars light as you
+// match the target, and whatever text is already there is kept rather than
+// cleared. Click away and it picks the rotation back up.
 //
 // Input is a real (invisible) <textarea> covering the hero, not a focusable
 // <div>: only an editable element raises the soft keyboard on iOS/Android. Two
@@ -91,21 +91,29 @@ if (demoEl && inputEl && viewEl && DEMO.length) {
 		paint(hits, hits > 0 && hits === target().steps.length);
 	}
 
-	// --------------------------------------------------------- demo the word
+	// --------------------------------------------------------- demo the words
+	/** Attract: type out the current target, rest on it, rotate to the next, and
+	 *  keep going — until the visitor takes over (focus) or jumps with an arrow,
+	 *  either of which bumps `run` and abandons this loop. */
 	async function demo() {
 		const token = ++run;
-		buffer = "";
-		paint(0);
-		await sleep(600);
-		const steps = target().steps;
-		for (let i = 0; i < steps.length; i++) {
+		for (;;) {
+			buffer = "";
+			paint(0);
+			await sleep(600);
+			const steps = target().steps;
+			for (let i = 0; i < steps.length; i++) {
+				if (live || token !== run) return;
+				buffer = steps[i][1];
+				paint(i + 1);
+				await sleep(380);
+			}
 			if (live || token !== run) return;
-			buffer = steps[i][1];
-			paint(i + 1);
-			await sleep(380);
+			paint(steps.length, true); // rest on the finished word…
+			await sleep(2200);
+			if (live || token !== run) return;
+			ti = (ti + 1) % DEMO.length; // …then rotate to the next
 		}
-		if (live || token !== run) return;
-		paint(steps.length, true); // rest on the finished word — no auto-advance
 	}
 
 	function setTarget(n: number) {
