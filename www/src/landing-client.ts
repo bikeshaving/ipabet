@@ -155,10 +155,14 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 	input.addEventListener("keydown", (e) => {
 		consumed = false;
 		if (e.metaKey || e.ctrlKey) return;
-		// Cede to an OS input method — EXCEPT when Option is held. macOS treats
-		// ⌥+letter as its own dead key (⌥n → ˜) and flags the keydown as
-		// composition; that would swallow our whole diacritic layer. ⌥ is ours.
-		if (!e.altKey && (e.isComposing || e.keyCode === 229)) return;
+		// Cede ONLY to a real input method, which commits via keyCode 229.
+		//
+		// Do NOT cede on isComposing: the plain macOS US layout sets it, because
+		// ⌥n/⌥e/⌥i/⌥u/⌥` are its own dead keys. Bailing there let macOS insert its
+		// ñ while our ˜ stayed armed and landed on the NEXT vowel — "señõr". No IME
+		// is involved; those keystrokes are ours, so we take them and preventDefault,
+		// which stops macOS composing at all.
+		if (e.keyCode === 229) return;
 		if (e.key === "Backspace") {
 			consumed = true;
 			if (input!.selectionStart !== input!.selectionEnd) return; // native
