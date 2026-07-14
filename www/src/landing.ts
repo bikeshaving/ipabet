@@ -71,10 +71,15 @@ export function Landing() {
 					<p class="provisional">Provisional — the keyboard layout is still being refined, and keystrokes may change between releases.</p>
 				</header>
 
-				<div id="demo" role="textbox" aria-label="Type IPA — click and type">
+				<div id="demo" role="textbox" aria-label="Type IPA — click and type it yourself">
 					<div class="keys"></div>
 					<div class="out"><span class="text ipa"></span><span class="caret"></span></div>
 					<div class="word"></div>
+				</div>
+				<div id="demonav">
+					<button id="demoprev" aria-label="Previous word" title="Previous word">◀</button>
+					<span class="hint">click the box and type it yourself</span>
+					<button id="demonext" aria-label="Next word" title="Next word">▶</button>
 				</div>
 
 				<${Marked} markdown=${doc.body} components=${landingComponents} />

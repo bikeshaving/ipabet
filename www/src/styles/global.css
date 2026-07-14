@@ -73,6 +73,21 @@ header h1 .ipa { color: var(--accent); }
 }
 @keyframes blink { 50% { opacity: 0; } }
 #demo .word { color: var(--dim); font-size: 0.9rem; height: 1.4rem; margin-top: 0.25rem; }
+#demo.live { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+
+/* Cycle through the target words; lives outside #demo so it can't steal focus. */
+#demonav {
+	display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+	margin: -1.25rem 0 2rem;
+}
+#demonav button {
+	appearance: none; width: 1.9rem; height: 1.9rem; border-radius: 999px;
+	border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+	cursor: pointer; font-size: 0.7rem; line-height: 1; display: grid; place-items: center;
+	transition: color 0.15s, border-color 0.15s;
+}
+#demonav button:hover { color: var(--accent); border-color: var(--accent); }
+#demonav .hint { color: var(--dim); font-size: 0.8rem; }
 
 section { margin-top: 4rem; }
 /* Markdown documents render without <section> wrappers, so the section spacing

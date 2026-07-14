@@ -47,7 +47,9 @@
 #typedwrap.good .caret { opacity: 0; }
 
 #hint { height: 2.4rem; margin-top: 1.1rem; display: flex; align-items: center; justify-content: center; gap: .25rem; }
-#hint kbd { font-size: .95rem; }
+/* The keys as bars that light as you walk the sequence (matches the hero). */
+#hint kbd { font-size: .95rem; opacity: .35; transition: opacity .15s, border-color .15s, color .15s; }
+#hint kbd.hit { opacity: 1; border-color: var(--accent); color: var(--accent); }
 #hint button { background: none; border: 1px solid var(--line); border-radius: 999px;
 	color: var(--dim); padding: .3rem .9rem; cursor: pointer; font-size: .82rem;
 	transition: color .15s, border-color .15s; }

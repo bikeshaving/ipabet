@@ -62,6 +62,16 @@ function dropLastCluster(text: string): string {
 }
 
 // ---------------------------------------------------------------- render
+/** How many of the word's keystrokes are already typed — the position along the
+ *  taught path. Drives the progressive lighting of the key bars. Returns 0 when
+ *  the buffer is off-path (a wrong key), so nothing extra lights. */
+function progress(): number {
+	const labels = word().labels;
+	const b = buffer.normalize("NFC");
+	for (let p = 0; p <= labels.length; p++)
+		if (simulate(labels, p).normalize("NFC") === b) return p;
+	return 0;
+}
 function renderHint() {
 	if (ear && !shown) { // ear mode: never spill the keys; offer a reveal escape instead
 		$("#hint").innerHTML = `<button id="hintbtn">reveal answer</button>`;
@@ -69,9 +79,16 @@ function renderHint() {
 		return;
 	}
 	const show = hinted || misses >= 2 || (ear && shown);
-	$("#hint").innerHTML = show
-		? word().labels.map((l) => `<kbd>${l}</kbd>`).join("")
-		: `<button id="hintbtn">show keys</button>`;
+	if (show) {
+		// The keys as bars that light up as you walk the sequence (the hero's
+		// treatment) rather than a flat, undifferentiated row.
+		const p = progress();
+		$("#hint").innerHTML = word().labels
+			.map((l, i) => `<kbd${i < p ? ' class="hit"' : ""}>${l}</kbd>`)
+			.join("");
+		return;
+	}
+	$("#hint").innerHTML = `<button id="hintbtn">show keys</button>`;
 	document.querySelector("#hintbtn")?.addEventListener("click", () => { hinted = true; renderHint(); });
 }
 function render() {
