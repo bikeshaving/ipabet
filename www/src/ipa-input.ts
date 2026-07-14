@@ -1,7 +1,7 @@
 // The ONE place the browser↔engine plumbing lives.
 //
 // Every input surface (the /type scratchpad, the homepage hero) binds through
-// bindIpaInput. Surfaces without a text field (/learn, which reads the whole
+// bindIPAInput. Surfaces without a text field (/learn, which reads the whole
 // window and has its own on-screen keyboard) import keyFromEvent/keyFromChar so
 // the keystroke derivation is still shared. Nothing here gets reimplemented per
 // surface — that duplication is exactly how these drifted and broke apart.
@@ -67,7 +67,7 @@ export function mediatedByIME(e: KeyboardEvent): boolean {
 
 type Field = HTMLTextAreaElement | HTMLInputElement;
 
-export interface IpaInput {
+export interface IPAInput {
 	/** The armed dead-key accent ("" when none). It is NOT in the field's text —
 	 *  the host must render it. */
 	pendingText(): string;
@@ -78,7 +78,7 @@ export interface IpaInput {
 /** Wire a real text field to the engine. The field holds the text, so the caret,
  *  selection, editing and the mobile keyboard come from the browser. `onChange`
  *  fires after every engine edit, carrying the pending accent to display. */
-export function bindIpaInput(el: Field, onChange: (pendingText: string) => void = () => {}): IpaInput {
+export function bindIPAInput(el: Field, onChange: (pendingText: string) => void = () => {}): IPAInput {
 	let pending: Pending = [];
 	// True when keydown already owned the event, so the beforeinput that follows
 	// must not handle it twice. Left false for keys keydown couldn't resolve — a

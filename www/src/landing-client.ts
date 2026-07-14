@@ -8,7 +8,7 @@
 // Attract mode types the target words out on a loop; click in and you take over.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
-import {bindIpaInput} from "./ipa-input.ts";
+import {bindIPAInput} from "./ipa-input.ts";
 
 interface Demo {
 	word: string;
@@ -59,7 +59,7 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 	}
 
 	// The one engine↔input binding, shared with /type.
-	const ipa = bindIpaInput(input, (pend) => paintLive(pend));
+	const ipa = bindIPAInput(input, (pend) => paintLive(pend));
 
 	// --------------------------------------------------------- attract mode
 	async function demo() {

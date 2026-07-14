@@ -4,12 +4,12 @@
 // the "use it without installing" surface.
 //
 // The engine↔input plumbing is NOT reimplemented here — it's the shared
-// bindIpaInput, the same one the homepage hero uses. This file only owns what is
+// bindIPAInput, the same one the homepage hero uses. This file only owns what is
 // actually specific to the scratchpad: persistence, the character count, copy,
 // clear, and the dead-key preview chip.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
-import {bindIpaInput} from "./ipa-input.ts";
+import {bindIPAInput} from "./ipa-input.ts";
 
 const ta = document.getElementById("ed") as HTMLTextAreaElement;
 const countEl = document.getElementById("count") as HTMLElement;
@@ -41,7 +41,7 @@ function afterChange(pendingText: string) {
 	save();
 }
 
-const ipa = bindIpaInput(ta, afterChange);
+const ipa = bindIPAInput(ta, afterChange);
 
 copyBtn.addEventListener("click", async () => {
 	try {

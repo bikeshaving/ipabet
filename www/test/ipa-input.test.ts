@@ -1,4 +1,4 @@
-// bindIpaInput, driven headlessly.
+// bindIPAInput, driven headlessly.
 //
 // The binding is a function over DOM events, so it needs no browser — just a
 // field with .value/.selectionStart and synthetic events. Every bug this file
@@ -8,7 +8,7 @@
 // and lands on the following vowel — "señõr".
 
 import {test, expect} from "bun:test";
-import {bindIpaInput} from "../src/ipa-input.ts";
+import {bindIPAInput} from "../src/ipa-input.ts";
 
 // --------------------------------------------------------------- test double
 
@@ -46,7 +46,7 @@ const KEY: Record<string, {code: string; key: string}> = {
 
 function setup() {
 	const f = new FakeField();
-	const ipa = bindIpaInput(f as any, () => {});
+	const ipa = bindIPAInput(f as any, () => {});
 	const press = (
 		ch: string,
 		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number} = {},
