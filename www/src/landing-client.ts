@@ -21,6 +21,7 @@ import {
 	handleKey,
 	handleBackspace,
 	nativeChar,
+	previewString,
 	type Keystroke,
 	type Pending,
 	type Edit,
@@ -28,7 +29,7 @@ import {
 
 interface Demo {
 	word: string;
-	steps: [string, string][]; // [keystroke label, cumulative IPA after it]
+	steps: [string, string, string][]; // [keystroke label, cumulative IPA, pending dead-key]
 }
 declare global {
 	interface Window { __DEMO?: Demo[]; }
@@ -41,10 +42,11 @@ const viewEl = document.getElementById("demoview");
 
 /** The hero's display: the target's keystroke bars (lit as far as they've been
  *  walked), the IPA produced so far, and the word once it's complete. */
-function HeroView({steps, hits, buffer, word, done}: {
-	steps: [string, string][];
+function HeroView({steps, hits, buffer, pend, word, done}: {
+	steps: [string, string, string][];
 	hits: number;
 	buffer: string;
+	pend: string;   // the armed dead-key accent, waiting for its base
 	word: string;
 	done: boolean;
 }) {
@@ -52,7 +54,9 @@ function HeroView({steps, hits, buffer, word, done}: {
 		<div class="keys">
 			${steps.map(([k], i) => jsx`<kbd class=${i < hits ? "hit" : undefined}>${k}</kbd>`)}
 		</div>
-		<div class="out"><span class="text ipa">${buffer}</span><span class="caret"></span></div>
+		<div class="out"><span class="text ipa">${buffer}</span>${
+			pend ? jsx`<span class="pend ipa">${pend}</span>` : null
+		}<span class="caret"></span></div>
 		<div class="word">${done ? "“" + word + "”" : ""}</div>`;
 }
 
@@ -68,18 +72,24 @@ if (demoEl && inputEl && viewEl && DEMO.length) {
 	const target = () => DEMO[ti];
 
 	// ------------------------------------------------------------- rendering
-	/** How far along the target's keystroke sequence the buffer has got. */
+	/** How far along the target's keystroke sequence we've got. Matches BOTH the
+	 *  output and the pending dead-key: after ⌥n the buffer is unchanged, so
+	 *  buffer alone can't tell that step apart from the one before it. */
 	function walked(): number {
 		const steps = target().steps;
-		for (let i = steps.length - 1; i >= 0; i--) if (steps[i][1] === buffer) return i + 1;
+		const pend = previewString(pending);
+		for (let i = steps.length - 1; i >= 0; i--) {
+			if (steps[i][1] === buffer && steps[i][2] === pend) return i + 1;
+		}
 		return 0;
 	}
-	function paint(hits: number, done = false) {
+	function paint(hits: number, done = false, pend = "") {
 		renderer.render(
 			jsx`<${HeroView}
 				steps=${target().steps}
 				hits=${hits}
 				buffer=${buffer}
+				pend=${pend}
 				word=${target().word}
 				done=${done}
 			/>`,
@@ -88,7 +98,7 @@ if (demoEl && inputEl && viewEl && DEMO.length) {
 	}
 	function paintLive() {
 		const hits = walked();
-		paint(hits, hits > 0 && hits === target().steps.length);
+		paint(hits, hits > 0 && hits === target().steps.length, previewString(pending));
 	}
 
 	// --------------------------------------------------------- demo the words
@@ -105,7 +115,7 @@ if (demoEl && inputEl && viewEl && DEMO.length) {
 			for (let i = 0; i < steps.length; i++) {
 				if (live || token !== run) return;
 				buffer = steps[i][1];
-				paint(i + 1);
+				paint(i + 1, false, steps[i][2]); // …including the armed dead-key
 				await sleep(380);
 			}
 			if (live || token !== run) return;

@@ -77,6 +77,12 @@ header h1 .ipa { color: var(--accent); }
 	font-size: 2.4rem; height: 3.6rem; line-height: 3.6rem;
 	margin-top: 0.5rem; overflow: hidden; white-space: nowrap;
 }
+/* An armed dead-key accent (⌥n → ˜) waiting for its base. It isn't text yet, so
+   it reads as pending: accent-coloured, underlined, not part of the output. */
+#demo .out .pend {
+	color: var(--accent); opacity: 0.85;
+	border-bottom: 2px dashed var(--accent); margin-left: 0.05em; padding: 0 0.06em;
+}
 #demo .out .caret {
 	display: inline-block; width: 2px; height: 2.2rem; background: var(--accent);
 	vertical-align: -0.35rem; animation: blink 1s step-end infinite;

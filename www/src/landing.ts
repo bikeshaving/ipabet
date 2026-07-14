@@ -1,7 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
-import {handleKey, applyEdit, nativeChar, type Keystroke, type Pending} from "../../js/src/index.ts";
+import {handleKey, applyEdit, nativeChar, previewString, type Keystroke, type Pending} from "../../js/src/index.ts";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
 import {components} from "./marked-components.ts";
@@ -42,19 +42,21 @@ function keyLabel(k: string): string {
 	const {key, shift, option} = parseKey(k);
 	return (option ? "⌥" : "") + (shift ? "⇧" : "") + (shift && /[a-z]/.test(key) ? key.toUpperCase() : key);
 }
-/** Run the keystrokes through the engine, capturing the output after each one.
- *  A pending dead-key yields a `noop`, so the output simply holds until its base
- *  lands — which is exactly what the animation should show. */
+/** Run the keystrokes through the engine, capturing the output AND the pending
+ *  dead-key after each one. A dead key yields a `noop` — the buffer doesn't move
+ *  — so the pending accent is the only evidence the keystroke landed. Carrying it
+ *  lets the hero both SHOW the armed accent and light that keystroke's bar
+ *  (buffer-matching alone can't see a step that changed no text). */
 function demo(word: string, ...keys: string[]) {
 	let buffer = "";
 	let pending: Pending = [];
-	const steps: [string, string][] = [];
+	const steps: [string, string, string][] = []; // [key label, output, pending]
 	for (const kk of keys) {
 		const k = parseKey(kk);
 		const step = handleKey(buffer, k, pending);
 		pending = step.pending;
 		buffer = applyEdit(buffer, step.edit, nativeChar(k));
-		steps.push([keyLabel(kk), buffer]);
+		steps.push([keyLabel(kk), buffer, previewString(pending)]);
 	}
 	return {word, steps};
 }
