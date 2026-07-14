@@ -16,6 +16,7 @@
 //                 work on a phone. (⌥ has no soft-keyboard equivalent, so the
 //                 diacritic layer is unreachable there — expected.)
 
+import {jsx, renderer} from "@b9g/crank/standalone";
 import {
 	handleKey,
 	handleBackspace,
@@ -36,11 +37,26 @@ declare global {
 const DEMO: Demo[] = window.__DEMO ?? [];
 const demoEl = document.getElementById("demo");
 const inputEl = document.getElementById("demoinput") as HTMLTextAreaElement | null;
-const keysEl = document.querySelector("#demo .keys");
-const outEl = document.querySelector("#demo .out .text");
-const wordEl = document.querySelector("#demo .word");
+const viewEl = document.getElementById("demoview");
 
-if (demoEl && inputEl && keysEl && outEl && wordEl && DEMO.length) {
+/** The hero's display: the target's keystroke bars (lit as far as they've been
+ *  walked), the IPA produced so far, and the word once it's complete. */
+function HeroView({steps, hits, buffer, word, done}: {
+	steps: [string, string][];
+	hits: number;
+	buffer: string;
+	word: string;
+	done: boolean;
+}) {
+	return jsx`
+		<div class="keys">
+			${steps.map(([k], i) => jsx`<kbd class=${i < hits ? "hit" : undefined}>${k}</kbd>`)}
+		</div>
+		<div class="out"><span class="text ipa">${buffer}</span><span class="caret"></span></div>
+		<div class="word">${done ? "“" + word + "”" : ""}</div>`;
+}
+
+if (demoEl && inputEl && viewEl && DEMO.length) {
 	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 	let ti = 0;            // current target word
@@ -59,11 +75,16 @@ if (demoEl && inputEl && keysEl && outEl && wordEl && DEMO.length) {
 		return 0;
 	}
 	function paint(hits: number, done = false) {
-		keysEl!.innerHTML = target().steps
-			.map(([k], i) => `<kbd${i < hits ? ' class="hit"' : ""}>${k}</kbd>`)
-			.join("");
-		outEl!.textContent = buffer;
-		wordEl!.textContent = done ? "“" + target().word + "”" : "";
+		renderer.render(
+			jsx`<${HeroView}
+				steps=${target().steps}
+				hits=${hits}
+				buffer=${buffer}
+				word=${target().word}
+				done=${done}
+			/>`,
+			viewEl!,
+		);
 	}
 	function paintLive() {
 		const hits = walked();

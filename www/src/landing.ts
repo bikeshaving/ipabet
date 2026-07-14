@@ -74,9 +74,7 @@ export function Landing() {
 				<div id="demo">
 					<textarea id="demoinput" aria-label="Type IPA — tap and type it yourself"
 						spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
-					<div class="keys"></div>
-					<div class="out"><span class="text ipa"></span><span class="caret"></span></div>
-					<div class="word"></div>
+					<div id="demoview"></div>
 				</div>
 				<div id="demonav">
 					<button id="demoprev" aria-label="Previous word" title="Previous word">◀</button>

@@ -44,20 +44,7 @@ const Scaffold = () => jsx`
 		<button id="ear" aria-pressed="false" title="Hide the symbol and type from the sound alone">
 			<span class="dot"></span>Ear training</button>
 	</div>
-	<div id="drill">
-		<div id="bar"><div id="barfill"></div></div>
-		<div id="stage"></div>
-		<div id="note"></div>
-		<div id="prog"></div>
-		<div id="hero">
-			<div id="target" class="ipa"></div>
-			<button id="say" aria-label="Play the sound"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.4 4.4 5.3H1.8v5.4h2.6L8 13.6z" fill="currentColor"/><path d="M10.4 5.3a3.4 3.4 0 0 1 0 5.4M12 3.5a5.8 5.8 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
-		</div>
-		<div id="word"></div>
-		<div id="typedwrap"><span id="typed"></span><span class="caret"></span></div>
-		<div id="hint"></div>
-		<div id="streak"></div>
-	</div>
+	<div id="drill"></div>
 	<div id="kbd"></div>`;
 
 export function Learn() {

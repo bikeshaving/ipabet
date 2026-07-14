@@ -29,6 +29,7 @@ const Pad = () => jsx`
 			<button id="clear">Clear</button>
 			<button id="copy">Copy</button>
 		</div>
+		<span id="pending-mount"></span>
 	</div>`;
 
 export function Type() {

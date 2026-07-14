@@ -4,6 +4,7 @@
 // the "use it without installing" surface — and the place to trial shift-chaining
 // on real prose (hold shift to continue IPA), toggleable below.
 
+import {jsx, renderer} from "@b9g/crank/standalone";
 import {
 	handleKey,
 	handleBackspace,
@@ -25,14 +26,13 @@ const KEY = "ipabet-editor-v1";
 // user's own NBSP (common in pasted text) can never be mistaken for it. A
 // <textarea> can't style a sub-range, so the preview is a chip, not marked text.
 let pending: Pending = [];
-const chip = document.createElement("span");
-chip.id = "pending-chip";
-chip.hidden = true;
-document.getElementById("pad")?.appendChild(chip);
+const chipMount = document.getElementById("pending-mount");
+/** The dead-key preview: the accent(s) waiting for a base. */
+function PendingChip({text}: {text: string}) {
+	return text === "" ? null : jsx`<span id="pending-chip">${text}</span>`;
+}
 function renderPending(): void {
-	const s = previewString(pending);
-	chip.textContent = s;
-	chip.hidden = s === "";
+	if (chipMount) renderer.render(jsx`<${PendingChip} text=${previewString(pending)} />`, chipMount);
 }
 try {
 	const s = JSON.parse(localStorage.getItem(KEY) || "null");
