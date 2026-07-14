@@ -19,7 +19,7 @@ export interface ComboProps {
 	keys?: string;
 	/** The resulting glyph shown after the arrow. Omit for a keys-only combo. */
 	out?: string;
-	/** Render the output as a plain char (raw-US escapes: @, H) rather than IPA. */
+	/** Render the output as a plain char (an escape's output: @, GH) rather than IPA. */
 	plain?: boolean;
 }
 

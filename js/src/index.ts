@@ -296,8 +296,9 @@ function superscriptize(textBefore: string): Edit {
 /**
  * The IPAbet keystroke handler. Mirrors the IME's handle():
  * bare keys are plain US, ⇧number → IPA glyph, ⇧letter → transform of the
- * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → raw-US escape on
- * letters/digits. Command/control chords and anything unmapped pass.
+ * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → a mark's second form
+ * (plus the raw-US escape on the number row), ⌃⇧letter → the literal capital.
+ * Command chords, other control chords, and anything unmapped pass.
  */
 /**
  * Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ). The gate

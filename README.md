@@ -20,10 +20,27 @@ IPAbet is US-first; the IPA is purely additive:
   `nG`→ŋ), grounded in romanization conventions (pinyin / ITRANS / ALA-LC).
   `C` makes the base letter a click at that place (`tC`→ǀ, `qC`→ǃ, `lC`→ǁ).
 - **Shift + number** — the IPA glyphs with no Latin key (`⇧2`→ʔ, `⇧3`→ʕ,
-  `⇧5`→ə, `⇧1`→ɨ, `⇧4`→ɾ, `⇧7`→ħ), grounded in Arabizi + X-SAMPA.
-- **Option** — diacritics and suprasegmentals, postfix, on Apple's ABC Extended
-  layout (`a`+`⌥e`→á, `n`+`⌥n`→ñ, `a`+`⌥;`→aː) plus IPA-only marks. `⌥⇧` is the
-  raw-US escape for any symbol an IPA layer claims.
+  `⇧4`→ɾ, `⇧5`→ə, `⇧7`→ħ), grounded in Arabizi + X-SAMPA. `⇧6` is the tie bar
+  (`t ⇧6 s`→t͡s); press it again and the tie flips below (t͜ɕ), where descenders
+  would collide.
+- **Option** — diacritics and suprasegmentals. Combining marks are **prefix**,
+  dead-key style like the US layout's own é/ñ: press the mark, then the base
+  absorbs it (`⌥e`+`a`→á, `⌥n`+`n`→ñ). Spacing marks — length, tone, stress —
+  stay postfix (`a`+`⌥;`→aː). Chao tone letters live on `⌥1`–`⌥5`.
+- **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high),
+  and on the number row the raw-US escape, which exists only because `⇧<digit>`
+  is an IPA glyph (`⇧2` is ʔ, so `@` lives on `⌥⇧2`).
+
+Escapes, for when the IPA layer claims something you meant literally:
+
+- **Ctrl + Shift + letter** — the literal capital. `⇧<letter>` transforms the
+  glyph before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H`
+  and bypasses every transform.
+- **Caps Lock** — a *lock*, not a modifier: letters type their literal capitals
+  and never transform (a locked `T` then `H` is "TH", not θ). Shift still means
+  the modifier while locked.
+- **⌥⇧Space** — the Raw-US Lock. The whole keyboard goes native until pressed
+  again: write code, paste in a terminal, type camelCase.
 
 Every glyph has exactly one canonical keystroke sequence — the notation is a
 bijection, so IPAbet↔IPA round-trips losslessly.
@@ -59,12 +76,19 @@ through untouched — transparent to English, shell, and shortcuts.
 
 ## Status
 
-Tier 1 (segments) covers every symbol on the standard IPA chart — pulmonic
-and non-pulmonic (clicks, implosives, ejectives) — save one deliberate
-omission: ɧ, which has no stable articulation (Ladefoged & Maddieson), so its
-variants are transcribed directly. Tier 2 (diacritics and suprasegmentals)
-lives on the Option layer, grounded in ABC Extended and X-SAMPA/TIPA
-convention. Not yet covered: Chao tone letters, prosodic bars, extIPA.
+**The standard IPA chart is complete.** Every symbol is typeable — pulmonic and
+non-pulmonic consonants (clicks, implosives, ejectives), all 28 vowels, ɧ, both
+tie bars, every diacritic and suprasegmental, and the Chao tone letters. Tier 1
+(segments) lives on the shifted layers; Tier 2 (diacritics) on the Option layer,
+grounded in ABC Extended and X-SAMPA/TIPA convention.
+
+Two known gaps, both deliberate: **extIPA** (the extensions for disordered
+speech) is not covered — see `docs/extipa-proposal.md`; and `g` is U+0067, not
+U+0261 script g, which the bare-layer law buys and corpus work must normalize
+(`laws.scriptG`).
+
+The layout is **provisional** until the first release — keystrokes may still
+change between versions.
 
 ## License
 
