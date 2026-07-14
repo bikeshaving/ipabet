@@ -159,25 +159,20 @@ const TIE_BELOW = "͜";
 // fricatives; ejectives need voicelessness (sealed glottis) and a closure.
 const VOICELESS_OBSTRUENTS = "ptʈckqɸfθsʃʂçxχɬ";
 
-// IPA bases whose descenders collide with a below-ring: the voiceless ring
-// rides above these (ŋ̊, ɡ̊, j̊), below everything else (n̥, l̥).
-const DESCENDERS = new Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ");
-
-// below-form ⇄ above-form for descender bases (ring, syllabic line); position
-// is non-contrastive, the engine owns it. Applied to the *final* base, so a
-// mark that landed below on n rides above once ⇧G makes it ŋ.
-const POSITIONAL: Record<string, string> = {
-	"\u{0325}": "\u{030A}",
-	"\u{0329}": "\u{030D}",
-};
-const POSITIONAL_INV: Record<string, string> = {
-	"\u{030A}": "\u{0325}",
-	"\u{030D}": "\u{0329}",
-};
-function reposition(base: string, marks: readonly string[]): string[] {
-	const desc = DESCENDERS.has(base[0] ?? "");
-	return marks.map((sc) => (desc ? POSITIONAL[sc] : POSITIONAL_INV[sc]) ?? sc);
-}
+// Mark PLACEMENT is the transcriber's, never the engine's.
+//
+// Three marks have an above/below form — the tie bar, the voiceless ring, and the
+// syllabic line — and the engine used to choose two of them for you, by looking up
+// the base in a hardcoded set of "glyphs with descenders". That is a TYPOGRAPHY
+// model living inside a NOTATION engine, and it was wrong in both directions: it
+// silently pushed an explicit ring back below (so å, a letter, was untypeable), and
+// its descender list had drifted — ɲ ʎ ɸ β ç ʑ and ɧ were all missing, so it buried
+// rings in their tails anyway. Nobody notices that class of bug, because the
+// codepoint is right and only the rendering collides.
+//
+// So the list is gone. Every placement is now a keystroke: ⌥k / ⌥⇧k for the ring,
+// ⌥s / ⌥⇧s for the syllabic line, ⇧6 twice for the tie. The engine emits exactly
+// the mark you asked for, on the base you asked for.
 
 // ---------------------------------------------------------------- unicode
 
@@ -276,7 +271,7 @@ function emitBase(glyph: string, pending: Pending): Step {
 	if (pending.length === 1 && pending[0] === "\u{0334}" && glyph === "l") {
 		return {edit: {type: "insert", text: "ɫ"}, pending: []};
 	}
-	const marks = reposition(glyph, [...pending]);
+	const marks = [...pending];
 	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};
 }
 
@@ -472,14 +467,14 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 					// Ʈ). Excluded: Greek uppercases (θ→Θ, wrong script, keeps "THE"
 					// literal) and plain ASCII (tJ→c→C, so ⇧T⇧J stays "TJ").
 					if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
-						return {edit: replaceCluster(p, recompose(up, reposition(up, marks))), pending: []};
+						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
 					}
 				}
 			}
 		}
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) {
-			return {edit: replaceCluster(p, recompose(combo, reposition(combo, marks))), pending: []};
+			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};
 		}
 		// vowel rhoticization: R after any vowel. ə and ɜ have precomposed
 		// rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞.

@@ -487,14 +487,14 @@ class InputController: IMKInputController {
                     if up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
                        u.value > 0x7f, !(0x370...0x3ff).contains(u.value) {
                         Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
-                        replace(r, with: recompose(up, reposition(up, marks)), client)
+                        replace(r, with: recompose(up, marks), client)
                         chainBroken = false; return true
                     }
                 }
             }
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
-                replace(r, with: recompose(combo, reposition(combo, marks)), client)
+                replace(r, with: recompose(combo, marks), client)
                 chainBroken = false; return true
             }
             // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
@@ -556,27 +556,19 @@ class InputController: IMKInputController {
         }
     }
 
-    /// IPA bases whose descenders collide with below-marks. Marks with a
-    /// positional twin ride above these: voiceless ring (n̥ but ŋ̊) and
-    /// syllabic line (n̩ but ŋ̍). Position is non-contrastive; the engine
-    /// owns it. Applied to the *final* base, so a mark that landed below on n
-    /// rides above once ⇧G makes it ŋ.
-    private static let descenders: Set<Unicode.Scalar> =
-        Set("gɡjɟʄpqyŋɱɳɻɭɽʂʐʝɣɖʈɥɰʒ".unicodeScalars)
-
-    /// below-form ⇄ above-form for descender bases
-    private static let positional: [Unicode.Scalar: Unicode.Scalar] = [
-        "\u{0325}": "\u{030A}",   // ring below → ring above
-        "\u{0329}": "\u{030D}",   // vertical line below → above (syllabic)
-    ]
-    private static let positionalInv: [Unicode.Scalar: Unicode.Scalar] = [
-        "\u{030A}": "\u{0325}",
-        "\u{030D}": "\u{0329}",
-    ]
-    private func reposition(_ base: String, _ marks: [Unicode.Scalar]) -> [Unicode.Scalar] {
-        let desc = base.unicodeScalars.first.map(Self.descenders.contains) ?? false
-        return marks.map { desc ? (Self.positional[$0] ?? $0) : (Self.positionalInv[$0] ?? $0) }
-    }
+    // Mark PLACEMENT is the transcriber's, never the engine's.
+    //
+    // Three marks have an above/below form — the tie bar, the voiceless ring, and
+    // the syllabic line — and this used to choose two of them for you, by looking
+    // the base up in a hardcoded set of "glyphs with descenders". That is a
+    // TYPOGRAPHY model inside a NOTATION engine, and it was wrong both ways: it
+    // silently pushed an explicit ring back below (so å, a LETTER, could not be
+    // typed at all), and the descender list had drifted — ɲ ʎ ɸ β ç ʑ and ɧ were
+    // all missing, so it buried rings in their tails anyway. Nobody catches that
+    // class of bug: the codepoint is right and only the rendering collides.
+    //
+    // The list is gone. Every placement is a keystroke now — ⌥k / ⌥⇧k for the ring,
+    // ⌥s / ⌥⇧s for the syllabic line, ⇧6 twice for the tie.
 
     // MARK: - the pending accent (real marked text, like the US dead keys)
     //
@@ -686,7 +678,7 @@ class InputController: IMKInputController {
             Dbg.log("    emitBase: commit ɫ")
             insert("ɫ", client); return
         }
-        let out = recompose(glyph, reposition(glyph, marks))
+        let out = recompose(glyph, marks)
         Dbg.log("    emitBase: commit '\(Dbg.str(out))'")
         insert(out, client)   // replaces the marked range
     }

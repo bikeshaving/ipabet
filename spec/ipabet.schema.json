@@ -92,7 +92,7 @@
 				"shiftSense": {
 					"description": "One entry per allowed `shiftSense` value, plus `about`. A mark's `shiftSense` MUST be a key of this object.",
 					"type": "object",
-					"required": ["about", "greater", "extreme", "lesser", "below", "twin", "arbitrary"],
+					"required": ["about", "greater", "extreme", "lesser", "below", "above", "twin", "arbitrary"],
 					"additionalProperties": {"type": "string"}
 				}
 			}
@@ -153,7 +153,7 @@
 				},
 				"shiftSense": {
 					"description": "What ⌥⇧ means for this pair. Present iff `double` is present. See classes.shiftSense.",
-					"enum": ["greater", "extreme", "lesser", "below", "twin", "arbitrary"]
+					"enum": ["greater", "extreme", "lesser", "below", "above", "twin", "arbitrary"]
 				},
 				"ipa": {
 					"description": "Present only as false, meaning: not on the IPA chart. Implies `beyond`. Such marks are excluded from /chart and /chart.json and listed on /keys.",

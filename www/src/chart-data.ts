@@ -38,7 +38,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̈", keys: "~u", name: "Centralized", on: "e"},
 	{glyph: "◌̽", keys: "~x", name: "Mid-centralized", on: "e"},
 	{glyph: "◌̩", keys: "~s", name: "Syllabic", on: "n"},
-	{glyph: "◌̯", keys: "~+s", name: "Non-syllabic", on: "e"},
+	{glyph: "◌̯", keys: "~+b", name: "Non-syllabic", on: "e"},
 	// ⇧5 ⇧R and ⇧5 ⇧H ⇧R give the precomposed ɚ/ɝ; every other vowel takes the
 	// bare hook, so `a` is the honest base to demonstrate the mark on.
 	{glyph: "˞", keys: "+R", name: "Rhoticity", on: "a"},

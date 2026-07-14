@@ -185,8 +185,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~'")).toBe("ˈ");
 		expect(typed("~+'")).toBe("ˌ");
 	});
-	test("non-syllabic: ⌥⇧s a → a̯ (diphthong glide; twin of syllabic ⌥s)", () =>
-		expect(typed("~+s", "a")).toBe(nfc("a\u{032F}")));
+	test("non-syllabic: ⌥⇧b a → a̯ (diphthong glide; the breve BELOW, on the breve key)", () =>
+		expect(typed("~+b", "a")).toBe(nfc("a\u{032F}")));
 	test("breathy: ⌥⇧u a → a̤", () => expect(typed("~+u", "a")).toBe(nfc("a\u{0324}")));
 	test("half-long is spacing, still postfix: a ⌥; → aː, ⌥⇧; → ˑ", () => {
 		expect(typed("a", "~;")).toBe("aː");
@@ -298,8 +298,9 @@ describe("the two ⌥⇧ laws", () => {
 		expect(typed("~d", "~+d", "d")).toBe(nfc("d\u{033B}")));
 	test("raised replaces lowered (⌥. then ⌥⇧.)", () =>
 		expect(typed("~g", "~+g", "a")).toBe(nfc("a\u{031D}")));
-	test("non-syllabic replaces syllabic (⌥s then ⌥⇧s)", () =>
-		expect(typed("~s", "~+s", "n")).toBe(nfc("n\u{032F}")));
+	test("the syllabic line's two PLACEMENTS replace each other (⌥s then ⌥⇧s)", () =>
+		// one line, above or below — never both
+		expect(typed("~s", "~+s", "n")).toBe(nfc("n\u{030D}")));
 
 	// LAW 2 — shape twins are independent features and DO stack: a vowel can be
 	// nasalized and creaky at once (ã̰), centralized and breathy at once.
@@ -454,13 +455,23 @@ describe("East Asian coverage", () => {
 	});
 });
 
-describe("ring positioning", () => {
-	test("⌥k n → ring below", () => expect(typed("~k", "n")).toBe(nfc("n\u{0325}")));
-	test("⌥k n ⇧G → ring rides above the descender (prefixed before ŋ exists)", () =>
-		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u{030A}")));
-	test("syllabic repositions too: ⌥s n → n̩, ⌥s n ⇧G → ŋ̍", () => {
+describe("placement is the transcriber's, not the engine's", () => {
+	// The engine used to choose above-vs-below by looking the base up in a hardcoded
+	// set of "glyphs with descenders" — a typography model inside a notation engine.
+	// It was wrong in both directions: it pushed an explicit ring back below (so å, a
+	// LETTER, could not be typed at all), and its list was missing ɲ ʎ ɸ β ç ʑ ɧ, so
+	// it buried rings in their tails regardless. Now every placement is a keystroke.
+	test("⌥k puts the ring below — always, whatever the base", () => {
+		expect(typed("~k", "n")).toBe(nfc("n\u{0325}"));
+		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u{0325}")); // no longer raised for you
+	});
+	test("⌥⇧k puts it above — always, whatever the base", () => {
+		expect(typed("~+k", "n", "+g")).toBe(nfc("ŋ\u{030A}")); // ŋ̊: you asked, so it is above
+		expect(typed("~+k", "a")).toBe("å");                     // and it stays there: å, a letter
+	});
+	test("⌥s / ⌥⇧s are the syllabic line's two placements", () => {
 		expect(typed("~s", "n")).toBe(nfc("n\u{0329}"));
-		expect(typed("~s", "n", "+g")).toBe(nfc("ŋ\u{030D}"));
+		expect(typed("~+s", "n", "+g")).toBe(nfc("ŋ\u{030D}")); // ŋ̍
 	});
 	test("syllabic toggles off cleanly: ⌥s ⌥s → nothing committed", () =>
 		expect(typed("~s", "~s")).toBe(""));
@@ -696,4 +707,31 @@ describe("tie bar", () => {
 describe("heng", () => {
 	test("x ⇧H → ɧ, the Swedish sj-sound (simultaneous ʃ and x)", () =>
 		expect(typed("x", "+h")).toBe("ɧ"));
+});
+
+// ------------------------------------------------- the ring, both placements
+
+describe("ring above (⌥⇧k) pairs with ring below (⌥k)", () => {
+	// The voiceless ring has two placements on the chart, and the engine used to own
+	// that choice entirely. ⌥⇧k gives it back — which is also the only way to type
+	// å/Å, since the ⌥ layer destroyed macOS's ⌥a.
+	test("⌥k is the ring below: voiceless a → ḁ", () =>
+		expect(typed("~k", "a")).toBe(nfc("a\u{0325}")));
+
+	test("⌥⇧k is the ring ABOVE, explicitly — and it survives on a plain base", () =>
+		// the whole point: without this the auto-placement flips it back below (ḁ)
+		expect(typed("~+k", "a")).toBe("å"));
+
+	test("Å too — the capital the Option layer destroyed", () =>
+		expect(typed("~+k", "+a")).toBe("Å"));
+
+	test("voiceless above where you want it, not where the engine guesses: ⌥⇧k t → t̊", () =>
+		expect(typed("~+k", "t")).toBe(nfc("t\u{030A}")));
+
+	test("the two placements are exclusive — the second replaces the first", () =>
+		// one ring, not two: ⌥k then ⌥⇧k is still a single mark
+		expect(typed("~k", "~+k", "a")).toBe("å"));
+
+	test("the spacing form still flushes: ⌥⇧k then space → ˚", () =>
+		expect(typed("~+k", " ")).toBe("˚ "));
 });

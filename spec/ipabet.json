@@ -762,19 +762,26 @@
    "opt": "b",
    "mark": "̆",
    "clone": "˘",
+   "double": "̯",
+   "doubleClone": "˯",
+   "shiftSense": "below",
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0306",
-   "name": "COMBINING BREVE (extra-short)"
+   "name": "COMBINING BREVE (extra-short; ⇧ → the breve BELOW, U+032F — the non-syllabic mark, which IS an inverted breve below. It used to sit on ⌥⇧s, where it had no claim on the key beyond adjacency to `syllabic`; the breve key is its shape's home. Vacating ⌥⇧s is what let the syllabic line have its own second placement. The two stack — a segment can be both extra-short and non-syllabic)"
   },
   {
    "opt": "k",
    "mark": "̥",
    "clone": "˳",
+   "double": "̊",
+   "doubleClone": "˚",
+   "exclusive": true,
+   "shiftSense": "above",
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0325",
-   "name": "COMBINING RING BELOW (voiceless; positioned by base)"
+   "name": "COMBINING RING BELOW (voiceless; ⇧ → the ring ABOVE, U+030A — the chart's own second placement, for bases whose descenders collide with a ring below: ŋ̊ j̊. The engine places the ring for you, so ⌥⇧k is for when you want to say WHERE it goes — and it is the only way to type å/Å, which the ⌥ layer destroyed)"
   },
   {
    "opt": ",",
@@ -873,11 +880,12 @@
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0329",
-   "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → non-syllabic; positioned by base)",
-   "double": "̯",
+   "name": "COMBINING VERTICAL LINE BELOW (syllabic; ⇧ → the line ABOVE, U+030D — the chart's second placement, for bases whose descenders a line below collides with: n̩ but ŋ̍. The engine used to pick this for you from a hardcoded list of which glyphs have tails; now you say it. The non-syllabic mark moved to ⌥⇧b, the key whose shape it actually is)",
+   "double": "̍",
    "clone": "ˌ",
+   "doubleClone": "ˈ",
    "exclusive": true,
-   "shiftSense": "arbitrary"
+   "shiftSense": "above"
   },
   {
    "opt": "z",
@@ -1394,6 +1402,7 @@
   "optShift": "⌥ gives a mark's primary form, ⌥⇧ its `double`. ⌥⇧ has no single meaning: see `classes.shiftSense` for the six, and `classes.exclusive` for whether a pair replaces or stacks. Both are recorded per-mark.",
   "keyClasses": "A key earns its mark by cross-tier phonetics, by shape identity (the comma key carries the comma-shaped marks; the period key the dot-shaped ones), or by convention (the five universal dead keys ⌥e ⌥i ⌥u ⌥n ⌥`). Where none of the three applies the mark is parked and flagged `arbitraryKey`. Marks outside the IPA are flagged `ipa: false`; see `classes.beyond`.",
   "numberRow": "⇧<digit> carries an IPA glyph with no Latin home (⇧2 ʔ, ⇧5 ə). The one exception is the tie bar on ⇧6 — a combining joiner (t ⇧6 s → t͡s), contrastive and frequent, so it earns a single-modifier key. It lives on the number row, not on a ⇧-letter, because an unguarded ⇧-letter joiner would fire inside acronyms ($PATH). Because ⇧6 is thereby claimed, its raw-US ^ moves to the option-shift escape, exactly as @ sits on the ⇧2 escape.",
+  "placement": "A mark's PLACEMENT is the transcriber's, never the engine's. Three marks have both an above- and a below-form — the tie bar (⇧6, press again to flip), the voiceless ring (⌥k below, ⌥⇧k above), and the syllabic line (⌥s below, ⌥⇧s above) — and the engine used to choose two of them by looking the base up in a hardcoded set of glyphs-with-descenders. That is a TYPOGRAPHY model inside a NOTATION engine, and it failed both ways: it silently pushed an explicit ring back below, so å — a LETTER, not a diacritic — could not be typed at all; and the descender set had drifted, missing ɲ ʎ ɸ β ç ʑ and ɧ, so it buried rings in their tails regardless. That class of bug is invisible in review, because the codepoint is right and only the rendering collides. The set is deleted. Every placement is now one keystroke, and the engine emits exactly the mark you asked for.",
   "tieBar": "⇧6 is the tie ABOVE (U+0361, t͡s). The chart also sanctions the tie BELOW (U+035C) for when descenders collide with a bar above — t͜ɕ, d͜ʒ, k͜p — and it is the same mark, not a second one. So it gets no key: press ⇧6 AGAIN while a tie sits before the cursor and it flips, above ⇄ below. Stateless (the document holds the tie, not the engine), reversible, and it spends no keyboard real estate, which is the only reason the below-form fits at all.",
   "scriptG": "IPAbet types g as U+0067, not U+0261 LATIN SMALL LETTER SCRIPT G. The IPA sanctions both shapes and every IPA font draws them alike, but U+0261 is the codepoint the chart specifies — so this is a deliberate, known non-conformance, bought by the bare-layer law (an unshifted key is native US, and the native g key is U+0067). It is invisible to a reader and visible to a grep: corpus work that diffs against reference transcriptions must normalize. U+0261 still appears in the tables as a lookup key (superscripts, descenders), so text pasted in with a script g behaves correctly.",
   "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=.",
@@ -1414,9 +1423,10 @@
    "greater": "⌥⇧ is the greater pole of one dimension: advanced, raised, more rounded, ATR, upstep.",
    "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
    "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
-   "below": "⌥⇧ is the same glyph relocated below the base: tilde, caron, diaeresis, dot.",
+   "below": "⌥⇧ is the same glyph relocated below the base: tilde, caron, diaeresis, dot, breve.",
+  "above": "⌥⇧ is the same glyph relocated ABOVE the base — the mirror of `below`: the voiceless ring and the syllabic line. The chart gives the voiceless ring two placements (n̥ but ŋ̊, j̊) and the engine normally picks by descender; ⌥⇧ is how you say where it goes yourself. It is also the only way to type å/Å, whose native ⌥a the diacritic layer destroyed.",
    "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (cedilla/comma-below, ʿayn/hamza, undertie/‖.)",
-   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (syllabic/non-syllabic, apical/laminal.)"
+   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)"
   },
   "exclusive": "The two forms are values of the SAME dimension, so ⌥⇧ replaces rather than stacks — nothing is both advanced and retracted. Marks on INDEPENDENT dimensions stack (nasalized + creaky). Tone level is a five-way scale, so an exclusive pair need not be binary or exhaustive."
  },
