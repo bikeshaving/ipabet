@@ -21,7 +21,7 @@ const doc = docs.type;
 // markdown) — the island binds to these exact ids.
 const Pad = () => jsx`
 	<div id="pad">
-		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"
+		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
 			placeholder="Start typing… s⇧H → ʃ · ⇧5 → ə · a⌥; → aː · ⌥n n → ñ"></textarea>
 		<div id="bar2">
 			<span id="count">0</span>

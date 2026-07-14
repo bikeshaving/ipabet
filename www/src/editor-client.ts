@@ -55,6 +55,34 @@ function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 	return {key, shift: e.shiftKey, option: e.altKey};
 }
 
+// Soft keyboards (iOS/Android) report no usable `e.code`, so keydown alone
+// can't drive the engine on a phone — the character has to carry the keystroke.
+// An uppercase letter means shift was used; a shifted-digit symbol means ⇧+digit.
+// This makes the bare and ⇧ layers (the cognates, every digraph, the homeless
+// glyphs) typeable on the stock phone keyboard. ⌥ has no soft-keyboard
+// equivalent, so the diacritic layer stays desktop-only.
+const SHIFTED_DIGIT: Record<string, string> = {
+	"!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
+	"^": "6", "&": "7", "*": "8", "(": "9", ")": "0",
+};
+function keyFromChar(c: string): Keystroke | null {
+	if (/^[a-z]$/.test(c)) return {key: c, shift: false};
+	if (/^[A-Z]$/.test(c)) return {key: c.toLowerCase(), shift: true};
+	if (/^[0-9]$/.test(c)) return {key: c, shift: false};
+	if (SHIFTED_DIGIT[c] !== undefined) return {key: SHIFTED_DIGIT[c], shift: true};
+	if ("`-=[]\\;',./".includes(c)) return {key: c, shift: false};
+	return null;
+}
+
+/** Run one keystroke through the engine at the caret. */
+function sendKeystroke(k: Keystroke) {
+	const before = ta.value.slice(0, ta.selectionStart);
+	const step = handleKey(before, k, pending);
+	pending = step.pending;
+	renderPending();
+	if (step.edit.type !== "noop") applyAtCaret(step.edit, nativeChar(k));
+}
+
 // Apply an engine edit at the caret. `before` is the text up to selectionStart;
 // any active selection (start…end) is dropped, exactly as typing over a
 // selection does natively.
@@ -79,7 +107,26 @@ function afterChange() {
 	save();
 }
 
+/** Backspace through the engine. Shared by the keydown and beforeinput paths. */
+function engineBackspace(e: Event) {
+	if (ta.selectionStart !== ta.selectionEnd) return; // native deletes the selection
+	const before = ta.value.slice(0, ta.selectionStart);
+	const step = handleBackspace(before, pending);
+	pending = step.pending;
+	renderPending();
+	if (step.edit.type === "noop") { e.preventDefault(); return; } // peeled the accent
+	if (step.edit.type === "pass") return; // bare glyph: native single-char delete
+	e.preventDefault();
+	applyAtCaret(step.edit, "");
+}
+
+// True when keydown already owned the event, so the beforeinput that follows
+// must not handle it a second time (desktop). Left false when keydown couldn't
+// resolve a key — either a native key (space, enter) or a soft keyboard.
+let consumed = false;
+
 ta.addEventListener("keydown", (e) => {
+	consumed = false;
 	if (e.metaKey || e.ctrlKey) return; // native shortcuts (copy, paste, undo…)
 	// An OS input method is mediating this keystroke (e.g. IPAbet itself, or
 	// any Korean/Japanese/pinyin IME) — let it own the text; running our engine
@@ -87,25 +134,30 @@ ta.addEventListener("keydown", (e) => {
 	// IMEs; keyCode 229 covers immediate-commit ones like IPAbet.
 	if (e.isComposing || e.keyCode === 229) return;
 	if (e.key === "Backspace") {
-		if (ta.selectionStart !== ta.selectionEnd) return; // native deletes the selection
-		const before = ta.value.slice(0, ta.selectionStart);
-		const step = handleBackspace(before, pending);
-		pending = step.pending;
-		renderPending();
-		if (step.edit.type === "noop") { e.preventDefault(); return; } // peeled the accent
-		if (step.edit.type === "pass") return; // bare glyph: native single-char delete
-		e.preventDefault();
-		applyAtCaret(step.edit, "");
+		consumed = true; // we own this key whatever we decide inside
+		engineBackspace(e);
 		return;
 	}
 	const k = keyFromEvent(e);
-	if (k === null) return; // space, enter, arrows, tab… all native
+	if (k === null) return; // no usable e.code: native key, or a soft keyboard → beforeinput
 	e.preventDefault();
-	const before = ta.value.slice(0, ta.selectionStart);
-	const step = handleKey(before, k, pending);
-	pending = step.pending;
-	renderPending();
-	if (step.edit.type !== "noop") applyAtCaret(step.edit, nativeChar(k));
+	consumed = true;
+	sendKeystroke(k);
+});
+
+// Soft-keyboard path: a phone gives us the character, not the physical key.
+// Only runs when keydown didn't already own the event, so desktop space, enter,
+// and paste still fall through to the host untouched.
+ta.addEventListener("beforeinput", (e) => {
+	if (consumed) { consumed = false; return; }
+	const ie = e as InputEvent;
+	if (ie.inputType === "deleteContentBackward") { engineBackspace(e); return; }
+	if (ie.inputType.startsWith("insert") && ie.data) {
+		const keys = [...ie.data].map(keyFromChar);
+		if (keys.some((k) => k === null)) return; // space, emoji, pasted text — leave it native
+		e.preventDefault();
+		for (const k of keys) sendKeystroke(k!);
+	}
 });
 
 // paste / native input (mobile, dictation) — keep the count and storage honest
