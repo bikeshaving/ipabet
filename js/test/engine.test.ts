@@ -538,9 +538,10 @@ describe("⌥⇧ is not an escape any more", () => {
 		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
-		// Declining is a `pass`: on macOS the host then types its own Ó. (typeKeys
+		// Declining is a `pass`: on macOS the host then types its own Á. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		expect(handleKey("", seq("~+h")[0]).edit.type).toBe("pass"));
+		// ⌥⇧y is one of the last unclaimed ⌥⇧ letters — ⌥⇧h is extIPA's whistled now.
+		expect(handleKey("", seq("~+y")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
@@ -678,7 +679,9 @@ describe("rhotic R", () => {
 
 describe("option-shift raw escape", () => {
 	test("⌥⇧2 → @", () => expect(typed("~+2")).toBe("@"));
-	test("⌥⇧h → H (dodges the transform)", () => expect(typed("s", "~+h")).toBe("sH"));
+	// A ⌥⇧ letter with no mark declines, so the host types its own character and the
+	// ⇧-transform never fires. (⌥⇧y — ⌥⇧h carries extIPA's whistled mark now.)
+	test("⌥⇧y declines, so no transform reaches back", () => expect(typed("s", "~+y")).toBe("sY"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });

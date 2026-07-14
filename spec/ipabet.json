@@ -733,7 +733,9 @@
    "type": "combining",
    "group": "Tone",
    "cp": "U+0304",
-   "name": "COMBINING MACRON (mid tone)"
+   "name": "COMBINING MACRON (long/mid tone; ⇧ → ͇ U+0347, extIPA's ALVEOLAR — the labioalveolar series. The key is a mnemonic, not a shape: alveolar, on `a`. It took a redundant slot — ⌥⇧a was Å, which the ring already types (⌥k ⇧A) — so the character cost nothing)",
+   "double": "͇",
+   "shiftSense": "twin"
   },
   {
    "opt": "n",
@@ -790,9 +792,12 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA (Latin tenant: ç ş ţ ģ ņ. It sits on ⌥c because that is ABC Extended's cedilla key and the c is what the mark is named for. It used to squat on ⌥, for its comma shape alone, which cost the comma key its own mark. ç is two keystrokes now — exactly what é has always cost on a Mac)",
+   "name": "COMBINING CEDILLA (Latin tenant: ç ş ţ ģ ņ — ABC Extended's own key; ⇧ → ¢, which the tone bars destroyed on ⌥4. Cent, on `c`. ⌥⇧c was Ç, which this very key still types — ⌥c ⇧C — so the slot was free)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "¢",
+   "doubleSpacing": true,
+   "shiftSense": "twin"
   },
   {
    "opt": ",",
@@ -812,9 +817,11 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",
-   "name": "COMBINING OGONEK (Latin tenant — transliteration, not IPA)",
+   "name": "COMBINING OGONEK (Latin tenant: ą ę; ⇧ → ͍ U+034D, extIPA's LABIAL SPREADING. Cross-tier: `m` is the labial letter, and this is the labial mark. Took a redundant slot — ⌥⇧m was Â, which ⌥i ⇧A still types)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "͍",
+   "shiftSense": "twin"
   },
   {
    "opt": "t",
@@ -856,8 +863,11 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+0334",
-   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized — ɫ is l + overlay)",
-   "clone": "˜"
+   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized — ɫ is l + overlay; ⇧ → £, which the tone bars destroyed on ⌥3. The pound sign IS an L — it is a struck ₤ from libra — so the key is the letter's own, and ⌥⇧l was Ò, which ⌥` ⇧O still types. See laws.restoration)",
+   "clone": "˜",
+   "double": "£",
+   "doubleSpacing": true,
+   "shiftSense": "twin"
   },
   {
    "opt": "g",
@@ -1066,9 +1076,12 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0309",
-   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi tone — Latin tenant, h for hook/hỏi)",
+   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi — Latin tenant; ⇧ → ͎ U+034E, extIPA's WHISTLED articulation. ARBITRARY: the arrow family that owns this shape (⌥f ↘ ↗) is full, and no letter claims a whistle. It sits on a redundant slot — ⌥⇧h was Ó, which ⌥e ⇧O still types — so an arbitrary mark costs nothing here, per laws.arbitraryKeys)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "͎",
+   "shiftSense": "twin",
+   "arbitraryKey": true
   },
   {
    "opt": "0",
@@ -1454,7 +1467,8 @@
   "escape": "⇧<letter> transforms the glyph before it, so a capital that forms a digraph is otherwise untypeable (\"GitHub\" → \"Giθub\"). ⌃⇧<letter> is the escape: it commits the raw capital and bypasses everything downstream — the ⇧-modifier transforms, the shift-chain, the capital-digraph rule — so ⌃⇧G ⌃⇧H is a literal \"GH\" and ⌃⇧A ⌃⇧E a literal \"AE\". It sits on Control because Control is inert here: ⌃ chords are leader keys (tmux ^b, emacs ^x) and pass untouched, and ⌃⇧<letter> is a chord almost no host claims. Letters only — ⌃⇧<digit/punct> keeps its native chord. Moving the escape here freed the whole ⌥⇧<letter> layer, which formerly had to hold it and so could never be spent freely. ⌥⇧<digit> is a different job: reachability, not escaping (⇧2 is ʔ, so @ lives on ⌥⇧2).",
   "capsLock": "Caps Lock is a LOCK, not a modifier. The bare layer is native US and Caps Lock belongs to it: a letter types its CAPITAL, literally. It never acts as ⇧ (a locked T then H is \"TH\", not θ), and the capital it types is inert text downstream — the modifier tables are lowercase-keyed — which is the same acronym safety ⌃⇧ relies on. ⇧ still means the modifier while locked, and a pending mark still absorbs onto the capital (⌥u then a locked A → Ä).",
   "planes": "WHICH form of a pair gets the unshifted ⌥ key, and which gets ⌥⇧. In priority order: (1) DON'T FIGHT THE HOST — if the mark exists on ABC Extended, keep its key AND its plane; Mac muscle memory is an asset we did not build and cannot buy, and violating it costs every user forever (this is why the voiceless ring defaults ABOVE, against a weak frequency edge, and why the cedilla is on ⌥c). (2) FREQUENCY — the form you type more often is unshifted (long ː over half-long ˑ, primary stress over secondary, syllabic-below over syllabic-above). (3) PRECEDENCE — when frequency is a wash and the pair has a natural order, the opening/first/lesser member is unshifted: “ before ”, ‘ before ’, « before », – before —, acute before double-acute. (4) IPA OVER TENANT — where an IPA mark and a Latin-orthography tenant want the same slot, the IPA meaning wins the unshifted plane, unless (1) says otherwise. Key CHOICE is a separate question with its own rules — see keyClasses.",
-  "arbitraryKeys": "A mark with no claim on its key — neither phonetics, shape, nor convention — is flagged `arbitraryKey`, and it must sit on an UNEARNED slot: one whose native macOS character no law defends and nobody needs (ª º ∆ ¶ § ÷ ®). An arbitrary mark on a valuable key is the worst of both worlds — it teaches nothing and it costs something. The horn used to break this rule, parked on an arbitrary letter key while destroying ¥; it moved to ⌥7, where Vietnamese VNI convention justifies it (ơ = o7) and the slot was worthless, and ¥ came back. Three marks remain arbitrary — linguolabial ⌥9, unreleased ⌥j, Korean fortis ⌥0 — and all three destroy only ª ∆ º."
+  "arbitraryKeys": "A mark with no claim on its key — neither phonetics, shape, nor convention — is flagged `arbitraryKey`, and it must sit on an UNEARNED slot: one whose native macOS character no law defends and nobody needs (ª º ∆ ¶ § ÷ ®). An arbitrary mark on a valuable key is the worst of both worlds — it teaches nothing and it costs something. The horn used to break this rule, parked on an arbitrary letter key while destroying ¥; it moved to ⌥7, where Vietnamese VNI convention justifies it (ơ = o7) and the slot was worthless, and ¥ came back. Three marks remain arbitrary — linguolabial ⌥9, unreleased ⌥j, Korean fortis ⌥0 — and all three destroy only ª ∆ º.",
+  "restoration": "The layer may BUY BACK a character it destroyed, onto a slot that costs nothing — one whose native character IPAbet already types another way (the accented capitals: Å = ⌥k ⇧A, Ó = ⌥e ⇧O, Ò = ⌥` ⇧O, Â = ⌥i ⇧A, Ç = ⌥c ⇧C). Those slots are redundant, not free: keeping them buys nothing and costs a key. A restoration must have a claim like any other assignment — £ on `l` (the pound sign is a struck L, from libra), ¢ on `c` — and it must restore a character THIS layout took, not add typography we never owed. € has no honest key: its only natural home is ⌥⇧2, which is the load-bearing @ escape (⇧2 is ʔ), so it stays gone. The ellipsis, likewise."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
