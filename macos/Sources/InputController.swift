@@ -515,6 +515,22 @@ class InputController: IMKInputController {
                     }
                 }
             }
+            // The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
+            // (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
+            // chain, so a shift release escapes to the literal (%Y). Same Latin-only
+            // guard as the capital digraphs. Mirrors js/src/index.ts.
+            if chainLive,
+               let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
+                            "^": "6", "&": "7", "*": "8", "(": "9", ")": "0"][base],
+               let low = t.transforms[digit + s] {
+                let up = low.uppercased()
+                if up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
+                   u.value > 0x7f, !(0x370...0x3ff).contains(u.value) {
+                    Dbg.log("  → digit capital \(base)+\(s) ⇒ \(Dbg.str(up))")
+                    replace(r, with: recompose(up, marks), client)
+                    chainBroken = false; return true
+                }
+            }
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
                 replace(r, with: recompose(combo, marks), client)

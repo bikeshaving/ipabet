@@ -529,6 +529,23 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 				}
 			}
 		}
+		// The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
+		// (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
+		// chain, so a shift release escapes to the literal (%Y) — the same law
+		// as every capital digraph. Same Latin-only guard: &⇧H → Ħ, @⇧H stays
+		// literal (ʔ has no capital).
+		if (shift && chainLive) {
+			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
+			if (digit !== undefined) {
+				const low = transforms.get(digit + s);
+				if (low !== undefined) {
+					const up = low.toUpperCase();
+					if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
+						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
+					}
+				}
+			}
+		}
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) {
 			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};

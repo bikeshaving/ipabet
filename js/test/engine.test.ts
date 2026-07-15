@@ -87,6 +87,15 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	test("released is still a fresh capital: ⇧S ^⇧H ⇧A → ƩA", () =>
 		expect(chain("+s", "^+h", "+a")).toBe("ƩA"));
 	test("PHP stays PHP (pH is not a digraph)", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
+	// The shifted digit is the digit's capital plane — Azerbaijani's Ə lives here.
+	test("digit capitals: held ⇧5⇧Y → Ə, ⇧7⇧H → Ħ", () => {
+		expect(chain("+5", "+y")).toBe("Ə");
+		expect(chain("+7", "+h")).toBe("Ħ");
+	});
+	test("a shift release escapes to the literal: ⇧5 ^⇧Y → %Y", () =>
+		expect(chain("+5", "^+y")).toBe("%Y"));
+	test("no capital, no fire: ⇧2⇧H stays @H (ʔ has no uppercase)", () =>
+		expect(chain("+2", "+h")).toBe("@H"));
 	test("THE stays THE (tH→θ→Θ is Greek, excluded)", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
 
 	// A plain ASCII base (lowercase i) is not special, so a capital after it is
