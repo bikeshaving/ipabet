@@ -955,31 +955,13 @@
   },
   {
    "opt": "r",
-   "mark": "˞",
-   "type": "spacing",
-   "group": "Articulation",
-   "cp": "U+02DE",
-   "name": "MODIFIER LETTER RHOTIC HOOK (rhoticity — r-colouring, ə˞ → ɚ). r for RHOTIC: the one standard IPA diacritic that had no dedicated key, reachable before only through the ⇧R vowel rule. Explicit here for any base"
-  },
-  {
-   "opt": "q",
    "mark": "↘",
    "type": "spacing",
    "group": "Tone",
    "cp": "U+2198",
-   "name": "SOUTH EAST ARROW (global fall; ⇧ → ↗ global rise, the greater pole). Standalone intonation over a phrase, not marks. Demoted to ⌥q — a niche pair belongs on a poor key — when rhoticity took ⌥r; that also spent the native œ, which o⇧E still types",
+   "name": "SOUTH EAST ARROW (global fall; ⇧ → ↗ global rise, the greater pole). Standalone characters over a phrase, not marks — they attach to nothing. Paired like ⌥o downstep/upstep.",
    "double": "↗",
    "shiftSense": "greater"
-  },
-  {
-   "opt": "y",
-   "mark": "̱",
-   "type": "combining",
-   "group": "Transliteration",
-   "cp": "U+0331",
-   "name": "COMBINING MACRON BELOW (transliteration tenant — Semitic ḵ ṯ ḏ ẖ, Indic and Americanist line-below. The one common transliteration mark IPAbet could not type; a tenant like the horn and cedilla, filling ⌥y rather than leaving it native)",
-   "ipa": false,
-   "beyond": "tenant"
   },
   {
    "opt": "o",

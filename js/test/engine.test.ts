@@ -224,14 +224,6 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
 		expect(typed("~+w", "o")).toBe(nfc("o\u{0339}"));
 	});
-	// The two freed Option slots (native œ/¥) filled: rhoticity takes ⌥r (r = rhotic),
-	// which demotes the niche global arrows down to ⌥q; macron-below fills ⌥y.
-	test("rhoticity ⌥r, macron-below ⌥y, arrows on ⌥q", () => {
-		expect(typed("a", "~r")).toBe(nfc("a˞"));   // explicit rhotic hook, any base
-		expect(typed("~y", "k")).toBe(nfc("ḵ"));    // macron-below — Semitic/Indic ḵ ṯ
-		expect(typed("~q")).toBe("↘");              // global fall (moved off ⌥r)
-		expect(typed("~+q")).toBe("↗");             // global rise
-	});
 	// ⌥7 now carries ʿayn; the free slots are ⌥8 and (since cedilla moved to
 	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
 	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
