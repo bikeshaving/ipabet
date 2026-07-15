@@ -546,10 +546,10 @@ describe("⌥⇧ is not an escape any more", () => {
 		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
-		// Declining is a `pass`: on macOS the host then types its own Á. (typeKeys
+		// Declining is a `pass`: on macOS the host then types its own Ç. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		// ⌥⇧y is one of the last unclaimed ⌥⇧ letters — ⌥⇧h carries ATR now (RTR/ATR moved to ⌥h).
-		expect(handleKey("", seq("~+y")[0]).edit.type).toBe("pass"));
+		// ⌥⇧c is unclaimed since the cedilla lost its ¢ spend (⌥⇧y carries ↗ now).
+		expect(handleKey("", seq("~+c")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
@@ -662,6 +662,18 @@ describe("superscript operator ⌥q", () => {
 		expect(typed("k", "h", "~p")).toBe("kh"));
 });
 
+describe("rhoticity ⌥r — postfix like length", () => {
+	test("hook appends: a ⌥r → a˞", () => expect(typed("a", "~r")).toBe("a˞"));
+	test("schwa fuses: 5 ⇧Y ⌥r → ɚ", () => expect(typed("5", "+y", "~r")).toBe("ɚ"));
+	test("open-mid fuses: 5 ⇧H ⌥r → ɝ", () => expect(typed("5", "+h", "~r")).toBe("ɝ"));
+	test("fused glyph keeps its marks: ə̃ ⌥r → ɚ̃", () =>
+		expect(nfc(typed("~n", "5", "+y", "~r"))).toBe(nfc("ɚ\u{0303}")));
+	test("⌥⇧r is the retroflex hook below, prefix: ⌥⇧r a → a̢", () =>
+		expect(nfc(typed("~+r", "a"))).toBe(nfc("a\u{0322}")));
+	test("vowel ⇧R no longer rhoticizes — the modifier tier only transforms", () =>
+		expect(typed("a", "+r")).toBe("aR"));
+});
+
 describe("subscript operator ⌥⇧q", () => {
 	test("digit lowers: x 2 ⌥⇧q → x₂", () => expect(typed("x", "2", "~+q")).toBe("x₂"));
 	test("math run: l o g 2 ⌥⇧q → log₂", () => expect(typed("l", "o", "g", "2", "~+q")).toBe("log₂"));
@@ -685,20 +697,18 @@ describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
 	});
 });
 
-describe("rhotic R", () => {
-	test("ə ⇧R → ɚ (precomposed)", () => expect(typed("5", "+y", "+r")).toBe("ɚ"));
-	test("a ⇧R → a˞ (spacing hook)", () => expect(typed("a", "+r")).toBe("a˞"));
-	test("rhoticity is a dimension: e ⇧R → e˞, ʌ ⇧R → ʌ˞", () => {
-		expect(typed("e", "+r")).toBe("e˞");
-		expect(typed("u", "+a", "+r")).toBe("ʌ˞");
+describe("rhotic hook on any vowel", () => {
+	test("rhoticity is a dimension: e ⌥r → e˞, ʌ ⌥r → ʌ˞", () => {
+		expect(typed("e", "~r")).toBe("e˞");
+		expect(typed("u", "+a", "~r")).toBe("ʌ˞");
 	});
 });
 
 describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
-	// A ⌥⇧ letter with no mark declines, so the host types its own character and the
-	// ⇧-transform never fires. (⌥⇧y — ⌥⇧h carries ATR now.)
-	test("⌥⇧y declines, so no transform reaches back", () => expect(typed("s", "~+y")).toBe("sY"));
+	// A ⌥⇧ letter with no second form declines, so the host types its own character
+	// and the ⇧-transform never fires. (⌥⇧c — the cedilla lost its ¢ spend.)
+	test("⌥⇧c declines, so no transform reaches back", () => expect(typed("s", "~+c")).toBe("sC"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });

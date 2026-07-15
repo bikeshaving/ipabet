@@ -322,7 +322,7 @@ function *VowelApp() {
 					</div>` : null}
 
 				<p class="viznote">Click any vowel to hear its recording (Wikimedia Commons, isolated phonemes).
-					Rhoticity ˞ is vowel-then-<span class="chip">R</span>. Formant values are illustrative averages.</p>
+					Rhoticity ˞ is vowel-then-<span class="chip">⌥R</span>. Formant values are illustrative averages.</p>
 			</div>
 		`;
 	}
@@ -438,7 +438,7 @@ const OPS = {
 	R: {
 		label:"-R", color:"#d97706",
 		pairs:[["t","ʈ"],["d","ɖ"],["n","ɳ"],["ɾ","ɽ"],["s","ʂ"],["z","ʐ"],["l","ɭ"],["ɹ","ɻ"]],
-		desc:"Retroflex: curl the tongue tip back. The cleanest operator in the set — every arrow lands in the retroflex column, and it’s the same R that makes a vowel rhotic (˞).",
+		desc:"Retroflex: curl the tongue tip back. The cleanest operator in the set — every arrow lands in the retroflex column.",
 	},
 	J: {
 		label:"-J", color:"#7c3aed",

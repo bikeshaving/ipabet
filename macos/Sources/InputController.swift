@@ -426,6 +426,16 @@ class InputController: IMKInputController {
             if oc == "j" { emitBase(String(Self.tieAbove), client); return true }
             // ⌥q raises the previous glyph; ⌥p now declines (host's π passes).
             if oc == "q" { flushPending(client); return superscriptize(client) }
+            // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
+            // so ˞ is a spacing character and the visual join onto the vowel is the
+            // font's job. The one join the engine owes is ə/ɜ → precomposed ɚ/ɝ,
+            // fused the way ⌥l + l fuses to ɫ. Other bases fall through to the
+            // marks table, which inserts the bare ˞. Mirrors js/src/index.ts.
+            if oc == "r", pending.isEmpty, let (p, r) = lastCluster(client) {
+                let (base, marks) = decompose(p)
+                if base == "ə" { replace(r, with: recompose("ɚ", marks), client); return true }
+                if base == "ɜ" { replace(r, with: recompose("ɝ", marks), client); return true }
+            }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
             // ⌥7 ¶, ⌥8 • survive. (This used to insert the bare digit, destroying
@@ -508,19 +518,6 @@ class InputController: IMKInputController {
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
                 replace(r, with: recompose(combo, marks), client)
-                chainBroken = false; return true
-            }
-            // vowel rhoticization: R after any vowel. ə and ɜ have precomposed
-            // rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞,
-            // which has no fused form in Unicode.
-            if s == "R", let b = base.first, "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ".contains(b) {
-                let out: String
-                switch base {
-                case "ə": out = recompose("ɚ", marks)
-                case "ɜ": out = recompose("ɝ", marks)
-                default:  out = recompose(base, marks) + "\u{02DE}"
-                }
-                replace(r, with: out, client)
                 chainBroken = false; return true
             }
             // ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).

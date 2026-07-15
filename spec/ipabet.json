@@ -973,6 +973,17 @@
   },
   {
    "opt": "r",
+   "mark": "˞",
+   "type": "spacing",
+   "double": "̢",
+   "doubleCp": "U+0322",
+   "group": "Articulation",
+   "cp": "U+02DE",
+   "name": "MODIFIER LETTER RHOTIC HOOK",
+   "shiftSense": "twin"
+  },
+  {
+   "opt": "y",
    "mark": "↘",
    "type": "spacing",
    "group": "Tone",

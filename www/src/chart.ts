@@ -229,7 +229,7 @@ const beyondCount = String((spec.marks as {ipa?: boolean}[]).filter((m) => m.ipa
 function Diacritics() {
 	return jsx`
 		<div class="cols2">${list(DIACRITICS)}</div>
-		<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧n</i> → creaky); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥q</i> (⌥⇧q lowers, for subscripts). Rhoticity <b class="ipa">˞</b>: vowel then <i>⇧R</i>. The ${beyondCount} diacritics beyond the IPA — cedilla, ogonek, horn, ß and the rest — are on <a href="/keys">/keys</a>.</p>`;
+		<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧n</i> → creaky); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts: glyph then <i>⌥q</i> (⌥⇧q lowers, for subscripts). Rhoticity <b class="ipa">˞</b>: vowel then <i>⌥r</i> (ə ⌥r → ɚ). The ${beyondCount} diacritics beyond the IPA — cedilla, ogonek, horn, ß and the rest — are on <a href="/keys">/keys</a>.</p>`;
 }
 
 // --------------------------------------------------------------- sheet

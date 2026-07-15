@@ -39,9 +39,10 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̽", keys: "~x", name: "Mid-centralized", on: "e"},
 	{glyph: "◌̩", keys: "~s", name: "Syllabic", on: "n"},
 	{glyph: "◌̯", keys: "~+b", name: "Non-syllabic", on: "e"},
-	// 5 ⇧Y ⇧R and 5 ⇧H ⇧R give the precomposed ɚ/ɝ; every other vowel takes the
-	// bare hook, so `a` is the honest base to demonstrate the mark on.
-	{glyph: "˞", keys: "+R", name: "Rhoticity", on: "a"},
+	// ⌥r emits the spacing hook and the font joins it to the vowel (Unicode has
+	// no combining rhotic hook). ə ⌥r and ɜ ⌥r fuse to the precomposed ɚ/ɝ;
+	// every other vowel takes the bare hook, so `a` is the honest demo base.
+	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "a"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
 	{glyph: "◌̼", keys: "~9", name: "Linguolabial", on: "t"},
@@ -90,6 +91,6 @@ export const TONES: ChartEntry[] = [
 	{glyph: "˩", keys: "~1", name: "Extra low (tone letter)"},
 	{glyph: "ꜜ", keys: "~o", name: "Downstep"},
 	{glyph: "ꜛ", keys: "~+o", name: "Upstep"},
-	{glyph: "↗", keys: "~+r", name: "Global rise"},
-	{glyph: "↘", keys: "~r", name: "Global fall"},
+	{glyph: "↗", keys: "~+y", name: "Global rise"},
+	{glyph: "↘", keys: "~y", name: "Global fall"},
 ];

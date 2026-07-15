@@ -166,7 +166,6 @@ const isGreekUpper = (c: string): boolean => {
 	return n >= 0x370 && n <= 0x3ff;
 };
 
-const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 
 // The tie bar (⌥j) and its below-form (⌥⇧j). The tie goes BELOW when the glyphs'
 // descenders would collide with a bar above (t͜ɕ, d͜ʒ, k͜p).
@@ -429,6 +428,18 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
 			// immediately. ⌥j — j for JOIN. (Below-form ⌥⇧j is in the block above.)
 			if (key === "j") return emitBase(TIE, pending);
+			// Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
+			// so ˞ is a spacing character and the visual join onto the vowel is the
+			// font's job, not the engine's. The one real join the engine owes is
+			// ə/ɜ → the precomposed ɚ/ɝ, fused here the way ⌥l + l fuses to ɫ.
+			if (key === "r" && pending.length === 0) {
+				const p = lastCluster(textBefore);
+				if (p !== undefined) {
+					const {base, marks} = decompose(p);
+					if (base === "ə") return withFlush(replaceCluster(p, recompose("ɚ", marks)));
+					if (base === "ɜ") return withFlush(replaceCluster(p, recompose("ɝ", marks)));
+				}
+			}
 			const m = optMarks.get(key);
 			if (m !== undefined) return applyMark(m, pending);
 			// ⌥q raises the previous glyph; ⌥p now passes (native π returns).
@@ -507,15 +518,6 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) {
 			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};
-		}
-		// vowel rhoticization: R after any vowel. ə and ɜ have precomposed
-		// rhotic glyphs (ɚ ɝ); every other vowel takes the spacing hook ˞.
-		if (s === "R" && base.length > 0 && VOWELS.includes(base[0])) {
-			let out: string;
-			if (base === "ə") out = recompose("ɚ", marks);
-			else if (base === "ɜ") out = recompose("ɝ", marks);
-			else out = recompose(base, marks) + "˞";
-			return {edit: replaceCluster(p, out), pending: []};
 		}
 		// ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
 		// Open class, guarded like R; a non-obstruent falls through to a literal X.
