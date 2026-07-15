@@ -23,16 +23,16 @@ IPAbet is US-first; the IPA is purely additive:
   Latin key. Bare digit + a modifier: roots on `5Y`→ə, `2H`→ʔ, `3H`→ʕ, `4H`→ɾ,
   `7H`→ħ (H on the throat digits, Y — *central* — on the schwa), and the families
   extend the same base (`5H`→ɜ, `2Q`→ʡ, `4L`→ɺ), grounded in Arabizi + X-SAMPA.
-  Because the glyphs sit on the *unshifted* digit, `⇧2`–`⇧5`,`⇧7` stay their native
-  symbols (`@ # $ % &`). `⇧6` is *provisionally* the tie bar (`t ⇧6 s`→t͡s) — press
-  it again and the tie flips below (t͜ɕ) — pending its move to the Option layer.
+  Because the glyphs sit on the *unshifted* digit, `⇧2`–`⇧7` are all their native
+  symbols now (`@ # $ % ^ &`); the tie bar — the one joiner — left for `⌥j` (below).
 - **Option** — diacritics and suprasegmentals. Combining marks are **prefix**,
   dead-key style like the US layout's own é/ñ: press the mark, then the base
   absorbs it (`⌥e`+`a`→á, `⌥n`+`n`→ñ). Spacing marks — length, tone, stress —
-  stay postfix (`a`+`⌥;`→aː). Chao tone letters live on `⌥1`–`⌥5`.
-- **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high). The
-  number row's raw-US escape is now needed only for `^` (`⌥⇧6`), while the tie
-  provisionally holds `⇧6`; every other shifted digit types its symbol directly.
+  stay postfix (`a`+`⌥;`→aː). Chao tone letters live on `⌥1`–`⌥5`. The tie bar is a
+  postfix **joiner** on `⌥j` (join): `t ⌥j s`→t͡s, `⌥⇧j` for the below-form (t͜ɕ).
+- **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high,
+  `⌥⇧j`→the tie below). The number row's raw-US escape is fully retired now that no
+  shifted digit is claimed; `⌥⇧1`→¡ is the one deliberate spend.
 
 Escapes, for when the IPA layer claims something you meant literally:
 

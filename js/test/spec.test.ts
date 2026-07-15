@@ -123,9 +123,11 @@ describe("spec · the moved keys", () => {
 		expect(g.shiftSense).toBe("greater");
 	});
 
-	test("the tie bar is a number-row glyph on ⇧6, not a mark or a ⇧-letter", () => {
-		const six = (spec.letters as {key: string; glyph: string}[]).find((l) => l.key === "6");
-		expect(six?.glyph).toBe("\u{0361}");
+	test("the tie bar is a postfix joiner on ⌥j, not a number-row glyph or a ⇧-letter", () => {
+		expect((spec.letters as {key: string}[]).find((l) => l.key === "6")).toBeUndefined();
+		const tie = byOpt.get("j")!;
+		expect(tie.mark).toBe("\u{0361}"); // tie above on ⌥j
+		expect(tie.double).toBe("\u{035C}"); // tie below on ⌥⇧j
 		expect(byOpt.get("8")!.cp).toBe("U+034A"); // ⌥8 is the denasal mark, not the tie
 		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
 	});

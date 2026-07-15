@@ -135,8 +135,8 @@ for (const [key, glyph] of letters) {
 		// A leading digit is a LITERAL base. The number-row families used to hang off
 		// the shifted-digit root glyph (⇧5 → ə, then ə+H → ɜ); now the bare digit is
 		// the base a modifier transforms — 5H → ɜ, 2Q → ʡ — and the roots are ordinary
-		// two-key digraphs too (5Y → ə, 2H → ʔ). So ⇧2–5,7 fall through to native
-		// @ # $ % &. The tie (⇧6) is the lone digit still claimed on the shift plane.
+		// two-key digraphs too (5Y → ə, 2H → ʔ). So ⇧2–7 fall through to native
+		// @ # $ % ^ &, and the tie bar left the number row for ⌥j (join).
 		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
 	}
@@ -162,8 +162,8 @@ const isGreekUpper = (c: string): boolean => {
 
 const VOWELS = "iyɨʉɯuɪʏʊeøɘɵɤoəɛœɜɞʌɔæɐaɶɑɒ";
 
-// The tie bar (⇧6) and its second form. The chart sanctions both: the tie goes
-// BELOW when the glyphs' descenders would collide with one above (t͜ɕ, d͜ʒ, k͜p).
+// The tie bar (⌥j) and its below-form (⌥⇧j). The tie goes BELOW when the glyphs'
+// descenders would collide with a bar above (t͜ɕ, d͜ʒ, k͜p).
 const TIE = "͡";
 const TIE_BELOW = "͜";
 
@@ -183,7 +183,7 @@ const VOICELESS_OBSTRUENTS = "ptʈckqɸfθsʃʂçxχɬ";
 // codepoint is right and only the rendering collides.
 //
 // So the list is gone. Every placement is now a keystroke: ⌥k / ⌥⇧k for the ring,
-// ⌥s / ⌥⇧s for the syllabic line, ⇧6 twice for the tie. The engine emits exactly
+// ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie. The engine emits exactly
 // the mark you asked for, on the base you asked for.
 
 // ---------------------------------------------------------------- unicode
@@ -329,7 +329,7 @@ export function handleKey(
 	const brokenIn = chainBroken || (k.shiftBroke ?? false);
 	const step = handleKeyCore(textBefore, k, pending, !brokenIn);
 	// A fresh IPA glyph clears the break and starts a new live chain: a transform
-	// (`replace`) or an inserted non-ASCII glyph (5 ⇧Y → ə, the ⇧6 tie). A literal
+	// (`replace`) or an inserted non-ASCII glyph (5 ⇧Y → ə, the ⌥j tie). A literal
 	// capital or ASCII base is neither, so it carries the flag unchanged.
 	const e = step.edit;
 	const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
@@ -383,17 +383,19 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// same keystroke escaped on one and applied a mark on the other. A ⌥⇧<letter>
 	// with no second form now DECLINES, so the host's own Option typography passes.
 		if (option && shift) {
+			// The tie bar's BELOW form (⌥⇧j → U+035C, for colliding descenders: t͜ɕ,
+			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
+			// segment. Explicit — no toggle, no placement guessing.
+			if (key === "j") return emitBase(TIE_BELOW, pending);
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
-				// A slot spent deliberately (⌥⇧1 → ¡).
+				// A slot spent deliberately (⌥⇧1 → ¡). Every other ⌥⇧<digit> now passes
+				// to native: no shifted digit is an IPA glyph any more (the roots are
+				// digraphs, the tie left for ⌥j), so the raw-US escape is fully retired
+				// and ⌥⇧2 restores €, with ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all surviving.
 				const over = optShiftDigits[key];
 				if (over !== undefined) return withFlush({type: "insert", text: over});
-				// The raw-US escape survives only where ⇧<digit> is still an IPA glyph.
-				// Now that the digit roots are digraphs, that is only ⇧6 (the tie), so
-				// ⌥⇧6 → ^; every other ⇧<digit> types its symbol directly, so the escape
-				// is redundant — pass, and the
-				// host's own ⌥⇧8 ° ⌥⇧9 · ⌥⇧0 ‚ survive.
 				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
 			}
 			return withFlush({type: "pass"});
@@ -404,38 +406,23 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		// survive. (This used to insert the bare digit, destroying them to produce a
 		// character the unshifted digit key already types.)
 		if (option) {
+			// The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): it attaches to
+			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
+			// immediately. ⌥j — j for JOIN. (Below-form ⌥⇧j is in the block above.)
+			if (key === "j") return emitBase(TIE, pending);
 			const m = optMarks.get(key);
 			if (m !== undefined) return applyMark(m, pending);
 			if (key === "p") return withFlush(superscriptize(textBefore));
 			return withFlush({type: "pass"});
 		}
 
-	// Number row: bare → native digit (the digit is now a BASE — a following
-	// modifier transforms it, 5H → ɜ, handled in the modifier path below). Shift →
-	// native symbol too (⇧2 @, ⇧3 #, ⇧4 $, ⇧5 %, ⇧7 &): the roots moved to
-	// two-key digraphs (2H ʔ, 5Y ə), so the shifted digits are unclaimed and pass.
-	// The lone survivor is ⇧6, the tie bar — a joiner that cannot live on a
-	// ⇧-letter (it would fire between plain letters in $PATH) and is not a
-	// sound-base, so it keeps the shift-plane slot until the Option-map reshuffle.
+	// Number row: every digit is native now. Bare digit → native digit (a BASE — a
+	// following modifier transforms it, 5H → ɜ, in the modifier path below). Shift →
+	// native symbol (⇧2 @ … ⇧6 ^ ⇧7 &): the roots are two-key digraphs and the tie
+	// bar left for ⌥j, so no shifted digit is claimed. A pending prefix diacritic
+	// absorbs onto the (bare) digit base (⌥g then 5 ⇧A → ɐ̞); otherwise pass so the
+	// digit stays a real keystroke (counts, prefixes, shortcuts).
 	if (/[0-9]/.test(key)) {
-		if (shift) {
-			// The tie bar toggles its own second form. ⇧6 is the tie ABOVE (t͡s); the
-			// chart also sanctions a tie BELOW for when descenders collide (t͜ɕ, d͜ʒ),
-			// and it had no key at all. Rather than spend one, press ⇧6 again while a
-			// tie sits before the cursor and it flips — above ⇄ below. Stateless (the
-			// document holds the tie), reversible, and it costs no keyboard real
-			// estate, which is why the below-form gets in at all.
-			if (key === "6" && pending.length === 0 &&
-				(textBefore.endsWith(TIE) || textBefore.endsWith(TIE_BELOW))) {
-				const flipped = textBefore.endsWith(TIE) ? TIE_BELOW : TIE;
-				return {edit: {type: "replace", length: 1, text: flipped}, pending: []};
-			}
-			const glyph = letters.get(key);
-			if (glyph !== undefined) return emitBase(glyph, pending);
-		}
-		// A pending prefix diacritic absorbs onto the (bare) digit base — a digit is a
-		// base like any letter now (⌥g then 5 ⇧A → ɐ̞). Shifted digits are native
-		// symbols, not bases; with nothing pending, pass so the digit stays a real key.
 		if (!shift && pending.length > 0) return emitBase(key, pending);
 		return withFlush({type: "pass"});
 	}

@@ -67,7 +67,7 @@ struct Tables {
     /// are absent from this map and stack normally.
     let exclusiveTwin: [Unicode.Scalar: Unicode.Scalar]
     /// ⌥⇧<digit> slots spent on a character instead of the raw-US escape
-    /// (⌥⇧1 → ¡, ⌥⇧6 → ß). See spec `optShift`.
+    /// (⌥⇧1 → ¡). See spec `optShift`.
     let optShiftDigits: [String: String]
 
     static let shared: Tables = {
@@ -115,8 +115,8 @@ struct Tables {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
             // A leading digit is a LITERAL base: the number-row families hang off the
             // bare digit now (5H → ɜ, 2Q → ʡ), and the roots are digraphs too (5Y → ə,
-            // 2H → ʔ), so ⇧2–5,7 pass through to native @ # $ % &. ⇧6 (tie) is the one
-            // shifted digit still claimed. Mirrors js/src/index.ts.
+            // 2H → ʔ), so ⇧2–7 pass through to native @ # $ % ^ &, and the tie bar
+            // left the number row for ⌥j. Mirrors js/src/index.ts.
             let prev = base.first!.isNumber ? base : letters[base]
             if let prev = prev { transforms[prev + mod] = glyph }
         }
@@ -374,14 +374,16 @@ class InputController: IMKInputController {
         // moved to Ctrl+Shift (see handle()'s top); ⌥⇧<letter> now declines, so
         // the host's own Option typography passes through. On digits the escape
         // exists only because ⇧<digit> is an IPA glyph, leaving the shifted
-        // character otherwise unreachable. Now that the digit roots are digraphs,
-        // that is only ⇧6 (the tie), so ⌥⇧6 → ^; every other ⇧<digit> types its
-        // symbol directly, so the escape is redundant and we DECLINE, letting the
+        // character otherwise unreachable. Now that the digit roots are digraphs
+        // and the tie left for ⌥j, NO shifted digit is an IPA glyph, so every ⇧<digit>
+        // types its symbol directly, the escape is redundant and we DECLINE, letting the
         // host's ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ survive. One digit slot is spent
         // deliberately (⌥⇧1 → ¡). On punctuation it always
         // declines, so Mac's Option typography passes (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
+            // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
+            if oc == "j" { emitBase(String(Self.tieBelow), client); return true }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
             // stress). A capital that forms a digraph ("GitHub" → Giθub) is escaped
             // with Ctrl+Shift now (see handle()'s top), so this no longer competes
@@ -410,6 +412,9 @@ class InputController: IMKInputController {
         if opt {
             let oc = USLayout.char(event.keyCode, shift: false)
             guard oc.count == 1 else { flushPending(client); return false }
+            // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
+            // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
+            if oc == "j" { emitBase(String(Self.tieAbove), client); return true }
             if oc == "p" { flushPending(client); return superscriptize(client) }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
@@ -419,30 +424,12 @@ class InputController: IMKInputController {
             return false
         }
 
-        // Number row: bare → decline (native passthrough), so a digit key is a
-        // real digit key — usable as a tmux/vim/app command, not just text.
-        // Shift → the IPA glyph (Shift-5 → ə, Shift-2 → ʔ …). Shifted symbols
-        // (! @ # …) live on ⌥⇧.
+        // Number row: bare → decline (native passthrough) so a digit key is a real
+        // digit key (tmux/vim/app commands). Shift → native symbol too: the roots are
+        // digraphs and the tie bar left for ⌥j, so no shifted digit is claimed. A
+        // pending prefix diacritic absorbs onto the (bare) digit base (⌥g then 5 ⇧A → ɐ̞).
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
-            // The tie bar owns its own second form. ⇧6 is the tie ABOVE (t͡s); the chart
-            // also sanctions the tie BELOW where descenders collide (t͜ɕ, d͜ʒ). It is the
-            // same mark, so it gets no key of its own: press ⇧6 again while a tie sits
-            // before the cursor and it flips. Stateless — the document holds the tie.
-            if shift, bareKey == "6", pending.isEmpty, let (p, r) = lastCluster(client) {
-                let scalars = Array(String(p).unicodeScalars)
-                if let last = scalars.last, last == Self.tieAbove || last == Self.tieBelow {
-                    var flipped = String.UnicodeScalarView(scalars.dropLast())
-                    flipped.append(last == Self.tieAbove ? Self.tieBelow : Self.tieAbove)
-                    Dbg.log("  → ⇧6 flips the tie")
-                    replace(r, with: String(flipped), client)
-                    return true
-                }
-            }
-            if shift, let glyph = t.letters[bareKey] { emitBase(glyph, client); return true }
-            // A pending prefix diacritic absorbs onto the bare digit base (⌥g then
-            // 5 ⇧A → ɐ̞) — a digit is a base like any letter now. Shifted digits are
-            // native symbols; with nothing pending, pass so the digit stays a real key.
             if !shift, !pending.isEmpty { emitBase(bareKey, client); return true }
             flushPending(client)
             return false
@@ -484,7 +471,7 @@ class InputController: IMKInputController {
             // Is the glyph behind this pending capital IPA content? Test the WHOLE
             // cluster, not just its base: "t͡" is ASCII t carrying a tie (U+0361),
             // and "s̪" is ASCII s carrying a bridge — both are plainly IPA, and a
-            // base-only test would break the chain right after ⇧6 or a diacritic.
+            // base-only test would break the chain right after a tie or a diacritic.
             // A shifted (capital) base has one question: are we in a LIVE chain —
             // shift held continuously since an IPA segment? If so, this capital
             // CONTINUES it in lowercase (ʃ⇧I⇧H → ʃɪ, Ɣ⇧G⇧H → Ɣɣ). Otherwise — a
@@ -587,7 +574,7 @@ class InputController: IMKInputController {
     // class of bug: the codepoint is right and only the rendering collides.
     //
     // The list is gone. Every placement is a keystroke now — ⌥k / ⌥⇧k for the ring,
-    // ⌥s / ⌥⇧s for the syllabic line, ⇧6 twice for the tie.
+    // ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie.
 
     // MARK: - the pending accent (real marked text, like the US dead keys)
     //
@@ -604,7 +591,7 @@ class InputController: IMKInputController {
     /// The accumulated prefix diacritics awaiting a base. Empty = no composition.
     private var pending: [Unicode.Scalar] = []
 
-    /// The tie bar (⇧6) and the below-form it flips to. See `laws.tieBar`.
+    /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
     private static let tieBelow: Unicode.Scalar = "\u{035C}"
 

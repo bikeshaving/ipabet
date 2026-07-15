@@ -236,7 +236,7 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// The shifted digits give their native symbols directly now that the roots are
 	// two-key digraphs (⇧2 @, ⇧7 &), so the old ⌥⇧-digit raw escapes are redundant
 	// and free up. ⌥⇧9/⌥⇧0 stay the voicing brackets — marks by shape, since ⇧9/⇧0
-	// were never IPA. The lone escape left is ⌥⇧6 → ^, while the tie holds ⇧6.
+	// were never IPA. Every ⌥⇧-digit escape is retired now (the tie left ⇧6 for ⌥j); ⌥⇧1 → ¡ is the one spend.
 	test("shifted digits are native symbols directly — no escape needed", () => {
 		expect(typed("+2")).toBe("@");
 		expect(typed("+7")).toBe("&");
@@ -245,7 +245,7 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typeKeys(seq("~+9"))).toBe("₍");
 	});
 	test("the one spent ⌥⇧ digit slot: ⌥⇧1 → ¡", () => expect(typed("~+1")).toBe("¡"));
-	test("⌥⇧6 is the ^ escape while the tie provisionally holds ⇧6", () => expect(typed("~+6")).toBe("^"));
+	test("⇧6 is native ^ now the tie moved to ⌥j", () => expect(typed("+6")).toBe("^"));
 	test("⇧1 is ! (never was IPA)", () => expect(typed("+1")).toBe("!"));
 });
 
@@ -332,22 +332,17 @@ describe("the two ⌥⇧ laws", () => {
 	});
 });
 
-describe("⇧6 = tie bar (welds two segments)", () => {
+describe("⌥j = tie bar (welds two segments)", () => {
 	// The tie welds two symbols into ONE segment (postfix, attaching to the glyph
-	// before it). It lives on ⇧6, a number-row glyph — an unguarded ⇧-letter
-	// joiner would fire inside acronyms.
-	test("affricate t͡ʃ: t ⇧6 s⇧H", () =>
-		expect(typed("t", "+6", "s", "+h")).toBe("t\u{0361}ʃ"));
-	test("affricate t͡s: t ⇧6 s", () => expect(typed("t", "+6", "s")).toBe("t\u{0361}s"));
-	test("affricate d͡ʒ: d ⇧6 z⇧H", () =>
-		expect(typed("d", "+6", "z", "+h")).toBe("d\u{0361}ʒ"));
+	// before it). It lives on ⌥j — j for join — a postfix joiner; a ⇧-letter joiner
+	// would fire between the plain letters of any capitalized word ($PATH).
+	test("affricate t͡ʃ: t ⌥j s⇧H", () =>
+		expect(typed("t", "~j", "s", "+h")).toBe("t\u{0361}ʃ"));
+	test("affricate t͡s: t ⌥j s", () => expect(typed("t", "~j", "s")).toBe("t\u{0361}s"));
+	test("affricate d͡ʒ: d ⌥j z⇧H", () =>
+		expect(typed("d", "~j", "z", "+h")).toBe("d\u{0361}ʒ"));
 	test("untied tʃ stays reachable (the tie is optional in IPA)", () =>
 		expect(typed("t", "s", "+h")).toBe("tʃ"));
-
-	// The tie must not break a held-shift run: "t͡" (ASCII t + U+0361) is IPA, so a
-	// following ⇧S⇧H still chains.
-	test("held-shift affricate: t ⇧6 ⇧S ⇧H → t͡ʃ", () =>
-		expect(typed("t", "+6", "+s", "+h")).toBe("t\u{0361}ʃ"));
 	test("a diacritic-bearing ASCII base still continues the chain: ⌥t s ⇧H ⇧I ⇧H", () =>
 		expect(typed("~t", "s", "+h", "+i", "+h")).toBe(nfc("ʃ\u{032A}ɪ")));
 });
@@ -440,9 +435,9 @@ describe("East Asian coverage", () => {
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
 		expect(typed("m", "a", "2", "~p", "1", "~p", "4", "~p")).toBe("ma²¹⁴"));
 
-	test("Chinese affricates: t ⇧6 s⇧J → t͡ɕ, t ⇧6 s⇧R → t͡ʂ", () => {
-		expect(typed("t", "+6", "s", "+j")).toBe("t\u{0361}ɕ");
-		expect(typed("t", "+6", "s", "+r")).toBe("t\u{0361}ʂ");
+	test("Chinese affricates: t ⌥j s⇧J → t͡ɕ, t ⌥j s⇧R → t͡ʂ", () => {
+		expect(typed("t", "~j", "s", "+j")).toBe("t\u{0361}ɕ");
+		expect(typed("t", "~j", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
 	test("aspiration via ⌥p: k h ⌥p → kʰ", () => expect(typed("k", "h", "~p")).toBe("kʰ"));
 
@@ -458,17 +453,17 @@ describe("East Asian coverage", () => {
 	test("Vietnamese implosive: b ⇧P → ɓ", () => expect(typed("b", "+p")).toBe("ɓ"));
 
 	// Korean/Cantonese/Thai coda stops are unreleased; Korean has a fortis series.
-	test("unreleased coda stops on ⌥j", () => {
-		expect(typed("~j", "p")).toBe(nfc("p\u{031A}"));
-		expect(typed("~j", "k")).toBe(nfc("k\u{031A}"));
+	test("unreleased coda stops on ⌥f", () => {
+		expect(typed("~f", "p")).toBe(nfc("p\u{031A}"));
+		expect(typed("~f", "k")).toBe(nfc("k\u{031A}"));
 	});
-	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~j", "p")).toBe(nfc("sɐp\u{031A}")));
+	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~f", "p")).toBe(nfc("sɐp\u{031A}")));
 	test("Korean fortis on ⌥0: k͈ t͈ p͈ s͈", () => {
 		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
 		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
 	});
-	test("fortis affricate stacks with the tie: t ⇧6 ⌥0 s⇧J → t͡ɕ͈", () =>
-		expect(typed("t", "+6", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
+	test("fortis affricate stacks with the tie: t ⌥j ⌥0 s⇧J → t͡ɕ͈", () =>
+		expect(typed("t", "~j", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
 
 	// Vowels East Asianists need, one digraph each.
 	test("ɨ ɯ ɤ ʌ are single digraphs", () => {
@@ -572,8 +567,8 @@ describe("chaining seeds only on a real segment, not any non-ASCII char", () => 
 		expect(withInitial("\u2014", "+t", "+h")).toBe("\u2014TH"));
 	test("a real segment still seeds the chain: ʃ⇧T⇧R → ʃʈ", () =>
 		expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
-	test("an ASCII base carrying a tie still seeds it: t ⇧6 s ⇧X → t͡sʼ", () =>
-		expect(typed("t", "+6", "s", "+x")).toBe(nfc("t\u{0361}s\u{02BC}")));
+	test("an ASCII base carrying a tie still seeds it: t ⌥j s ⇧X → t͡sʼ", () =>
+		expect(typed("t", "~j", "s", "+x")).toBe(nfc("t\u{0361}s\u{02BC}")));
 });
 
 // Shift-chaining continues a transcription with held shift (ʃ⇧I⇧H → ʃɪ). The
@@ -723,19 +718,21 @@ describe("daily-driver invariants", () => {
 // ------------------------------------------------------- the tie bar's two forms
 
 describe("tie bar", () => {
-	test("⇧6 ties above: t ⇧6 s → t͡s", () =>
-		expect(typed("t", "+6", "s")).toBe("t\u{0361}s"));
+	test("⌥j ties above: t ⌥j s → t͡s", () =>
+		expect(typed("t", "~j", "s")).toBe("t\u{0361}s"));
 
-	test("⇧6 again flips the tie below — the form for colliding descenders", () =>
-		// The below-form is the same mark, not a second one, so it gets no key:
-		// press ⇧6 twice. d͜ʒ instead of d͡ʒ, where the bar would hit the ʒ's tail.
-		expect(typed("d", "+6", "+6", "z", "+h")).toBe("d\u{035C}ʒ"));
+	test("⌥⇧j ties below — the form for colliding descenders", () =>
+		// The below-form (U+035C) is explicit on ⌥⇧j, no toggle: d͜ʒ instead of d͡ʒ,
+		// where the bar would hit the ʒ's tail. Placement is the transcriber's.
+		expect(typed("d", "~+j", "z", "+h")).toBe("d\u{035C}ʒ"));
 
-	test("a third press flips it back — the toggle is reversible", () =>
-		expect(typed("t", "+6", "+6", "+6", "s")).toBe("t\u{0361}s"));
+	test("above and below are independent keys, not a toggle", () => {
+		expect(typed("t", "~j", "s")).toBe("t\u{0361}s");
+		expect(typed("t", "~+j", "s")).toBe("t\u{035C}s");
+	});
 
-	test("⇧6 with no tie behind it still just ties", () =>
-		expect(typed("k", "+6", "p")).toBe("k\u{0361}p"));
+	test("⌥j with no tie behind it still just ties", () =>
+		expect(typed("k", "~j", "p")).toBe("k\u{0361}p"));
 });
 
 // -------------------------------------------------------------- the last chart hole
@@ -751,10 +748,10 @@ describe("heng", () => {
 describe("extIPA marks land on the keys their SHAPE claims", () => {
 	// The four that derive. Each is one glyph already in the layout, relocated — so
 	// the key was never a choice, and none of them needed an invented mnemonic.
-	test("⌥⇧j is WEAK — U+0349 is a left angle BELOW, and ⌥j is the left angle ABOVE", () =>
-		// It would have sat beside `strong` on ⌥⇧0 by meaning. Shape is the rule the
-		// layout actually follows, and obeying it freed the paren keys for the brackets.
-		expect(typed("~+j", "t")).toBe(nfc("t͉")));
+	test("⌥⇧f is WEAK — U+0349 is a left angle BELOW, and ⌥f is the left angle ABOVE (unreleased)", () =>
+		// Weak would have sat beside `strong` on ⌥⇧0 by meaning; it sits with unreleased
+		// by shape. The pair moved off ⌥j when the tie bar took j (join).
+		expect(typed("~+f", "t")).toBe(nfc("t͉")));
 
 	test("⌥⇧t is DENTOLABIAL — the dental bridge, relocated above", () =>
 		expect(typed("~+t", "t")).toBe(nfc("t͆")));

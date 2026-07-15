@@ -666,12 +666,6 @@
    "name": "LATIN SMALL LETTER C (voiceless palatal stop — palatalized t)"
   },
   {
-   "key": "6",
-   "glyph": "͡",
-   "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — welds two symbols into one segment: t ⇧6 s → t͡s)"
-  },
-  {
    "key": "sS",
    "glyph": "ß",
    "cp": "U+00DF",
@@ -919,6 +913,16 @@
    "shiftSense": "twin"
   },
   {
+   "opt": "j",
+   "mark": "͡",
+   "type": "combining",
+   "group": "Prosody",
+   "cp": "U+0361",
+   "name": "COMBINING DOUBLE INVERTED BREVE (the tie bar — a postfix JOINER welding two segments into one: t ⌥j s → t͡s, affricates t͡ʃ d͡ʒ and double-articulations k͡p. `j` for join, the right-index home key. ⇧ → the BELOW form U+035C, for descenders colliding with a bar above (t͜ɕ, d͜ʒ) — explicit, not a toggle. Unlike the prefix dead-key diacritics it emits IMMEDIATELY onto the previous segment; the engine special-cases it — see laws.tieBar)",
+   "double": "͜",
+   "shiftSense": "placement"
+  },
+  {
    "opt": "x",
    "mark": "̽",
    "type": "combining",
@@ -963,7 +967,7 @@
    "shiftSense": "lesser"
   },
   {
-   "opt": "f",
+   "opt": "r",
    "mark": "↘",
    "type": "spacing",
    "group": "Tone",
@@ -1058,12 +1062,12 @@
    "doubleSpacing": true
   },
   {
-   "opt": "j",
+   "opt": "f",
    "mark": "̚",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; ⇧ → the SAME angle BELOW, U+0349, which is extIPA's WEAK articulation. The key is still arbitrary — nothing claims `j` — but the plane is not: the two marks are one shape, relocated. Weak was going to sit beside `strong` on ⌥⇧0 by meaning; it sits here by shape, which is the rule the layout actually follows, and that left the paren keys free for the voicing brackets)",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; ⇧ → the SAME angle BELOW, U+0349, which is extIPA's WEAK articulation. Moved to ⌥f (with weak, as a pair) when the tie bar took ⌥j — `j` for join. The key is arbitrary — nothing claims `f` either — but the plane is not: the two marks are one shape, relocated. Weak was going to sit beside `strong` on ⌥⇧0 by meaning; it sits with unreleased by shape, which is the rule the layout follows)",
    "clone": "˺",
    "arbitraryKey": true,
    "double": "͉",
@@ -1458,9 +1462,9 @@
  "laws": {
   "optShift": "⌥ gives a mark's primary form, ⌥⇧ its `double`. ⌥⇧ has no single meaning: see `classes.shiftSense` for the six, and `classes.exclusive` for whether a pair replaces or stacks. Both are recorded per-mark.",
   "keyClasses": "A key earns its mark by cross-tier phonetics, by shape identity (the comma key carries the comma-shaped marks; the period key the dot-shaped ones), or by convention (the five universal dead keys ⌥e ⌥i ⌥u ⌥n ⌥`). Where none of the three applies the mark is parked and flagged `arbitraryKey`. Marks outside the IPA are flagged `ipa: false`; see `classes.beyond`.",
-  "numberRow": "The digit keys are BASES, exactly like the consonant and vowel letters. Bare digit → native digit; digit + modifier → an IPA glyph with no Latin home, keyed off the LITERAL digit. The roots are two-key digraphs — 2H ʔ, 3H ʕ, 4H ɾ, 5Y ə, 7H ħ (H on the throat bases, where ħ is literally h-with-stroke and the Q-forms deepen to epiglottal; Y on the central-vowel base, Y being `central` and ə the mid-central vowel) — and the families extend the same base: 2Q ʡ, 3Q ʢ, 4L ɺ, 4R ɽ, 4V ⱱ, 5H ɜ, 5W ɞ, 5A ɐ, 7Q ʜ. Because the glyphs left the shift plane, ⇧2–5,7 return to their native symbols @ # $ % & (and the now-redundant ⌥⇧2–5,7 raw escapes free up). This also makes the family members shift-LIGHTER: ⇧5⇧H became 5⇧H. The lone holdout is the tie bar on ⇧6 — a combining joiner (t ⇧6 s → t͡s), contrastive and frequent, that cannot live on a ⇧-letter (an unguarded joiner would fire between the plain letters in $PATH) and is not a sound-base. It is PROVISIONALLY kept on ⇧6 pending the Option-map reshuffle, where it is headed for ⌥6/⌥⇧6 (above/below, explicit — no placement guessing); until then ⇧6 stays claimed and its raw-US ^ stays on the ⌥⇧6 escape.",
-  "placement": "A mark's PLACEMENT is the transcriber's, never the engine's. Three marks have both an above- and a below-form — the tie bar (⇧6, press again to flip), the voiceless ring (⌥k below, ⌥⇧k above), and the syllabic line (⌥s below, ⌥⇧s above) — and the engine used to choose two of them by looking the base up in a hardcoded set of glyphs-with-descenders. That is a TYPOGRAPHY model inside a NOTATION engine, and it failed both ways: it silently pushed an explicit ring back below, so å — a LETTER, not a diacritic — could not be typed at all; and the descender set had drifted, missing ɲ ʎ ɸ β ç ʑ and ɧ, so it buried rings in their tails regardless. That class of bug is invisible in review, because the codepoint is right and only the rendering collides. The set is deleted. Every placement is now one keystroke, and the engine emits exactly the mark you asked for.",
-  "tieBar": "⇧6 is the tie ABOVE (U+0361, t͡s). The chart also sanctions the tie BELOW (U+035C) for when descenders collide with a bar above — t͜ɕ, d͜ʒ, k͜p — and it is the same mark, not a second one. So it gets no key: press ⇧6 AGAIN while a tie sits before the cursor and it flips, above ⇄ below. Stateless (the document holds the tie, not the engine), reversible, and it spends no keyboard real estate, which is the only reason the below-form fits at all.",
+  "numberRow": "The digit keys are BASES, exactly like the consonant and vowel letters. Bare digit → native digit; digit + modifier → an IPA glyph with no Latin home, keyed off the LITERAL digit. The roots are two-key digraphs — 2H ʔ, 3H ʕ, 4H ɾ, 5Y ə, 7H ħ (H on the throat bases, where ħ is literally h-with-stroke and the Q-forms deepen to epiglottal; Y on the central-vowel base, Y being `central` and ə the mid-central vowel) — and the families extend the same base: 2Q ʡ, 3Q ʢ, 4L ɺ, 4R ɽ, 4V ⱱ, 5H ɜ, 5W ɞ, 5A ɐ, 7Q ʜ. Because the glyphs left the shift plane, ⇧2–7 return to their native symbols @ # $ % ^ & (and the now-redundant ⌥⇧2–7 raw escapes free up — ⌥⇧2 restores €, whose only honest home this had been). This also makes the family members shift-LIGHTER: ⇧5⇧H became 5⇧H. The tie bar — the one combining joiner that used to hold ⇧6 — left the number row entirely for ⌥j (see laws.tieBar), so ⇧6 is native ^ like its neighbours and no shifted digit is claimed at all.",
+  "placement": "A mark's PLACEMENT is the transcriber's, never the engine's. Three marks have both an above- and a below-form — the tie bar (⌥j above, ⌥⇧j below), the voiceless ring (⌥k below, ⌥⇧k above), and the syllabic line (⌥s below, ⌥⇧s above) — and the engine used to choose two of them by looking the base up in a hardcoded set of glyphs-with-descenders. That is a TYPOGRAPHY model inside a NOTATION engine, and it failed both ways: it silently pushed an explicit ring back below, so å — a LETTER, not a diacritic — could not be typed at all; and the descender set had drifted, missing ɲ ʎ ɸ β ç ʑ and ɧ, so it buried rings in their tails regardless. That class of bug is invisible in review, because the codepoint is right and only the rendering collides. The set is deleted. Every placement is now one keystroke, and the engine emits exactly the mark you asked for.",
+  "tieBar": "The tie bar is a postfix combining JOINER: it welds two segments into one — affricates t͡ʃ d͡ʒ t͡s, double-articulations k͡p. It CANNOT live on a ⇧-letter, because it must attach to a plain first element (t d k p — bare ASCII), so a ⇧-letter joiner would fire between the letters of any capitalized word ($PATH, camelCase); the tie's own commonness forbids it. So it lives on the Option layer, on ⌥j — `j` for JOIN, the right-index home key, since you hit it on every affricate. ABOVE is ⌥j (U+0361); the BELOW form (U+035C, for when descenders collide with a bar above — t͜ɕ, d͜ʒ) is ⌥⇧j — explicit, no toggle and no placement guessing (placement is the transcriber's, laws.placement). Unlike the prefix dead-key diacritics it emits IMMEDIATELY, appending onto the preceding segment (t ⌥j s → t͡s).",
   "scriptG": "IPAbet types g as U+0067, not U+0261 LATIN SMALL LETTER SCRIPT G. The IPA sanctions both shapes and every IPA font draws them alike, but U+0261 is the codepoint the chart specifies — so this is a deliberate, known non-conformance, bought by the bare-layer law (an unshifted key is native US, and the native g key is U+0067). It is invisible to a reader and visible to a grep: corpus work that diffs against reference transcriptions must normalize. U+0261 still appears in the tables as a lookup key (superscripts, descenders), so text pasted in with a script g behaves correctly.",
   "dashes": "⌥- and ⌥⇧- (en/em dash) are never overridden. This is why advanced/retracted live on ⌥=.",
   "punctuation": "The host's orthographic punctuation is reserved, like the dashes. ⌥[ ⌥] ⌥\\ carry “ ” ‘ ’ « » and ⌥⇧/ carries ¿ — these keys are never claimed. An unassigned ⌥<key> passes to the host, digits included, so its typography survives. An ⌥⇧<digit> escapes to raw US only where ⇧<digit> is an IPA glyph; otherwise it passes or is spent deliberately (see `optShift`).",

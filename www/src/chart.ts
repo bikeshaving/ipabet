@@ -100,7 +100,7 @@ const OTHER: [string, string, string?][] = [
 	["ɕ", "Voiceless alveolo-palatal fricative"],
 	["ʑ", "Voiced alveolo-palatal fricative"],
 	["ɺ", "Voiced alveolar lateral flap"],
-	["t͡s", "Affricate (tie bar)", "t ⇧6 s"],
+	["t͡s", "Affricate (tie bar)", "t ⌥j s"],
 	["ɧ", "Simultaneous ʃ and x"],
 ];
 
