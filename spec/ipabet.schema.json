@@ -4,7 +4,7 @@
 	"title": "IPAbet notation spec",
 	"description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json. Read by the macOS IME (Swift), the TypeScript engine, and every page on ipabet.org. Keystroke notation: a `key` string is a sequence of US-layout characters; an uppercase letter or digit means that key with Shift. Marks live on the Option layer, keyed by their unshifted US character.",
 	"type": "object",
-	"required": ["modifiers", "letters", "marks", "superscripts", "classes"],
+	"required": ["modifiers", "letters", "marks", "superscripts", "subscripts", "classes"],
 	"additionalProperties": false,
 
 	"properties": {
@@ -60,6 +60,29 @@
 						"properties": {
 							"base": {"type": "string", "minLength": 1},
 							"sup": {"type": "string", "minLength": 1}
+						}
+					}
+				}
+			}
+		},
+
+		"subscripts": {
+			"description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧q) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
+			"type": "object",
+			"required": ["operator", "table", "rule"],
+			"additionalProperties": false,
+			"properties": {
+				"operator": {"type": "string"},
+				"rule": {"type": "string"},
+				"table": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": ["base", "sub"],
+						"additionalProperties": false,
+						"properties": {
+							"base": {"type": "string", "minLength": 1},
+							"sub": {"type": "string", "minLength": 1}
 						}
 					}
 				}

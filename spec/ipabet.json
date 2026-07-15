@@ -1145,7 +1145,7 @@
   }
  ],
  "superscripts": {
-  "operator": "opt+p",
+  "operator": "opt+q",
   "table": [
    {
     "base": "0",
@@ -1477,6 +1477,132 @@
    }
   ],
   "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter (Lm) or superscript digit (No) whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
+ },
+ "subscripts": {
+  "operator": "opt+shift+q",
+  "table": [
+   {
+    "base": "0",
+    "sub": "₀"
+   },
+   {
+    "base": "1",
+    "sub": "₁"
+   },
+   {
+    "base": "2",
+    "sub": "₂"
+   },
+   {
+    "base": "3",
+    "sub": "₃"
+   },
+   {
+    "base": "4",
+    "sub": "₄"
+   },
+   {
+    "base": "5",
+    "sub": "₅"
+   },
+   {
+    "base": "6",
+    "sub": "₆"
+   },
+   {
+    "base": "7",
+    "sub": "₇"
+   },
+   {
+    "base": "8",
+    "sub": "₈"
+   },
+   {
+    "base": "9",
+    "sub": "₉"
+   },
+   {
+    "base": "a",
+    "sub": "ₐ"
+   },
+   {
+    "base": "e",
+    "sub": "ₑ"
+   },
+   {
+    "base": "h",
+    "sub": "ₕ"
+   },
+   {
+    "base": "i",
+    "sub": "ᵢ"
+   },
+   {
+    "base": "j",
+    "sub": "ⱼ"
+   },
+   {
+    "base": "k",
+    "sub": "ₖ"
+   },
+   {
+    "base": "l",
+    "sub": "ₗ"
+   },
+   {
+    "base": "m",
+    "sub": "ₘ"
+   },
+   {
+    "base": "n",
+    "sub": "ₙ"
+   },
+   {
+    "base": "o",
+    "sub": "ₒ"
+   },
+   {
+    "base": "p",
+    "sub": "ₚ"
+   },
+   {
+    "base": "r",
+    "sub": "ᵣ"
+   },
+   {
+    "base": "s",
+    "sub": "ₛ"
+   },
+   {
+    "base": "t",
+    "sub": "ₜ"
+   },
+   {
+    "base": "u",
+    "sub": "ᵤ"
+   },
+   {
+    "base": "v",
+    "sub": "ᵥ"
+   },
+   {
+    "base": "x",
+    "sub": "ₓ"
+   },
+   {
+    "base": "ə",
+    "sub": "ₔ"
+   },
+   {
+    "base": "β",
+    "sub": "ᵦ"
+   },
+   {
+    "base": "χ",
+    "sub": "ᵪ"
+   }
+  ],
+  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a modifier letter (Lm) or subscript digit (No) whose compatibility decomposition is <sub> of it — filtered, as the superscripts are, to bases this layout produces (or plain ASCII) and to BMP forms, so the astral Cyrillic subscripts of U+1E0xx (Unicode 16) are excluded as near-universal tofu. No exceptions: there is no ʔ/ʕ analogue and no subscript ɡ, so bare `g` does not subscript. Lives on the shifted twin of the superscript operator (⌥⇧q), so Shift flips a raised glyph to a lowered one."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",

@@ -105,10 +105,10 @@ describe("clicks (C modifier)", () => {
 	test("pC → ʘ", () => expect(typed("p", "+c")).toBe("ʘ"));
 	test("cC → ǂ", () => expect(typed("c", "+c")).toBe("ǂ"));
 	test("lC → ǁ", () => expect(typed("l", "+c")).toBe("ǁ"));
-	test("nasal click: n ⇧G ⌥p q ⇧C → ᵑǃ", () =>
-		expect(typed("n", "+g", "~p", "q", "+c")).toBe("ᵑǃ"));
-	test("voiced click: g ⌥p q ⇧C → ᶢǃ", () =>
-		expect(typed("g", "~p", "q", "+c")).toBe("ᶢǃ"));
+	test("nasal click: n ⇧G ⌥q q ⇧C → ᵑǃ", () =>
+		expect(typed("n", "+g", "~q", "q", "+c")).toBe("ᵑǃ"));
+	test("voiced click: g ⌥q q ⇧C → ᶢǃ", () =>
+		expect(typed("g", "~q", "q", "+c")).toBe("ᶢǃ"));
 });
 
 describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive)", () => {
@@ -434,13 +434,13 @@ describe("East Asian coverage", () => {
 		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥");           // rising 35
 	});
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
-		expect(typed("m", "a", "2", "~p", "1", "~p", "4", "~p")).toBe("ma²¹⁴"));
+		expect(typed("m", "a", "2", "~q", "1", "~q", "4", "~q")).toBe("ma²¹⁴"));
 
 	test("Chinese affricates: t ⌥j s⇧J → t͡ɕ, t ⌥j s⇧R → t͡ʂ", () => {
 		expect(typed("t", "~j", "s", "+j")).toBe("t\u{0361}ɕ");
 		expect(typed("t", "~j", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
-	test("aspiration via ⌥p: k h ⌥p → kʰ", () => expect(typed("k", "h", "~p")).toBe("kʰ"));
+	test("aspiration via ⌥q: k h ⌥q → kʰ", () => expect(typed("k", "h", "~q")).toBe("kʰ"));
 
 	// All six Vietnamese tones (ngang is unmarked).
 	test("Vietnamese tones on a: ngang sắc huyền hỏi ngã nặng", () => {
@@ -655,9 +655,18 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+a", "+e", "^+n", "+g")).toBe("ÆŊ"));
 });
 
-describe("superscript operator ⌥p", () => {
-	test("aspiration: t h ⌥p → tʰ", () => expect(typed("t", "h", "~p")).toBe("tʰ"));
-	test("no superscriptable base → literal p", () => expect(typed("~p")).toBe("p"));
+describe("superscript operator ⌥q", () => {
+	test("aspiration: t h ⌥q → tʰ", () => expect(typed("t", "h", "~q")).toBe("tʰ"));
+	test("no superscriptable base → literal q", () => expect(typed("~q")).toBe("q"));
+	test("⌥p no longer raises — it passes (host owns π)", () =>
+		expect(typed("k", "h", "~p")).toBe("kh"));
+});
+
+describe("subscript operator ⌥⇧q", () => {
+	test("digit lowers: x 2 ⌥⇧q → x₂", () => expect(typed("x", "2", "~+q")).toBe("x₂"));
+	test("math run: l o g 2 ⌥⇧q → log₂", () => expect(typed("l", "o", "g", "2", "~+q")).toBe("log₂"));
+	test("schwa lowers: 5 ⇧Y ⌥⇧q → ₔ", () => expect(typed("5", "+y", "~+q")).toBe("ₔ"));
+	test("no subscriptable base → literal q", () => expect(typed("~+q")).toBe("q"));
 });
 
 describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {

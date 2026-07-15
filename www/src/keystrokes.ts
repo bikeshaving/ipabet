@@ -68,7 +68,7 @@ export function keySpelled(key: string): string {
 		.join(" ");
 }
 
-/** chart-data's compact marks → display: "~+w" → "⌥⇧w", "g +H ~p" → "g ⇧H ⌥p". */
+/** chart-data's compact marks → display: "~+w" → "⌥⇧w", "g +H ~q" → "g ⇧H ⌥q". */
 export function formatCompact(keys: string): string {
 	return keys.split(" ").map((k) => k.replace(/~/g, "⌥").replace(/\+/g, "⇧")).join(" ");
 }

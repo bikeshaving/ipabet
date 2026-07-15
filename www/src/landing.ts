@@ -76,7 +76,7 @@ const landingComponents = {
 			<tr><td><kbd>⇧</kbd> + letter</td><td class="desc">modify the previous segment — consonants <em>and</em> vowels</td>
 				<td class="examples"><${Combo} keys="s ⇧H" out="ʃ"/> <${Combo} keys="t ⇧R" out="ʈ"/> <${Combo} keys="n ⇧G" out="ŋ"/> <${Combo} keys="i ⇧H" out="ɪ"/> <${Combo} keys="u ⇧H" out="ʊ"/> <${Combo} keys="e ⇧H" out="ɛ"/></td></tr>
 			<tr><td><kbd>⌥</kbd></td><td class="desc">diacritics (prefix, dead-key style) &amp; suprasegmentals</td>
-				<td class="examples"><${Combo} keys="⌥e a" out="á"/> <${Combo} keys="a ⌥;" out="aː"/> <${Combo} keys="h ⌥p" out="ʰ"/></td></tr>
+				<td class="examples"><${Combo} keys="⌥e a" out="á"/> <${Combo} keys="a ⌥;" out="aː"/> <${Combo} keys="h ⌥q" out="ʰ"/></td></tr>
 			<tr><td><kbd>⌃⇧</kbd> + letter</td><td class="desc">escape to the literal capital — so “GitHub” stays GitHub</td>
 				<td class="examples"><${Combo} keys="⌃⇧H" out="H" plain/> <${Combo} keys="⌃⇧G ⌃⇧H" out="GH" plain/></td></tr>
 			<tr><td><kbd>⌥⇧</kbd> + number</td><td class="desc">escape to the raw shifted symbol the IPA layer claims</td>

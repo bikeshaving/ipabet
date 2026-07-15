@@ -26,6 +26,7 @@ const letters = spec.letters as Letter[];
 const marks = spec.marks as MarkE[];
 const modifiers = spec.modifiers as Record<string, string>;
 const sups = (spec.superscripts as {table: {base: string; sup: string}[]}).table;
+const subs = (spec.subscripts as {table: {base: string; sub: string}[]}).table;
 const classes = spec.classes as {beyond: Record<string, string>};
 const doc = docs.keys;
 
@@ -70,7 +71,8 @@ const keysComponents = {
 	...components,
 	SegTable: ({token}: any) => jsx`<${Table}>${segRows(SEGS[token.kind])}<//>`,
 	MarkTable: ({token}: any) => jsx`<${Table}>${markRows(token.kind === "ipa" ? ipaMarks : marks)}<//>`,
-	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.base} ⌥p</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
+	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.base} ⌥q</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
+	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">${s.base} ⌥⇧q</td><td class="g">${s.sub}</td><td class="cp">${cp(s.sub)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
 	RulesTable: () => jsx`
 		<${Table}>
 			<tr><td class="k">vowel ⇧R</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity (5 ⇧Y ⇧R → ɚ, 5 ⇧H ⇧R → ɝ precomposed; every other vowel takes the hook)</td></tr>

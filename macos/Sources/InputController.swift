@@ -57,6 +57,7 @@ struct Tables {
     // Option-layer diacritics, keyed by the Option key's unshifted US character.
     let optMarks: [String: Mark]
     let sups: [String: String]
+    let subs: [String: String]
     // transformation index: (previous output glyph + keystroke) → combined glyph
     let transforms: [String: String]
     /// combining scalar → its spacing form, for the dead-key preview.
@@ -110,6 +111,12 @@ struct Tables {
                 if let b = r["base"] as? String, let sp = r["sup"] as? String { sups[b] = sp }
             }
         }
+        var subs: [String: String] = [:]
+        if let s = root["subscripts"] as? [String: Any] {
+            for r in s["table"] as? [[String: Any]] ?? [] {
+                if let b = r["base"] as? String, let sp = r["sub"] as? String { subs[b] = sp }
+            }
+        }
         var transforms: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
@@ -120,7 +127,7 @@ struct Tables {
             let prev = base.first!.isNumber ? base : letters[base]
             if let prev = prev { transforms[prev + mod] = glyph }
         }
-        return Tables(letters: letters, optMarks: optMarks, sups: sups,
+        return Tables(letters: letters, optMarks: optMarks, sups: sups, subs: subs,
                       transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
                       optShiftDigits: optShiftDigits)
     }()
@@ -384,6 +391,8 @@ class InputController: IMKInputController {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
             if oc == "j" { emitBase(String(Self.tieBelow), client); return true }
+            // ⌥⇧q lowers the previous glyph — the shifted twin of ⌥q's raise.
+            if oc == "q" { flushPending(client); return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
             // stress). A capital that forms a digraph ("GitHub" → Giθub) is escaped
             // with Ctrl+Shift now (see handle()'s top), so this no longer competes
@@ -406,7 +415,7 @@ class InputController: IMKInputController {
         }
 
         // Option: the diacritic layer, keyed by the key's unshifted US character
-        // (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥p → superscript, ⌥1–⌥5 →
+        // (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥q → superscript, ⌥1–⌥5 →
         // Chao tone letters ˩˨˧˦˥, ⌥o/⌥i → downstep/upstep). Combining marks are
         // PREFIX (dead-key style, é/ñ); spacing marks stay postfix.
         if opt {
@@ -415,7 +424,8 @@ class InputController: IMKInputController {
             // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
             // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
             if oc == "j" { emitBase(String(Self.tieAbove), client); return true }
-            if oc == "p" { flushPending(client); return superscriptize(client) }
+            // ⌥q raises the previous glyph; ⌥p now declines (host's π passes).
+            if oc == "q" { flushPending(client); return superscriptize(client) }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
             // ⌥7 ¶, ⌥8 • survive. (This used to insert the bare digit, destroying
@@ -694,8 +704,8 @@ class InputController: IMKInputController {
         insert(scalarStr, client)
     }
 
-    /// ⌥p: superscriptize the previous glyph (`t` `h` ⌥p → tʰ). No
-    /// superscriptable base → the literal letter p (never a dead keystroke).
+    /// ⌥q: superscriptize the previous glyph (`t` `h` ⌥q → tʰ). No
+    /// superscriptable base → the literal letter q (never a dead keystroke).
     private func superscriptize(_ client: IMKTextInput) -> Bool {
         if let (p, r) = lastCluster(client) {
             let (base, marks) = decompose(p)
@@ -703,7 +713,19 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(sup, marks), client); return true
             }
         }
-        insert("p", client); return true
+        insert("q", client); return true
+    }
+
+    /// ⌥⇧q: subscriptize the previous glyph (`x` `2` ⌥⇧q → x₂). The lowered
+    /// twin of superscriptize. No subscriptable base → the literal letter q.
+    private func subscriptize(_ client: IMKTextInput) -> Bool {
+        if let (p, r) = lastCluster(client) {
+            let (base, marks) = decompose(p)
+            if let sub = Tables.shared.subs[base] {
+                replace(r, with: recompose(sub, marks), client); return true
+            }
+        }
+        insert("q", client); return true
     }
 
     // MARK: - backspace
