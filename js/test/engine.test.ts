@@ -276,14 +276,23 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 		expect(typed("~n", "~n", "x")).toBe("x"));
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
 		expect(typed("~g", "~g")).toBe(""));
-	// velarized lives on ⌥l: U+0334 is velarized OR pharyngealized, so ⌥g would be
-	// cross-tier-consistent for only half the mark, while ⌥l keeps ɫ = l + overlay.
-	test("dark l is atomic: ⌥l l → ɫ; ⌥l ⌥l l → l (velarization lifted)", () => {
-		expect(typed("~l", "l")).toBe("ɫ");
-		expect(typed("~l", "~l", "l")).toBe("l");
+	// The l key is the overlay pair: ⌥l stroke (orthography, ABC Extended's own
+	// dead key), ⌥⇧l tilde overlay (IPA velarized-or-pharyngealized).
+	test("dark l is atomic: ⌥⇧l l → ɫ; ⌥⇧l ⌥⇧l l → l (velarization lifted)", () => {
+		expect(typed("~+l", "l")).toBe("ɫ");
+		expect(typed("~+l", "~+l", "l")).toBe("l");
 	});
-	test("velarization elsewhere stays an overlay: ⌥l t → t̴", () =>
-		expect(typed("~l", "t")).toBe("t\u{0334}"));
+	test("velarization elsewhere stays an overlay: ⌥⇧l t → t̴", () =>
+		expect(typed("~+l", "t")).toBe("t\u{0334}"));
+	test("guttural digraph: l ⇧Q → ɫ (velarized OR pharyngealized, the chart's wording)", () =>
+		expect(typed("l", "+q")).toBe("ɫ"));
+	test("stroke fuses to the alphabet: ⌥l l → ł, ⌥l d → đ, capitals too", () => {
+		expect(typed("~l", "l")).toBe("ł");
+		expect(typed("~l", "d")).toBe("đ");
+		expect(typed("~l", "+d")).toBe("Đ");        // pending absorbs the capital
+	});
+	test("stroke on an unlisted base stays a raw overlay: ⌥l s → s̵", () =>
+		expect(typed("~l", "s")).toBe("s\u{0335}"));
 	test("backspace peels the pending accent before touching the document", () => {
 		expect(typed("~n", "⌫")).toBe("");
 		expect(typed("~n", "~e", "⌫", "a")).toBe(nfc("ã"));

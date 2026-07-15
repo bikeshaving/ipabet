@@ -284,12 +284,26 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	return {edit: {type: "insert", text}, pending: []};
 }
 
+// The stroke overlay's precomposed family (⌥l is ABC Extended's stroke dead key):
+// NFC cannot fuse an overlay, so these must be emitted atomic, like ɫ. The set
+// matches what ABC Extended itself resolves — Polish ł, Vietnamese đ, Sámi ŧ ǥ,
+// Maltese ħ, ƀ ƶ. An unlisted base takes the raw combining overlay.
+const STROKED = new Map(Object.entries({
+	l: "ł", L: "Ł", d: "đ", D: "Đ", t: "ŧ", T: "Ŧ", g: "ǥ", G: "Ǥ",
+	h: "ħ", H: "Ħ", b: "ƀ", z: "ƶ", Z: "Ƶ",
+}));
+
 /** Emit a base glyph, committing any pending prefix diacritics onto it. */
 function emitBase(glyph: string, pending: Pending): Step {
 	if (pending.length === 0) return {edit: {type: "insert", text: glyph}, pending: []};
-	// dark l: overlay + l is the atomic ɫ, not a ragged l̴
+	// dark l: overlay + l is the atomic ɫ, not a ragged l̴ (also a digraph, l⇧Q)
 	if (pending.length === 1 && pending[0] === "\u{0334}" && glyph === "l") {
 		return {edit: {type: "insert", text: "ɫ"}, pending: []};
+	}
+	// stroke overlay: the orthographic letters are precomposed (⌥l l → ł, ⌥l d → đ)
+	if (pending.length === 1 && pending[0] === "\u{0335}") {
+		const s = STROKED.get(glyph);
+		if (s !== undefined) return {edit: {type: "insert", text: s}, pending: []};
 	}
 	const marks = [...pending];
 	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};

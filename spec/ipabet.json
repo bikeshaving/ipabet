@@ -670,6 +670,12 @@
    "glyph": "ß",
    "cp": "U+00DF",
    "name": "LATIN SMALL LETTER SHARP S"
+  },
+  {
+   "key": "lQ",
+   "glyph": "ɫ",
+   "cp": "U+026B",
+   "name": "LATIN SMALL LETTER L WITH MIDDLE TILDE"
   }
  ],
  "marks": [
@@ -862,15 +868,15 @@
   },
   {
    "opt": "l",
-   "mark": "̴",
+   "mark": "̵",
+   "clone": "-",
    "type": "combining",
-   "group": "Articulation",
-   "cp": "U+0334",
-   "name": "COMBINING TILDE OVERLAY",
-   "clone": "˜",
-   "double": "£",
-   "doubleCp": "U+00A3",
-   "doubleSpacing": true,
+   "double": "̴",
+   "doubleCp": "U+0334",
+   "doubleClone": "˜",
+   "group": "Transliteration",
+   "cp": "U+0335",
+   "name": "COMBINING SHORT STROKE OVERLAY",
    "shiftSense": "twin"
   },
   {

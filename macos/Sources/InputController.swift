@@ -601,6 +601,11 @@ class InputController: IMKInputController {
     /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
     private static let tieBelow: Unicode.Scalar = "\u{035C}"
+    /// The stroke overlay's precomposed family (⌥l, ABC Extended's stroke key).
+    private static let stroked: [String: String] = [
+        "l": "ł", "L": "Ł", "d": "đ", "D": "Đ", "t": "ŧ", "T": "Ŧ",
+        "g": "ǥ", "G": "Ǥ", "h": "ħ", "H": "Ħ", "b": "ƀ", "z": "ƶ", "Z": "Ƶ",
+    ]
 
     /// What the highlighted preview shows: each pending mark as its *spacing*
     /// glyph when one exists (⌥e → ´, exactly the US dead key's terminator),
@@ -686,10 +691,17 @@ class InputController: IMKInputController {
         }
         let marks = pending
         pending = []
-        // dark l: overlay + l is the atomic ɫ, not a ragged l̴
+        // dark l: overlay + l is the atomic ɫ, not a ragged l̴ (also a digraph, l⇧Q)
         if marks.count == 1, marks[0] == "\u{0334}", glyph == "l" {
             Dbg.log("    emitBase: commit ɫ")
             insert("ɫ", client); return
+        }
+        // stroke overlay: the orthographic letters are precomposed (⌥l l → ł,
+        // ⌥l d → đ) — NFC cannot fuse an overlay. Set mirrors js/src/index.ts.
+        if marks.count == 1, marks[0] == "\u{0335}",
+           let s = Self.stroked[glyph] {
+            Dbg.log("    emitBase: commit \(s)")
+            insert(s, client); return
         }
         let out = recompose(glyph, marks)
         Dbg.log("    emitBase: commit '\(Dbg.str(out))'")
