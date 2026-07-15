@@ -313,7 +313,11 @@ export const CHART_JSON = JSON.stringify(
 			"The IPA chart (2015, CC BY-SA) with IPAbet keystrokes. " +
 			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes typed in " +
 			"sequence. Combining diacritics are typed before their base (dead-key " +
-			"style); spacing marks after. Canonical spec: /ipabet.json.",
+			"style); spacing marks after. One deliberate divergence: the chart " +
+			"shows the IPA's script ɡ (U+0261), but the g key emits plain g " +
+			"(U+0067) — the layout's plain-US constraint; both stand for the " +
+			"voiced velar plosive, and g superscripts to ᶢ accordingly. " +
+			"Canonical spec: /ipabet.json.",
 		pulmonic: {
 			places: PLACES,
 			manners: PULMONIC.map(([manner, cells]) => ({
