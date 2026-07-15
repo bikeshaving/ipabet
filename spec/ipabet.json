@@ -934,19 +934,6 @@
    "shiftSense": "placement"
   },
   {
-   "opt": "q",
-   "mark": "̙",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+0319",
-   "name": "COMBINING RIGHT TACK BELOW (RTR — retracted tongue root; ⇧ → ATR, the advanced pole)",
-   "double": "̘",
-   "clone": "˲",
-   "doubleClone": "˱",
-   "exclusive": true,
-   "shiftSense": "greater"
-  },
-  {
    "opt": "'",
    "mark": "ˈ",
    "type": "spacing",
@@ -1032,9 +1019,11 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+034C",
-   "name": "COMBINING ALMOST EQUAL TO ABOVE (extIPA VELOPHARYNGEAL FRICTION — routine in cleft-palate transcription. Arbitrary key on an unearned slot: § is a lawyer's mark, not a phonetician's)",
+   "name": "COMBINING ALMOST EQUAL TO ABOVE (extIPA VELOPHARYNGEAL FRICTION — routine in cleft-palate transcription; ⇧ → ͎ U+034E, extIPA's WHISTLED articulation. Two extIPA articulation marks paired on one arbitrary key — whistled came here off ⌥⇧h when RTR took that home-row slot)",
    "ipa": false,
    "beyond": "extIPA",
+   "double": "͎",
+   "shiftSense": "twin",
    "arbitraryKey": true
   },
   {
@@ -1076,16 +1065,16 @@
   },
   {
    "opt": "h",
-   "mark": "̉",
+   "mark": "̙",
    "type": "combining",
-   "group": "Transliteration",
-   "cp": "U+0309",
-   "name": "COMBINING HOOK ABOVE (Vietnamese hỏi — Latin tenant; ⇧ → ͎ U+034E, extIPA's WHISTLED articulation. ARBITRARY: the arrow family that owns this shape (⌥f ↘ ↗) is full, and no letter claims a whistle. It sits on a redundant slot — ⌥⇧h was Ó, which ⌥e ⇧O still types — so an arbitrary mark costs nothing here, per laws.arbitraryKeys)",
-   "ipa": false,
-   "beyond": "tenant",
-   "double": "͎",
-   "shiftSense": "twin",
-   "arbitraryKey": true
+   "group": "Articulation",
+   "cp": "U+0319",
+   "name": "COMBINING RIGHT TACK BELOW (RTR — retracted tongue root; ⇧ → ATR, the advanced pole. Promoted to prime ⌥h by FREQUENCY: RTR/ATR is a real IPA contrast that was marooned on the poor ⌥q key, and a home-row key should carry it, not the Vietnamese hỏi tenant that squatted here — hỏi went home to ⌥⇧7, beside the horn it is written with)",
+   "double": "̘",
+   "clone": "˲",
+   "doubleClone": "˱",
+   "exclusive": true,
+   "shiftSense": "greater"
   },
   {
    "opt": "0",
@@ -1120,9 +1109,11 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+031B",
-   "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant. On ⌥7 by CONVENTION, not by parking: Vietnamese VNI input encodes the horn as the digit 7 (ơ = o7, ư = u7), so the key is the one a Vietnamese typist already knows. It used to sit on ⌥y, an arbitrary key which also happened to be the only valuable native character any arbitrary mark was destroying — ¥, now restored)",
+   "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant. On ⌥7 by CONVENTION: Vietnamese VNI encodes the horn as the digit 7 (ơ = o7, ư = u7), the key a Vietnamese typist already knows. ⇧ → ̉ U+0309, the hỏi tone — the two Vietnamese diacritics on one key, written together in ở. hỏi moved here off prime ⌥h)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "̉",
+   "shiftSense": "twin"
   }
  ],
  "superscripts": {

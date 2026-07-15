@@ -214,10 +214,11 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~g", "a")).toBe(nfc("a\u{031E}"));
 		expect(typed("~+g", "a")).toBe(nfc("a\u{031D}"));
 	});
-	// ⌥q matches ⌥='s polarity: shift is the *advanced* pole on both keys.
-	test("tongue-root on ⌥q (throat): RTR ⌥q a → a̙, ATR ⌥⇧q a → a̘", () => {
-		expect(typed("~q", "a")).toBe(nfc("a\u{0319}"));
-		expect(typed("~+q", "a")).toBe(nfc("a\u{0318}"));
+	// ⌥h matches ⌥='s polarity: shift is the *advanced* pole on both keys. RTR/ATR
+	// was promoted here from the poor ⌥q key; ⌥q is native œ again.
+	test("tongue-root on ⌥h: RTR ⌥h a → a̙, ATR ⌥⇧h a → a̘", () => {
+		expect(typed("~h", "a")).toBe(nfc("a\u{0319}"));
+		expect(typed("~+h", "a")).toBe(nfc("a\u{0318}"));
 	});
 	test("rounding on ⌥w (labialize): less ⌥w o → o̜, more ⌥⇧w o → o̹", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
@@ -406,7 +407,7 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~7", "o")).toBe(nfc("ơ"));
 		expect(typed("~7", "u")).toBe(nfc("ư"));
 		expect(typed("~`", "~7", "u")).toBe(nfc("ừ"));   // huyền + horn
-		expect(typed("~h", "~7", "o")).toBe(nfc("ở"));   // hỏi + horn
+		expect(typed("~7", "~+7", "o")).toBe(nfc("ở"));   // horn + hỏi, both on ⌥7
 	});
 	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
 	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c is the cedilla now.
@@ -446,7 +447,7 @@ describe("East Asian coverage", () => {
 		expect(typed("a")).toBe("a");
 		expect(typed("~e", "a")).toBe(nfc("á"));
 		expect(typed("~`", "a")).toBe(nfc("à"));
-		expect(typed("~h", "a")).toBe(nfc("ả"));   // hỏi, U+0309
+		expect(typed("~+7", "a")).toBe(nfc("ả"));   // hỏi on ⌥⇧7, U+0309
 		expect(typed("~n", "a")).toBe(nfc("ã"));
 		expect(typed("~+.", "a")).toBe(nfc("ạ"));
 	});
@@ -547,7 +548,7 @@ describe("⌥⇧ is not an escape any more", () => {
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
 		// Declining is a `pass`: on macOS the host then types its own Á. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		// ⌥⇧y is one of the last unclaimed ⌥⇧ letters — ⌥⇧h is extIPA's whistled now.
+		// ⌥⇧y is one of the last unclaimed ⌥⇧ letters — ⌥⇧h carries ATR now (RTR/ATR moved to ⌥h).
 		expect(handleKey("", seq("~+y")[0]).edit.type).toBe("pass"));
 });
 
@@ -687,7 +688,7 @@ describe("rhotic R", () => {
 describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 	// A ⌥⇧ letter with no mark declines, so the host types its own character and the
-	// ⇧-transform never fires. (⌥⇧y — ⌥⇧h carries extIPA's whistled mark now.)
+	// ⇧-transform never fires. (⌥⇧y — ⌥⇧h carries ATR now.)
 	test("⌥⇧y declines, so no transform reaches back", () => expect(typed("s", "~+y")).toBe("sY"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
