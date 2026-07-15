@@ -14,9 +14,9 @@ import {seq, formatKey as label} from "./keystrokes.ts";
 export interface Stage { id: string; title: string; note: string; glyphs: string; }
 export const STAGES: Stage[] = [
 	{id: "free", title: "The free alphabet", glyphs: "pbtdkgmnfvszlwhaeiouə",
-		note: "Most keys already type their own IPA sound. Vowels are cardinal (ah eh ee oh oo, not English), and g is always hard. Plus the schwa ə on ⇧5 — English’s most common vowel."},
+		note: "Most keys already type their own IPA sound. Vowels are cardinal (ah eh ee oh oo, not English), and g is always hard. Plus the schwa ə on 5 ⇧Y — English’s most common vowel."},
 	{id: "false-friends", title: "False friends", glyphs: "cjqrxyɾ",
-		note: "Same letters, different sounds: r is a trill, j is “y”, x is the loch sound, y is a rounded vowel, q is uvular, c is palatal. And ⇧4 is the quick tap ɾ — the trill’s single-flap cousin (Spanish pero vs. perro)."},
+		note: "Same letters, different sounds: r is a trill, j is “y”, x is the loch sound, y is a rounded vowel, q is uvular, c is palatal. And 4 ⇧H is the quick tap ɾ — the trill’s single-flap cousin (Spanish pero vs. perro)."},
 	{id: "digraphs", title: "English digraphs", glyphs: "ʃθðŋʒ",
 		note: "The sh/th/ng you already spell: ⇧H spirantizes, ⇧G goes dorsal."},
 	{id: "vowels", title: "The English vowels", glyphs: "ɪʊɛɔæʌ",

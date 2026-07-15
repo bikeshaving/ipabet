@@ -12,7 +12,7 @@ import {seq, formatKey as label} from "./keystrokes.ts";
 // old one alone. Every word is tagged with its language. No generation, no
 // random — that's a later practice mode.
 
-// compact keys: "s" bare · "+h" ⇧ · "~n" ⌥ · "+5" ⇧5
+// compact keys: "s" bare · "+h" ⇧ · "~n" ⌥ · digit is a base: "5" "+y" → ə
 // w(display, language, gloss/note, ...keys) — gloss "" for none
 function w(word: string, lang: string, gloss: string, ...keys: string[]) {
 	return {word, lang, gloss, target: typeKeys(seq(...keys)), labels: keys.map(label)};
@@ -89,10 +89,10 @@ export const CURRICULUM: Lesson[] = [
 		en("rock", "r", "+h", "o", "+h", "k"), en("rug", "r", "+h", "u", "+a", "g"), en("trip", "t", "r", "+h", "i", "+h", "p"),
 		en("fresh", "f", "r", "+h", "e", "+h", "s", "+h"), en("thrash", "t", "+h", "r", "+h", "a", "+e", "s", "+h"),
 	]},
-	{title: "The schwa — ə", sound: "ə", keys: ["⇧5"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
-		en("the", "d", "+h", "+5"), en("a", "+5"), en("sudden", "s", "u", "+a", "d", "+5", "n"),
-		en("seven", "s", "e", "+h", "v", "+5", "n"), en("under", "u", "+a", "n", "d", "+5", "r", "+h"),
-		en("rabbit", "r", "+h", "a", "+e", "b", "+5", "t"), en("listen", "l", "i", "+h", "s", "+5", "n"),
+	{title: "The schwa — ə", sound: "ə", keys: ["5", "⇧Y"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
+		en("the", "d", "+h", "5", "+y"), en("a", "5", "+y"), en("sudden", "s", "u", "+a", "d", "5", "+y", "n"),
+		en("seven", "s", "e", "+h", "v", "5", "+y", "n"), en("under", "u", "+a", "n", "d", "5", "+y", "r", "+h"),
+		en("rabbit", "r", "+h", "a", "+e", "b", "5", "+y", "t"), en("listen", "l", "i", "+h", "s", "5", "+y", "n"),
 	]},
 
 	// ── Phase 3 · diphthongs (combinations of vowels you know) ───────
@@ -122,9 +122,9 @@ export const CURRICULUM: Lesson[] = [
 		w("perro", "Spanish", "dog", "p", "e", "r", "o"), w("rico", "Spanish", "rich", "r", "i", "k", "o"),
 		w("toro", "Spanish", "bull", "t", "o", "r", "o"), w("caro", "Spanish", "dear", "k", "a", "r", "o"), w("rosa", "Spanish", "rose", "r", "o", "s", "a"),
 	]},
-	{title: "The tapped r — ɾ", sound: "ɾ", keys: ["⇧4"], intro: "A single quick tap — the trill’s one-flap cousin (Spanish “pero” vs. “perro”).", words: [
-		w("pero", "Spanish", "but", "p", "e", "+4", "o"), w("cara", "Spanish", "face", "k", "a", "+4", "a"),
-		w("para", "Spanish", "for", "p", "a", "+4", "a"), w("hora", "Spanish", "hour", "o", "+4", "a"),
+	{title: "The tapped r — ɾ", sound: "ɾ", keys: ["4", "⇧H"], intro: "A single quick tap — the trill’s one-flap cousin (Spanish “pero” vs. “perro”).", words: [
+		w("pero", "Spanish", "but", "p", "e", "4", "+h", "o"), w("cara", "Spanish", "face", "k", "a", "4", "+h", "a"),
+		w("para", "Spanish", "for", "p", "a", "4", "+h", "a"), w("hora", "Spanish", "hour", "o", "4", "+h", "a"),
 	]},
 	{title: "The ñ — ɲ", sound: "ɲ", keys: ["n", "⇧J"], intro: "The Spanish “ñ” — a palatal n.", words: [
 		w("niño", "Spanish", "child", "n", "i", "n", "+j", "o"), w("año", "Spanish", "year", "a", "n", "+j", "o"),
@@ -147,14 +147,14 @@ export const CURRICULUM: Lesson[] = [
 	]},
 
 	// ── Phase 5 · the throat (Arabic) ───────────────────────────────
-	{title: "The glottal stop — ʔ", sound: "ʔ", keys: ["⇧2"], intro: "The glottal stop — the catch in the middle of “uh-oh”.", words: [
-		en("uh-oh", "u", "+a", "+2", "o", "u", "+h"), w("ana", "Arabic", "I", "+2", "a", "n", "a"),
+	{title: "The glottal stop — ʔ", sound: "ʔ", keys: ["2", "⇧H"], intro: "The glottal stop — the catch in the middle of “uh-oh”.", words: [
+		en("uh-oh", "u", "+a", "2", "+h", "o", "u", "+h"), w("ana", "Arabic", "I", "2", "+h", "a", "n", "a"),
 	]},
-	{title: "The pharyngeal ħ", sound: "ħ", keys: ["⇧7"], intro: "A hard, whispered h from deep in the throat (Arabic ح).", words: [
-		w("ħabīb", "Arabic", "beloved", "+7", "a", "b", "i", "~;", "b"), w("ħaram", "Arabic", "forbidden", "+7", "a", "r", "a", "m"),
+	{title: "The pharyngeal ħ", sound: "ħ", keys: ["7", "⇧H"], intro: "A hard, whispered h from deep in the throat (Arabic ح).", words: [
+		w("ħabīb", "Arabic", "beloved", "7", "+h", "a", "b", "i", "~;", "b"), w("ħaram", "Arabic", "forbidden", "7", "+h", "a", "r", "a", "m"),
 	]},
-	{title: "The ʕ (Arabic ع)", sound: "ʕ", keys: ["⇧3"], intro: "ħ’s voiced twin — a tightened throat (Arabic ع).", words: [
-		w("ʕarabī", "Arabic", "Arabic", "+3", "a", "r", "a", "b", "i"),
+	{title: "The ʕ (Arabic ع)", sound: "ʕ", keys: ["3", "⇧H"], intro: "ħ’s voiced twin — a tightened throat (Arabic ع).", words: [
+		w("ʕarabī", "Arabic", "Arabic", "3", "+h", "a", "r", "a", "b", "i"),
 	]},
 	{title: "The uvular q", sound: "q", keys: ["q"], intro: "A k made far back at the uvula (Arabic ق).", words: [
 		w("qalb", "Arabic", "heart", "q", "a", "l", "b"), w("qamar", "Arabic", "moon", "q", "a", "m", "a", "r"),
@@ -203,14 +203,14 @@ const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
 	8: [en("chef", "s", "+h", "e", "+h", "f"), en("sure", "s", "+h", "o", "+h")],
 	9: [en("ink", "i", "+h", "n", "+g", "k"), en("bank", "b", "a", "+e", "n", "+g", "k"), en("monkey", "m", "u", "+a", "n", "+g", "k", "i")],
 	12: [en("wrong", "r", "+h", "o", "+h", "n", "+g"), en("wrist", "r", "+h", "i", "+h", "s", "t")],
-	13: [en("pencil", "p", "e", "+h", "n", "s", "+5", "l"), en("lemon", "l", "e", "+h", "m", "+5", "n")],
-	14: [en("aisle", "a", "i", "+h", "l"), en("height", "h", "a", "i", "+h", "t"), en("buy", "b", "a", "i", "+h"), en("island", "a", "i", "+h", "l", "+5", "n", "d")],
+	13: [en("pencil", "p", "e", "+h", "n", "s", "5", "+y", "l"), en("lemon", "l", "e", "+h", "m", "5", "+y", "n")],
+	14: [en("aisle", "a", "i", "+h", "l"), en("height", "h", "a", "i", "+h", "t"), en("buy", "b", "a", "i", "+h"), en("island", "a", "i", "+h", "l", "5", "+y", "n", "d")],
 	15: [en("bough", "b", "a", "u", "+h"), en("drought", "d", "r", "+h", "a", "u", "+h", "t")],
 	16: [en("though", "d", "+h", "o", "u", "+h"), en("dough", "d", "o", "u", "+h"), en("beau", "b", "o", "u", "+h")],
 	17: [en("eight", "e", "i", "+h", "t"), en("steak", "s", "t", "e", "i", "+h", "k"), en("they", "d", "+h", "e", "i", "+h")],
 	18: [en("buoy", "b", "o", "+h", "i", "+h")],
 	22: [en("loch", "l", "o", "+h", "x")],
-	26: [en("button", "b", "u", "+a", "+2", "+5", "n")],
+	26: [en("button", "b", "u", "+a", "2", "+h", "5", "+y", "n")],
 };
 for (let i = 0; i < CURRICULUM.length; i++)
 	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push(friend); // unlabelled — the jolt is the lesson

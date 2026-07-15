@@ -50,16 +50,22 @@ export function keystrokeFromLabel(lab: string): Keystroke {
 // compact one above. Two formats, deliberately, for two surfaces; both live here
 // so the notation can't fork again.
 
-/** The chart's compact form: "sH" → "s H", "5" → "⇧5". Digits are shifted; a
- *  trailing capital is the shift-modifier letter, shown bare to stay tight. */
+/** The chart's compact form: "sH" → "sH", "2H" → "2H", "6" → "⇧6". A digit is a
+ *  BARE base when a modifier follows (2H → 2 then ⇧H); a lone digit is a shifted
+ *  glyph (the tie, ⇧6). A trailing capital is the shift-modifier, shown bare. */
 export function keyText(key: string): string {
-	return [...key].map((c) => (/[0-9]/.test(c) ? "⇧" + c : c)).join("");
+	const digitBare = key.length > 1;
+	return [...key].map((c) => (/[0-9]/.test(c) && !digitBare ? "⇧" + c : c)).join("");
 }
 
-/** The /keys reference form: "sH" → "s ⇧H", "5" → "⇧5". Explicit — every shift
- *  is spelled out and keystrokes are space-separated, for scrapers and readers. */
+/** The /keys reference form: "sH" → "s ⇧H", "5Y" → "5 ⇧Y", "6" → "⇧6". Explicit —
+ *  every shift is spelled out, space-separated. A digit leading a longer key is a
+ *  bare base; a lone digit (the tie) is ⇧-shifted; uppercase letters are ⇧. */
 export function keySpelled(key: string): string {
-	return [...key].map((c) => (/[0-9A-Z]/.test(c) ? "⇧" + c : c)).join(" ");
+	const digitBare = key.length > 1;
+	return [...key]
+		.map((c) => (/[0-9]/.test(c) ? (digitBare ? c : "⇧" + c) : /[A-Z]/.test(c) ? "⇧" + c : c))
+		.join(" ");
 }
 
 /** chart-data's compact marks → display: "~+w" → "⌥⇧w", "g +H ~p" → "g ⇧H ⌥p". */

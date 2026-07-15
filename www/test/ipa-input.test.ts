@@ -45,7 +45,7 @@ const KEY: Record<string, {code: string; key: string}> = {
 	o: {code: "KeyO", key: "o"}, r: {code: "KeyR", key: "r"}, i: {code: "KeyI", key: "i"},
 	p: {code: "KeyP", key: "p"}, h: {code: "KeyH", key: "h"}, t: {code: "KeyT", key: "t"},
 	g: {code: "KeyG", key: "g"}, a: {code: "KeyA", key: "a"}, u: {code: "KeyU", key: "u"},
-	"5": {code: "Digit5", key: "5"},
+	"5": {code: "Digit5", key: "5"}, y: {code: "KeyY", key: "y"},
 };
 
 function setup() {
@@ -101,9 +101,10 @@ test("a whole word: ship = s ⇧H i ⇧H p → ʃɪp", () => {
 	expect(f.value).toBe("ʃɪp");
 });
 
-test("⇧digit gives the homeless glyphs: ⇧5 → ə", () => {
+test("digit base + modifier gives the homeless glyphs: 5 ⇧Y → ə", () => {
 	const {f, press} = setup();
-	press("5", {shift: true});
+	press("5");
+	press("y", {shift: true});
 	expect(f.value).toBe("ə");
 });
 
@@ -156,9 +157,9 @@ test("soft keyboard: characters drive the engine when there is no e.code", () =>
 	expect(f.value).toBe("ʃ");
 });
 
-test("soft keyboard: a shifted-digit symbol is ⇧digit — % → ə", () => {
+test("soft keyboard: a digit base + modifier — 5 then Y → ə", () => {
 	const {f, tap} = setup();
-	tap("%");
+	tap("5"); tap("Y");
 	expect(f.value).toBe("ə");
 });
 

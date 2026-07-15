@@ -59,8 +59,8 @@ function Table({children}: {children?: unknown}) {
 
 const SEGS: Record<string, Letter[]> = {
 	identity: letters.filter((l) => l.key.length === 1 && /[a-z]/.test(l.key)),
-	shiftNum: letters.filter((l) => /^[0-9]$/.test(l.key)),
-	digraphs: letters.filter((l) => l.key.length === 2),
+	shiftNum: letters.filter((l) => /^[0-9]/.test(l.key)),
+	digraphs: letters.filter((l) => l.key.length === 2 && /^[a-z]/.test(l.key)),
 };
 const ipaMarks = marks.filter((m) => m.ipa !== false);
 const beyondMarks = marks.filter((m) => m.ipa === false);
@@ -73,7 +73,7 @@ const keysComponents = {
 	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.base} ⌥p</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
 	RulesTable: () => jsx`
 		<${Table}>
-			<tr><td class="k">vowel ⇧R</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity (⇧5 ⇧R → ɚ, ⇧5 ⇧H ⇧R → ɝ precomposed; every other vowel takes the hook)</td></tr>
+			<tr><td class="k">vowel ⇧R</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity (5 ⇧Y ⇧R → ɚ, 5 ⇧H ⇧R → ɝ precomposed; every other vowel takes the hook)</td></tr>
 			<tr><td class="k">obstruent ⇧X</td><td class="g">Cʼ</td><td class="cp">U+02BC</td><td>ejective (eXplosive) — appends ʼ to a voiceless obstruent (p t ʈ c k q ɸ f θ s ʃ ʂ ç x χ ɬ); open class</td></tr>
 		<//>`,
 	BeyondTables: () =>

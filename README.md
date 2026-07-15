@@ -19,17 +19,20 @@ IPAbet is US-first; the IPA is purely additive:
 - **Shift + letter** — a modifier on the previous segment (`sH`→ʃ, `tR`→ʈ,
   `nG`→ŋ), grounded in romanization conventions (pinyin / ITRANS / ALA-LC).
   `C` makes the base letter a click at that place (`tC`→ǀ, `qC`→ǃ, `lC`→ǁ).
-- **Shift + number** — the IPA glyphs with no Latin key (`⇧2`→ʔ, `⇧3`→ʕ,
-  `⇧4`→ɾ, `⇧5`→ə, `⇧7`→ħ), grounded in Arabizi + X-SAMPA. `⇧6` is the tie bar
-  (`t ⇧6 s`→t͡s); press it again and the tie flips below (t͜ɕ), where descenders
-  would collide.
+- **Number as base** — the digit keys are bases too, for the IPA glyphs with no
+  Latin key. Bare digit + a modifier: roots on `5Y`→ə, `2H`→ʔ, `3H`→ʕ, `4H`→ɾ,
+  `7H`→ħ (H on the throat digits, Y — *central* — on the schwa), and the families
+  extend the same base (`5H`→ɜ, `2Q`→ʡ, `4L`→ɺ), grounded in Arabizi + X-SAMPA.
+  Because the glyphs sit on the *unshifted* digit, `⇧2`–`⇧5`,`⇧7` stay their native
+  symbols (`@ # $ % &`). `⇧6` is *provisionally* the tie bar (`t ⇧6 s`→t͡s) — press
+  it again and the tie flips below (t͜ɕ) — pending its move to the Option layer.
 - **Option** — diacritics and suprasegmentals. Combining marks are **prefix**,
   dead-key style like the US layout's own é/ñ: press the mark, then the base
   absorbs it (`⌥e`+`a`→á, `⌥n`+`n`→ñ). Spacing marks — length, tone, stress —
   stay postfix (`a`+`⌥;`→aː). Chao tone letters live on `⌥1`–`⌥5`.
-- **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high),
-  and on the number row the raw-US escape, which exists only because `⇧<digit>`
-  is an IPA glyph (`⇧2` is ʔ, so `@` lives on `⌥⇧2`).
+- **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high). The
+  number row's raw-US escape is now needed only for `^` (`⌥⇧6`), while the tie
+  provisionally holds `⇧6`; every other shifted digit types its symbol directly.
 
 Escapes, for when the IPA layer claims something you meant literally:
 

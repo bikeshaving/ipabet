@@ -14,7 +14,7 @@ Bare keys type plain US; the IPA lives on the shifted positions.
 <span class="combo"><kbd>⇧</kbd>+letter</span> transforms the segment before the cursor
 (<Combo keys="t ⇧R" out="ʈ"/>),
 <span class="combo"><kbd>⇧</kbd>+number</span> gives the homeless glyphs
-(<Combo keys="⇧2" out="ʔ"/>),
+(<Combo keys="2 ⇧H" out="ʔ"/>),
 <span class="combo"><kbd>⌥</kbd></span> adds diacritics
 (<Combo keys="a ⌥;" out="aː"/>),
 and <span class="combo"><kbd>⌃⇧</kbd>+letter</span> escapes to a literal capital. The

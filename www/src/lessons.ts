@@ -143,8 +143,9 @@ one H away from their tense neighbors: <kbd>i</kbd><kbd>⇧H</kbd> → ɪ,
 				body: `…is one no English letter writes: <b class="ipa">ə</b>, schwa,
 the unstressed vowel of <i>a</i>bout, sof<i>a</i>, supp<i>o</i>rt. Nearly
 every unstressed syllable in English reduces toward it. It lives on
-<kbd>⇧5</kbd>, the center of the number row — fitting for the center of the
-vowel space. Its stressed sibling <b class="ipa">ʌ</b> (<i>cup</i>) is a
+<kbd>5</kbd> <kbd>⇧Y</kbd> — the digit 5 is the central-vowel base, and
+<kbd>⇧Y</kbd> means <i>central</i>, which is exactly what schwa is: the center
+of the vowel space. Its stressed sibling <b class="ipa">ʌ</b> (<i>cup</i>) is a
 little lower and further back.`,
 			},
 		],
@@ -184,7 +185,7 @@ little lower and further back.`,
 			t("bed", ["b", "e", "+h", "d"]),
 			t("cat", ["k", "a", "+e", "t"]),
 			t("cup", ["k", "a", "+u", "p"]),
-			t("sofa", ["s", "o", "u", "+h", "f", "+5"], "Final unstressed vowel: schwa. (We'll add the stress mark in lesson 4.)"),
+			t("sofa", ["s", "o", "u", "+h", "f", "5", "+y"], "Final unstressed vowel: schwa. (We'll add the stress mark in lesson 4.)"),
 		],
 	},
 	{
@@ -260,10 +261,10 @@ your ears, and your transcription, must not.`,
 			t("ship", ["s", "+h", "i", "+h", "p"]),
 			t("this", ["d", "+h", "i", "+h", "s"]),
 			t("think", ["t", "+h", "i", "+h", "n", "+g", "k"], "The n before k is really ŋ — listen."),
-			t("church", ["t", "s", "+h", "+5", "+h", "+r", "t", "s", "+h"], "tʃ + rhotic vowel ɝ + tʃ."),
+			t("church", ["t", "s", "+h", "5", "+h", "+r", "t", "s", "+h"], "tʃ + rhotic vowel ɝ + tʃ."),
 			t("judge", ["d", "z", "+h", "a", "+u", "d", "z", "+h"]),
 			t("sing", ["s", "i", "+h", "n", "+g"]),
-			t("vision", ["v", "i", "+h", "z", "+h", "+5", "n"], "Unstressed second syllable: schwa."),
+			t("vision", ["v", "i", "+h", "z", "+h", "5", "+y", "n"], "Unstressed second syllable: schwa."),
 		],
 	},
 ];

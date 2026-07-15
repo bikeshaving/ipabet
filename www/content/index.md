@@ -14,14 +14,14 @@ Every vowel is a base letter, at most one modifier on top: <Combo keys="i ⇧Y" 
 
 ## A normal keyboard, with the IPA one shift away
 
-IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so prose, code, and the terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="⇧5" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
+IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so prose, code, and the terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧Y" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
 
 <Cards>
 <Card title="Works in every app">
 A real input method, not a website or palette: type IPA directly into Word, Praat, ELAN, LaTeX, Slack, your browser — at full speed, offline.
 </Card>
 <Card title="Nothing to memorize">
-Digraphs follow pinyin/ITRANS-style romanization; diacritics sit on Apple's ABC&nbsp;Extended keys; the glyphs with no Latin letter live on the shifted number row.
+Digraphs follow pinyin/ITRANS-style romanization; diacritics sit on Apple's ABC&nbsp;Extended keys; the glyphs with no Latin letter live on the number-row bases — an unshifted digit plus a modifier (`5` `⇧Y` → ə).
 </Card>
 <Card title="Your keyboard stays yours">
 Unshifted keys are 100% native US — Caps Lock included, so capitals stay capitals. Every key always emits something, and there is an escape for anything the IPA layer claims.
@@ -52,7 +52,7 @@ IPAbet is in active development ahead of its first signed release. To build from
 
 ## FAQ
 
-**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US. What the IPA layer claims is _shifted_ positions: the number row's symbols (typing <kbd>@</kbd> gives ʔ, <kbd>%</kbd> gives ə) and capital modifiers right after a letter (typing "GitHub" gives Giθub). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub), <kbd>⌥⇧</kbd>+digit gives the number row's raw symbol, Caps Lock types literal capitals, and <kbd>⌥⇧Space</kbd> is the **Raw-US Lock**: one press makes the keyboard fully native (write code, paste in a terminal, type camelCase), one press brings the IPA back. Leave IPAbet on all day; lock and unlock as you switch registers.
+**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US — and the shifted number symbols (<kbd>@</kbd> <kbd>#</kbd> <kbd>$</kbd> <kbd>%</kbd> <kbd>&</kbd>) type normally too. What the IPA layer claims is capital modifiers right after a letter (typing "GitHub" gives Giθub) and the digit _bases_ (an unshifted digit plus a modifier — <kbd>5</kbd> <kbd>⇧Y</kbd> → ə). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub), Caps Lock types literal capitals, and <kbd>⌥⇧Space</kbd> is the **Raw-US Lock**: one press makes the keyboard fully native (write code, paste in a terminal, type camelCase), one press brings the IPA back. Leave IPAbet on all day; lock and unlock as you switch registers.
 
 **Are the symbols real IPA codepoints?** Yes — IPAbet emits the true characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your transcriptions are searchable, fontable Unicode.
 

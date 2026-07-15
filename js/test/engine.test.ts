@@ -38,7 +38,7 @@ describe("digraph transforms", () => {
 	test("retroflex: t ⇧R → ʈ", () => expect(typed("t", "+r")).toBe("ʈ"));
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
 	test("open back: a ⇧H → ɑ", () => expect(typed("a", "+h")).toBe("ɑ"));
-	test("central: ⇧5 ⇧A → ɐ", () => expect(typed("+5", "+a")).toBe("ɐ"));
+	test("central: 5 ⇧A → ɐ", () => expect(typed("5", "+a")).toBe("ɐ"));
 	test("y-vowel: i ⇧Y → ɨ", () => expect(typed("i", "+y")).toBe("ɨ"));
 	test("y-vowel: o ⇧Y → ɵ", () => expect(typed("o", "+y")).toBe("ɵ"));
 	test("y-vowel: e ⇧Y → ɘ", () => expect(typed("e", "+y")).toBe("ɘ"));
@@ -95,8 +95,8 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 		expect(chain("i", "+p")).toBe("iP"));
 	// Daily-driver: symbol-prefixed caps keep their capitals (identical to the
 	// pre-chaining keyboard — chaining adds nothing a daily-driver would notice).
-	test("$PATH keeps its caps: ⇧4 ⇧P⇧A⇧T⇧H → ɾPATH", () =>
-		expect(chain("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
+	test("acronym safety: ɾ (4 ⇧H) then ⇧P⇧A⇧T⇧H → ɾPATH", () =>
+		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
 });
 
 describe("clicks (C modifier)", () => {
@@ -142,11 +142,24 @@ describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive
 	});
 });
 
-describe("shifted number row", () => {
-	test("⇧5 → ə", () => expect(typed("+5")).toBe("ə"));
-	test("⇧2 → ʔ", () => expect(typed("+2")).toBe("ʔ"));
-	test("about: ⇧5 b a u ⇧H t → əbaʊt", () =>
-		expect(typed("+5", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
+describe("number-row bases", () => {
+	test("5 ⇧Y → ə", () => expect(typed("5", "+y")).toBe("ə"));
+	test("2 ⇧H → ʔ", () => expect(typed("2", "+h")).toBe("ʔ"));
+	test("4 ⇧H → ɾ", () => expect(typed("4", "+h")).toBe("ɾ"));
+	test("7 ⇧H → ħ", () => expect(typed("7", "+h")).toBe("ħ"));
+	test("family off the literal digit: 5 ⇧H → ɜ, 2 ⇧Q → ʡ", () => {
+		expect(typed("5", "+h")).toBe("ɜ");
+		expect(typed("2", "+q")).toBe("ʡ");
+	});
+	test("about: 5 ⇧Y b a u ⇧H t → əbaʊt", () =>
+		expect(typed("5", "+y", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
+	test("the roots left, so ⇧2 @ ⇧3 # ⇧4 $ ⇧5 % ⇧7 & come back", () => {
+		expect(typed("+2")).toBe("@");
+		expect(typed("+3")).toBe("#");
+		expect(typed("+4")).toBe("$");
+		expect(typed("+5")).toBe("%");
+		expect(typed("+7")).toBe("&");
+	});
 	test("bare digits pass natively", () => expect(typed("1", "2")).toBe("12"));
 	test("⇧9 passes (native paren)", () => {
 		expect(handleKey("", {key: "9", shift: true}).edit).toEqual({type: "pass"});
@@ -220,21 +233,20 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		for (const d of "1234567890")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
-	// ⌥⇧<digit> is the raw-US escape only where ⇧<digit> is an IPA glyph (⌥⇧2 → @).
-	// Where it is not, the slot was free: ⌥⇧8 is nasal escape, ⌥⇧9/⌥⇧0 the voicing
-	// brackets (the ( and ) keys, by shape).
-	test("⌥⇧ digits are escapes where ⇧digit is IPA, marks where it is not", () => {
-		expect(typeKeys(seq("~+2"))).toBe("@");   // ⇧2 is ʔ, so @ must live here
-		expect(typeKeys(seq("~+9"))).toBe("₍");   // ⇧9 is not IPA — the slot was free
+	// The shifted digits give their native symbols directly now that the roots are
+	// two-key digraphs (⇧2 @, ⇧7 &), so the old ⌥⇧-digit raw escapes are redundant
+	// and free up. ⌥⇧9/⌥⇧0 stay the voicing brackets — marks by shape, since ⇧9/⇧0
+	// were never IPA. The lone escape left is ⌥⇧6 → ^, while the tie holds ⇧6.
+	test("shifted digits are native symbols directly — no escape needed", () => {
+		expect(typed("+2")).toBe("@");
+		expect(typed("+7")).toBe("&");
 	});
-	test("load-bearing ⌥⇧ digit escapes survive (⇧2 is ʔ, so @ lives here)", () => {
-		expect(typed("~+2")).toBe("@");
-		expect(typed("~+7")).toBe("&");
+	test("⌥⇧9 is still the voicing bracket ₍ (⇧9 was never IPA)", () => {
+		expect(typeKeys(seq("~+9"))).toBe("₍");
 	});
 	test("the one spent ⌥⇧ digit slot: ⌥⇧1 → ¡", () => expect(typed("~+1")).toBe("¡"));
-	test("⌥⇧6 is the ^ escape now that ⇧6 is the tie", () => expect(typed("~+6")).toBe("^"));
-	test("⇧1 is ! again, now the tie bar left the number row", () =>
-		expect(typed("+1")).toBe("!"));
+	test("⌥⇧6 is the ^ escape while the tie provisionally holds ⇧6", () => expect(typed("~+6")).toBe("^"));
+	test("⇧1 is ! (never was IPA)", () => expect(typed("+1")).toBe("!"));
 });
 
 describe("dental family — spread across keys, no cycle", () => {
@@ -361,7 +373,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 		expect(typed("+u", "+r", "+l")).toBe("URL");
 		expect(typed("+s", "^+h", "+a")).toBe("ƩA"); // fresh capital digraph, not literal
 		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ");
-		expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
+		expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
 	});
 });
 
@@ -450,7 +462,7 @@ describe("East Asian coverage", () => {
 		expect(typed("~j", "p")).toBe(nfc("p\u{031A}"));
 		expect(typed("~j", "k")).toBe(nfc("k\u{031A}"));
 	});
-	test("Cantonese sɐp̚", () => expect(typed("s", "+5", "+a", "~j", "p")).toBe(nfc("sɐp\u{031A}")));
+	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~j", "p")).toBe(nfc("sɐp\u{031A}")));
 	test("Korean fortis on ⌥0: k͈ t͈ p͈ s͈", () => {
 		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
 		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
@@ -587,7 +599,7 @@ describe("shift release ends the chain → next digraph is a fresh capital", () 
 		expect(typed("~t", "s", "+h")).toBe(nfc("ʃ\u{032A}")));
 	// $PATH stays literal with or without releases: the final T is preceded by a
 	// literal A, not an IPA segment, so the run breaks there regardless.
-	test("$PATH → ɾPATH", () => expect(typed("+4", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
+	test("$PATH → ɾPATH", () => expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
 });
 
 // Capital digraphs: capitalize the base, capitalize the result. Held shift forms
@@ -623,7 +635,7 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 	test("a release starts a fresh capital, not a literal: ⇧A ^⇧E → Æ", () =>
 		expect(typed("+a", "^+e")).toBe("Æ"));
 	test("does not disturb a lowercase chain: ə ⇧O⇧H → əɔ", () =>
-		expect(typed("+5", "+o", "+h")).toBe(nfc("əɔ")));
+		expect(typed("5", "+y", "+o", "+h")).toBe(nfc("əɔ")));
 	// A release BEFORE the capital (from typing the previous lowercase word) must
 	// NOT break the digraph — only a release BETWEEN base and modifier does. So the
 	// digraph gates on heldFromPrev (previous key), not the persistent chain state:
@@ -669,7 +681,7 @@ describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
 });
 
 describe("rhotic R", () => {
-	test("ə ⇧R → ɚ (precomposed)", () => expect(typed("+5", "+r")).toBe("ɚ"));
+	test("ə ⇧R → ɚ (precomposed)", () => expect(typed("5", "+y", "+r")).toBe("ɚ"));
 	test("a ⇧R → a˞ (spacing hook)", () => expect(typed("a", "+r")).toBe("a˞"));
 	test("rhoticity is a dimension: e ⇧R → e˞, ʌ ⇧R → ʌ˞", () => {
 		expect(typed("e", "+r")).toBe("e˞");
@@ -678,7 +690,7 @@ describe("rhotic R", () => {
 });
 
 describe("option-shift raw escape", () => {
-	test("⌥⇧2 → @", () => expect(typed("~+2")).toBe("@"));
+	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 	// A ⌥⇧ letter with no mark declines, so the host types its own character and the
 	// ⇧-transform never fires. (⌥⇧y — ⌥⇧h carries extIPA's whistled mark now.)
 	test("⌥⇧y declines, so no transform reaches back", () => expect(typed("s", "~+y")).toBe("sY"));

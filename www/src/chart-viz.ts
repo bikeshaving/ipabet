@@ -41,15 +41,15 @@ const VOWELS = [
 	{sym:"ɵ", key:"oY",  x:.5,  yo:1/3,  r:1, f1:430, f2:1450, name:"Close-mid central rounded"},
 	{sym:"ɤ", key:"oW",  x:1,   yo:1/3,  r:0, f1:460, f2:1310, name:"Close-mid back unrounded"},
 	{sym:"o", key:"o",   x:1,   yo:1/3,  r:1, f1:360, f2:640,  name:"Close-mid back rounded"},
-	{sym:"ə", key:"⇧5",  x:.5,  yo:.5,   r:0, f1:500, f2:1500, name:"Mid central (schwa)"},
+	{sym:"ə", key:"5 ⇧Y",  x:.5,  yo:.5,   r:0, f1:500, f2:1500, name:"Mid central (schwa)"},
 	{sym:"ɛ", key:"eH",  x:0,   yo:2/3,  r:0, f1:610, f2:1900, name:"Open-mid front unrounded"},
 	{sym:"œ", key:"oE",  x:0,   yo:2/3,  r:1, f1:585, f2:1710, name:"Open-mid front rounded"},
-	{sym:"ɜ", key:"⇧5H", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
-	{sym:"ɞ", key:"⇧5W", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
+	{sym:"ɜ", key:"5 ⇧H", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
+	{sym:"ɞ", key:"5 ⇧W", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
 	{sym:"ʌ", key:"uA",  x:1,   yo:2/3,  r:0, f1:600, f2:1170, name:"Open-mid back unrounded"},
 	{sym:"ɔ", key:"oH",  x:1,   yo:2/3,  r:1, f1:500, f2:700,  name:"Open-mid back rounded"},
 	{sym:"æ", key:"aE",  x:0,   yo:5/6,  r:0, f1:800, f2:1750, name:"Near-open front unrounded"},
-	{sym:"ɐ", key:"⇧5A", x:.5,  yo:5/6,  r:0, f1:680, f2:1420, name:"Near-open central"},
+	{sym:"ɐ", key:"5 ⇧A", x:.5,  yo:5/6,  r:0, f1:680, f2:1420, name:"Near-open central"},
 	{sym:"a", key:"a",   x:0,   yo:1,    r:0, f1:850, f2:1610, name:"Open front unrounded"},
 	{sym:"ɶ", key:"aW",  x:0,   yo:1,    r:1, f1:820, f2:1530, name:"Open front rounded"},
 	{sym:"ɑ", key:"aH",  x:1,   yo:1,    r:0, f1:750, f2:940,  name:"Open back unrounded"},
@@ -76,7 +76,7 @@ const MODS = {
 		label: "bases", color: "#111827", pairs: [],
 		members: ["i","y","e","a","o","u","ə"],
 		desc: "Seven anchors. Six are plain letters on the periphery — i y e a o u — " +
-			"plus ⇧5 for ə at dead center. Everything else is base + one trailing capital.",
+			"plus 5 ⇧Y for ə at dead center. Everything else is base + one trailing capital.",
 	},
 	H: {
 		label: "-H", color: "#d97706",
@@ -89,7 +89,7 @@ const MODS = {
 	W: {
 		label: "-W", color: "#dc2626",
 		pairs: [["u","ɯ"],["e","ø"],["o","ɤ"],["a","ɶ"],["ə","ɞ"]],
-		desc: "Flip rounding in place: u→ɯ, e→ø, o→ɤ, a→ɶ, ⇧5(ə)→ɞ. Same logic as " +
+		desc: "Flip rounding in place: u→ɯ, e→ø, o→ɤ, a→ɶ, ə→ɞ. Same logic as " +
 			"consonantal w→ɰ (wW). Note the asymmetry: i’s rounded twin never needs iW " +
 			"because y is already a letter.",
 	},
@@ -304,7 +304,7 @@ function *VowelApp() {
 				</div>
 				${m ? jsx`<p class="moddesc" style="border-color: ${m.color}">${m.desc}</p>` : jsx`
 					<p class="moddesc muted">Select a modifier to see how derived vowels hang off the seven bases.
-					Every non-base vowel is base + one trailing capital (except the ⇧5-series, which start from schwa).</p>`}
+					Every non-base vowel is base + one trailing capital (except the central-vowel series on 5, which start from schwa).</p>`}
 
 				${sel ? jsx`
 					<div class="detail">
@@ -362,7 +362,7 @@ const CONS = [
 	{sym:"ɡ", key:"g",   pl:"velar",       m:0, v:1},
 	{sym:"q", key:"q",   pl:"uvular",      m:0, v:0},
 	{sym:"ɢ", key:"gQ",  pl:"uvular",      m:0, v:1},
-	{sym:"ʔ", key:"⇧2",  pl:"glottal",     m:0, v:0},
+	{sym:"ʔ", key:"2 ⇧H",  pl:"glottal",     m:0, v:0},
 	{sym:"m", key:"m",   pl:"bilabial",    m:1, v:1},
 	{sym:"ɱ", key:"mV",  pl:"labiodental", m:1, v:1},
 	{sym:"n", key:"n",   pl:"alveolar",    m:1, v:1},
@@ -373,9 +373,9 @@ const CONS = [
 	{sym:"ʙ", key:"rB",  pl:"bilabial",    m:2, v:1},
 	{sym:"r", key:"r",   pl:"alveolar",    m:2, v:1},
 	{sym:"ʀ", key:"rG",  pl:"uvular",      m:2, v:1},
-	{sym:"ⱱ", key:"⇧4V", pl:"labiodental", m:3, v:1},
-	{sym:"ɾ", key:"⇧4",  pl:"alveolar",    m:3, v:1},
-	{sym:"ɽ", key:"⇧4R", pl:"retroflex",   m:3, v:1},
+	{sym:"ⱱ", key:"4 ⇧V", pl:"labiodental", m:3, v:1},
+	{sym:"ɾ", key:"4 ⇧H",  pl:"alveolar",    m:3, v:1},
+	{sym:"ɽ", key:"4 ⇧R", pl:"retroflex",   m:3, v:1},
 	{sym:"ɸ", key:"pH",  pl:"bilabial",    m:4, v:0},
 	{sym:"β", key:"bH",  pl:"bilabial",    m:4, v:1},
 	{sym:"f", key:"f",   pl:"labiodental", m:4, v:0},
@@ -394,8 +394,8 @@ const CONS = [
 	{sym:"ɣ", key:"gH",  pl:"velar",       m:4, v:1},
 	{sym:"χ", key:"qH",  pl:"uvular",      m:4, v:0},
 	{sym:"ʁ", key:"rQ",  pl:"uvular",      m:4, v:1},
-	{sym:"ħ", key:"⇧7",  pl:"pharyngeal",  m:4, v:0},
-	{sym:"ʕ", key:"⇧3",  pl:"pharyngeal",  m:4, v:1},
+	{sym:"ħ", key:"7 ⇧H",  pl:"pharyngeal",  m:4, v:0},
+	{sym:"ʕ", key:"3 ⇧H",  pl:"pharyngeal",  m:4, v:1},
 	{sym:"h", key:"h",   pl:"glottal",     m:4, v:0},
 	{sym:"ɦ", key:"hH",  pl:"glottal",     m:4, v:1},
 	{sym:"ɬ", key:"sL",  pl:"alveolar",    m:5, v:0},
@@ -463,7 +463,7 @@ const OPS = {
 	L: {
 		label:"-L", color:"#0284c7",
 		pairs:[["s","ɬ"],["z","ɮ"]],
-		desc:"Lateral airflow: s→ɬ, z→ɮ (the lateral fricatives). Same L as the lateral click lC=ǁ and lateral flap ⇧4L=ɺ.",
+		desc:"Lateral airflow: s→ɬ, z→ɮ (the lateral fricatives). Same L as the lateral click lC=ǁ and lateral flap 4L=ɺ.",
 	},
 };
 

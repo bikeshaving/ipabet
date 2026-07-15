@@ -132,7 +132,12 @@ for (const e of (spec.superscripts as {table: {base: string; sup: string}[]})
 const transforms = new Map<string, string>();
 for (const [key, glyph] of letters) {
 	if (key.length === 2) {
-		const prev = letters.get(key[0]);
+		// A leading digit is a LITERAL base. The number-row families used to hang off
+		// the shifted-digit root glyph (⇧5 → ə, then ə+H → ɜ); now the bare digit is
+		// the base a modifier transforms — 5H → ɜ, 2Q → ʡ — and the roots are ordinary
+		// two-key digraphs too (5Y → ə, 2H → ʔ). So ⇧2–5,7 fall through to native
+		// @ # $ % &. The tie (⇧6) is the lone digit still claimed on the shift plane.
+		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
 	}
 }
@@ -324,7 +329,7 @@ export function handleKey(
 	const brokenIn = chainBroken || (k.shiftBroke ?? false);
 	const step = handleKeyCore(textBefore, k, pending, !brokenIn);
 	// A fresh IPA glyph clears the break and starts a new live chain: a transform
-	// (`replace`) or an inserted non-ASCII glyph (⇧5 → ə, the ⌥8 tie). A literal
+	// (`replace`) or an inserted non-ASCII glyph (5 ⇧Y → ə, the ⇧6 tie). A literal
 	// capital or ASCII base is neither, so it carries the flag unchanged.
 	const e = step.edit;
 	const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
@@ -381,12 +386,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
-				// A slot spent deliberately (⌥⇧1 → ¡, ⌥⇧6 → ß).
+				// A slot spent deliberately (⌥⇧1 → ¡).
 				const over = optShiftDigits[key];
 				if (over !== undefined) return withFlush({type: "insert", text: over});
-				// The raw-US escape exists only because ⇧<digit> is an IPA glyph, leaving
-				// the shifted character otherwise unreachable (⇧2 is ʔ, so @ lives here).
-				// Where ⇧<digit> is unclaimed the escape is redundant — pass, and the
+				// The raw-US escape survives only where ⇧<digit> is still an IPA glyph.
+				// Now that the digit roots are digraphs, that is only ⇧6 (the tie), so
+				// ⌥⇧6 → ^; every other ⇧<digit> types its symbol directly, so the escape
+				// is redundant — pass, and the
 				// host's own ⌥⇧8 ° ⌥⇧9 · ⌥⇧0 ‚ survive.
 				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
 			}
@@ -404,8 +410,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			return withFlush({type: "pass"});
 		}
 
-	// Number row: bare → native digit; Shift → the IPA glyph (⇧5 → ə);
-	// number keys with no glyph (9, 0) pass so ( and ) stay native.
+	// Number row: bare → native digit (the digit is now a BASE — a following
+	// modifier transforms it, 5H → ɜ, handled in the modifier path below). Shift →
+	// native symbol too (⇧2 @, ⇧3 #, ⇧4 $, ⇧5 %, ⇧7 &): the roots moved to
+	// two-key digraphs (2H ʔ, 5Y ə), so the shifted digits are unclaimed and pass.
+	// The lone survivor is ⇧6, the tie bar — a joiner that cannot live on a
+	// ⇧-letter (it would fire between plain letters in $PATH) and is not a
+	// sound-base, so it keeps the shift-plane slot until the Option-map reshuffle.
 	if (/[0-9]/.test(key)) {
 		if (shift) {
 			// The tie bar toggles its own second form. ⇧6 is the tie ABOVE (t͡s); the
@@ -422,6 +433,10 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const glyph = letters.get(key);
 			if (glyph !== undefined) return emitBase(glyph, pending);
 		}
+		// A pending prefix diacritic absorbs onto the (bare) digit base — a digit is a
+		// base like any letter now (⌥g then 5 ⇧A → ɐ̞). Shifted digits are native
+		// symbols, not bases; with nothing pending, pass so the digit stays a real key.
+		if (!shift && pending.length > 0) return emitBase(key, pending);
 		return withFlush({type: "pass"});
 	}
 

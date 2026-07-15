@@ -15,7 +15,8 @@ import {STAGES} from "/Users/brian/Projects/ipabet/www/src/wordbank.ts";
 const progression=new Set<string>(); for(const s of STAGES) for(const g of s.glyphs) progression.add(g);
 const DIR = "./_harvest_data";
 type K = {key:string;shift:boolean;option:boolean};
-const keysFor = (k:string):K[] => [...k].map(c => /[A-Z]/.test(c)?{key:c.toLowerCase(),shift:true,option:false}:/[0-9]/.test(c)?{key:c,shift:true,option:false}:{key:c,shift:false,option:false});
+// A digit is a BARE base now (5H → ɜ, 5Y → ə), typed unshifted; only letters shift.
+const keysFor = (k:string):K[] => [...k].map(c => /[A-Z]/.test(c)?{key:c.toLowerCase(),shift:true,option:false}:{key:c,shift:false,option:false});
 const label = (k:K) => (k.option?"⌥":"")+(k.shift?"⇧":"")+(k.shift&&/[a-z]/.test(k.key)?k.key.toUpperCase():k.key);
 const glyphKeys = new Map<string,K[]>(); for (const e of spec.letters as any[]) if(!glyphKeys.has(e.glyph)) glyphKeys.set(e.glyph, keysFor(e.key));
 // Combining marks: primary on ⌥key, secondary (the `double`) on ⌥⇧key.

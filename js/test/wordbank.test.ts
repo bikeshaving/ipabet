@@ -29,7 +29,7 @@ function parse(l: string): Keystroke {
 	if (option) s = s.slice(1);
 	let shift = s.startsWith("⇧");
 	if (shift) s = s.slice(1);
-	if (/^[A-Z0-9]$/.test(s)) shift = true;
+	if (/^[A-Z]$/.test(s)) shift = true; // a bare digit is an unshifted base (5H, 2Q)
 	return {key: s.toLowerCase(), shift, option};
 }
 

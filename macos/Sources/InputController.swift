@@ -113,7 +113,12 @@ struct Tables {
         var transforms: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
-            if let prev = letters[base] { transforms[prev + mod] = glyph }
+            // A leading digit is a LITERAL base: the number-row families hang off the
+            // bare digit now (5H → ɜ, 2Q → ʡ), and the roots are digraphs too (5Y → ə,
+            // 2H → ʔ), so ⇧2–5,7 pass through to native @ # $ % &. ⇧6 (tie) is the one
+            // shifted digit still claimed. Mirrors js/src/index.ts.
+            let prev = base.first!.isNumber ? base : letters[base]
+            if let prev = prev { transforms[prev + mod] = glyph }
         }
         return Tables(letters: letters, optMarks: optMarks, sups: sups,
                       transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
@@ -369,10 +374,11 @@ class InputController: IMKInputController {
         // moved to Ctrl+Shift (see handle()'s top); ⌥⇧<letter> now declines, so
         // the host's own Option typography passes through. On digits the escape
         // exists only because ⇧<digit> is an IPA glyph, leaving the shifted
-        // character otherwise unreachable (⇧2 is ʔ, so @ lives here) — where
-        // ⇧<digit> is unclaimed the escape is redundant and we DECLINE, so the
-        // host's ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ survive. Two digit slots are spent
-        // deliberately on characters (⌥⇧1 → ¡, ⌥⇧6 → ß). On punctuation it always
+        // character otherwise unreachable. Now that the digit roots are digraphs,
+        // that is only ⇧6 (the tie), so ⌥⇧6 → ^; every other ⇧<digit> types its
+        // symbol directly, so the escape is redundant and we DECLINE, letting the
+        // host's ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ survive. One digit slot is spent
+        // deliberately (⌥⇧1 → ¡). On punctuation it always
         // declines, so Mac's Option typography passes (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
@@ -434,6 +440,10 @@ class InputController: IMKInputController {
                 }
             }
             if shift, let glyph = t.letters[bareKey] { emitBase(glyph, client); return true }
+            // A pending prefix diacritic absorbs onto the bare digit base (⌥g then
+            // 5 ⇧A → ɐ̞) — a digit is a base like any letter now. Shifted digits are
+            // native symbols; with nothing pending, pass so the digit stays a real key.
+            if !shift, !pending.isEmpty { emitBase(bareKey, client); return true }
             flushPending(client)
             return false
         }
@@ -528,7 +538,7 @@ class InputController: IMKInputController {
         if let glyph = t.letters[s] {
             Dbg.log("  → emitBase '\(glyph)'")
             emitBase(glyph, client)
-            // A non-ASCII base (⇧5 → ə) is an IPA segment and re-arms the chain.
+            // A non-ASCII base (5 ⇧Y → ə) is an IPA segment and re-arms the chain.
             if glyph.unicodeScalars.contains(where: { $0.value > 127 }) { chainBroken = false }
             return true
         }

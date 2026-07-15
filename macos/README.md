@@ -103,17 +103,18 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
 
 - **bare** — plain US. IPA base letters that are Latin letters (a, s, t…) are
   typed directly; digits and punctuation are native.
-- **Shift** — US shift, overridden where IPA needs it: **number keys → the IPA
-  glyph with no Latin home** (⇧5 → ə, ⇧2 → ʔ…); a letter right after a glyph →
-  an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ).
+- **Shift** — US shift, overridden where IPA needs it: a letter right after a
+  glyph → an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ). The **digit keys
+  are bases** too — a bare digit + a modifier gives an IPA glyph with no Latin home
+  (`5` `⇧Y` → ə, `2` `⇧H` → ʔ, `5` `⇧H` → ɜ). Because those sit on the *unshifted*
+  digit, ⇧2–5,7 stay their native symbols (@ # $ % &).
 - **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
   style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
   tone, stress — stay postfix (`a` `⌥;` → aː). `⌥p` superscriptizes the previous
   glyph (`h` `⌥p` → ʰ). Chao tone letters on `⌥1`–`⌥5`.
-- **Option-Shift** — a mark's second form (`⌥⇧n` → creaky). On the number row it
-  is the raw-US escape instead, because `⇧<digit>` is an IPA glyph and the shifted
-  symbol would otherwise be unreachable (`⌥⇧2` → `@`); two slots are spent
-  deliberately on characters (`⌥⇧1` → ¡, `⌥⇧6` → ß).
+- **Option-Shift** — a mark's second form (`⌥⇧n` → creaky). On the number row the
+  raw-US escape now applies only to `^` (`⌥⇧6`, while the tie provisionally holds
+  ⇧6); `⌥⇧1` → ¡ is a deliberate spend.
 - **Ctrl-Shift-letter** — the literal capital. `⇧<letter>` transforms the glyph
   before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H` and
   bypasses every transform. Plain `⌃` chords stay leader keys (tmux `^b`).

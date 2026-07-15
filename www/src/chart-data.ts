@@ -39,7 +39,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̽", keys: "~x", name: "Mid-centralized", on: "e"},
 	{glyph: "◌̩", keys: "~s", name: "Syllabic", on: "n"},
 	{glyph: "◌̯", keys: "~+b", name: "Non-syllabic", on: "e"},
-	// ⇧5 ⇧R and ⇧5 ⇧H ⇧R give the precomposed ɚ/ɝ; every other vowel takes the
+	// 5 ⇧Y ⇧R and 5 ⇧H ⇧R give the precomposed ɚ/ɝ; every other vowel takes the
 	// bare hook, so `a` is the honest base to demonstrate the mark on.
 	{glyph: "˞", keys: "+R", name: "Rhoticity", on: "a"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
@@ -48,7 +48,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "ʷ", keys: "w ~p", name: "Labialized", on: "t"},
 	{glyph: "ʲ", keys: "j ~p", name: "Palatalized", on: "t"},
 	{glyph: "ˠ", keys: "g +H ~p", name: "Velarized", on: "t"},
-	{glyph: "ˤ", keys: "+3 ~p", name: "Pharyngealized", on: "t"},
+	{glyph: "ˤ", keys: "3 +h ~p", name: "Pharyngealized", on: "t"},
 	{glyph: "◌̴", keys: "~l", name: "Velarized or pharyngealized", on: "t"},
 	{glyph: "◌̝", keys: "~+g", name: "Raised", on: "e"},
 	{glyph: "◌̞", keys: "~g", name: "Lowered", on: "e"},
