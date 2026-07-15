@@ -728,6 +728,10 @@ describe("rhotic hook on any vowel", () => {
 
 describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
+	test("currency rides its digits: ⌥⇧3 → £ (British ⇧3), ⌥⇧4 → ¢ (the $ key)", () => {
+		expect(typed("~+3")).toBe("£");
+		expect(typed("~+4")).toBe("¢");
+	});
 	// A ⌥⇧ letter with no second form declines, so the host types its own character
 	// and the ⇧-transform never fires. (⌥⇧c — the cedilla lost its ¢ spend.)
 	test("⌥⇧c declines, so no transform reaches back", () => expect(typed("s", "~+c")).toBe("sC"));
