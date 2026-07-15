@@ -489,7 +489,7 @@
    "key": "xH",
    "glyph": "ɧ",
    "cp": "U+0267",
-   "name": "LATIN SMALL LETTER HENG WITH HOOK (simultaneous ʃ and x — the Swedish sj-sound; ⇧H is the hushing digraph, so x hushed is the ʃ⊕x blend)"
+   "name": "LATIN SMALL LETTER HENG WITH HOOK (ɧ — simultaneous ʃ and x, the Swedish sj-sound)"
   },
   {
    "key": "rB",
@@ -669,7 +669,7 @@
    "key": "sS",
    "glyph": "ß",
    "cp": "U+00DF",
-   "name": "LATIN SMALL LETTER SHARP S (German ß — the ſs/ſz ligature, built from ss, its official fallback spelling)"
+   "name": "LATIN SMALL LETTER SHARP S (German ß)"
   }
  ],
  "marks": [
@@ -727,7 +727,7 @@
    "type": "combining",
    "group": "Tone",
    "cp": "U+0304",
-   "name": "COMBINING MACRON (long/mid tone; ⇧ → ͇ U+0347, extIPA's ALVEOLAR — the labioalveolar series. The key is a mnemonic, not a shape: alveolar, on `a`. It took a redundant slot — ⌥⇧a was Å, which the ring already types (⌥k ⇧A) — so the character cost nothing)",
+   "name": "COMBINING MACRON (long / mid-level tone; ⇧ → extIPA alveolar)",
    "double": "͇",
    "shiftSense": "twin"
   },
@@ -764,7 +764,7 @@
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0306",
-   "name": "COMBINING BREVE (extra-short; ⇧ → the breve BELOW, U+032F — the non-syllabic mark, which IS an inverted breve below. It used to sit on ⌥⇧s, where it had no claim on the key beyond adjacency to `syllabic`; the breve key is its shape's home. Vacating ⌥⇧s is what let the syllabic line have its own second placement. The two stack — a segment can be both extra-short and non-syllabic)"
+   "name": "COMBINING BREVE (extra-short; ⇧ → non-syllabic, the inverted breve below)"
   },
   {
    "opt": "k",
@@ -777,7 +777,7 @@
    "type": "combining",
    "group": "Phonation",
    "cp": "U+030A",
-   "name": "COMBINING RING ABOVE (voiceless, above the base: ŋ̊ j̊ ɡ̊; ⇧ → the SAME mark below, U+0325, the placement for a base with no descender: n̥ l̥ m̥ i̥. Placement carries no meaning — it is typography, and it is the transcriber's. The ring sits in THIS plane because that is where ABC Extended puts its ring key, and muscle memory beat a weak frequency edge; it is also what makes å one modifier again: ⌥k then a)"
+   "name": "COMBINING RING ABOVE (voiceless: ŋ̊ j̊; ⇧ → the ring below: n̥ l̥ m̥)"
   },
   {
    "opt": "c",
@@ -786,7 +786,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA (Latin tenant: ç ş ţ ģ ņ — ABC Extended's own key; ⇧ → ¢, which the tone bars destroyed on ⌥4. Cent, on `c`. ⌥⇧c was Ç, which this very key still types — ⌥c ⇧C — so the slot was free)",
+   "name": "COMBINING CEDILLA (ç ş ţ; ⇧ → ¢)",
    "ipa": false,
    "beyond": "tenant",
    "double": "¢",
@@ -800,7 +800,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0326",
-   "name": "COMBINING COMMA BELOW (Latin tenant: ș ț — Romanian. The comma key carries the comma-shaped mark, which is the spec's own shape-identity rule; it could not, while the cedilla was sitting here)",
+   "name": "COMBINING COMMA BELOW (Romanian ș ț)",
    "ipa": false,
    "beyond": "tenant"
   },
@@ -811,7 +811,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",
-   "name": "COMBINING OGONEK (Latin tenant: ą ę; ⇧ → ͍ U+034D, extIPA's LABIAL SPREADING. Cross-tier: `m` is the labial letter, and this is the labial mark. Took a redundant slot — ⌥⇧m was Â, which ⌥i ⇧A still types)",
+   "name": "COMBINING OGONEK (ą ę; ⇧ → extIPA labial spreading)",
    "ipa": false,
    "beyond": "tenant",
    "double": "͍",
@@ -823,7 +823,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+032A",
-   "name": "COMBINING BRIDGE BELOW (dental; ⇧ → the SAME bridge ABOVE, U+0346, which is extIPA's DENTOLABIAL — routine in cleft-palate transcription. One shape, two sides, one key)",
+   "name": "COMBINING BRIDGE BELOW (dental; ⇧ → extIPA dentolabial, the bridge above)",
    "double": "͆",
    "shiftSense": "placement"
   },
@@ -857,7 +857,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+0334",
-   "name": "COMBINING TILDE OVERLAY (velarized/pharyngealized — ɫ is l + overlay; ⇧ → £, which the tone bars destroyed on ⌥3. The pound sign IS an L — it is a struck ₤ from libra — so the key is the letter's own, and ⌥⇧l was Ò, which ⌥` ⇧O still types. See laws.restoration)",
+   "name": "COMBINING TILDE OVERLAY (velarized / pharyngealized, ɫ; ⇧ → £)",
    "clone": "˜",
    "double": "£",
    "doubleSpacing": true,
@@ -895,7 +895,7 @@
    "type": "combining",
    "group": "Syllabicity",
    "cp": "U+0329",
-   "name": "COMBINING VERTICAL LINE BELOW (syllabic, below the base: n̩ l̩ m̩ r̩ — button, bottle, rhythm; ⇧ → the SAME mark above, U+030D, for a base with a descender: ŋ̍. Below is the default here and ABOVE is the default on the ring: each follows its own frequency, because the law is 'the common form is unshifted', not a shape rule)",
+   "name": "COMBINING VERTICAL LINE BELOW (syllabic: n̩ l̩ m̩; ⇧ → the same mark above)",
    "double": "̍",
    "clone": "ˌ",
    "doubleClone": "ˈ",
@@ -918,7 +918,7 @@
    "type": "combining",
    "group": "Prosody",
    "cp": "U+0361",
-   "name": "COMBINING DOUBLE INVERTED BREVE (the tie bar — a postfix JOINER welding two segments into one: t ⌥j s → t͡s, affricates t͡ʃ d͡ʒ and double-articulations k͡p. `j` for join, the right-index home key. ⇧ → the BELOW form U+035C, for descenders colliding with a bar above (t͜ɕ, d͜ʒ) — explicit, not a toggle. Unlike the prefix dead-key diacritics it emits IMMEDIATELY onto the previous segment; the engine special-cases it — see laws.tieBar)",
+   "name": "COMBINING DOUBLE INVERTED BREVE (tie bar — postfix joiner, t ⌥j s → t͡s; ⇧ → the below form)",
    "double": "͜",
    "shiftSense": "placement"
   },
@@ -959,7 +959,7 @@
    "type": "spacing",
    "group": "Tone",
    "cp": "U+2198",
-   "name": "SOUTH EAST ARROW (global fall; ⇧ → ↗ global rise, the greater pole). Standalone characters over a phrase, not marks — they attach to nothing. Paired like ⌥o downstep/upstep.",
+   "name": "SOUTH EAST ARROW (global fall intonation; ⇧ → ↗ global rise)",
    "double": "↗",
    "shiftSense": "greater"
   },
@@ -1019,7 +1019,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+034C",
-   "name": "COMBINING ALMOST EQUAL TO ABOVE (extIPA VELOPHARYNGEAL FRICTION — routine in cleft-palate transcription; ⇧ → ͎ U+034E, extIPA's WHISTLED articulation. Two extIPA articulation marks paired on one arbitrary key — whistled came here off ⌥⇧h when RTR took that home-row slot)",
+   "name": "COMBINING ALMOST EQUAL TO ABOVE (extIPA velopharyngeal friction; ⇧ → extIPA whistled)",
    "ipa": false,
    "beyond": "extIPA",
    "double": "͎",
@@ -1032,7 +1032,7 @@
    "type": "combining",
    "group": "Nasalization",
    "cp": "U+034A",
-   "name": "COMBINING NOT TILDE ABOVE (extIPA DENASAL — hyponasality, the blocked nose; ⇧ → ͋ U+034B, NASAL ESCAPE, air leaking through the nose. One key, one dimension: ⌥ is too little nasal airflow, ⌥⇧ is too much. The KEY is arbitrary — nothing claims `8` — but it is an unearned slot (• is nobody's), which is what laws.arbitraryKeys asks of an arbitrary mark",
+   "name": "COMBINING NOT TILDE ABOVE (extIPA denasal; ⇧ → nasal escape)",
    "double": "͋",
    "shiftSense": "greater",
    "ipa": false,
@@ -1044,7 +1044,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW (linguolabial) — arbitrary key, parked on an unearned slot; ⇧ → ₍ U+208D, extIPA's PRE-VOICING bracket, which is on this key by shape identity: the 9 key is the ( key",
+   "name": "COMBINING SEAGULL BELOW (linguolabial; ⇧ → extIPA pre-voicing bracket ₍)",
    "arbitraryKey": true,
    "double": "₍",
    "shiftSense": "twin",
@@ -1056,7 +1056,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (unreleased — coda stops; ⇧ → the SAME angle BELOW, U+0349, which is extIPA's WEAK articulation. Moved to ⌥f (with weak, as a pair) when the tie bar took ⌥j — `j` for join. The key is arbitrary — nothing claims `f` either — but the plane is not: the two marks are one shape, relocated. Weak was going to sit beside `strong` on ⌥⇧0 by meaning; it sits with unreleased by shape, which is the rule the layout follows)",
+   "name": "COMBINING LEFT ANGLE ABOVE (unreleased: p̚ t̚ k̚; ⇧ → extIPA weak, the angle below)",
    "clone": "˺",
    "arbitraryKey": true,
    "double": "͉",
@@ -1069,7 +1069,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+0319",
-   "name": "COMBINING RIGHT TACK BELOW (RTR — retracted tongue root; ⇧ → ATR, the advanced pole. Promoted to prime ⌥h by FREQUENCY: RTR/ATR is a real IPA contrast that was marooned on the poor ⌥q key, and a home-row key should carry it, not the Vietnamese hỏi tenant that squatted here — hỏi went home to ⌥⇧7, beside the horn it is written with)",
+   "name": "COMBINING RIGHT TACK BELOW (RTR — retracted tongue root; ⇧ → ATR, the advanced pole)",
    "double": "̘",
    "clone": "˲",
    "doubleClone": "˱",
@@ -1082,7 +1082,7 @@
    "type": "combining",
    "group": "Phonation",
    "cp": "U+0348",
-   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis/tense — arbitrary key, on an unearned slot per laws.arbitraryKeys. It is also extIPA's STRONG articulation; its partner WEAK is not here but on ⌥⇧j, with the angle it shares a shape with. On the Korean 2-set keyboard ⇧ is itself what makes a consonant fortis, which is a convention about the PLANE, not about this key; ⇧ → ₎ U+208E, extIPA's POST-VOICING bracket — shape identity, the 0 key is the ) key)",
+   "name": "COMBINING DOUBLE VERTICAL LINE BELOW (Korean fortis / extIPA strong; ⇧ → extIPA post-voicing bracket ₎)",
    "ipa": false,
    "beyond": "tradition",
    "arbitraryKey": true,
@@ -1109,7 +1109,7 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+031B",
-   "name": "COMBINING HORN (Vietnamese ơ ư — Latin tenant. On ⌥7 by CONVENTION: Vietnamese VNI encodes the horn as the digit 7 (ơ = o7, ư = u7), the key a Vietnamese typist already knows. ⇧ → ̉ U+0309, the hỏi tone — the two Vietnamese diacritics on one key, written together in ở. hỏi moved here off prime ⌥h)",
+   "name": "COMBINING HORN (Vietnamese ơ ư; ⇧ → hỏi tone)",
    "ipa": false,
    "beyond": "tenant",
    "double": "̉",
