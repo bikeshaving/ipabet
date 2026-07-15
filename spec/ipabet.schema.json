@@ -4,7 +4,7 @@
 	"title": "IPAbet notation spec",
 	"description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json. Read by the macOS IME (Swift), the TypeScript engine, and every page on ipabet.org. Keystroke notation: a `key` string is a sequence of US-layout characters; an uppercase letter or digit means that key with Shift. Marks live on the Option layer, keyed by their unshifted US character.",
 	"type": "object",
-	"required": ["modifiers", "letters", "marks", "superscripts", "laws", "classes"],
+	"required": ["modifiers", "letters", "marks", "superscripts", "classes"],
 	"additionalProperties": false,
 
 	"properties": {
@@ -64,13 +64,6 @@
 					}
 				}
 			}
-		},
-
-		"laws": {
-			"description": "Design rules the layout obeys. Prose only: these MUST NOT name which mark sits on which key — that is recorded per-mark, and js/test/spec.test.ts fails if prose here names an unassigned key.",
-			"type": "object",
-			"required": ["optShift", "keyClasses", "numberRow", "dashes"],
-			"additionalProperties": {"type": ["string", "array"]}
 		},
 
 		"classes": {

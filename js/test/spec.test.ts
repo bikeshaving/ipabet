@@ -78,10 +78,10 @@ describe("spec · prose does not hardcode membership", () => {
 					? Object.values(obj).flatMap(prose)
 					: [];
 
-	// Every ⌥-key named anywhere in laws/classes must be a key that exists. This
-	// is the check that "⌥c cedilla" would have failed the moment cedilla moved.
-	test("every ⌥key named in laws or classes is assigned", () => {
-		const text = [...prose(spec.laws), ...prose(classes)].join(" ");
+	// Every ⌥-key named in the classes prose must be a key that exists. This is the
+	// check that "⌥c cedilla" would have failed the moment cedilla moved.
+	test("every ⌥key named in classes is assigned", () => {
+		const text = [...prose(classes)].join(" ");
 		const named = [...text.matchAll(/⌥⇧?([a-z0-9=.,`';-])/g)].map((m) => m[1]);
 		expect(named.length).toBeGreaterThan(0);
 		for (const k of named) {
