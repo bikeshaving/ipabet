@@ -679,6 +679,7 @@
    "clone": "´",
    "type": "combining",
    "double": "̋",
+   "doubleCp": "U+030B",
    "group": "Tone",
    "cp": "U+0301",
    "name": "COMBINING ACUTE ACCENT",
@@ -692,6 +693,7 @@
    "clone": "`",
    "type": "combining",
    "double": "̏",
+   "doubleCp": "U+030F",
    "group": "Tone",
    "cp": "U+0300",
    "name": "COMBINING GRAVE ACCENT",
@@ -714,6 +716,7 @@
    "clone": "ˇ",
    "type": "combining",
    "double": "̬",
+   "doubleCp": "U+032C",
    "group": "Tone",
    "cp": "U+030C",
    "name": "COMBINING CARON",
@@ -729,6 +732,7 @@
    "cp": "U+0304",
    "name": "COMBINING MACRON",
    "double": "͇",
+   "doubleCp": "U+0347",
    "shiftSense": "twin"
   },
   {
@@ -737,6 +741,7 @@
    "clone": "˜",
    "type": "combining",
    "double": "̰",
+   "doubleCp": "U+0330",
    "group": "Nasalization",
    "cp": "U+0303",
    "name": "COMBINING TILDE",
@@ -749,6 +754,7 @@
    "clone": "¨",
    "type": "combining",
    "double": "̤",
+   "doubleCp": "U+0324",
    "group": "Articulation",
    "cp": "U+0308",
    "name": "COMBINING DIAERESIS",
@@ -759,6 +765,7 @@
    "mark": "̆",
    "clone": "˘",
    "double": "̯",
+   "doubleCp": "U+032F",
    "doubleClone": "˯",
    "shiftSense": "below",
    "type": "combining",
@@ -771,6 +778,7 @@
    "mark": "̊",
    "clone": "˚",
    "double": "̥",
+   "doubleCp": "U+0325",
    "doubleClone": "˳",
    "exclusive": true,
    "shiftSense": "placement",
@@ -790,6 +798,7 @@
    "ipa": false,
    "beyond": "tenant",
    "double": "¢",
+   "doubleCp": "U+00A2",
    "doubleSpacing": true,
    "shiftSense": "twin"
   },
@@ -815,6 +824,7 @@
    "ipa": false,
    "beyond": "tenant",
    "double": "͍",
+   "doubleCp": "U+034D",
    "shiftSense": "twin"
   },
   {
@@ -825,6 +835,7 @@
    "cp": "U+032A",
    "name": "COMBINING BRIDGE BELOW",
    "double": "͆",
+   "doubleCp": "U+0346",
    "shiftSense": "placement"
   },
   {
@@ -835,6 +846,7 @@
    "cp": "U+033A",
    "name": "COMBINING INVERTED BRIDGE BELOW",
    "double": "̻",
+   "doubleCp": "U+033B",
    "exclusive": true,
    "shiftSense": "arbitrary"
   },
@@ -843,6 +855,7 @@
    "mark": "̠",
    "type": "combining",
    "double": "̟",
+   "doubleCp": "U+031F",
    "group": "Articulation",
    "cp": "U+0320",
    "name": "COMBINING MINUS SIGN BELOW",
@@ -860,6 +873,7 @@
    "name": "COMBINING TILDE OVERLAY",
    "clone": "˜",
    "double": "£",
+   "doubleCp": "U+00A3",
    "doubleSpacing": true,
    "shiftSense": "twin"
   },
@@ -871,6 +885,7 @@
    "cp": "U+031E",
    "name": "COMBINING DOWN TACK BELOW",
    "double": "̝",
+   "doubleCp": "U+031D",
    "clone": "˕",
    "doubleClone": "˔",
    "exclusive": true,
@@ -884,6 +899,7 @@
    "cp": "U+031C",
    "name": "COMBINING LEFT HALF RING BELOW",
    "double": "̹",
+   "doubleCp": "U+0339",
    "clone": "˓",
    "doubleClone": "˒",
    "exclusive": true,
@@ -897,6 +913,7 @@
    "cp": "U+0329",
    "name": "COMBINING VERTICAL LINE BELOW",
    "double": "̍",
+   "doubleCp": "U+030D",
    "clone": "ˌ",
    "doubleClone": "ˈ",
    "exclusive": true,
@@ -910,6 +927,7 @@
    "cp": "U+203F",
    "name": "UNDERTIE",
    "double": "‖",
+   "doubleCp": "U+2016",
    "shiftSense": "twin"
   },
   {
@@ -920,6 +938,7 @@
    "cp": "U+0361",
    "name": "COMBINING DOUBLE INVERTED BREVE",
    "double": "͜",
+   "doubleCp": "U+035C",
    "shiftSense": "placement"
   },
   {
@@ -931,6 +950,7 @@
    "name": "COMBINING X ABOVE",
    "clone": "˟",
    "double": "͓",
+   "doubleCp": "U+0353",
    "shiftSense": "placement"
   },
   {
@@ -938,6 +958,7 @@
    "mark": "ˈ",
    "type": "spacing",
    "double": "ˌ",
+   "doubleCp": "U+02CC",
    "group": "Prosody",
    "cp": "U+02C8",
    "name": "MODIFIER LETTER VERTICAL LINE",
@@ -948,6 +969,7 @@
    "mark": "ː",
    "type": "spacing",
    "double": "ˑ",
+   "doubleCp": "U+02D1",
    "group": "Length",
    "cp": "U+02D0",
    "name": "MODIFIER LETTER TRIANGULAR COLON",
@@ -961,6 +983,7 @@
    "cp": "U+2198",
    "name": "SOUTH EAST ARROW",
    "double": "↗",
+   "doubleCp": "U+2197",
    "shiftSense": "greater"
   },
   {
@@ -971,6 +994,7 @@
    "cp": "U+A71C",
    "name": "MODIFIER LETTER RAISED DOWN ARROW",
    "double": "ꜛ",
+   "doubleCp": "U+A71B",
    "shiftSense": "greater"
   },
   {
@@ -1023,6 +1047,7 @@
    "ipa": false,
    "beyond": "extIPA",
    "double": "͎",
+   "doubleCp": "U+034E",
    "shiftSense": "twin",
    "arbitraryKey": true
   },
@@ -1034,6 +1059,7 @@
    "cp": "U+034A",
    "name": "COMBINING NOT TILDE ABOVE",
    "double": "͋",
+   "doubleCp": "U+034B",
    "shiftSense": "greater",
    "ipa": false,
    "beyond": "extIPA"
@@ -1047,6 +1073,7 @@
    "name": "COMBINING SEAGULL BELOW",
    "arbitraryKey": true,
    "double": "₍",
+   "doubleCp": "U+208D",
    "shiftSense": "twin",
    "doubleSpacing": true
   },
@@ -1060,6 +1087,7 @@
    "clone": "˺",
    "arbitraryKey": true,
    "double": "͉",
+   "doubleCp": "U+0349",
    "doubleClone": "˹",
    "shiftSense": "placement"
   },
@@ -1071,6 +1099,7 @@
    "cp": "U+0319",
    "name": "COMBINING RIGHT TACK BELOW",
    "double": "̘",
+   "doubleCp": "U+0318",
    "clone": "˲",
    "doubleClone": "˱",
    "exclusive": true,
@@ -1087,6 +1116,7 @@
    "beyond": "tradition",
    "arbitraryKey": true,
    "double": "₎",
+   "doubleCp": "U+208E",
    "shiftSense": "twin",
    "doubleSpacing": true
   },
@@ -1098,6 +1128,7 @@
    "group": "Transliteration",
    "cp": "U+0307",
    "double": "̣",
+   "doubleCp": "U+0323",
    "name": "COMBINING DOT ABOVE",
    "ipa": false,
    "beyond": "tenant",
@@ -1113,6 +1144,7 @@
    "ipa": false,
    "beyond": "tenant",
    "double": "̉",
+   "doubleCp": "U+0309",
    "shiftSense": "twin"
   }
  ],

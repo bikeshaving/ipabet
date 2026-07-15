@@ -120,6 +120,7 @@
 					"type": "string",
 					"minLength": 1
 				},
+				"doubleCp": {"$ref": "#/$defs/codepoints"},
 				"doubleSpacing": {
 					"description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining — spacing is a property of the form, not the key. (⌥9 is the combining seagull; ⌥⇧9 is the ₍ voicing bracket, a standalone character.) Requires `double`.",
 					"type": "boolean"
@@ -169,6 +170,7 @@
 			"dependentRequired": {
 				"double": ["shiftSense"],
 				"shiftSense": ["double"],
+				"doubleCp": ["double"],
 				"doubleClone": ["double"],
 				"doubleSpacing": ["double"],
 				"exclusive": ["double"],
