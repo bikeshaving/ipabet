@@ -1626,7 +1626,7 @@
   "exclusive": "The two forms are values of the SAME dimension, so ⌥⇧ replaces rather than stacks — nothing is both advanced and retracted. Marks on INDEPENDENT dimensions stack (nasalized + creaky). Tone level is a five-way scale, so an exclusive pair need not be binary or exhaustive."
  },
  "optShift": {
-  "about": "⌥⇧<digit> normally escapes to the raw US character, because ⇧<digit> is claimed by an IPA glyph and would otherwise be unreachable (⌥⇧2 → @). Where ⇧<digit> is NOT claimed the escape is redundant, and the slot is free. These are the two we spend; the rest of the unclaimed slots (⌥⇧8 ⌥⇧9 ⌥⇧0) pass to the host so its ° · ‚ survive.",
+  "about": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is fully retired: no shifted digit is an IPA glyph any more (the number-row roots are unshifted-digit digraphs, and the tie bar lives on ⌥j), so every ⇧<digit> types its native symbol directly. An unlisted ⌥⇧<digit> passes to the host — ⌥⇧2 €, ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all survive. Only the slots listed here are spent.",
   "1": "¡"
  }
 }

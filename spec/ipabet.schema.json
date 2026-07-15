@@ -66,6 +66,14 @@
 			}
 		},
 
+		"optShift": {
+			"description": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is retired; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
+			"type": "object",
+			"required": ["about"],
+			"additionalProperties": {"type": "string"},
+			"propertyNames": {"pattern": "^(about|[0-9])$"}
+		},
+
 		"subscripts": {
 			"description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧q) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
 			"type": "object",
