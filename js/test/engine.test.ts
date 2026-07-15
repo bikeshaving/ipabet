@@ -241,8 +241,9 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("+2")).toBe("@");
 		expect(typed("+7")).toBe("&");
 	});
-	test("⌥⇧9 is still the voicing bracket ₍ (⇧9 was never IPA)", () => {
-		expect(typeKeys(seq("~+9"))).toBe("₍");
+	test("the voicing brackets live on the ( key: ⌥9 ₍, ⌥⇧9 ₎", () => {
+		expect(typeKeys(seq("~9"))).toBe("₍");
+		expect(typeKeys(seq("~+9"))).toBe("₎");
 	});
 	test("the one spent ⌥⇧ digit slot: ⌥⇧1 → ¡", () => expect(typed("~+1")).toBe("¡"));
 	test("⇧6 is native ^ now the tie moved to ⌥j", () => expect(typed("+6")).toBe("^"));
@@ -258,7 +259,7 @@ describe("dental family — spread across keys, no cycle", () => {
 		expect(typed("~t", "d")).toBe(nfc("d\u{032A}"));   // dental
 		expect(typed("~d", "d")).toBe(nfc("d\u{033A}"));   // apical (tip)
 		expect(typed("~+d", "d")).toBe(nfc("d\u{033B}"));  // laminal (blade)
-		expect(typed("~9", "d")).toBe(nfc("d\u{033C}"));   // linguolabial (parked)
+		expect(typed("~p", "d")).toBe(nfc("d\u{033C}"));   // linguolabial (the lips letter)
 	});
 });
 
@@ -674,8 +675,8 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 describe("superscript operator ⌥q", () => {
 	test("aspiration: t h ⌥q → tʰ", () => expect(typed("t", "h", "~q")).toBe("tʰ"));
 	test("no superscriptable base → literal q", () => expect(typed("~q")).toBe("q"));
-	test("⌥p no longer raises — it passes (host owns π)", () =>
-		expect(typed("k", "h", "~p")).toBe("kh"));
+	test("⌥p no longer raises — it's the linguolabial dead key now", () =>
+		expect(typed("~p", "b")).toBe(nfc("b\u{033C}")));
 });
 
 describe("rhoticity ⌥r — postfix like length", () => {
@@ -805,20 +806,18 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 	test("⌥⇧x is FRICTIONAL — the X, relocated below", () =>
 		expect(typed("~+x", "s")).toBe(nfc("s͓")));
 
-	test("the voicing brackets are on the ( and ) keys", () => {
+	test("the voicing brackets unite on the ( key: unshifted opens, shift closes", () => {
 		// ₍ and ₎ carry extIPA's whole (de)voicing system: ₍z, z̥₎, ₍z̥₎.
-		expect(typed("~+9")).toBe("₍");
-		expect(typed("~+0")).toBe("₎");
+		expect(typed("~9")).toBe("₍");
+		expect(typed("~+9")).toBe("₎");
+		expect(typed("~9", "z")).toBe("₍z");   // spacing: it just lands
 	});
 
-	test("a bracket is SPACING though its key's ⌥ mark is combining", () => {
-		// ⌥9 is the linguolabial seagull — a prefix dead key, absorbed by the base.
-		// ⌥⇧9 is a standalone character that just lands. Spacing is a property of the
-		// FORM, not the key, which the engine did not model until these two arrived.
-		expect(typed("~9", "t")).toBe(nfc("t̼"));   // prefix: the base absorbs it
-		expect(typed("~+9", "z")).toBe("₍z");            // postfix: it precedes the text
-	});
+	test("the seagull sits on the lips letter: ⌥p t → t̼ (linguolabial)", () =>
+		expect(typed("~p", "t")).toBe(nfc("t̼")));
 
-	test("strong keeps ⌥0, and says so: its partner lives on the angle key", () =>
-		expect(typed("~0", "k")).toBe(nfc("k͈")));
+	test("strong keeps ⌥0 alone now; ⌥⇧0 returns ‚ to the host", () => {
+		expect(typed("~0", "k")).toBe(nfc("k͈"));
+		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
+	});
 });

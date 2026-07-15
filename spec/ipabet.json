@@ -1079,17 +1079,12 @@
    "beyond": "extIPA"
   },
   {
-   "opt": "9",
+   "opt": "p",
    "mark": "̼",
    "type": "combining",
    "group": "Articulation",
    "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW",
-   "arbitraryKey": true,
-   "double": "₍",
-   "doubleCp": "U+208D",
-   "shiftSense": "twin",
-   "doubleSpacing": true
+   "name": "COMBINING SEAGULL BELOW (linguolabial — the lips letter)"
   },
   {
    "opt": "f",
@@ -1128,11 +1123,7 @@
    "name": "COMBINING DOUBLE VERTICAL LINE BELOW",
    "ipa": false,
    "beyond": "tradition",
-   "arbitraryKey": true,
-   "double": "₎",
-   "doubleCp": "U+208E",
-   "shiftSense": "twin",
-   "doubleSpacing": true
+   "arbitraryKey": true
   },
   {
    "opt": ".",
@@ -1157,6 +1148,20 @@
    "name": "COMBINING HOOK ABOVE (hỏi)",
    "ipa": false,
    "beyond": "tenant"
+  },
+  {
+   "opt": "9",
+   "mark": "₍",
+   "type": "spacing",
+   "double": "₎",
+   "doubleCp": "U+208E",
+   "doubleSpacing": true,
+   "group": "Phonation",
+   "cp": "U+208D",
+   "name": "SUBSCRIPT LEFT PARENTHESIS (pre-voicing; ⇧ → ₎ post-voicing)",
+   "ipa": false,
+   "beyond": "extIPA",
+   "shiftSense": "twin"
   }
  ],
  "superscripts": {

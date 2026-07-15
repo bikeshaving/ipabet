@@ -45,7 +45,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "a"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
-	{glyph: "◌̼", keys: "~9", name: "Linguolabial", on: "t"},
+	{glyph: "◌̼", keys: "~p", name: "Linguolabial", on: "t"},
 	{glyph: "ʷ", keys: "w ~q", name: "Labialized", on: "t"},
 	{glyph: "ʲ", keys: "j ~q", name: "Palatalized", on: "t"},
 	{glyph: "ˠ", keys: "g +H ~q", name: "Velarized", on: "t"},
