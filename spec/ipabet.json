@@ -739,10 +739,7 @@
    "type": "combining",
    "group": "Tone",
    "cp": "U+0304",
-   "name": "COMBINING MACRON",
-   "double": "͇",
-   "doubleCp": "U+0347",
-   "shiftSense": "twin"
+   "name": "COMBINING MACRON"
   },
   {
    "opt": "n",
