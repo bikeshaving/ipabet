@@ -71,8 +71,8 @@ const keysComponents = {
 	...components,
 	SegTable: ({token}: any) => jsx`<${Table}>${segRows(SEGS[token.kind])}<//>`,
 	MarkTable: ({token}: any) => jsx`<${Table}>${markRows(token.kind === "ipa" ? ipaMarks : marks)}<//>`,
-	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.base} ⌥q</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
-	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">${s.base} ⌥⇧q</td><td class="g">${s.sub}</td><td class="cp">${cp(s.sub)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
+	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.base} ⌥z</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
+	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">${s.base} ⌥⇧z</td><td class="g">${s.sub}</td><td class="cp">${cp(s.sub)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
 	RulesTable: () => jsx`
 		<${Table}>
 			<tr><td class="k">vowel ⌥r</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity — postfix like length (5 ⇧Y ⌥r → ɚ, 5 ⇧H ⌥r → ɝ precomposed; every other vowel takes the hook)</td></tr>

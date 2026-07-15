@@ -30,7 +30,7 @@ export interface ChartEntry {
 export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̊", keys: "~k", name: "Voiceless", on: "n"},
 	{glyph: "◌̬", keys: "~+v", name: "Voiced", on: "d"},
-	{glyph: "ʰ", keys: "h ~q", name: "Aspirated", on: "t"},
+	{glyph: "ʰ", keys: "h ~z", name: "Aspirated", on: "t"},
 	{glyph: "◌̹", keys: "~+w", name: "More rounded", on: "ɔ", onKeys: "o +H"},
 	{glyph: "◌̜", keys: "~w", name: "Less rounded", on: "ɔ", onKeys: "o +H"},
 	{glyph: "◌̟", keys: "~+=", name: "Advanced", on: "u"},
@@ -46,10 +46,10 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
 	{glyph: "◌̼", keys: "~p", name: "Linguolabial", on: "t"},
-	{glyph: "ʷ", keys: "w ~q", name: "Labialized", on: "t"},
-	{glyph: "ʲ", keys: "j ~q", name: "Palatalized", on: "t"},
-	{glyph: "ˠ", keys: "g +H ~q", name: "Velarized", on: "t"},
-	{glyph: "ˤ", keys: "3 +H ~q", name: "Pharyngealized", on: "t"},
+	{glyph: "ʷ", keys: "w ~z", name: "Labialized", on: "t"},
+	{glyph: "ʲ", keys: "j ~z", name: "Palatalized", on: "t"},
+	{glyph: "ˠ", keys: "g +H ~z", name: "Velarized", on: "t"},
+	{glyph: "ˤ", keys: "3 +H ~z", name: "Pharyngealized", on: "t"},
 	{glyph: "◌̴", keys: "~+l", name: "Velarized or pharyngealized", on: "t"},
 	{glyph: "◌̝", keys: "~+g", name: "Raised", on: "e"},
 	{glyph: "◌̞", keys: "~g", name: "Lowered", on: "e"},
@@ -59,8 +59,8 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̺", keys: "~d", name: "Apical", on: "t"},
 	{glyph: "◌̻", keys: "~+d", name: "Laminal", on: "t"},
 	{glyph: "◌̃", keys: "~n", name: "Nasalized", on: "e"},
-	{glyph: "ⁿ", keys: "n ~q", name: "Nasal release", on: "d"},
-	{glyph: "ˡ", keys: "l ~q", name: "Lateral release", on: "d"},
+	{glyph: "ⁿ", keys: "n ~z", name: "Nasal release", on: "d"},
+	{glyph: "ˡ", keys: "l ~z", name: "Lateral release", on: "d"},
 	{glyph: "◌̚", keys: "~f", name: "No audible release", on: "d"},
 ];
 
@@ -71,9 +71,9 @@ export const SUPRASEGMENTALS: ChartEntry[] = [
 	{glyph: "ˑ", keys: "~+;", name: "Half-long"},
 	{glyph: "◌̆", keys: "~b", name: "Extra-short", on: "e"},
 	{glyph: "|", keys: "|", name: "Minor (foot) group"},
-	{glyph: "‖", keys: "~+z", name: "Major (intonation) group"},
+	{glyph: "‖", keys: "~+y", name: "Major (intonation) group"},
 	{glyph: ".", keys: ".", name: "Syllable break"},
-	{glyph: "‿", keys: "~z", name: "Linking (absence of a break)"},
+	{glyph: "‿", keys: "~y", name: "Linking (absence of a break)"},
 ];
 
 export const TONES: ChartEntry[] = [

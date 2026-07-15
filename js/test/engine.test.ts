@@ -105,10 +105,10 @@ describe("clicks (C modifier)", () => {
 	test("pC → ʘ", () => expect(typed("p", "+c")).toBe("ʘ"));
 	test("cC → ǂ", () => expect(typed("c", "+c")).toBe("ǂ"));
 	test("lC → ǁ", () => expect(typed("l", "+c")).toBe("ǁ"));
-	test("nasal click: n ⇧G ⌥q q ⇧C → ᵑǃ", () =>
-		expect(typed("n", "+g", "~q", "q", "+c")).toBe("ᵑǃ"));
-	test("voiced click: g ⌥q q ⇧C → ᶢǃ", () =>
-		expect(typed("g", "~q", "q", "+c")).toBe("ᶢǃ"));
+	test("nasal click: n ⇧G ⌥z q ⇧C → ᵑǃ", () =>
+		expect(typed("n", "+g", "~z", "q", "+c")).toBe("ᵑǃ"));
+	test("voiced click: g ⌥z q ⇧C → ᶢǃ", () =>
+		expect(typed("g", "~z", "q", "+c")).toBe("ᶢǃ"));
 });
 
 describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive)", () => {
@@ -215,7 +215,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~+g", "a")).toBe(nfc("a\u{031D}"));
 	});
 	// ⌥h matches ⌥='s polarity: shift is the *advanced* pole on both keys. RTR/ATR
-	// was promoted here from the poor ⌥q key; ⌥q is native œ again.
+	// was promoted here from the poor ⌥z key (which now holds the operators —
+	// the prime chord went to the workhorse).
 	test("tongue-root on ⌥h: RTR ⌥h a → a̙, ATR ⌥⇧h a → a̘", () => {
 		expect(typed("~h", "a")).toBe(nfc("a\u{0319}"));
 		expect(typed("~+h", "a")).toBe(nfc("a\u{0318}"));
@@ -420,13 +421,13 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~`", "~+i", "u")).toBe(nfc("ừ"));   // huyền + horn
 		expect(typed("~+i", "~/", "o")).toBe(nfc("ở"));   // horn + hỏi stack
 	});
-	// ʿayn/hamza are back — paired on ⌥y (the free pair key; admitted arbitrary).
-	// They transliterate the sounds ʔ ʕ already type: ʾ ≈ 2⇧H's glottal, ʿ ≈ 3⇧H's
-	// pharyngeal. Spacing marks, postfix-free: they just emit.
-	test("Semitic half-rings: ⌥y → ʿ, ⌥⇧y → ʾ", () => {
-		expect(typed("~y")).toBe("ʿ");
-		expect(typed("~+y")).toBe("ʾ");
-		expect(typed("d", "~y", "a")).toBe("dʿa");
+	// ʿayn/hamza are back — paired on ⌥q, the guttural key (⇧Q is the guttural
+	// modifier; 2⇧Q/3⇧Q/7⇧Q the guttural family). They transliterate the sounds
+	// ʔ ʕ already type. Spacing marks: they just emit.
+	test("Semitic half-rings on the guttural key: ⌥q → ʿ, ⌥⇧q → ʾ", () => {
+		expect(typed("~q")).toBe("ʿ");
+		expect(typed("~+q")).toBe("ʾ");
+		expect(typed("d", "~q", "a")).toBe("dʿa");
 	});
 	test("⌥c is the cedilla — a dead key, exactly as on ABC Extended", () => {
 		const step = handleKey("", {key: "c", option: true}, []);
@@ -439,8 +440,8 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("s", "s")).toBe("ss"); // lowercase ss is untouched
 	});
 	test("prosodic boundaries: ‿ linking, ‖ major group", () => {
-		expect(typed("~z")).toBe("‿");
-		expect(typed("~+z")).toBe("‖");
+		expect(typed("~y")).toBe("‿");
+		expect(typed("~+y")).toBe("‖");
 	});
 });
 
@@ -451,13 +452,13 @@ describe("East Asian coverage", () => {
 		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥");           // rising 35
 	});
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
-		expect(typed("m", "a", "2", "~q", "1", "~q", "4", "~q")).toBe("ma²¹⁴"));
+		expect(typed("m", "a", "2", "~z", "1", "~z", "4", "~z")).toBe("ma²¹⁴"));
 
 	test("Chinese affricates: t ⌥j s⇧J → t͡ɕ, t ⌥j s⇧R → t͡ʂ", () => {
 		expect(typed("t", "~j", "s", "+j")).toBe("t\u{0361}ɕ");
 		expect(typed("t", "~j", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
-	test("aspiration via ⌥q: k h ⌥q → kʰ", () => expect(typed("k", "h", "~q")).toBe("kʰ"));
+	test("aspiration via ⌥z: k h ⌥z → kʰ", () => expect(typed("k", "h", "~z")).toBe("kʰ"));
 
 	// All six Vietnamese tones (ngang is unmarked).
 	test("Vietnamese tones on a: ngang sắc huyền hỏi ngã nặng", () => {
@@ -672,9 +673,9 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+a", "+e", "^+n", "+g")).toBe("ÆŊ"));
 });
 
-describe("superscript operator ⌥q", () => {
-	test("aspiration: t h ⌥q → tʰ", () => expect(typed("t", "h", "~q")).toBe("tʰ"));
-	test("no superscriptable base → literal q", () => expect(typed("~q")).toBe("q"));
+describe("superscript operator ⌥z", () => {
+	test("aspiration: t h ⌥z → tʰ", () => expect(typed("t", "h", "~z")).toBe("tʰ"));
+	test("no superscriptable base → literal z", () => expect(typed("~z")).toBe("z"));
 	test("⌥p no longer raises — it's the linguolabial dead key now", () =>
 		expect(typed("~p", "b")).toBe(nfc("b\u{033C}")));
 });
@@ -691,11 +692,11 @@ describe("rhoticity ⌥r — postfix like length", () => {
 		expect(typed("a", "+r")).toBe("aR"));
 });
 
-describe("subscript operator ⌥⇧q", () => {
-	test("digit lowers: x 2 ⌥⇧q → x₂", () => expect(typed("x", "2", "~+q")).toBe("x₂"));
-	test("math run: l o g 2 ⌥⇧q → log₂", () => expect(typed("l", "o", "g", "2", "~+q")).toBe("log₂"));
-	test("schwa lowers: 5 ⇧Y ⌥⇧q → ₔ", () => expect(typed("5", "+y", "~+q")).toBe("ₔ"));
-	test("no subscriptable base → literal q", () => expect(typed("~+q")).toBe("q"));
+describe("subscript operator ⌥⇧z", () => {
+	test("digit lowers: x 2 ⌥⇧z → x₂", () => expect(typed("x", "2", "~+z")).toBe("x₂"));
+	test("math run: l o g 2 ⌥⇧z → log₂", () => expect(typed("l", "o", "g", "2", "~+z")).toBe("log₂"));
+	test("schwa lowers: 5 ⇧Y ⌥⇧z → ₔ", () => expect(typed("5", "+y", "~+z")).toBe("ₔ"));
+	test("no subscriptable base → literal z", () => expect(typed("~+z")).toBe("z"));
 });
 
 describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {

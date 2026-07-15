@@ -309,7 +309,7 @@ function emitBase(glyph: string, pending: Pending): Step {
 	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};
 }
 
-/** ⌥q: superscriptize the previous glyph (`t` `h` ⌥q → tʰ). */
+/** ⌥z: superscriptize the previous glyph (`t` `h` ⌥z → tʰ). */
 function superscriptize(textBefore: string): Edit {
 	const p = lastCluster(textBefore);
 	if (p !== undefined) {
@@ -317,10 +317,10 @@ function superscriptize(textBefore: string): Edit {
 		const sup = sups.get(base);
 		if (sup !== undefined) return replaceCluster(p, recompose(sup, marks));
 	}
-	return {type: "insert", text: "q"};
+	return {type: "insert", text: "z"};
 }
 
-/** ⌥⇧q: subscriptize the previous glyph (`x` `2` ⌥⇧q → x₂). */
+/** ⌥⇧z: subscriptize the previous glyph (`x` `2` ⌥⇧z → x₂). */
 function subscriptize(textBefore: string): Edit {
 	const p = lastCluster(textBefore);
 	if (p !== undefined) {
@@ -328,7 +328,7 @@ function subscriptize(textBefore: string): Edit {
 		const sub = subs.get(base);
 		if (sub !== undefined) return replaceCluster(p, recompose(sub, marks));
 	}
-	return {type: "insert", text: "q"};
+	return {type: "insert", text: "z"};
 }
 
 // ---------------------------------------------------------------- engine
@@ -417,8 +417,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
 			// segment. Explicit — no toggle, no placement guessing.
 			if (key === "j") return emitBase(TIE_BELOW, pending);
-			// ⌥⇧q lowers the previous glyph — the shifted twin of ⌥q's raise.
-			if (key === "q") return withFlush(subscriptize(textBefore));
+			// ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
+			if (key === "z") return withFlush(subscriptize(textBefore));
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
@@ -456,8 +456,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			}
 			const m = optMarks.get(key);
 			if (m !== undefined) return applyMark(m, pending);
-			// ⌥q raises the previous glyph; ⌥p now passes (native π returns).
-			if (key === "q") return withFlush(superscriptize(textBefore));
+			// ⌥z raises the previous glyph — the operators live on the prime chord.
+			if (key === "z") return withFlush(superscriptize(textBefore));
 			return withFlush({type: "pass"});
 		}
 

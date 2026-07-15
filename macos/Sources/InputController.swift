@@ -391,8 +391,8 @@ class InputController: IMKInputController {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
             if oc == "j" { emitBase(String(Self.tieBelow), client); return true }
-            // ⌥⇧q lowers the previous glyph — the shifted twin of ⌥q's raise.
-            if oc == "q" { flushPending(client); return subscriptize(client) }
+            // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
+            if oc == "z" { flushPending(client); return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
             // stress). A capital that forms a digraph ("GitHub" → Giθub) is escaped
             // with Ctrl+Shift now (see handle()'s top), so this no longer competes
@@ -415,7 +415,7 @@ class InputController: IMKInputController {
         }
 
         // Option: the diacritic layer, keyed by the key's unshifted US character
-        // (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥q → superscript, ⌥1–⌥5 →
+        // (⌥e → acute, ⌥6 → circumflex, ⌥; → length, ⌥z → superscript, ⌥1–⌥5 →
         // Chao tone letters ˩˨˧˦˥, ⌥o/⌥i → downstep/upstep). Combining marks are
         // PREFIX (dead-key style, é/ñ); spacing marks stay postfix.
         if opt {
@@ -424,8 +424,8 @@ class InputController: IMKInputController {
             // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
             // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
             if oc == "j" { emitBase(String(Self.tieAbove), client); return true }
-            // ⌥q raises the previous glyph; ⌥p now declines (host's π passes).
-            if oc == "q" { flushPending(client); return superscriptize(client) }
+            // ⌥z raises the previous glyph — the operators live on the prime chord.
+            if oc == "z" { flushPending(client); return superscriptize(client) }
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
             // so ˞ is a spacing character and the visual join onto the vowel is the
             // font's job. The one join the engine owes is ə/ɜ → precomposed ɚ/ɝ,
@@ -713,8 +713,8 @@ class InputController: IMKInputController {
         insert(scalarStr, client)
     }
 
-    /// ⌥q: superscriptize the previous glyph (`t` `h` ⌥q → tʰ). No
-    /// superscriptable base → the literal letter q (never a dead keystroke).
+    /// ⌥z: superscriptize the previous glyph (`t` `h` ⌥z → tʰ). No
+    /// superscriptable base → the literal letter z (never a dead keystroke).
     private func superscriptize(_ client: IMKTextInput) -> Bool {
         if let (p, r) = lastCluster(client) {
             let (base, marks) = decompose(p)
@@ -722,11 +722,11 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(sup, marks), client); return true
             }
         }
-        insert("q", client); return true
+        insert("z", client); return true
     }
 
-    /// ⌥⇧q: subscriptize the previous glyph (`x` `2` ⌥⇧q → x₂). The lowered
-    /// twin of superscriptize. No subscriptable base → the literal letter q.
+    /// ⌥⇧z: subscriptize the previous glyph (`x` `2` ⌥⇧z → x₂). The lowered
+    /// twin of superscriptize. No subscriptable base → the literal letter z.
     private func subscriptize(_ client: IMKTextInput) -> Bool {
         if let (p, r) = lastCluster(client) {
             let (base, marks) = decompose(p)
@@ -734,7 +734,7 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(sub, marks), client); return true
             }
         }
-        insert("q", client); return true
+        insert("z", client); return true
     }
 
     // MARK: - backspace

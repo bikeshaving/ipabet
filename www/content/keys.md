@@ -54,15 +54,15 @@ Marks the IPA chart has no cell for, kept because the layout should be able to w
 
 <BeyondTables/>
 
-## Tier 2 · superscripts (base + ⌥q)
+## Tier 2 · superscripts (base + ⌥z)
 
-Type a glyph, then ⌥q to raise it — one press per glyph (`t` `h` ⌥q → tʰ). The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form.
+Type a glyph, then ⌥z to raise it — one press per glyph (`t` `h` ⌥z → tʰ). The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form.
 
 <SupTable/>
 
-## Tier 2 · subscripts (base + ⌥⇧q)
+## Tier 2 · subscripts (base + ⌥⇧z)
 
-The lowered twin, on the shifted operator: a glyph, then ⌥⇧q (`x` `2` ⌥⇧q → x₂). Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
+The lowered twin, on the shifted operator: a glyph, then ⌥⇧z (`x` `2` ⌥⇧z → x₂). Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
 
 <SubTable/>
 

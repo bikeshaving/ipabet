@@ -922,7 +922,7 @@
    "shiftSense": "placement"
   },
   {
-   "opt": "z",
+   "opt": "y",
    "mark": "‿",
    "type": "spacing",
    "group": "Prosody",
@@ -930,7 +930,8 @@
    "name": "UNDERTIE",
    "double": "‖",
    "doubleCp": "U+2016",
-   "shiftSense": "twin"
+   "shiftSense": "twin",
+   "arbitraryKey": true
   },
   {
    "opt": "j",
@@ -978,7 +979,7 @@
    "shiftSense": "lesser"
   },
   {
-   "opt": "y",
+   "opt": "q",
    "mark": "ʿ",
    "type": "spacing",
    "double": "ʾ",
@@ -986,11 +987,10 @@
    "doubleSpacing": true,
    "group": "Transliteration",
    "cp": "U+02BF",
-   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza)",
+   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza — the gutturals on the guttural key)",
    "ipa": false,
    "beyond": "tenant",
-   "shiftSense": "twin",
-   "arbitraryKey": true
+   "shiftSense": "twin"
   },
   {
    "opt": "r",
@@ -1165,7 +1165,7 @@
   }
  ],
  "superscripts": {
-  "operator": "opt+q",
+  "operator": "opt+z",
   "table": [
    {
     "base": "0",
@@ -1499,7 +1499,7 @@
   "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter (Lm) or superscript digit (No) whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
  },
  "subscripts": {
-  "operator": "opt+shift+q",
+  "operator": "opt+shift+z",
   "table": [
    {
     "base": "0",
@@ -1622,7 +1622,7 @@
     "sub": "ᵪ"
    }
   ],
-  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a modifier letter (Lm) or subscript digit (No) whose compatibility decomposition is <sub> of it — filtered, as the superscripts are, to bases this layout produces (or plain ASCII) and to BMP forms, so the astral Cyrillic subscripts of U+1E0xx (Unicode 16) are excluded as near-universal tofu. No exceptions: there is no ʔ/ʕ analogue and no subscript ɡ, so bare `g` does not subscript. Lives on the shifted twin of the superscript operator (⌥⇧q), so Shift flips a raised glyph to a lowered one."
+  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a modifier letter (Lm) or subscript digit (No) whose compatibility decomposition is <sub> of it — filtered, as the superscripts are, to bases this layout produces (or plain ASCII) and to BMP forms, so the astral Cyrillic subscripts of U+1E0xx (Unicode 16) are excluded as near-universal tofu. No exceptions: there is no ʔ/ʕ analogue and no subscript ɡ, so bare `g` does not subscript. Lives on the shifted twin of the superscript operator (⌥⇧z), so Shift flips a raised glyph to a lowered one."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
