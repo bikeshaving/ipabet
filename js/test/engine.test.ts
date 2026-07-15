@@ -419,8 +419,14 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~`", "~+i", "u")).toBe(nfc("ừ"));   // huyền + horn
 		expect(typed("~+i", "~/", "o")).toBe(nfc("ở"));   // horn + hỏi stack
 	});
-	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
-	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c is the cedilla now.
+	// ʿayn/hamza are back — paired on ⌥y (the free pair key; admitted arbitrary).
+	// They transliterate the sounds ʔ ʕ already type: ʾ ≈ 2⇧H's glottal, ʿ ≈ 3⇧H's
+	// pharyngeal. Spacing marks, postfix-free: they just emit.
+	test("Semitic half-rings: ⌥y → ʿ, ⌥⇧y → ʾ", () => {
+		expect(typed("~y")).toBe("ʿ");
+		expect(typed("~+y")).toBe("ʾ");
+		expect(typed("d", "~y", "a")).toBe("dʿa");
+	});
 	test("⌥c is the cedilla — a dead key, exactly as on ABC Extended", () => {
 		const step = handleKey("", {key: "c", option: true}, []);
 		expect(step.edit.type).toBe("noop");        // a dead key writes nothing…

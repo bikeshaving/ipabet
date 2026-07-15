@@ -981,6 +981,21 @@
    "shiftSense": "lesser"
   },
   {
+   "opt": "y",
+   "mark": "ʿ",
+   "type": "spacing",
+   "double": "ʾ",
+   "doubleCp": "U+02BE",
+   "doubleSpacing": true,
+   "group": "Transliteration",
+   "cp": "U+02BF",
+   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza)",
+   "ipa": false,
+   "beyond": "tenant",
+   "shiftSense": "twin",
+   "arbitraryKey": true
+  },
+  {
    "opt": "r",
    "mark": "˞",
    "type": "spacing",
