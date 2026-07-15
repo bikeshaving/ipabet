@@ -90,6 +90,6 @@ export const TONES: ChartEntry[] = [
 	{glyph: "˩", keys: "~1", name: "Extra low (tone letter)"},
 	{glyph: "ꜜ", keys: "~o", name: "Downstep"},
 	{glyph: "ꜛ", keys: "~+o", name: "Upstep"},
-	{glyph: "↗", keys: "~+r", name: "Global rise"},
-	{glyph: "↘", keys: "~r", name: "Global fall"},
+	{glyph: "↗", keys: "~+q", name: "Global rise"},
+	{glyph: "↘", keys: "~q", name: "Global fall"},
 ];
