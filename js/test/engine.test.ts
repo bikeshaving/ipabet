@@ -224,12 +224,11 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
 		expect(typed("~+w", "o")).toBe(nfc("o\u{0339}"));
 	});
-	// ⌥7 now carries ʿayn; the free slots are ⌥8 and (since cedilla moved to
-	// the comma key) ⌥c. An unassigned ⌥ digit inserts the digit; an unassigned
-	// ⌥ letter passes, so the host's own Option typography (⌥c → ç) survives.
-	// The ⌥ number row is now FULL: ⌥1–⌥5 Chao tone bars, ⌥6 velopharyngeal friction,
-	// ⌥7 horn (VNI's own key), ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to
-	// leave ⌥6 §, ⌥7 ¶, ⌥8 • to the host — a lawyer's row, not a phonetician's.
+	// The ⌥ number row is the tone system in increasing scope, then extIPA:
+	// ⌥1–⌥5 Chao tone bars, ⌥6 downstep (⇧ upstep), ⌥7 global fall (⇧ rise),
+	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
+	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
+	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
 	test("the ⌥ number row is fully claimed", () => {
 		for (const d of "1234567890")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
@@ -410,13 +409,15 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~c", "e")).toBe(nfc("ȩ"));    // a general cedilla, not a ç key
 	});
 	test("Vietnamese horn, and horn stacking with tone", () => {
-		// the horn is on ⌥7 — Vietnamese VNI encodes it as the digit 7 (ơ = o7, ư = u7),
-		// so the key is one a Vietnamese typist already knows. It used to be parked on
-		// ⌥y, an arbitrary key that was also destroying ¥.
-		expect(typed("~7", "o")).toBe(nfc("ơ"));
-		expect(typed("~7", "u")).toBe(nfc("ư"));
-		expect(typed("~`", "~7", "u")).toBe(nfc("ừ"));   // huyền + horn
-		expect(typed("~7", "~+7", "o")).toBe(nfc("ở"));   // horn + hỏi, both on ⌥7
+		// the horn is on ⌥⇧i — ABC Extended's own horn key (the circumflex key's ⇧
+		// form: the two Vietnamese vowel-shape marks share the i). VNI's o7/u7
+		// digit convention lost the slot to the tone row's global-contour arrows.
+		// Hỏi sits on the question key: the hook above is a dotless ?, and hỏi is
+		// the questioning tone.
+		expect(typed("~+i", "o")).toBe(nfc("ơ"));
+		expect(typed("~+i", "u")).toBe(nfc("ư"));
+		expect(typed("~`", "~+i", "u")).toBe(nfc("ừ"));   // huyền + horn
+		expect(typed("~+i", "~/", "o")).toBe(nfc("ở"));   // horn + hỏi stack
 	});
 	// ʿayn/hamza were dropped: their one natural home (⌥⇧2/⌥⇧3, beside ʔ ʕ) is the
 	// load-bearing @ / # escape, and ʔ ʕ cover the sounds. ⌥c is the cedilla now.
@@ -456,7 +457,7 @@ describe("East Asian coverage", () => {
 		expect(typed("a")).toBe("a");
 		expect(typed("~e", "a")).toBe(nfc("á"));
 		expect(typed("~`", "a")).toBe(nfc("à"));
-		expect(typed("~+7", "a")).toBe(nfc("ả"));   // hỏi on ⌥⇧7, U+0309
+		expect(typed("~/", "a")).toBe(nfc("ả"));    // hỏi on ⌥/, U+0309
 		expect(typed("~n", "a")).toBe(nfc("ã"));
 		expect(typed("~+.", "a")).toBe(nfc("ạ"));
 	});
@@ -690,7 +691,7 @@ describe("subscript operator ⌥⇧q", () => {
 	test("no subscriptable base → literal q", () => expect(typed("~+q")).toBe("q"));
 });
 
-describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
+describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 	test("levels: ⌥1→˩ ⌥2→˨ ⌥3→˧ ⌥4→˦ ⌥5→˥", () => {
 		expect(typed("~1")).toBe("˩");
 		expect(typed("~2")).toBe("˨");
@@ -700,10 +701,16 @@ describe("Chao tone letters (⌥1–⌥5) + register steps (⌥7/⌥8)", () => {
 	});
 	test("contours stack: m a ⌥3 ⌥5 → ma˧˥ (mid-rising)", () =>
 		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥"));
-	test("downstep ⌥o → ꜜ, upstep ⌥⇧o → ꜛ (twin)", () => {
-		expect(typed("~o")).toBe("ꜜ");
-		expect(typed("~+o")).toBe("ꜛ");
+	test("step: ⌥6 → ꜜ, ⌥⇧6 → ꜛ (shift is the upward member)", () => {
+		expect(typed("~6")).toBe("ꜜ");
+		expect(typed("~+6")).toBe("ꜛ");
 	});
+	test("contour: ⌥7 → ↘, ⌥⇧7 → ↗", () => {
+		expect(typed("~7")).toBe("↘");
+		expect(typed("~+7")).toBe("↗");
+	});
+	test("⌥o and ⌥y pass to the host again (ø and the half-rings' key)", () =>
+		expect(handleKey("", {key: "o", option: true}).edit.type).toBe("pass"));
 });
 
 describe("rhotic hook on any vowel", () => {

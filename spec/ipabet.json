@@ -714,7 +714,10 @@
    "type": "combining",
    "group": "Tone",
    "cp": "U+0302",
-   "name": "COMBINING CIRCUMFLEX ACCENT"
+   "name": "COMBINING CIRCUMFLEX ACCENT",
+   "double": "̛",
+   "doubleCp": "U+031B",
+   "shiftSense": "twin"
   },
   {
    "opt": "v",
@@ -989,7 +992,7 @@
    "shiftSense": "twin"
   },
   {
-   "opt": "y",
+   "opt": "7",
    "mark": "↘",
    "type": "spacing",
    "group": "Tone",
@@ -1000,7 +1003,7 @@
    "shiftSense": "greater"
   },
   {
-   "opt": "o",
+   "opt": "6",
    "mark": "ꜜ",
    "type": "spacing",
    "group": "Tone",
@@ -1049,20 +1052,6 @@
    "group": "Tone",
    "cp": "U+02E5",
    "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR"
-  },
-  {
-   "opt": "6",
-   "mark": "͌",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+034C",
-   "name": "COMBINING ALMOST EQUAL TO ABOVE",
-   "ipa": false,
-   "beyond": "extIPA",
-   "double": "͎",
-   "doubleCp": "U+034E",
-   "shiftSense": "twin",
-   "arbitraryKey": true
   },
   {
    "opt": "8",
@@ -1148,17 +1137,14 @@
    "shiftSense": "below"
   },
   {
-   "opt": "7",
-   "mark": "̛",
+   "opt": "/",
+   "mark": "̉",
    "type": "combining",
    "group": "Transliteration",
-   "cp": "U+031B",
-   "name": "COMBINING HORN",
+   "cp": "U+0309",
+   "name": "COMBINING HOOK ABOVE (hỏi)",
    "ipa": false,
-   "beyond": "tenant",
-   "double": "̉",
-   "doubleCp": "U+0309",
-   "shiftSense": "twin"
+   "beyond": "tenant"
   }
  ],
  "superscripts": {

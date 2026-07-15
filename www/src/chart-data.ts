@@ -89,8 +89,10 @@ export const TONES: ChartEntry[] = [
 	{glyph: "˧", keys: "~3", name: "Mid (tone letter)"},
 	{glyph: "˨", keys: "~2", name: "Low (tone letter)"},
 	{glyph: "˩", keys: "~1", name: "Extra low (tone letter)"},
-	{glyph: "ꜜ", keys: "~o", name: "Downstep"},
-	{glyph: "ꜛ", keys: "~+o", name: "Upstep"},
-	{glyph: "↗", keys: "~+y", name: "Global rise"},
-	{glyph: "↘", keys: "~y", name: "Global fall"},
+	// The tone row in increasing scope: ⌥1–5 the level bars, ⌥6 relative step,
+	// ⌥7 global contour. Shift is the upward member of both arrow pairs.
+	{glyph: "ꜜ", keys: "~6", name: "Downstep"},
+	{glyph: "ꜛ", keys: "~+6", name: "Upstep"},
+	{glyph: "↗", keys: "~+7", name: "Global rise"},
+	{glyph: "↘", keys: "~7", name: "Global fall"},
 ];
