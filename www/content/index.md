@@ -45,8 +45,8 @@ Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes]
 IPAbet is in active development ahead of its first signed release. To build from source today:
 
 1. Clone [github.com/bikeshaving/ipabet](https://github.com/bikeshaving/ipabet) and run <kbd>cd macos &amp;&amp; ./build.sh install</kbd>
-2. The install registers the input method into your session — **IPA** appears in the input menu immediately, no logout.
-3. If it doesn't, log out and back in once, then System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → **IPA**.
+2. **Log out and back in** — macOS registers new input methods at login. (The install also attempts same-session registration; if **IPA** is already in your input menu, skip the logout.)
+3. Pick **IPA** in the input menu, or add it under System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → **IPA**.
 
 <div class="note">A notarized installer package and Homebrew cask are coming with the first release — no Xcode, no logout surprises un-narrated.</div>
 

@@ -56,17 +56,21 @@ PLIST="build/component.plist"
 pkgbuild --analyze --root "$PKGROOT" "$PLIST"
 /usr/libexec/PlistBuddy -c 'Set :0:BundleIsRelocatable false' "$PLIST"
 
-# postinstall registers the input method into the logged-in user's session
-# (TISRegisterInputSource via the binary's --register mode), so installing
-# needs no logout in the normal case.
+# postinstall makes a BEST-EFFORT registration into the logged-in user's
+# session: launchctl asuser joins the user's Mach bootstrap namespace (a bare
+# sudo -u from the installer daemon stays outside the Aqua session, where TIS
+# calls succeed into a namespace the input menu never reads). Even done
+# right, macOS only reliably registers brand-new input methods at login — so
+# the conclusion page documents the logout, and this is a bonus when it works.
 SCRIPTS="build/scripts"
 mkdir -p "$SCRIPTS"
 cat > "$SCRIPTS/postinstall" <<'EOF'
 #!/bin/bash
-# Runs as root; TIS registration must happen as the console user.
 u=$(stat -f%Su /dev/console)
-if [ -n "$u" ] && [ "$u" != "root" ]; then
-  sudo -u "$u" "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
+uid=$(id -u "$u" 2>/dev/null)
+if [ -n "$uid" ] && [ "$u" != "root" ]; then
+  launchctl asuser "$uid" sudo -u "$u" \
+    "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
 fi
 exit 0
 EOF
@@ -84,12 +88,13 @@ cat > "$RES/conclusion.html" <<'EOF'
 body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
 kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
 </style></head><body>
-<h3>IPAbet is installed and registered.</h3>
-<p>Pick <b>IPA</b> in the input menu (top-right of the menu bar) and start typing —
-<kbd>s</kbd> <kbd>⇧H</kbd> → ʃ. The cheat sheet lives in the same menu.</p>
-<p>If <b>IPA</b> is missing from the input menu, log out and back in once —
-macOS occasionally requires it for brand-new input methods — then add it under
-System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.</p>
+<h3>IPAbet is installed.</h3>
+<p><b>Log out and back in</b> — macOS registers new input methods at login —
+then pick <b>IPA</b> in the input menu (top-right of the menu bar) and start
+typing: <kbd>s</kbd> <kbd>⇧H</kbd> → ʃ. The cheat sheet lives in the same menu.</p>
+<p>(If <b>IPA</b> is already in your input menu, the logout isn't needed. If it's
+missing after logging back in, add it under System Settings → Keyboard →
+Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.)</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"

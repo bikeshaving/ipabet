@@ -40,6 +40,6 @@ if [[ "${1:-}" == "install" ]]; then
   rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
-    && echo "installed + registered — IPA is in the input menu, no logout needed." \
+    && echo "installed; registration attempted — if IPA is not in the input menu, log out/in." \
     || echo "installed; registration failed — log out/in and add it in System Settings."
 fi
