@@ -3,7 +3,7 @@ title: IPAbet — keystroke reference (machine-readable)
 description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint. Raw JSON at /ipabet.json."
 ---
 
-The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. [Visual chart](/chart) · [home](/).
+The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **AltGr** — the right Alt key — mapped 1:1, and `⌥⇧` is AltGr+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
 
 ## Tier 1 · base letters (identity)
 
@@ -13,7 +13,7 @@ Bare Latin keys that are their own IPA value.
 
 ## Tier 1 · number-row bases
 
-IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, ⇧2–7 are all their native symbols now (@ # $ % ^ &). The tie bar — the one combining joiner — left the number row for <kbd>⌥J</kbd> (join); see the Option layer below.
+IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols now (@ # $ % ^ &). The tie bar — the one combining joiner — left the number row for <kbd>⌥J</kbd> (join); see the Option layer below.
 
 <SegTable kind="shiftNum"/>
 
@@ -29,18 +29,18 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 ## Tier 1 · escapes (getting a literal character back)
 
-⇧+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off:
+`⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off:
 
 | Keystroke | Effect |
 | --- | --- |
-| ⌃⇧+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
-| Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). ⇧ still means the modifier while locked. |
-| ⌥⇧1 | `¡` (a deliberate spend). Every other shifted digit types its symbol directly now, so the raw-US digit escape is retired. |
-| ⌃⇧Space | The **Raw-US Lock**: the whole keyboard goes native until pressed again — the sticky member of the ⌃⇧ escape family. |
+| `⌃⇧`+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
+| Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). `⇧` still means the modifier while locked. |
+| `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly now, so the raw-US digit escape is retired. |
+| `⌃⇧Space` | The **Raw-US Lock**: the whole keyboard goes native until pressed again — the sticky member of the `⌃⇧` escape family. |
 
 ## Tier 2 · diacritics & suprasegmentals (Option layer)
 
-Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press ⌥+key, then the base absorbs the mark (⌥n then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, ⌥⇧+key gives it (⌥⇧n → creaky, ⌥⇧' → secondary stress). Backspace cancels a pending mark. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
+Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky, `⌥⇧'` → secondary stress). Backspace cancels a pending mark. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
 
 <MarkTable kind="ipa"/>
 
@@ -70,10 +70,10 @@ A combining key may carry a **cycle**: pressing it again on its own pending mark
 
 | Key | Family |
 | --- | --- |
-| ⌥n ⌥n… | ◌̃ nasalized → ◌͊ denasal → ◌͋ nasal escape → ◌͌ velopharyngeal |
-| ⌥w ⌥w… | ◌̜ less rounded → ◌͍ labial spreading |
-| ⌥⇧w ⌥⇧w… | ◌̹ more rounded → ◌͎ whistled |
-| ⌥j ⌥j | the same joiner chord again toggles the emitted tie ⇄ ◌͢ sliding; the other chord flips placement |
+| `⌥n ⌥n`… | ◌̃ nasalized → ◌͊ denasal → ◌͋ nasal escape → ◌͌ velopharyngeal |
+| `⌥w ⌥w`… | ◌̜ less rounded → ◌͍ labial spreading |
+| `⌥⇧w ⌥⇧w`… | ◌̹ more rounded → ◌͎ whistled |
+| `⌥j ⌥j` | the same joiner chord again toggles the emitted tie ⇄ ◌͢ sliding; the other chord flips placement |
 
 ## Quotes by locale
 

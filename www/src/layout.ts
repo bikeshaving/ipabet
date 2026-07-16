@@ -1,6 +1,8 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Raw, type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
+// @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
+import keycapsClient from "./keycaps-client.ts" with {assetBase: "/assets/"};
 
 // The shared server shell — the one place doctype/head/meta/title/<style> live,
 // instead of being re-typed at the top of every page. A page is a component that
@@ -30,7 +32,10 @@ export function Layout({title, desc, styles = [], css, children}: LayoutProps) {
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
 				${css === undefined ? null : jsx`<style><${Raw} value=${css} /></style>`}
 			</head>
-			<body>${children}</body>
+			<body>
+				${children}
+				<script type="module" src=${keycapsClient}></script>
+			</body>
 		</html>`;
 }
 

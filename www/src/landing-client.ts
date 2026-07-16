@@ -9,6 +9,7 @@
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {bindIPAInput} from "./ipa-input.ts";
+import {displayKeys, KEYMODE_EVENT} from "./keycaps.ts";
 
 interface Demo {
 	word: string;
@@ -36,7 +37,7 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 
 	// ------------------------------------------------------------- rendering
 	function Bars({hits}: {hits: number}) {
-		return target().steps.map(([k], i) => jsx`<kbd class=${i < hits ? "hit" : undefined}>${k}</kbd>`);
+		return target().steps.map(([k], i) => jsx`<kbd class=${i < hits ? "hit" : undefined}>${displayKeys(k)}</kbd>`);
 	}
 	function paint(hits: number, done = false, pend = "") {
 		renderer.render(jsx`<${Bars} hits=${hits} />`, keysEl!);
@@ -109,6 +110,12 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 
 	document.getElementById("demoprev")?.addEventListener("click", () => setTarget(ti - 1));
 	document.getElementById("demonext")?.addEventListener("click", () => setTarget(ti + 1));
+
+	// Keystroke labels follow the platform toggle; the attract loop repaints on
+	// its own beat, so only a live (visitor-held) hero needs an explicit repaint.
+	window.addEventListener(KEYMODE_EVENT, () => {
+		if (live) paintLive();
+	});
 
 	demo();
 }

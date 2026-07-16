@@ -66,6 +66,7 @@
 	transition: transform .08s, background .12s, border-color .12s, color .12s, box-shadow .12s; }
 .kb:active { transform: translateY(1px); }
 .kb.wide { flex: 1.5 1 0; } .kb.space { flex: 6 1 0; }
+[data-keymode="pc"] .kb.wide { font-size: .78em; } /* "Shift"/"AltGr" caps, not ⇧/⌥ */
 .kb.hot { background: var(--accent); border-color: var(--accent); color: #fff;
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
 .kb.armed, .kb.need { border-color: var(--accent); color: var(--accent); }

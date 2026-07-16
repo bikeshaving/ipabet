@@ -10,6 +10,7 @@
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
 import {keystrokeFromLabel} from "./keystrokes.ts";
+import {displayKeys, KEYMODE_EVENT} from "./keycaps.ts";
 import {
 	handleKey,
 	handleBackspace,
@@ -117,7 +118,7 @@ function Drill() {
 			Lesson ${li + 1} / ${LESSONS.length} — ${les.title}${
 				les.sound
 					? jsx` · new sound <span class="g">/${les.sound}/</span>${
-							les.keys ? jsx`  type ${les.keys.map((k) => jsx`<kbd>${k}</kbd> `)}` : null
+							les.keys ? jsx`  type ${les.keys.map((k) => jsx`<kbd>${displayKeys(k)}</kbd> `)}` : null
 						}`
 					: null
 			}
@@ -138,7 +139,7 @@ function Drill() {
 				? jsx`<button id="hintbtn" onclick=${() => { shown = true; hinted = true; render(); }}>reveal answer</button>`
 				: showKeys
 					// The keys as bars that light as you walk the sequence.
-					? w.labels.map((l, i) => jsx`<kbd class=${i < p ? "hit" : undefined}>${l}</kbd>`)
+					? w.labels.map((l, i) => jsx`<kbd class=${i < p ? "hit" : undefined}>${displayKeys(l)}</kbd>`)
 					: jsx`<button id="hintbtn" onclick=${() => { hinted = true; render(); }}>show keys</button>`
 		}</div>
 		<div id="streak">${streak > 2 ? `${streak} in a row` : ""}</div>`;
@@ -158,12 +159,12 @@ function Keyboard() {
 	return jsx`
 		${KB_ROWS.map((chars, ri) => jsx`
 			<div class="kbrow">
-				${ri === 3 ? cap("⇧", mod("kb wide mshift", shiftArmed, nk?.shift === true), "", () => { shiftArmed = !shiftArmed; render(); }) : null}
+				${ri === 3 ? cap(displayKeys("⇧"), mod("kb wide mshift", shiftArmed, nk?.shift === true), "", () => { shiftArmed = !shiftArmed; render(); }) : null}
 				${[...chars].map((ch) => cap(ch, hot(ch), ch, () => tapChar(ch)))}
 				${ri === 3 ? cap("⌫", "kb wide", "", doBackspace) : null}
 			</div>`)}
 		<div class="kbrow">
-			${cap("⌥", mod("kb wide mopt", optArmed, nk?.option === true), "", () => { optArmed = !optArmed; render(); })}
+			${cap(displayKeys("⌥"), mod("kb wide mopt", optArmed, nk?.option === true), "", () => { optArmed = !optArmed; render(); })}
 			${cap("space", hot(" ") + " space", " ", () => tapChar(" "))}
 		</div>`;
 }
@@ -291,6 +292,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 // --------------------------------------------------------------- wiring
+window.addEventListener(KEYMODE_EVENT, () => render()); // keystroke labels follow the platform toggle
 document.getElementById("indextoggle")?.addEventListener("click", () => { indexOpen = !indexOpen; render(); });
 document.getElementById("prevlesson")?.addEventListener("click", () => goLesson(li - 1));
 document.getElementById("nextlesson")?.addEventListener("click", () => goLesson(li + 1));
