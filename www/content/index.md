@@ -58,4 +58,4 @@ IPAbet is in active development ahead of its first signed release. To build from
 
 **What does it cover?** The full standard IPA chart — every consonant, vowel, click, diacritic, and suprasegmental, including Chao tone letters (<kbd>⌥1</kbd>–<kbd>⌥5</kbd>) and both tie bars. And the full extIPA set — the extensions for disordered speech — every 2015 diacritic.
 
-**Privacy?** IPAbet is fully offline, makes no network connections, and is open source (MIT).
+**Privacy?** An input method sees every keystroke, so IPAbet doesn't ask for trust — it's **App-Sandboxed with zero network entitlements**: macOS itself denies it any network access. Fully offline by OS enforcement, and open source (MIT), so you can check both claims.

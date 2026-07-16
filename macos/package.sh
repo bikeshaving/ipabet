@@ -33,8 +33,10 @@ echo "version:          $VERSION"
 # --- 1. fresh build ---
 ./build.sh
 
-# --- 2. sign the app for distribution: hardened runtime + secure timestamp ---
-codesign --force --options runtime --timestamp --sign "$DEVID_APP" "$APP"
+# --- 2. sign for distribution: hardened runtime + App Sandbox (no network
+# entitlement — the OS enforces the no-phoning-home claim) + timestamp ---
+codesign --force --options runtime --timestamp \
+	--entitlements IPAbet.entitlements --sign "$DEVID_APP" "$APP"
 codesign --verify --strict --verbose=2 "$APP"
 
 # --- 3. stage under /Library/Input Methods and build the component pkg ---

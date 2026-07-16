@@ -23,8 +23,9 @@ cp ../www/src/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's
 mkdir -p "$APP/Contents/Resources/en.lproj"
 cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 
-# Ad-hoc sign (required on Apple Silicon)
-codesign --force --deep --sign - "$APP"
+# Ad-hoc sign (required on Apple Silicon), sandboxed exactly like the
+# distribution build so dev and shipped behavior can't diverge.
+codesign --force --deep --entitlements IPAbet.entitlements --sign - "$APP"
 
 echo "built $APP"
 
