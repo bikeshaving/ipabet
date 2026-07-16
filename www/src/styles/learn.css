@@ -72,10 +72,13 @@
 .kb.armed, .kb.need { border-color: var(--accent); color: var(--accent); }
 #controls { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: 1.5rem 0 -.75rem; flex-wrap: wrap; }
 #lessonnav { display: flex; align-items: center; gap: .4rem; }
-#lessonnav button { appearance: none; width: 1.9rem; height: 1.9rem; border-radius: 999px;
+#lessonnav button { appearance: none; border-radius: 999px;
 	border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer;
 	font-size: .7rem; line-height: 1; display: grid; place-items: center;
 	transition: color .15s, border-color .15s; }
+/* Only the arrows are one-glyph circles; the id rule below can't outgun
+   `#lessonnav button` (1-0-1 beats 1-0-0), so sizing must not live there. */
+#prevlesson, #nextlesson { width: 1.9rem; height: 1.9rem; }
 #lessonnav button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
 #lessonnav button:disabled { opacity: .35; cursor: default; }
 #indextoggle { font-size: .74rem; letter-spacing: .02em; color: var(--dim); background: var(--bg);
