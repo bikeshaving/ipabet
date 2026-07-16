@@ -52,7 +52,10 @@ svg text.axis { font-size: 9px; fill: var(--dim); }
 .webnav { text-align: center; font-family: -apple-system, sans-serif; font-size: 0.85rem; padding: 0.75rem; }
 @media print {
 	html { background: #fff; }
-	.sheet { box-shadow: none; margin: 0; width: auto; min-height: auto; padding: 0; zoom: 0.78; }
-	.webnav { display: none; }
-	@page { size: letter portrait; margin: 0.35in; }
+	.sheet { box-shadow: none; margin: 0; width: auto; min-height: auto; padding: 0; zoom: 0.72; }
+	.webnav, .screen-only { display: none; }
+	h3 { margin: 0.1in 0 0.05in; }
+	.attrib { margin-top: 0.07in; }
+	.fine { margin-top: 2pt; }
+	@page { size: letter portrait; margin: 0.3in; }
 }

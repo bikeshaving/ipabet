@@ -53,7 +53,8 @@ function pill(): void {
 		"padding:.5em .85em;border-radius:999px;cursor:pointer;" +
 		"border:1px solid color-mix(in srgb, CanvasText 30%, transparent);" +
 		"background:Canvas;color:CanvasText;opacity:.6}" +
-		"#keymode-pill:hover,#keymode-pill:focus-visible{opacity:1}";
+		"#keymode-pill:hover,#keymode-pill:focus-visible{opacity:1}" +
+		"@media print{#keymode-pill{display:none}}"; // a screen control, never ink
 	document.head.append(style);
 	document.body.append(b);
 }
