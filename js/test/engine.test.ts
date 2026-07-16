@@ -807,6 +807,10 @@ describe("option-shift raw escape", () => {
 	// and the ⇧-transform never fires. (⌥⇧/ — hỏi has no second form.)
 	test("⌥⇧/ declines, so no transform reaches back", () =>
 		expect(handleKey("s", {key: "/", shift: true, option: true}).edit.type).toBe("pass"));
+	test("the grapheme brackets: ⌥\\ → ⟨, ⌥⇧\\ → ⟩ (citing orthography: ⟨c⟩ spells /k/)", () => {
+		expect(typed("~\\")).toBe("⟨");
+		expect(typed("~+\\")).toBe("⟩");
+	});
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });

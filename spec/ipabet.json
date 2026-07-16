@@ -1203,6 +1203,20 @@
    "shiftSense": "greater"
   },
   {
+   "opt": "\\",
+   "mark": "⟨",
+   "type": "spacing",
+   "double": "⟩",
+   "doubleCp": "U+27E9",
+   "doubleSpacing": true,
+   "group": "Transliteration",
+   "cp": "U+27E8",
+   "name": "MATHEMATICAL LEFT ANGLE BRACKET (the grapheme brackets — /phoneme/ [phone] ⟨grapheme⟩; opening unshifted, per the quote law. The « » this displaces return as the French locale's primary quotes)",
+   "ipa": false,
+   "beyond": "tenant",
+   "shiftSense": "twin"
+  },
+  {
    "opt": "o",
    "mark": "̯",
    "clone": "˯",
