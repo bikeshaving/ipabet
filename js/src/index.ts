@@ -171,9 +171,30 @@ const isGreekUpper = (c: string): boolean => {
 
 
 // The tie bar (⌥j) and its below-form (⌥⇧j). The tie goes BELOW when the glyphs'
-// descenders would collide with a bar above (t͜ɕ, d͜ʒ, k͜p).
+// descenders would collide with a bar above (t͜ɕ, d͜ʒ, k͜p). The joiners are a
+// FAMILY: a repeat press advances the just-emitted one in place (lookback, like
+// the ɚ fusion) — ͡ → ͜ → ͢ (extIPA's sliding articulation) → wrap. Two tie
+// bars stacked was never a transcription; now the second press means "the next
+// joiner" instead.
 const TIE = "͡";
 const TIE_BELOW = "͜";
+const SLIDE = "͢";
+const JOINERS = [TIE, TIE_BELOW, SLIDE];
+
+/** ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or, if one was just
+ *  emitted, advance it through the family in place. */
+function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
+	const p = lastCluster(textBefore);
+	if (p !== undefined && pending.length === 0) {
+		const last = [...p].pop()!;
+		const at = JOINERS.indexOf(last);
+		if (at >= 0) {
+			const next = JOINERS[(at + 1) % JOINERS.length];
+			return {edit: {type: "replace", length: last.length, text: next}, pending: []};
+		}
+	}
+	return emitBase(start, pending);
+}
 
 // Mark PLACEMENT is the transcriber's, never the engine's.
 //
@@ -424,7 +445,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// The tie bar's BELOW form (⌥⇧j → U+035C, for colliding descenders: t͜ɕ,
 			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
 			// segment. Explicit — no toggle, no placement guessing.
-			if (key === "j") return emitBase(TIE_BELOW, pending);
+			if (key === "j") return emitJoiner(textBefore, TIE_BELOW, pending);
 			// ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
 			if (key === "z") return withFlush(subscriptize(textBefore));
 			const m2 = optMarks.get(key);
@@ -449,7 +470,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): it attaches to
 			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
 			// immediately. ⌥j — j for JOIN. (Below-form ⌥⇧j is in the block above.)
-			if (key === "j") return emitBase(TIE, pending);
+			if (key === "j") return emitJoiner(textBefore, TIE, pending);
 			// Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
 			// so ˞ is a spacing character and the visual join onto the vowel is the
 			// font's job, not the engine's. The one real join the engine owes is

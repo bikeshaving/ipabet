@@ -398,7 +398,7 @@ class InputController: IMKInputController {
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
-            if oc == "j" { emitBase(String(Self.tieBelow), client); return true }
+            if oc == "j" { emitJoiner(Self.tieBelow, client); return true }
             // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
             if oc == "z" { flushPending(client); return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
@@ -431,7 +431,7 @@ class InputController: IMKInputController {
             guard oc.count == 1 else { flushPending(client); return false }
             // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
             // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
-            if oc == "j" { emitBase(String(Self.tieAbove), client); return true }
+            if oc == "j" { emitJoiner(Self.tieAbove, client); return true }
             // ⌥z raises the previous glyph — the operators live on the prime chord.
             if oc == "z" { flushPending(client); return superscriptize(client) }
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
@@ -618,6 +618,10 @@ class InputController: IMKInputController {
     /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
     private static let tieBelow: Unicode.Scalar = "\u{035C}"
+    /// The joiner family: tie above → tie below → extIPA's sliding articulation.
+    /// A repeat press advances the just-emitted joiner in place (lookback, like
+    /// the ɚ fusion) — two stacked tie bars was never a transcription.
+    private static let joiners: [Unicode.Scalar] = ["\u{0361}", "\u{035C}", "\u{0362}"]
     /// The stroke overlay's precomposed family (⌥l, ABC Extended's stroke key).
     private static let stroked: [String: String] = [
         "l": "ł", "L": "Ł", "d": "đ", "D": "Đ", "t": "ŧ", "T": "Ŧ",
@@ -704,6 +708,20 @@ class InputController: IMKInputController {
             pending.append(scalar)
         }
         updateMarked(client)
+    }
+
+    /// ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or, if one was just
+    /// emitted, advance it through the family in place. Mirrors js emitJoiner.
+    private func emitJoiner(_ start: Unicode.Scalar, _ client: IMKTextInput) {
+        if pending.isEmpty, let (p, r) = lastCluster(client), let last = p.unicodeScalars.last,
+           let at = Self.joiners.firstIndex(of: last) {
+            let next = Self.joiners[(at + 1) % Self.joiners.count]
+            var scalars = Array(p.unicodeScalars.dropLast())
+            scalars.append(next)
+            replace(r, with: String(String.UnicodeScalarView(scalars)), client)
+            return
+        }
+        emitBase(String(start), client)
     }
 
     /// Emit a base glyph, committing any pending prefix diacritics onto it.

@@ -780,6 +780,19 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
 });
 
+describe("the joiner family (⌥j repeat-walks: tie → tie-below → sliding)", () => {
+	test("t ⌥j s → t͡s; a second ⌥j advances the emitted joiner, never stacks", () => {
+		expect(typed("t", "~j", "s")).toBe(nfc("t\u{0361}s"));
+		expect(typed("t", "~j", "~j", "s")).toBe(nfc("t\u{035C}s"));   // → tie below
+		expect(typed("t", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0362}s")); // → sliding (extIPA)
+		expect(typed("t", "~j", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0361}s")); // wraps
+	});
+	test("⌥⇧j starts at tie-below and walks the same family", () => {
+		expect(typed("t", "~+j", "s")).toBe(nfc("t\u{035C}s"));
+		expect(typed("t", "~+j", "~+j", "s")).toBe(nfc("t\u{0362}s"));
+	});
+});
+
 describe("rhotic hook on any vowel", () => {
 	test("rhoticity is a dimension: e ⌥r → e˞, ʌ ⌥r → ʌ˞", () => {
 		expect(typed("e", "~r")).toBe("e˞");
