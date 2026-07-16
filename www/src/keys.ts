@@ -76,7 +76,6 @@ const keysComponents = {
 	RulesTable: () => jsx`
 		<${Table}>
 			<tr><td class="k">vowel ⌥r</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity — postfix like length (5 ⇧Y ⌥r → ɚ, 5 ⇧H ⌥r → ɝ precomposed; every other vowel takes the hook)</td></tr>
-			<tr><td class="k">obstruent ⇧X</td><td class="g">Cʼ</td><td class="cp">U+02BC</td><td>ejective (eXplosive) — appends ʼ to a voiceless obstruent (p t ʈ c k q ɸ f θ s ʃ ʂ ç x χ ɬ); open class</td></tr>
 		<//>`,
 	BeyondTables: () =>
 		Object.entries(classes.beyond).map(([k, desc]) => jsx`

@@ -88,7 +88,7 @@ function PulmonicTable() {
 
 const CLICKS: [string, string][] = [["ʘ", "Bilabial"], ["ǀ", "Dental"], ["ǃ", "(Post)alveolar"], ["ǂ", "Palatoalveolar"], ["ǁ", "Alveolar lateral"]];
 const IMPLOSIVES: [string, string][] = [["ɓ", "Bilabial"], ["ɗ", "Dental/alveolar"], ["ʄ", "Palatal"], ["ɠ", "Velar"], ["ʛ", "Uvular"]];
-const EJECTIVES: [string, string, string][] = [["pʼ", "Bilabial", "p ⇧X"], ["tʼ", "Dental/alveolar", "t ⇧X"], ["kʼ", "Velar", "k ⇧X"], ["sʼ", "Alveolar fricative", "s ⇧X"]];
+const EJECTIVES: [string, string, string][] = [["pʼ", "Bilabial", "p ⌥q"], ["tʼ", "Dental/alveolar", "t ⌥q"], ["kʼ", "Velar", "k ⌥q"], ["sʼ", "Alveolar fricative", "s ⌥q"]];
 
 const OTHER: [string, string, string?][] = [
 	["ʍ", "Voiceless labial-velar fricative"],
@@ -119,7 +119,7 @@ function NonPulmonic() {
 			<div>
 				<h4>Ejectives</h4>
 				${EJECTIVES.map(([g, name, keys]) => Li(g, name, keys))}
-				<div class="fine">…any voiceless obstruent + ⇧X</div>
+				<div class="fine">…any base + ⌥q</div>
 			</div>
 		</div>`;
 }
@@ -333,7 +333,7 @@ export const CHART_JSON = JSON.stringify(
 		clicks: CLICKS.map(([g, n]) => sym(g, n)),
 		implosives: IMPLOSIVES.map(([g, n]) => sym(g, n)),
 		ejectives: {
-			rule: "any voiceless obstruent + ⇧X",
+			rule: "any base + ⌥q",
 			examples: EJECTIVES.map(([g, n, k]) => sym(g, n, k)),
 		},
 		other: OTHER.map(([g, n, fb]) => sym(g, n, fb)),

@@ -120,7 +120,7 @@ describe("clicks (C modifier)", () => {
 		expect(typed("g", "~z", "q", "+c")).toBe("ᶢǃ"));
 });
 
-describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive)", () => {
+describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥q mark", () => {
 	test("implosives — voiced stops via ⇧P", () => {
 		expect(typed("b", "+p")).toBe("ɓ");
 		expect(typed("d", "+p")).toBe("ɗ");
@@ -132,22 +132,32 @@ describe("airstream: implosives (⇧P, imPlosive) and ejectives (⇧X, eXplosive
 		expect(typed("g", "+g")).toBe("gG"); // gG→ʛ removed; ɢ stays on gQ
 		expect(typed("g", "+q")).toBe("ɢ");
 	});
-	test("ejective — ⇧X appends ʼ to a voiceless obstruent", () => {
-		expect(typed("k", "+x")).toBe("k\u{02BC}");
-		expect(typed("t", "+x")).toBe("t\u{02BC}");
-		expect(typed("s", "+x")).toBe("s\u{02BC}");
-		expect(typed("s", "+h", "+x")).toBe("ʃ\u{02BC}"); // ʃʼ
-		expect(typed("t", "+r", "+x")).toBe("ʈ\u{02BC}"); // ʈʼ (retroflex ejective)
+	// The ejective moved to the mark tier: kʼ is k + U+02BC, a spacing modifier
+	// letter — the same encoding shape as rhoticity, so the same law applies
+	// (⇧ transforms into atomic glyphs; appended marks live on ⌥). ⌥q is the
+	// guttural key and ejectives are the glottalic airstream. No guard: the
+	// transcriber owns it, which is what lets ʼ serve orthography (Hausa ʼy,
+	// Uzbek tutuq) and ejective clicks alike.
+	test("ejective — ⌥q appends ʼ: kʼ tʼ ʃʼ ʈʼ", () => {
+		expect(typed("k", "~q")).toBe("k\u{02BC}");
+		expect(typed("t", "~q")).toBe("t\u{02BC}");
+		expect(typed("s", "+h", "~q")).toBe("ʃ\u{02BC}");
+		expect(typed("t", "+r", "~q")).toBe("ʈ\u{02BC}");
 	});
-	test("ejective affricate: t ʃ ⇧X → tʃʼ", () =>
-		expect(typed("t", "s", "+h", "+x")).toBe("tʃ\u{02BC}"));
-	test("⇧X guards to voiceless obstruents — vowel/sonorant/voiced pass to literal X", () => {
+	test("ejective affricate: t ʃ ⌥q → tʃʼ", () =>
+		expect(typed("t", "s", "+h", "~q")).toBe("tʃ\u{02BC}"));
+	test("standalone ʼ just emits — orthography needs it bare", () =>
+		expect(typed("~q")).toBe("\u{02BC}"));
+	test("the okina rides the shift: ⌥⇧q → ʻ (Hawaiian, Uzbek oʻ)", () => {
+		expect(typed("~+q")).toBe("\u{02BB}");
+		expect(typed("o", "~+q")).toBe("o\u{02BB}");
+	});
+	test("⇧X is retired — X after any base is a literal", () => {
+		expect(typed("k", "+x")).toBe("kX");
 		expect(typed("a", "+x")).toBe("aX");
-		expect(typed("m", "+x")).toBe("mX");
-		expect(typed("z", "+x")).toBe("zX");
 	});
 	test("the ejective ʼ is U+02BC, not the curly quote U+2019", () => {
-		expect(typed("k", "+x").codePointAt(1)).toBe(0x02BC);
+		expect(typed("k", "~q").codePointAt(1)).toBe(0x02BC);
 	});
 });
 
@@ -444,8 +454,8 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~+3")).toBe("ʿ");
 		expect(typed("d", "~+3", "a")).toBe("dʿa");
 	});
-	test("⌥q passes to the host again — œ returns", () =>
-		expect(handleKey("", {key: "q", option: true}).edit.type).toBe("pass"));
+	test("⌥q is the ejective now — œ is a digraph anyway (o⇧E)", () =>
+		expect(typed("k", "~q")).toBe("k\u{02BC}"));
 	test("⌥c is the cedilla — a dead key, exactly as on ABC Extended", () => {
 		const step = handleKey("", {key: "c", option: true}, []);
 		expect(step.edit.type).toBe("noop");        // a dead key writes nothing…
@@ -601,8 +611,8 @@ describe("chaining seeds only on a real segment, not any non-ASCII char", () => 
 		expect(withInitial("\u2014", "+t", "+h")).toBe("\u2014TH"));
 	test("a real segment still seeds the chain: ʃ⇧T⇧R → ʃʈ", () =>
 		expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
-	test("an ASCII base carrying a tie still seeds it: t ⌥j s ⇧X → t͡sʼ", () =>
-		expect(typed("t", "~j", "s", "+x")).toBe(nfc("t\u{0361}s\u{02BC}")));
+	test("an ASCII base carrying a tie still seeds it: t ⌥j s ⌥q → t͡sʼ", () =>
+		expect(typed("t", "~j", "s", "~q")).toBe(nfc("t\u{0361}s\u{02BC}")));
 });
 
 // Shift-chaining continues a transcription with held shift (ʃ⇧I⇧H → ʃɪ). The

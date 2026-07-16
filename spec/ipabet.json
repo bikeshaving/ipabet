@@ -13,8 +13,7 @@
   "Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ); Welsh y, Russian ы",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
-  "P": "implosive (voiced glottalic ingressive)",
-  "X": "ejective (voiceless glottalic egressive; voiceless obstruents only)"
+  "P": "implosive (voiced glottalic ingressive)"
  },
  "letters": [
   {
@@ -987,6 +986,18 @@
    "cp": "U+02D0",
    "name": "MODIFIER LETTER TRIANGULAR COLON",
    "shiftSense": "lesser"
+  },
+  {
+   "opt": "q",
+   "mark": "ʼ",
+   "type": "spacing",
+   "double": "ʻ",
+   "doubleCp": "U+02BB",
+   "doubleSpacing": true,
+   "group": "Phonation",
+   "cp": "U+02BC",
+   "name": "MODIFIER LETTER APOSTROPHE (ejective — glottalic, on the guttural key; ⇧ → ʻ okina)",
+   "shiftSense": "twin"
   },
   {
    "opt": "r",

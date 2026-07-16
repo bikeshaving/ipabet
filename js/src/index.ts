@@ -172,10 +172,6 @@ const isGreekUpper = (c: string): boolean => {
 const TIE = "͡";
 const TIE_BELOW = "͜";
 
-// Voiceless obstruents — the ejectivizable set (⇧P). Plosives + oral
-// fricatives; ejectives need voicelessness (sealed glottis) and a closure.
-const VOICELESS_OBSTRUENTS = "ptʈckqɸfθsʃʂçxχɬ";
-
 // Mark PLACEMENT is the transcriber's, never the engine's.
 //
 // Three marks have an above/below form — the tie bar, the voiceless ring, and the
@@ -549,11 +545,6 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) {
 			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};
-		}
-		// ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
-		// Open class, guarded like R; a non-obstruent falls through to a literal X.
-		if (s === "X" && base.length > 0 && VOICELESS_OBSTRUENTS.includes(base[0])) {
-			return {edit: replaceCluster(p, recompose(base, marks) + "\u{02BC}"), pending: []};
 		}
 	}
 

@@ -536,13 +536,6 @@ class InputController: IMKInputController {
                 replace(r, with: recompose(combo, marks), client)
                 chainBroken = false; return true
             }
-            // ejective: X (eXplosive) after a voiceless obstruent appends ʼ (U+02BC).
-            // Open class — any voiceless obstruent, matching the chart's "p t k s …".
-            // Guarded like R; a non-obstruent falls through to a literal X.
-            if s == "X", let b = base.first, "ptʈckqɸfθsʃʂçxχɬ".contains(b) {
-                replace(r, with: recompose(base, marks) + "\u{02BC}", client)
-                chainBroken = false; return true
-            }
         }
         // letter base glyph — absorbing any pending prefix diacritics
         if let glyph = t.letters[s] {
