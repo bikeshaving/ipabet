@@ -76,10 +76,11 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// them, so the pending-base rule never fires (two-glyph lookback).
 	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
-	// Held-shift acronyms whose pair is a Latin-uppercase digraph FORM it —
-	// SHA → ƩA — because capital digraphs are always-on; literal comes from a
-	// shift release (or the raw-lock). Greek-uppercase (TH→Θ) and ASCII pairs
-	// stay literal, so THE and PHP are safe untouched.
+	// Held-shift acronyms whose pair is a capital digraph FORM it — SHA → ƩA,
+	// THE → ΘE — because capital digraphs are always-on; the literal comes from
+	// Caps Lock or ⌃⇧ (the Caps Lock law exists for all-caps words). ASCII
+	// pairs and the Β/Χ confusables stay literal, and pH's ɸ is caseless, so
+	// PHP is safe untouched.
 	// SHA: ⇧S⇧H is a fresh capital digraph Ʃ whether held or (released → still a
 	// fresh capital), then ⇧A appends. Literal "SHA" comes from Ctrl+Shift, not a
 	// shift release.
@@ -94,18 +95,20 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	});
 	test("a shift release escapes to the literal: ⇧5 ^⇧Y → %Y", () =>
 		expect(chain("+5", "^+y")).toBe("%Y"));
-	test("no capital, no fire: ⇧2⇧H stays @H (ʔ has no uppercase)", () =>
-		expect(chain("+2", "+h")).toBe("@H"));
-	test("THE stays THE (tH→θ→Θ is Greek, excluded)", () => expect(chain("+t", "+h", "+e")).toBe("THE"));
+	test("digit capital glottal: held ⇧2⇧H → Ɂ (U+0241, the Dene capital)", () =>
+		expect(chain("+2", "+h")).toBe("\u{0241}"));
+	test("THE forms the capital theta: ⇧T⇧H⇧E → ΘE (Caps Lock types the literal)", () =>
+		expect(chain("+t", "+h", "+e")).toBe("ΘE"));
 
 	// A plain ASCII base (lowercase i) is not special, so a capital after it is
 	// just a capital — no chain.
 	test("lowercase base doesn't seed a chain: i ⇧P → iP", () =>
 		expect(chain("i", "+p")).toBe("iP"));
-	// Daily-driver: symbol-prefixed caps keep their capitals (identical to the
-	// pre-chaining keyboard — chaining adds nothing a daily-driver would notice).
-	test("acronym safety: ɾ (4 ⇧H) then ⇧P⇧A⇧T⇧H → ɾPATH", () =>
-		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
+	// Daily-driver: held-shift caps keep their capitals UNLESS a pair is a
+	// digraph — PATH ends in the TH pair, so it forms Θ, exactly as PUSH forms
+	// Ʃ. All-caps words belong to Caps Lock (the law); terminals to the raw lock.
+	test("held ⇧P⇧A⇧T⇧H forms the theta: ɾPAΘ (Caps Lock types the literal)", () =>
+		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"));
 });
 
 describe("clicks (C modifier)", () => {
@@ -419,7 +422,7 @@ describe("accented capitals (a pending accent absorbs onto a capital base)", () 
 		expect(typed("+u", "+r", "+l")).toBe("URL");
 		expect(typed("+s", "^+h", "+a")).toBe("ƩA"); // fresh capital digraph, not literal
 		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ");
-		expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH");
+		expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"); // TH is a digraph pair
 	});
 });
 
@@ -618,17 +621,18 @@ describe("⌥⇧ is not an escape", () => {
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
 // a non-ASCII letter or combining mark. Terminals report the empty cell before
 // the cursor as U+00A0 NBSP; a bare "non-ASCII" test would read that as a
-// segment and rebase every start-of-line capital, turning "TH" into θ. (typeKeys(seq, initial)
-// seeds the buffer, standing in for what the app reports before the cursor.)
+// segment and LOWERCASE-rebase every start-of-line capital (θ where a fresh
+// capital digraph Θ belongs). (typeKeys(seq, initial) seeds the buffer,
+// standing in for what the app reports before the cursor.)
 describe("chaining seeds only on a real segment, not any non-ASCII char", () => {
 	const withInitial = (init: string, ...ks: string[]) => typeKeys(seq(...ks), init);
 
-	test("NBSP before ⇧T⇧H stays literal (the terminal bug)", () =>
-		expect(withInitial("\u00A0", "+t", "+h")).toBe("\u00A0TH"));
-	test("curly quote before ⇧T⇧H stays literal", () =>
-		expect(withInitial("\u201C", "+t", "+h")).toBe("\u201CTH"));
-	test("em dash before ⇧T⇧H stays literal", () =>
-		expect(withInitial("\u2014", "+t", "+h")).toBe("\u2014TH"));
+	test("NBSP before ⇧T⇧H is a fresh CAPITAL digraph, not a lowercase rebase", () =>
+		expect(withInitial("\u00A0", "+t", "+h")).toBe("\u00A0Θ"));
+	test("curly quote before ⇧T⇧H: fresh capital, not a chain", () =>
+		expect(withInitial("\u201C", "+t", "+h")).toBe("\u201CΘ"));
+	test("em dash before ⇧T⇧H: fresh capital, not a chain", () =>
+		expect(withInitial("\u2014", "+t", "+h")).toBe("\u2014Θ"));
 	test("a real segment still seeds the chain: ʃ⇧T⇧R → ʃʈ", () =>
 		expect(typed("s", "+h", "+t", "+r")).toBe("ʃʈ"));
 	test("an ASCII base carrying a tie still seeds it: t ⌥j s ⌥⇧q → t͡sʼ", () =>
@@ -656,17 +660,20 @@ describe("shift release ends the chain → next digraph is a fresh capital", () 
 	// diacritic (⌥t dental, no shift) leaves s̪ live, so ⇧H still chains to ʃ.
 	test("an unshifted diacritic keeps the chain live: ⌥t s ⇧H → ʃ̪", () =>
 		expect(typed("~t", "s", "+h")).toBe(nfc("ʃ\u{032A}")));
-	// $PATH stays literal with or without releases: the final T is preceded by a
-	// literal A, not an IPA segment, so the run breaks there regardless.
-	test("$PATH → ɾPATH", () => expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPATH"));
+	// $PATH never *chains* (the final T is preceded by a literal A, not an IPA
+	// segment) — but TH is a digraph pair, so the fresh-capital rule forms Θ,
+	// exactly as PUSH forms Ʃ. Caps Lock and the raw lock type the literal.
+	test("$PATH → ɾPAΘ (fresh capital digraph, not a chain)", () =>
+		expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"));
 });
 
 // Capital digraphs: capitalize the base, capitalize the result. Held shift forms
-// them (⇧A⇧E → Æ); a shift release just ends the chain. Every real Latin-Extended
-// uppercase is reachable — orthographic (Ŋ Ɛ Ɔ) and phantom (Ʃ Ʈ) alike; only
-// Greek uppercases (θ→Θ) and plain-ASCII ones (tJ→c→C) are excluded, being
-// nonsense in a Latin word. The IPA has no capitals, so this is purely an
-// orthographic courtesy for European and African writing systems.
+// them (⇧A⇧E → Æ); a shift release just ends the chain. Every real, visually
+// distinct uppercase is reachable — orthographic (Ŋ Ɛ Ɔ), phantom (Ʃ Ʈ), Greek
+// theta (Θ), and the hand-mapped Dene glottal (Ɂ). Excluded: plain-ASCII
+// results (tJ→c→C) and the Greek confusables Β/Χ, which render identically to
+// the Latin B/X the typist sees. The IPA has no capitals, so this is purely an
+// orthographic courtesy for the writing systems that do.
 describe("capital digraphs (capitalize the base → capitalize the result)", () => {
 	test("European: Æ Œ Ø", () => {
 		expect(typed("+a", "+e")).toBe("Æ");
@@ -687,8 +694,12 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("a", "+e")).toBe("æ"));
 	test("Title Case is safe (modifier not shifted): ⇧S h i p → Ship", () =>
 		expect(typed("+s", "h", "i", "p")).toBe("Ship"));
-	test("Greek uppercase excluded: ⇧T⇧H → TH (not Θ)", () =>
-		expect(typed("+t", "+h")).toBe("TH"));
+	test("Greek capital theta forms: ⇧T⇧H → Θ (U+0398)", () =>
+		expect(typed("+t", "+h")).toBe("\u{0398}"));
+	test("the Greek confusables stay literal: ⇧B⇧H → BH, ⇧Q⇧H → QH (Β/Χ look like B/X)", () => {
+		expect(typed("+b", "+h")).toBe("BH");
+		expect(typed("+q", "+h")).toBe("QH");
+	});
 	test("ASCII uppercase excluded: ⇧T⇧J → TJ (not C)", () =>
 		expect(typed("+t", "+j")).toBe("TJ"));
 	test("a release starts a fresh capital, not a literal: ⇧A ^⇧E → Æ", () =>

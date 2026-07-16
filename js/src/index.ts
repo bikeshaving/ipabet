@@ -172,12 +172,24 @@ function quoteQuad(): string[] {
 const optShiftDigits: Record<string, string> =
 	(spec as {optShift?: Record<string, string>}).optShift ?? {};
 
-// A capital digraph's uppercase must be LATIN — θ/χ/β uppercase into Greek
-// Θ/Χ/Β, which is never wanted in a Latin/IPA context (and keeps "THE" literal).
-const isGreekUpper = (c: string): boolean => {
-	const n = c.codePointAt(0)!;
-	return n >= 0x370 && n <= 0x3ff;
-};
+// A capital digraph capitalizes the digraph's result — but only into a REAL,
+// visually distinct capital. Excluded: plain ASCII (tJ→c→C, so ⇧T⇧J stays
+// "TJ") and the Greek confusables Β/Χ, which render identically to the Latin
+// B/X the typist can already see — a lookalike in the wrong script is a lie.
+// Θ is a distinct glyph, so it forms (⇧T⇧H → Θ). ʔ is caseless in Unicode,
+// but Dene orthographies write its capital as Ɂ (U+0241) — the one
+// hand-mapped capital.
+const CONFUSABLE_CAPS = new Set(["\u{0392}", "\u{03A7}"]); // Β Χ
+const HAND_CAPS: Record<string, string> = {"\u{0294}": "\u{0241}"}; // ʔ → Ɂ
+function capitalOf(low: string): string | undefined {
+	const hand = HAND_CAPS[low];
+	if (hand !== undefined) return hand;
+	const up = low.toUpperCase();
+	if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !CONFUSABLE_CAPS.has(up)) {
+		return up;
+	}
+	return undefined;
+}
 
 
 // The tie bar (⌥j) and its below-form (⌥⇧j) — a placement pair, above/below,
@@ -551,11 +563,10 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			} else {
 				const low = transforms.get(base.toLowerCase() + s);
 				if (low !== undefined) {
-					const up = low.toUpperCase();
-					// A real Latin-Extended capital — orthographic (Ŋ Ɛ) or phantom (Ʃ
-					// Ʈ). Excluded: Greek uppercases (θ→Θ, wrong script, keeps "THE"
-					// literal) and plain ASCII (tJ→c→C, so ⇧T⇧J stays "TJ").
-					if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
+					// A real, distinct capital — orthographic (Ŋ Ɛ), phantom (Ʃ Ʈ),
+					// or Greek-but-unmistakable (Θ). See capitalOf for the exclusions.
+					const up = capitalOf(low);
+					if (up !== undefined) {
 						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
 					}
 				}
@@ -564,15 +575,15 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		// The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
 		// (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
 		// chain, so a shift release escapes to the literal (%Y) — the same law
-		// as every capital digraph. Same Latin-only guard: &⇧H → Ħ, @⇧H stays
-		// literal (ʔ has no capital).
+		// as every capital digraph. Same guard: &⇧H → Ħ, and ⇧2⇧H → Ɂ, the
+		// Dene capital glottal.
 		if (shift && chainLive) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			if (digit !== undefined) {
 				const low = transforms.get(digit + s);
 				if (low !== undefined) {
-					const up = low.toUpperCase();
-					if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !isGreekUpper(up)) {
+					const up = capitalOf(low);
+					if (up !== undefined) {
 						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
 					}
 				}

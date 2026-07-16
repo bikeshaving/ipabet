@@ -515,40 +515,34 @@ class InputController: IMKInputController {
             // shift held continuously since an IPA segment? If so, this capital
             // CONTINUES it in lowercase (ʃ⇧I⇧H → ʃɪ, Ɣ⇧G⇧H → Ɣɣ). Otherwise — a
             // fresh word, or the chain was ended by a shift release — it is a fresh
-            // capital DIGRAPH (⇧A⇧E → Æ, ⇧N⇧G → Ŋ, phantom ⇧S⇧H → Ʃ). Release ends
-            // the chain, it does NOT escape to literal (that is Ctrl+Shift). Greek
-            // (θ→Θ) and ASCII (tJ→c→C) uppercases are excluded.
+            // capital DIGRAPH (⇧A⇧E → Æ, ⇧N⇧G → Ŋ, phantom ⇧S⇧H → Ʃ, Greek ⇧T⇧H
+            // → Θ). Release ends the chain, it does NOT escape to literal (that is
+            // Ctrl+Shift). See capitalOf for the exclusions.
             if shift, base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
                 let p2Segment = clusterBefore(r, client).map {
                     String($0).unicodeScalars.contains(where: isSegmentScalar)
                 } ?? false
                 if p2Segment, chainLive {
                     base = base.lowercased()
-                } else if let low = t.transforms[base.lowercased() + s] {
-                    let up = low.uppercased()
-                    if up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
-                       u.value > 0x7f, !(0x370...0x3ff).contains(u.value) {
-                        Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
-                        replace(r, with: recompose(up, marks), client)
-                        chainBroken = false; return true
-                    }
+                } else if let low = t.transforms[base.lowercased() + s],
+                          let up = Self.capitalOf(low) {
+                    Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
+                    replace(r, with: recompose(up, marks), client)
+                    chainBroken = false; return true
                 }
             }
             // The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
             // (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
-            // chain, so a shift release escapes to the literal (%Y). Same Latin-only
-            // guard as the capital digraphs. Mirrors js/src/index.ts.
+            // chain, so a shift release escapes to the literal (%Y). Same guard as
+            // the capital digraphs (⇧2⇧H → Ɂ). Mirrors js/src/index.ts.
             if chainLive,
                let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
                             "^": "6", "&": "7", "*": "8", "(": "9", ")": "0"][base],
-               let low = t.transforms[digit + s] {
-                let up = low.uppercased()
-                if up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
-                   u.value > 0x7f, !(0x370...0x3ff).contains(u.value) {
-                    Dbg.log("  → digit capital \(base)+\(s) ⇒ \(Dbg.str(up))")
-                    replace(r, with: recompose(up, marks), client)
-                    chainBroken = false; return true
-                }
+               let low = t.transforms[digit + s],
+               let up = Self.capitalOf(low) {
+                Dbg.log("  → digit capital \(base)+\(s) ⇒ \(Dbg.str(up))")
+                replace(r, with: recompose(up, marks), client)
+                chainBroken = false; return true
             }
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
@@ -900,5 +894,21 @@ class InputController: IMKInputController {
         var s = base
         s.unicodeScalars.append(contentsOf: marks)
         return s.precomposedStringWithCanonicalMapping
+    }
+
+    // A capital digraph capitalizes the digraph's result — but only into a REAL,
+    // visually distinct capital. Excluded: plain ASCII (tJ→c→C, so ⇧T⇧J stays
+    // "TJ") and the Greek confusables Β/Χ, which render identically to the Latin
+    // B/X the typist can already see — a lookalike in the wrong script is a lie.
+    // Θ is a distinct glyph, so it forms (⇧T⇧H → Θ). ʔ is caseless in Unicode,
+    // but Dene orthographies write its capital as Ɂ (U+0241) — the one
+    // hand-mapped capital. Mirrors js/src/index.ts capitalOf.
+    static func capitalOf(_ low: String) -> String? {
+        if low == "\u{0294}" { return "\u{0241}" } // ʔ → Ɂ
+        let up = low.uppercased()
+        guard up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
+              u.value > 0x7f, u.value != 0x0392, u.value != 0x03A7 // Β Χ
+        else { return nil }
+        return up
     }
 }
