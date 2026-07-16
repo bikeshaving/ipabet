@@ -10,7 +10,7 @@ describe("pcKeys", () => {
 		expect(pcKeys("⇧H")).toBe("Shift+H");
 		expect(pcKeys("⌥n")).toBe("AltGr+n");
 		expect(pcKeys("⌥⇧w")).toBe("AltGr+Shift+w");
-		expect(pcKeys("⌃⇧Space")).toBe("Ctrl+Shift+Space");
+		expect(pcKeys("⌃⇧G")).toBe("Ctrl+Shift+G");
 	});
 
 	test("sequences translate per keystroke, spaces intact", () => {

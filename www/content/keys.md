@@ -29,14 +29,14 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 ## Tier 1 · escapes (getting a literal character back)
 
-`⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off:
+`⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off — and the OS's own fourth:
 
 | Keystroke | Effect |
 | --- | --- |
 | `⌃⇧`+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
 | Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). `⇧` still means the modifier while locked. |
 | `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly; there is no raw-US digit escape. |
-| `⌃⇧Space` | The **Raw-US Lock**: the whole keyboard goes native until pressed again — the sticky member of the `⌃⇧` escape family. |
+| `⌃Space` | Not IPAbet's key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
 
 ## Tier 2 · diacritics & suprasegmentals (Option layer)
 

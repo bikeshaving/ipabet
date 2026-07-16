@@ -3,28 +3,6 @@ import InputMethodKit
 import Carbon
 import IOKit
 
-// The Raw-US Lock's menu-bar badge: a "raw" item that exists only while the
-// active client is locked, so the lock is visible without opening the input
-// menu. The input-source ICON itself cannot change dynamically (that would
-// take input-mode switching — macOS 15 IMK landmine territory), but the IME
-// is a full app, so it may own a status item.
-enum LockIndicator {
-    private static var item: NSStatusItem?
-    static func update(_ locked: Bool) {
-        DispatchQueue.main.async {
-            if locked, item == nil {
-                let it = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-                it.button?.title = "raw"
-                it.button?.toolTip = "IPAbet Raw-US Lock is on (⌃⇧Space toggles)"
-                item = it
-            } else if !locked, let it = item {
-                NSStatusBar.system.removeStatusItem(it)
-                item = nil
-            }
-        }
-    }
-}
-
 // Decodes a physical key (virtual keyCode) through a fixed US layout, so the
 // engine's ASCII-keyed tables work regardless of the active keyboard layout —
 // including the cosmetic IPAbet layout we override to for Keyboard Viewer. The
@@ -95,8 +73,7 @@ struct Tables {
     /// *replaces* rather than stacks. Independent shape-twins (tilde/creaky)
     /// are absent from this map and stack normally.
     let exclusiveTwin: [Unicode.Scalar: Unicode.Scalar]
-    /// ⌥⇧<digit> slots spent on a character instead of the raw-US escape
-    /// (⌥⇧1 → ¡). See spec `optShift`.
+    /// ⌥⇧<digit> slots spent on a character (⌥⇧1 → ¡). See spec `optShift`.
     let optShiftDigits: [String: String]
     /// Locale-semantic quotes: locale → [openPrimary, closePrimary, openSecondary,
     /// closeSecondary]. The active locale is the `quoteLocale` user default —
@@ -245,62 +222,18 @@ class InputController: IMKInputController {
         return Self.secureInputOwner() == bundleID
     }
 
-    // Raw-US lock: when on, every keystroke is declined — the IME is
-    // transparent (for code, camelCase, shifted symbols). Toggled by
-    // ⌃⇧Space or the input menu.
-    //
-    // Two policies (input-menu preferences, UserDefaults-backed):
-    //  - global (default): one lock, session-only, cleared on arrival
-    //  - per-app: the lock remembers each app (Terminal stays raw forever
-    //    after one toggle), persisted across restarts, arrival-proof
-    static var rawLock = false
-    static var perAppLock: Bool {
-        get { UserDefaults.standard.bool(forKey: "PerAppRawLock") }
-        set { UserDefaults.standard.set(newValue, forKey: "PerAppRawLock") }
-    }
-    static var lockedApps: Set<String> {
-        get { Set(UserDefaults.standard.stringArray(forKey: "RawLockedApps") ?? []) }
-        set { UserDefaults.standard.set(Array(newValue), forKey: "RawLockedApps") }
-    }
-
     private func clientBundleID() -> String {
         client()?.bundleIdentifier() ?? ""
-    }
-
-    private func isRawLocked(for bundleID: String) -> Bool {
-        Self.perAppLock ? Self.lockedApps.contains(bundleID) : Self.rawLock
-    }
-
-    private func toggleRaw(for bundleID: String) {
-        if Self.perAppLock {
-            var apps = Self.lockedApps
-            if apps.contains(bundleID) { apps.remove(bundleID) } else { apps.insert(bundleID) }
-            Self.lockedApps = apps
-        } else {
-            Self.rawLock.toggle()
-        }
-        LockIndicator.update(isRawLocked(for: bundleID))
     }
 
     // The input menu IS the settings surface: System Settings' Input Sources
     // pane offers third-party input methods no options UI, so everything
     // configurable lives here. Rebuilt on every open, so the checkmarks are
-    // always current — including a lock toggled by ⌃⇧Space.
+    // always current. There is no raw mode to toggle: the OS's own
+    // input-source switcher is the off switch, since macOS always keeps a
+    // plain US layout installed.
     override func menu() -> NSMenu! {
         let menu = NSMenu()
-        let bundleID = clientBundleID()
-        let lock = NSMenuItem(title: "Raw US Lock (⌃⇧Space)",
-                              action: #selector(toggleRawLock(_:)), keyEquivalent: "")
-        lock.target = self
-        lock.state = isRawLocked(for: bundleID) ? .on : .off
-        menu.addItem(lock)
-        let perApp = NSMenuItem(title: "Per-App Lock",
-                                action: #selector(togglePerApp(_:)), keyEquivalent: "")
-        perApp.target = self
-        perApp.state = Self.perAppLock ? .on : .off
-        menu.addItem(perApp)
-
-        menu.addItem(.separator())
         let t = Tables.shared
         let active = UserDefaults.standard.string(forKey: "quoteLocale") ?? t.quoteDefault
         let quotes = NSMenuItem(title: "Quote Style", action: nil, keyEquivalent: "")
@@ -330,15 +263,6 @@ class InputController: IMKInputController {
         return menu
     }
 
-    @objc func toggleRawLock(_ sender: Any?) {
-        toggleRaw(for: clientBundleID())
-    }
-
-    @objc func togglePerApp(_ sender: Any?) {
-        Self.perAppLock.toggle()
-        LockIndicator.update(isRawLocked(for: clientBundleID()))
-    }
-
     @objc func setQuoteLocaleItem(_ sender: NSMenuItem) {
         if let locale = sender.representedObject as? String {
             UserDefaults.standard.set(locale, forKey: "quoteLocale")
@@ -366,7 +290,6 @@ class InputController: IMKInputController {
         // bare in-bundle name was a misrouting suspect on macOS 15.
         Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall
         Dbg.log("── activate app=\(clientBundleID()) ──")
-        LockIndicator.update(isRawLocked(for: clientBundleID()))
     }
 
     /// The host is taking the composition away (click, focus loss, input-source
@@ -425,17 +348,6 @@ class InputController: IMKInputController {
         if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flushPending(client); return false }
         if flags.contains(.control) {
             if flags.contains(.shift) {
-                // ⌃⇧Space toggles the raw-US lock: the whole IME goes transparent
-                // (every key native) until toggled back. The sticky member of the
-                // ⌃⇧ escape family — ⌃⇧letter is the literal capital, ⌃⇧Space is
-                // the literal keyboard. One bit of *settings* state; composition
-                // remains stateless. (Must sit before the lock check below so it
-                // can toggle OFF while locked.)
-                if event.keyCode == 49 {
-                    flushPending(client)
-                    toggleRaw(for: clientBundleID())
-                    return true
-                }
                 let oc = USLayout.char(event.keyCode, shift: false)
                 if oc.count == 1, oc.first!.isLetter {
                     flushPending(client)
@@ -453,7 +365,6 @@ class InputController: IMKInputController {
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
 
-        if isRawLocked(for: clientBundleID()) { flushPending(client); return false }
 
         // Fold a pending shift release into the chain state: once broken, it stays
         // broken until a segment re-arms it (see the transform section). chainLive

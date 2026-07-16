@@ -33,8 +33,10 @@ The joiners walk by lookback instead (⌥j ⌥j ⇄ sliding), since they emit.
 Capitals ride the capital-digraph rule; the shifted digit is the digit's
 capital plane (⇧5⇧Y → Ə).
 
-**Escapes are ⌃⇧.** ⌃⇧letter is the literal capital; ⌃⇧Space is the Raw-US
-Lock. Caps Lock is a lock, never the ⇧ modifier.
+**Escapes are ⌃⇧.** ⌃⇧letter is the literal capital; Caps Lock is a lock,
+never the ⇧ modifier. There is no raw mode: macOS always keeps a plain US
+layout installed, so the OS's own input-source switcher (⌃Space) is the off
+switch, with its own menu-bar indicator.
 
 **Quotes are a locale.** The bracket keys carry open/close-primary/secondary
 semantics; the `quotes` table in the spec (en de fr ch pl ru sv) decides the

@@ -112,7 +112,8 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	});
 	// Daily-driver: held-shift caps keep their capitals UNLESS a pair is a
 	// digraph — PATH ends in the TH pair, so it forms Θ, exactly as PUSH forms
-	// Ʃ. All-caps words belong to Caps Lock (the law); terminals to the raw lock.
+	// Ʃ. All-caps words belong to Caps Lock (the law); terminals to the plain
+	// US input source (⌃Space).
 	test("held ⇧P⇧A⇧T⇧H forms the theta: ɾPAΘ (Caps Lock types the literal)", () =>
 		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"));
 });
@@ -667,7 +668,7 @@ describe("shift release ends the chain → next digraph is a fresh capital", () 
 		expect(typed("~t", "s", "+h")).toBe(nfc("ʃ\u{032A}")));
 	// $PATH never *chains* (the final T is preceded by a literal A, not an IPA
 	// segment) — but TH is a digraph pair, so the fresh-capital rule forms Θ,
-	// exactly as PUSH forms Ʃ. Caps Lock and the raw lock type the literal.
+	// exactly as PUSH forms Ʃ. Caps Lock (or the US input source) types the literal.
 	test("$PATH → ɾPAΘ (fresh capital digraph, not a chain)", () =>
 		expect(typed("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"));
 });
