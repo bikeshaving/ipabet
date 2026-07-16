@@ -465,6 +465,8 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 	// ʿayn/hamza are back — paired on ⌥q, the guttural key (⇧Q is the guttural
 	// modifier; 2⇧Q/3⇧Q/7⇧Q the guttural family). They transliterate the sounds
 	// ʔ ʕ already type. Spacing marks: they just emit.
+	test("the palatal hook backs the cedilla: ⌥⇧c t → t̡ (Slavicist palatalization)", () =>
+		expect(typed("~+c", "t")).toBe(nfc("t\u{0321}")));
 	test("candrabindu rides the nasal letter: ⌥⇧m m → m̐ (IAST)", () =>
 		expect(typed("~+m", "m")).toBe(nfc("m\u{0310}")));
 	test("macron below rides the macron key: ⌥⇧a → ◌̱ (Semitic ṯ ḏ ẖ)", () => {

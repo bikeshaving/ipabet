@@ -812,9 +812,12 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0327",
-   "name": "COMBINING CEDILLA",
+   "name": "COMBINING CEDILLA (⇧ → ̡ palatalized hook — the cedilla's sibling curl; the palatal hook on the palatal letter, Slavicist t̡ d̡)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "̡",
+   "doubleCp": "U+0321",
+   "shiftSense": "twin"
   },
   {
    "opt": ",",
