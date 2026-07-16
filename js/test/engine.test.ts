@@ -79,8 +79,7 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// Held-shift acronyms whose pair is a capital digraph FORM it — SHA → ƩA,
 	// THE → ΘE — because capital digraphs are always-on; the literal comes from
 	// Caps Lock or ⌃⇧ (the Caps Lock law exists for all-caps words). ASCII
-	// pairs and the Β/Χ confusables stay literal, and pH's ɸ is caseless, so
-	// PHP is safe untouched.
+	// pairs stay literal, and pH's ɸ is caseless, so PHP is safe untouched.
 	// SHA: ⇧S⇧H is a fresh capital digraph Ʃ whether held or (released → still a
 	// fresh capital), then ⇧A appends. Literal "SHA" comes from Ctrl+Shift, not a
 	// shift release.
@@ -668,11 +667,10 @@ describe("shift release ends the chain → next digraph is a fresh capital", () 
 });
 
 // Capital digraphs: capitalize the base, capitalize the result. Held shift forms
-// them (⇧A⇧E → Æ); a shift release just ends the chain. Every real, visually
-// distinct uppercase is reachable — orthographic (Ŋ Ɛ Ɔ), phantom (Ʃ Ʈ), Greek
-// theta (Θ), and the hand-mapped Dene glottal (Ɂ). Excluded: plain-ASCII
-// results (tJ→c→C) and the Greek confusables Β/Χ, which render identically to
-// the Latin B/X the typist sees. The IPA has no capitals, so this is purely an
+// them (⇧A⇧E → Æ); a shift release just ends the chain. Every real uppercase is
+// reachable — orthographic (Ŋ Ɛ Ɔ), phantom (Ʃ Ʈ), Greek (Θ Β Χ), and the
+// hand-mapped Dene glottal (Ɂ). Only a plain-ASCII result (tJ→c→C) is excluded,
+// being nonsense as a digraph. The IPA has no capitals, so this is purely an
 // orthographic courtesy for the writing systems that do.
 describe("capital digraphs (capitalize the base → capitalize the result)", () => {
 	test("European: Æ Œ Ø", () => {
@@ -696,9 +694,9 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+s", "h", "i", "p")).toBe("Ship"));
 	test("Greek capital theta forms: ⇧T⇧H → Θ (U+0398)", () =>
 		expect(typed("+t", "+h")).toBe("\u{0398}"));
-	test("the Greek confusables stay literal: ⇧B⇧H → BH, ⇧Q⇧H → QH (Β/Χ look like B/X)", () => {
-		expect(typed("+b", "+h")).toBe("BH");
-		expect(typed("+q", "+h")).toBe("QH");
+	test("the other Greek capitals form too: ⇧B⇧H → Β (U+0392), ⇧Q⇧H → Χ (U+03A7)", () => {
+		expect(typed("+b", "+h")).toBe("\u{0392}");
+		expect(typed("+q", "+h")).toBe("\u{03A7}");
 	});
 	test("Caps Lock declines the digraph: locked T then locked-⇧H stays TH", () =>
 		expect(typeKeys([

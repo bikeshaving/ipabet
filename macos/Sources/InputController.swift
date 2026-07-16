@@ -900,18 +900,17 @@ class InputController: IMKInputController {
         return s.precomposedStringWithCanonicalMapping
     }
 
-    // A capital digraph capitalizes the digraph's result — but only into a REAL,
-    // visually distinct capital. Excluded: plain ASCII (tJ→c→C, so ⇧T⇧J stays
-    // "TJ") and the Greek confusables Β/Χ, which render identically to the Latin
-    // B/X the typist can already see — a lookalike in the wrong script is a lie.
-    // Θ is a distinct glyph, so it forms (⇧T⇧H → Θ). ʔ is caseless in Unicode,
-    // but Dene orthographies write its capital as Ɂ (U+0241) — the one
-    // hand-mapped capital. Mirrors js/src/index.ts capitalOf.
+    // A capital digraph capitalizes the digraph's result. Every real uppercase
+    // forms — Latin (Æ Ŋ Ʃ) and Greek (Θ Β Χ) alike; the only exclusion is a
+    // plain-ASCII result (tJ→c→C, so ⇧T⇧J stays "TJ"), which is nonsense as a
+    // digraph. ʔ is caseless in Unicode, but Dene orthographies write its
+    // capital as Ɂ (U+0241) — the one hand-mapped capital. Mirrors
+    // js/src/index.ts capitalOf.
     static func capitalOf(_ low: String) -> String? {
         if low == "\u{0294}" { return "\u{0241}" } // ʔ → Ɂ
         let up = low.uppercased()
         guard up != low, up.unicodeScalars.count == 1, let u = up.unicodeScalars.first,
-              u.value > 0x7f, u.value != 0x0392, u.value != 0x03A7 // Β Χ
+              u.value > 0x7f
         else { return nil }
         return up
     }

@@ -172,20 +172,17 @@ function quoteQuad(): string[] {
 const optShiftDigits: Record<string, string> =
 	(spec as {optShift?: Record<string, string>}).optShift ?? {};
 
-// A capital digraph capitalizes the digraph's result — but only into a REAL,
-// visually distinct capital. Excluded: plain ASCII (tJ→c→C, so ⇧T⇧J stays
-// "TJ") and the Greek confusables Β/Χ, which render identically to the Latin
-// B/X the typist can already see — a lookalike in the wrong script is a lie.
-// Θ is a distinct glyph, so it forms (⇧T⇧H → Θ). ʔ is caseless in Unicode,
-// but Dene orthographies write its capital as Ɂ (U+0241) — the one
-// hand-mapped capital.
-const CONFUSABLE_CAPS = new Set(["\u{0392}", "\u{03A7}"]); // Β Χ
+// A capital digraph capitalizes the digraph's result. Every real uppercase
+// forms — Latin (Æ Ŋ Ʃ) and Greek (Θ Β Χ) alike; the only exclusion is a
+// plain-ASCII result (tJ→c→C, so ⇧T⇧J stays "TJ"), which is nonsense as a
+// digraph. ʔ is caseless in Unicode, but Dene orthographies write its capital
+// as Ɂ (U+0241) — the one hand-mapped capital.
 const HAND_CAPS: Record<string, string> = {"\u{0294}": "\u{0241}"}; // ʔ → Ɂ
 function capitalOf(low: string): string | undefined {
 	const hand = HAND_CAPS[low];
 	if (hand !== undefined) return hand;
 	const up = low.toUpperCase();
-	if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f && !CONFUSABLE_CAPS.has(up)) {
+	if (up !== low && [...up].length === 1 && up.codePointAt(0)! > 0x7f) {
 		return up;
 	}
 	return undefined;
@@ -566,8 +563,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			} else {
 				const low = transforms.get(base.toLowerCase() + s);
 				if (low !== undefined) {
-					// A real, distinct capital — orthographic (Ŋ Ɛ), phantom (Ʃ Ʈ),
-					// or Greek-but-unmistakable (Θ). See capitalOf for the exclusions.
+					// A real capital — orthographic (Ŋ Ɛ), phantom (Ʃ Ʈ), or Greek
+					// (Θ Β Χ). See capitalOf.
 					const up = capitalOf(low);
 					if (up !== undefined) {
 						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
