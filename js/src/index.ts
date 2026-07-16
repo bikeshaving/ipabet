@@ -155,6 +155,13 @@ const SHIFTED_DIGITS: Record<string, string> = {
 	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%",
 	"6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
 };
+// …and the punctuation shift plane, for nativeChar: the web binding consumes
+// every typing key and re-inserts, so a pass edit must know that ⇧` is ~.
+// (The IME never needs this — a declined key is typed by the host itself.)
+const SHIFTED_PUNCT: Record<string, string> = {
+	"`": "~", "-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
+	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
+};
 
 // Locale-semantic quotes on the bracket keys. The locale is CONFIGURATION,
 // not composition state — the engine stays stateless per keystroke.
@@ -496,6 +503,12 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 					if (base === "ɜ") return withFlush(replaceCluster(p, recompose("ɝ", marks)));
 				}
 			}
+			// ⌥. on its own pending dot commits the INTERPUNCT — the dot key's
+			// free-floating form (the Catalan punt volat: l ⌥. ⌥. l → l·l). One
+			// hardcoded double-press, like the joiner walk; ⌫ still cancels.
+			if (key === "." && pending.length === 1 && pending[0] === "\u{0307}") {
+				return {edit: {type: "insert", text: "\u{00B7}"}, pending: []};
+			}
 			const m = optMarks.get(key);
 			if (m !== undefined) return applyMark(m, pending);
 			// ⌥z raises the previous glyph — the operators live on the prime chord.
@@ -503,7 +516,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			return withFlush({type: "pass"});
 		}
 
-	// Number row: every digit is native now. Bare digit → native digit (a BASE — a
+	// Number row: every digit is native. Bare digit → native digit (a BASE — a
 	// following modifier transforms it, 5H → ɜ, in the modifier path below). Shift →
 	// native symbol (⇧2 @ … ⇧6 ^ ⇧7 &): the roots are two-key digraphs and the tie
 	// bar left for ⌥j, so no shifted digit is claimed. A pending prefix diacritic
@@ -653,6 +666,7 @@ export function nativeChar(k: Keystroke): string {
 	if (k.key.length !== 1) return "";
 	if (k.shift && /[a-z]/i.test(k.key)) return k.key.toUpperCase();
 	if (k.shift && /[0-9]/.test(k.key)) return SHIFTED_DIGITS[k.key] ?? "";
+	if (k.shift) return SHIFTED_PUNCT[k.key] ?? k.key; // ⇧` is ~, ⇧/ is ? …
 	if (k.option) return ""; // host Option typography is host-specific
 	return k.key;
 }

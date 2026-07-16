@@ -28,9 +28,9 @@ cross-dimension marks keep separate keys and can stack (t̪̻ is why apical
 stayed off the t cycle). The composition preview shows every step; ⌫ cancels.
 The joiners walk by lookback instead (⌥j ⌥j ⇄ sliding), since they emit.
 
-**The doubled-letter law.** X⇧X is X's orthographic cousin: ß þ ı ƙ ƴ ƒ, and
-l⇧L → l·l. Capitals ride the capital-digraph rule; the shifted digit is the
-digit's capital plane (⇧5⇧Y → Ə).
+**The doubled-letter law.** X⇧X is X's orthographic cousin: ß þ ı ƙ ƴ ƒ.
+Capitals ride the capital-digraph rule; the shifted digit is the digit's
+capital plane (⇧5⇧Y → Ə).
 
 **Escapes are ⌃⇧.** ⌃⇧letter is the literal capital; ⌃⇧Space is the Raw-US
 Lock. Caps Lock is a lock, never the ⇧ modifier.

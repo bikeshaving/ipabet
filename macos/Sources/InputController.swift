@@ -456,6 +456,15 @@ class InputController: IMKInputController {
                 if base == "ə" { replace(r, with: recompose("ɚ", marks), client); return true }
                 if base == "ɜ" { replace(r, with: recompose("ɝ", marks), client); return true }
             }
+            // ⌥. on its own pending dot commits the INTERPUNCT — the dot key's
+            // free-floating form (the Catalan punt volat: l ⌥. ⌥. l → l·l). One
+            // hardcoded double-press, like the joiner walk; ⌫ still cancels.
+            // Mirrors js/src/index.ts.
+            if oc == ".", pending.count == 1, pending[0].value == 0x0307 {
+                pending = []
+                insert("\u{00B7}", client)
+                return true
+            }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
             // ⌥7 ¶, ⌥8 • survive.

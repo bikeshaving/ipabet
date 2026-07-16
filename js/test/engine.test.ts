@@ -103,6 +103,13 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// just a capital — no chain.
 	test("lowercase base doesn't seed a chain: i ⇧P → iP", () =>
 		expect(chain("i", "+p")).toBe("iP"));
+	// The punctuation shift plane rides nativeChar — the web binding consumes
+	// every typing key and re-inserts, so a pass edit must know ⇧` is ~.
+	test("shifted punctuation is native: ⇧` → ~, ⇧/ → ?, ⇧' → \"", () => {
+		expect(typed("+`")).toBe("~");
+		expect(typed("+/")).toBe("?");
+		expect(typed("+'")).toBe('"');
+	});
 	// Daily-driver: held-shift caps keep their capitals UNLESS a pair is a
 	// digraph — PATH ends in the TH pair, so it forms Θ, exactly as PUSH forms
 	// Ʃ. All-caps words belong to Caps Lock (the law); terminals to the raw lock.
@@ -824,9 +831,16 @@ describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
 		expect(typed("y", "+y")).toBe("ƴ");
 		expect(typed("f", "+f")).toBe("ƒ");
 	});
-	test("Catalan in one chord: l⇧L → l·l (cel·la)", () => {
-		expect(typed("c", "e", "l", "+l", "a")).toBe("cel·la");
-		expect(typed("+l", "+l")).toBe("LL");   // uppercase of l·l is 3 chars — excluded, caps safe
+	test("l⇧L is literal — the ela geminada lives on the dot key, not the letter law", () => {
+		expect(typed("l", "+l")).toBe("lL");
+		expect(typed("+l", "+l")).toBe("LL");
+	});
+	test("the interpunct is the dot key's double-press: ⌥. ⌥. → ·", () => {
+		expect(typed("~.", "~.")).toBe("\u{00B7}");
+		expect(typed("c", "e", "l", "~.", "~.", "l", "a")).toBe("cel·la");
+		// The double-press claims only the toggle-off; the mark itself, and ⌫, are untouched.
+		expect(typed("~.", "n")).toBe(nfc("ṅ"));
+		expect(typed("~.", "⌫", "x")).toBe("x");
 	});
 });
 

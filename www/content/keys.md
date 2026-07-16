@@ -74,6 +74,7 @@ A combining key may carry a **cycle**: pressing it again on its own pending mark
 | `⌥w ⌥w`… | ◌̜ less rounded → ◌͍ labial spreading |
 | `⌥⇧w ⌥⇧w`… | ◌̹ more rounded → ◌͎ whistled |
 | `⌥j ⌥j` | the same joiner chord again toggles the emitted tie ⇄ ◌͢ sliding; the other chord flips placement |
+| `⌥. ⌥.` | the double-press commits · — the interpunct, the dot key's free-floating form (Catalan punt volat: `l ⌥. ⌥. l` → l·l) |
 
 ## Quotes by locale
 

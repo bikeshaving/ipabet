@@ -705,12 +705,6 @@
    "glyph": "ƒ",
    "cp": "U+0192",
    "name": "LATIN SMALL LETTER F WITH HOOK (Ewe — the doubled-letter law)"
-  },
-  {
-   "key": "lL",
-   "glyph": "l·l",
-   "cp": "U+006C U+00B7 U+006C",
-   "name": "ela geminada (Catalan — the whole trigraph in one chord; the punt volat never occurs outside l_l)"
   }
  ],
  "marks": [
@@ -1195,7 +1189,7 @@
    "cp": "U+0307",
    "double": "̣",
    "doubleCp": "U+0323",
-   "name": "COMBINING DOT ABOVE",
+   "name": "COMBINING DOT ABOVE (pressed again on its own pending dot it commits · — the interpunct, Catalan's punt volat: l ⌥. ⌥. l → l·l)",
    "ipa": false,
    "beyond": "tenant",
    "shiftSense": "below"
