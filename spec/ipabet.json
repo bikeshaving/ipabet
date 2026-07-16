@@ -814,10 +814,7 @@
    "cp": "U+0327",
    "name": "COMBINING CEDILLA",
    "ipa": false,
-   "beyond": "tenant",
-   "double": "̐",
-   "doubleCp": "U+0310",
-   "shiftSense": "twin"
+   "beyond": "tenant"
   },
   {
    "opt": ",",
@@ -840,9 +837,12 @@
    "type": "combining",
    "group": "Transliteration",
    "cp": "U+0328",
-   "name": "COMBINING OGONEK",
+   "name": "COMBINING OGONEK (the Polish nasal hook; ⇧ → ̐ candrabindu, Indic nasalization — the nasal tenants on the nasal letter)",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "̐",
+   "doubleCp": "U+0310",
+   "shiftSense": "twin"
   },
   {
    "opt": "t",
