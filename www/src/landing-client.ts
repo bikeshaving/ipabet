@@ -111,6 +111,23 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 	document.getElementById("demoprev")?.addEventListener("click", () => setTarget(ti - 1));
 	document.getElementById("demonext")?.addEventListener("click", () => setTarget(ti + 1));
 
+	// Keyboard carousel — only while the hero is on screen, so arrows still
+	// scroll the rest of the page. ←/→ browse; Enter advances (the input is
+	// single-line, so Enter is free even mid-typing). Arrows defer to the caret
+	// once the visitor has typed text. Space stays the page-scroll key.
+	const heroVisible = () => {
+		const r = demoEl!.getBoundingClientRect();
+		return r.bottom > 0 && r.top < window.innerHeight;
+	};
+	window.addEventListener("keydown", (e) => {
+		if (e.metaKey || e.ctrlKey || e.altKey || !heroVisible()) return;
+		if (document.activeElement instanceof HTMLButtonElement) return; // buttons keep their own Enter
+		const typing = document.activeElement === input && input.value !== "";
+		if (e.key === "Enter") { e.preventDefault(); setTarget(ti + 1); }
+		else if (e.key === "ArrowRight" && !typing) { e.preventDefault(); setTarget(ti + 1); }
+		else if (e.key === "ArrowLeft" && !typing) { e.preventDefault(); setTarget(ti - 1); }
+	});
+
 	// Keystroke labels follow the platform toggle; the attract loop repaints on
 	// its own beat, so only a live (visitor-held) hero needs an explicit repaint.
 	window.addEventListener(KEYMODE_EVENT, () => {

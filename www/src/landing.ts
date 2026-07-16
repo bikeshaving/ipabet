@@ -54,7 +54,8 @@ const DEMO = [
 	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
 	demo("about", "5", "+y", "b", "a", "u", "+h", "t"),
 	demo("señor", "s", "e", "~n", "n", "o", "r"),
-	demo("click", "q", "+c", "a"),
+	demo("Hawaiʻi", "+h", "a", "w", "a", "i", "~q", "i"),
+	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
 ];
 
 // ⇧ + number row: the IPA glyphs with no Latin home, from the spec.
@@ -110,7 +111,7 @@ export function Landing() {
 				</div>
 				<div id="demonav">
 					<button id="demoprev" aria-label="Previous word" title="Previous word">◀</button>
-					<span class="hint">click the box and type it yourself</span>
+					<span class="hint">click the box and type it yourself · ← → to browse</span>
 					<button id="demonext" aria-label="Next word" title="Next word">▶</button>
 				</div>
 
