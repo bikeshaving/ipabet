@@ -26,18 +26,26 @@ const CODE_KEYS: Record<string, string> = {
 /** Desktop: the physical key, from e.code. Gives us ⇧ and ⌥ exactly — and Caps
  *  Lock, which is a lock rather than a modifier (the engine types the capital
  *  literally and never treats it as ⇧). getModifierState is the only way to see
- *  it: e.shiftKey stays false under Caps Lock. */
+ *  it: e.shiftKey stays false under Caps Lock.
+ *
+ *  Windows/Linux: AltGr is the ⌥ layer, 1:1 — but the OS reports AltGr as
+ *  Ctrl+Alt held together, so AltGraph must be resolved BEFORE the control
+ *  check or every AltGr press reads as a ⌃ chord. Plain Alt also maps to ⌥
+ *  (best-effort; the page's preventDefault suppresses most menu behavior). */
 export function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 	let key: string | undefined;
 	if (/^Key[A-Z]$/.test(e.code)) key = e.code[3].toLowerCase();
 	else if (/^Digit[0-9]$/.test(e.code)) key = e.code[5];
 	else key = CODE_KEYS[e.code];
 	if (key === undefined) return null;
+	const altgr =
+		(typeof e.getModifierState === "function" && e.getModifierState("AltGraph")) ||
+		(e.ctrlKey && e.altKey);
 	return {
 		key,
 		shift: e.shiftKey,
-		option: e.altKey,
-		control: e.ctrlKey,
+		option: e.altKey || altgr,
+		control: e.ctrlKey && !altgr,
 		capsLock: typeof e.getModifierState === "function" && e.getModifierState("CapsLock"),
 	};
 }
