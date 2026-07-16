@@ -1740,7 +1740,7 @@
    "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
    "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
    "below": "⌥⇧ is a DIFFERENT diacritic that shares this glyph's shape, sitting below the base: tilde/creaky, diaeresis/breathy, caron/voiced, dot/dot, breve/non-syllabic. The shape is a memory hook, not a meaning — ⌥⇧n is not 'a lower tilde', it is creaky voice.",
-   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (ʿayn/hamza, undertie/‖, and the two voicing brackets, which are one system split across the ( and ) keys.)",
+   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (The cedilla and the palatal hook; the okina and the ejective; the voicing brackets, one system on the ( key; the tone bar and the alveolar mark sharing the tap digit.)",
    "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)",
    "placement": "⌥⇧ is the SAME mark on the other side of the base. The meaning is identical; placement is typography and the transcriber owns it (laws.placement). The direction differs per mark because each follows its own frequency: the ring defaults ABOVE (ŋ̊ j̊ ɡ̊, and ABC Extended's ring key), the syllabic line BELOW (n̩ l̩ m̩ r̩)."
   },
