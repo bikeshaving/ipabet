@@ -89,12 +89,9 @@ body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
 kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
 </style></head><body>
 <h3>IPAbet is installed.</h3>
-<p><b>Log out and back in</b> — macOS registers new input methods at login —
-then pick <b>IPA</b> in the input menu (top-right of the menu bar) and start
-typing: <kbd>s</kbd> <kbd>⇧H</kbd> → ʃ. The cheat sheet lives in the same menu.</p>
-<p>(If <b>IPA</b> is already in your input menu, the logout isn't needed. If it's
-missing after logging back in, add it under System Settings → Keyboard →
-Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.)</p>
+<p><b>Log out and back in</b>, then pick <b>IPA</b> in the input menu (top-right
+of the menu bar).</p>
+<p>Missing? System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"
