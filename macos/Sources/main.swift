@@ -2,29 +2,8 @@ import Cocoa
 import InputMethodKit
 import Carbon
 
-// --register: run by the pkg postinstall (as the console user) and by
-// build.sh install. TISRegisterInputSource is the API Apple provides
-// installers so a new input method appears in the CURRENT session — no
-// logout. Enabling makes it show up in the input menu without a trip
-// through System Settings; selecting it is left to the user.
-if CommandLine.arguments.contains("--register") {
-    let status = TISRegisterInputSource(Bundle.main.bundleURL as CFURL)
-    guard status == noErr else {
-        FileHandle.standardError.write(Data("TISRegisterInputSource failed: \(status)\n".utf8))
-        exit(1)
-    }
-    if let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISInputSource] {
-        for src in list {
-            guard let p = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { continue }
-            let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
-            if id.hasPrefix("org.bikeshaving.inputmethod.IPAbet") {
-                TISEnableInputSource(src)
-            }
-        }
-    }
-    print("registered + enabled in the current session")
-    exit(0)
-}
+// Registration lives in Helper/register.swift (ipabet-register): TIS
+// enablement must run UNSANDBOXED, and this binary is sandboxed.
 
 // Connection name must match InputMethodConnectionName in Info.plist.
 let kConnectionName = "IPAbet_Connection"

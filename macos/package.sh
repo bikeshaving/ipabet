@@ -34,7 +34,13 @@ echo "version:          $VERSION"
 ./build.sh
 
 # --- 2. sign for distribution: hardened runtime + App Sandbox (no network
-# entitlement — the OS enforces the no-phoning-home claim) + timestamp ---
+# entitlement — the OS enforces the no-phoning-home claim) + timestamp.
+# The registration helper is hardened but NOT sandboxed (TIS enablement
+# writes HIToolbox prefs, which a sandboxed process writes into its own
+# container — a silent no-op for the real session). Per-binary entitlements;
+# app signed without --deep so the helper's signature survives. ---
+codesign --force --options runtime --timestamp --sign "$DEVID_APP" \
+	"$APP/Contents/MacOS/ipabet-register"
 codesign --force --options runtime --timestamp \
 	--entitlements IPAbet.entitlements --sign "$DEVID_APP" "$APP"
 codesign --verify --strict --verbose=2 "$APP"
@@ -60,7 +66,7 @@ cat > "$SCRIPTS/postinstall" <<'EOF'
 # Runs as root; TIS registration must happen as the console user.
 u=$(stat -f%Su /dev/console)
 if [ -n "$u" ] && [ "$u" != "root" ]; then
-  sudo -u "$u" "/Library/Input Methods/IPAbet.app/Contents/MacOS/IPAbet" --register || true
+  sudo -u "$u" "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
 fi
 exit 0
 EOF
