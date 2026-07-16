@@ -1075,7 +1075,10 @@
    "type": "spacing",
    "group": "Tone",
    "cp": "U+02E6",
-   "name": "MODIFIER LETTER HIGH TONE BAR"
+   "name": "MODIFIER LETTER HIGH TONE BAR (⇧ → ͇ alveolar, extIPA — the alveolar mark on the alveolar-tap digit)",
+   "double": "͇",
+   "doubleCp": "U+0347",
+   "shiftSense": "twin"
   },
   {
    "opt": "5",

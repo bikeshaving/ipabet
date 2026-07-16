@@ -742,6 +742,8 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~6")).toBe("ꜜ");
 		expect(typed("~+6")).toBe("ꜛ");
 	});
+	test("the alveolar mark rides the alveolar-tap digit: ⌥⇧4 t → t͇", () =>
+		expect(typed("~+4", "t")).toBe(nfc("t\u{0347}")));
 	test("contour: ⌥7 → ↘, ⌥⇧7 → ↗", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
