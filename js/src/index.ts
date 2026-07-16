@@ -182,26 +182,27 @@ const isGreekUpper = (c: string): boolean => {
 };
 
 
-// The tie bar (⌥j) and its below-form (⌥⇧j). The tie goes BELOW when the glyphs'
-// descenders would collide with a bar above (t͜ɕ, d͜ʒ, k͜p). The joiners are a
-// FAMILY: a repeat press advances the just-emitted one in place (lookback, like
-// the ɚ fusion) — ͡ → ͜ → ͢ (extIPA's sliding articulation) → wrap. Two tie
-// bars stacked was never a transcription; now the second press means "the next
-// joiner" instead.
+// The tie bar (⌥j) and its below-form (⌥⇧j) — a placement pair, above/below,
+// like the ring key. Two rules ride the emitted joiner (lookback, like the ɚ
+// fusion): the OTHER chord flips placement in place, and the SAME chord again
+// toggles to ͢ — extIPA's sliding articulation, the third joiner — and back.
+// Two tie bars stacked was never a transcription.
 const TIE = "͡";
 const TIE_BELOW = "͜";
 const SLIDE = "͢";
-const JOINERS = [TIE, TIE_BELOW, SLIDE];
+const TIES = [TIE, TIE_BELOW];
 
-/** ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or, if one was just
- *  emitted, advance it through the family in place. */
+/** ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or rewrite the one just
+ *  emitted: same chord again ⇄ sliding, other chord = placement flip. */
 function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
 	const p = lastCluster(textBefore);
 	if (p !== undefined && pending.length === 0) {
 		const last = [...p].pop()!;
-		const at = JOINERS.indexOf(last);
-		if (at >= 0) {
-			const next = JOINERS[(at + 1) % JOINERS.length];
+		const next =
+			last === start ? SLIDE :                         // same again → sliding
+			last === SLIDE ? start :                         // …and back
+			TIES.includes(last) ? start : undefined;         // other tie → placement flip
+		if (next !== undefined) {
 			return {edit: {type: "replace", length: last.length, text: next}, pending: []};
 		}
 	}

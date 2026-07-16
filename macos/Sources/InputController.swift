@@ -636,10 +636,10 @@ class InputController: IMKInputController {
     /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
     private static let tieBelow: Unicode.Scalar = "\u{035C}"
-    /// The joiner family: tie above → tie below → extIPA's sliding articulation.
-    /// A repeat press advances the just-emitted joiner in place (lookback, like
-    /// the ɚ fusion) — two stacked tie bars was never a transcription.
-    private static let joiners: [Unicode.Scalar] = ["\u{0361}", "\u{035C}", "\u{0362}"]
+    /// The joiners: ⌥j/⌥⇧j is a placement pair (above/below); the OTHER chord
+    /// flips placement in place, and the SAME chord again toggles sliding ͢
+    /// (extIPA) and back. Lookback rewrites, like the ɚ fusion.
+    private static let slide: Unicode.Scalar = "\u{0362}"
     /// The stroke overlay's precomposed family (⌥l, ABC Extended's stroke key).
     private static let stroked: [String: String] = [
         "l": "ł", "L": "Ł", "d": "đ", "D": "Đ", "t": "ŧ", "T": "Ŧ",
@@ -736,16 +736,22 @@ class InputController: IMKInputController {
         return t.quoteLocales[locale] ?? t.quoteLocales[t.quoteDefault] ?? ["\u{201C}", "\u{201D}", "\u{2018}", "\u{2019}"]
     }
 
-    /// ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or, if one was just
-    /// emitted, advance it through the family in place. Mirrors js emitJoiner.
+    /// ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or rewrite the one
+    /// just emitted: same chord again ⇄ sliding, other chord = placement flip.
+    /// Mirrors js emitJoiner.
     private func emitJoiner(_ start: Unicode.Scalar, _ client: IMKTextInput) {
-        if pending.isEmpty, let (p, r) = lastCluster(client), let last = p.unicodeScalars.last,
-           let at = Self.joiners.firstIndex(of: last) {
-            let next = Self.joiners[(at + 1) % Self.joiners.count]
-            var scalars = Array(p.unicodeScalars.dropLast())
-            scalars.append(next)
-            replace(r, with: String(String.UnicodeScalarView(scalars)), client)
-            return
+        if pending.isEmpty, let (p, r) = lastCluster(client), let last = p.unicodeScalars.last {
+            let ties: [Unicode.Scalar] = [Self.tieAbove, Self.tieBelow]
+            let next: Unicode.Scalar? =
+                last == start ? Self.slide :
+                last == Self.slide ? start :
+                ties.contains(last) ? start : nil
+            if let next = next {
+                var scalars = Array(p.unicodeScalars.dropLast())
+                scalars.append(next)
+                replace(r, with: String(String.UnicodeScalarView(scalars)), client)
+                return
+            }
         }
         emitBase(String(start), client)
     }

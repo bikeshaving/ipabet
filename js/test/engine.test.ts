@@ -822,16 +822,17 @@ describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
 	});
 });
 
-describe("the joiner family (⌥j repeat-walks: tie → tie-below → sliding)", () => {
-	test("t ⌥j s → t͡s; a second ⌥j advances the emitted joiner, never stacks", () => {
+describe("the joiners: a placement pair, with sliding on the double-press", () => {
+	test("⌥j above, ⌥⇧j below — the placement pair, and the other chord flips in place", () => {
 		expect(typed("t", "~j", "s")).toBe(nfc("t\u{0361}s"));
-		expect(typed("t", "~j", "~j", "s")).toBe(nfc("t\u{035C}s"));   // → tie below
-		expect(typed("t", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0362}s")); // → sliding (extIPA)
-		expect(typed("t", "~j", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0361}s")); // wraps
-	});
-	test("⌥⇧j starts at tie-below and walks the same family", () => {
 		expect(typed("t", "~+j", "s")).toBe(nfc("t\u{035C}s"));
+		expect(typed("t", "~j", "~+j", "s")).toBe(nfc("t\u{035C}s"));  // flip above → below
+		expect(typed("t", "~+j", "~j", "s")).toBe(nfc("t\u{0361}s"));  // flip below → above
+	});
+	test("the same chord again toggles sliding ◌͢ (extIPA), from either side", () => {
+		expect(typed("t", "~j", "~j", "s")).toBe(nfc("t\u{0362}s"));
 		expect(typed("t", "~+j", "~+j", "s")).toBe(nfc("t\u{0362}s"));
+		expect(typed("t", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0361}s"));  // …and back
 	});
 });
 

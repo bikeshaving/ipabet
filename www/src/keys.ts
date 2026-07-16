@@ -82,7 +82,7 @@ const keysComponents = {
 			<tr><td class="k">vowel ⌥r</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity — emits the spacing hook, the font joins it (5 ⇧Y ⌥r → ɚ, 5 ⇧H ⌥r → ɝ precomposed)</td></tr>
 			<tr><td class="k">X ⇧X</td><td class="g">þ ı ƙ ƴ ƒ ß</td><td class="cp"></td><td>the doubled-letter law: a letter doubled with its own shift is its orthographic cousin (t⇧T þ, i⇧I ı, k⇧K ƙ, y⇧Y ƴ, f⇧F ƒ, s⇧S ß). Held capitals: ⇧T⇧T → Þ</td></tr>
 			<tr><td class="k">l ⇧L</td><td class="g">l·l</td><td class="cp">U+00B7</td><td>Catalan ela geminada — the whole trigraph in one chord (cel·la)</td></tr>
-			<tr><td class="k">⌥j ⌥j…</td><td class="g">◌͡ ◌͜ ◌͢</td><td class="cp"></td><td>the joiner walk: a repeat press advances the emitted joiner — tie above → tie below → sliding (extIPA), then wraps</td></tr>
+			<tr><td class="k">⌥j ⌥j</td><td class="g">◌͢</td><td class="cp">U+0362</td><td>sliding articulation (extIPA): the same joiner chord again toggles the emitted tie ⇄ sliding; the other chord flips placement in place</td></tr>
 			<tr><td class="k">held ⇧5⇧Y</td><td class="g">Ə</td><td class="cp">U+018F</td><td>the shifted digit is the digit's capital plane: a held chain uppercases the digraph (⇧5⇧Y → Ə, ⇧7⇧H → Ħ); a shift release escapes to the literal</td></tr>
 		<//>`,
 	BeyondTables: () =>

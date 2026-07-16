@@ -75,7 +75,7 @@ A combining key may carry a **cycle**: pressing it again on its own pending mark
 | ⌥n ⌥n… | ◌̃ nasalized → ◌͊ denasal → ◌͋ nasal escape → ◌͌ velopharyngeal |
 | ⌥w ⌥w… | ◌̜ less rounded → ◌͍ labial spreading |
 | ⌥⇧w ⌥⇧w… | ◌̹ more rounded → ◌͎ whistled |
-| ⌥j ⌥j… | ◌͡ tie → ◌͜ tie below → ◌͢ sliding (a lookback walk on the emitted joiner) |
+| ⌥j ⌥j | the same joiner chord again toggles the emitted tie ⇄ ◌͢ sliding; the other chord flips placement |
 
 ## Quotes by locale
 
