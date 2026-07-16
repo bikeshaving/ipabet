@@ -269,7 +269,7 @@ export function Chart() {
 				<${Diacritics} />
 
 				<p class="attrib">Click any symbol to hear it. Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; combining ⌥ marks are typed before their base (dead-key style), spacing marks after.
-				This chart as data: <a href="/chart.json">chart.json</a> · every keystroke: <a href="/keys">keys</a>. <b>Beta — provisional; keystrokes may change between releases.</b>
+				This chart as data: <a href="/chart.json">chart.json</a> · every keystroke: <a href="/keys">keys</a>.
 				Audio: Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses, re-hosted with attribution.
 				Layout derived from <a href="https://www.internationalphoneticassociation.org/content/ipa-chart">The International Phonetic Alphabet (revised to 2015)</a>,
 				© 2015 International Phonetic Association, CC BY-SA 3.0. This sheet is likewise CC BY-SA · <a href="https://ipabet.org">ipabet.org</a></p>

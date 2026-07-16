@@ -3,8 +3,6 @@ title: IPAbet — keystroke reference (machine-readable)
 description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint. Raw JSON at /ipabet.json."
 ---
 
-<p style="color:var(--dim);font-style:italic;font-size:.9rem">Provisional: the layout is still being refined and these keystrokes may change between releases.</p>
-
 The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. [Visual chart](/chart) · [home](/).
 
 ## Tier 1 · base letters (identity)
