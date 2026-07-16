@@ -377,6 +377,12 @@
    "name": "LATIN LETTER SMALL CAPITAL G"
   },
   {
+   "key": "gG",
+   "glyph": "ɡ",
+   "cp": "U+0261",
+   "name": "LATIN SMALL LETTER SCRIPT G (the chart's single-story ɡ, exact codepoint — the doubled-letter law: X⇧X is X's orthographic cousin, and ɡ is g's own other form. Plain g types the same phoneme)"
+  },
+  {
    "key": "hH",
    "glyph": "ɦ",
    "cp": "U+0266",

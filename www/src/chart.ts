@@ -21,7 +21,8 @@ const reverse = new Map<string, string>();
 for (const e of spec.letters as {key: string; glyph: string}[]) {
 	if (!reverse.has(e.glyph)) reverse.set(e.glyph, e.key);
 }
-reverse.set("ɡ", reverse.get("g") ?? "g"); // the chart's script ɡ is our g
+// The chart's script ɡ resolves through the spec like any glyph: gG (exact
+// U+0261); plain g types the same phoneme on the bare key.
 
 
 /** A glyph with its keystrokes beneath. `fallback` annotates glyphs typed
@@ -313,10 +314,10 @@ export const CHART_JSON = JSON.stringify(
 			"The IPA chart (2015, CC BY-SA) with IPAbet keystrokes. " +
 			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes typed in " +
 			"sequence. Combining diacritics are typed before their base (dead-key " +
-			"style); spacing marks after. One deliberate divergence: the chart " +
-			"shows the IPA's script ɡ (U+0261), but the g key emits plain g " +
-			"(U+0067) — the layout's plain-US constraint; both stand for the " +
-			"voiced velar plosive, and g superscripts to ᶢ accordingly. " +
+			"style); spacing marks after. The chart shows the IPA's script ɡ " +
+			"(U+0261), typed exactly as gG (the doubled-letter law); the bare " +
+			"g key emits plain g (U+0067) — the layout's plain-US constraint — " +
+			"and both stand for the voiced velar plosive, superscripting to ᶢ. " +
 			"Canonical spec: /ipabet.json.",
 		pulmonic: {
 			places: PLACES,

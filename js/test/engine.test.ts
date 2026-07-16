@@ -136,9 +136,8 @@ describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥⇧q mar
 		expect(typed("j", "+p")).toBe("ʄ");
 		expect(typed("g", "+p")).toBe("ɠ");
 	});
-	test("uvular implosive is qP; gG is a literal digraph", () => {
+	test("uvular implosive is qP; ɢ stays on gQ", () => {
 		expect(typed("q", "+p")).toBe("ʛ");
-		expect(typed("g", "+g")).toBe("gG"); // ʛ is qP only; ɢ stays on gQ
 		expect(typed("g", "+q")).toBe("ɢ");
 	});
 	// The ejective lives on the mark tier: kʼ is k + U+02BC, a spacing modifier
@@ -818,6 +817,11 @@ describe("locale quotes on the bracket keys", () => {
 });
 
 describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
+	test("g⇧G → ɡ — the exact U+0261, g's own other form; capital Ɡ via held chain", () => {
+		expect(typed("g", "+g")).toBe("\u{0261}");
+		expect(typed("+g", "+g")).toBe("\u{A7AC}"); // Ɡ
+		expect(typed("g", "+g", "~z")).toBe("ᶢ");    // the sup table already keyed ɡ
+	});
 	test("t⇧T → þ (Icelandic), capitals via held chain: ⇧T⇧T → Þ", () => {
 		expect(typed("t", "+t")).toBe("þ");
 		expect(typed("+t", "+t")).toBe("Þ");

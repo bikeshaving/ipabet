@@ -359,7 +359,7 @@ const CONS = [
 	{sym:"c", key:"c",   pl:"palatal",     m:0, v:0},
 	{sym:"ɟ", key:"dJ",  pl:"palatal",     m:0, v:1},
 	{sym:"k", key:"k",   pl:"velar",       m:0, v:0},
-	{sym:"ɡ", key:"g",   pl:"velar",       m:0, v:1},
+	{sym:"ɡ", key:"g ⇧G", pl:"velar",      m:0, v:1},
 	{sym:"q", key:"q",   pl:"uvular",      m:0, v:0},
 	{sym:"ɢ", key:"gQ",  pl:"uvular",      m:0, v:1},
 	{sym:"ʔ", key:"2 ⇧H",  pl:"glottal",     m:0, v:0},

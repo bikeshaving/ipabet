@@ -28,7 +28,8 @@ cross-dimension marks keep separate keys and can stack (t̪̻ is why apical
 stayed off the t cycle). The composition preview shows every step; ⌫ cancels.
 The joiners walk by lookback instead (⌥j ⌥j ⇄ sliding), since they emit.
 
-**The doubled-letter law.** X⇧X is X's orthographic cousin: ß þ ı ƙ ƴ ƒ.
+**The doubled-letter law.** X⇧X is X's orthographic cousin: ɡ ß þ ı ƙ ƴ ƒ —
+ɡ being g's own single-story form, the chart's exact codepoint.
 Capitals ride the capital-digraph rule; the shifted digit is the digit's
 capital plane (⇧5⇧Y → Ə).
 
