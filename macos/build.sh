@@ -31,6 +31,7 @@ echo "built $APP"
 if [[ "${1:-}" == "install" ]]; then
   rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
-  echo "installed. Log out/in (or: killall -HUP TextInputMenuAgent),"
-  echo "then add it under System Settings → Keyboard → Input Sources → + → English."
+  ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/IPAbet --register \
+    && echo "installed + registered — IPA is in the input menu, no logout needed." \
+    || echo "installed; registration failed — log out/in and add it in System Settings."
 fi

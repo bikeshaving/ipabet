@@ -47,11 +47,61 @@ cp -R "$APP" "$STAGE/"
 PLIST="build/component.plist"
 pkgbuild --analyze --root "$PKGROOT" "$PLIST"
 /usr/libexec/PlistBuddy -c 'Set :0:BundleIsRelocatable false' "$PLIST"
-pkgbuild --root "$PKGROOT" --component-plist "$PLIST" --install-location "/" \
+
+# postinstall registers the input method into the logged-in user's session
+# (TISRegisterInputSource via the binary's --register mode), so installing
+# needs no logout in the normal case.
+SCRIPTS="build/scripts"
+mkdir -p "$SCRIPTS"
+cat > "$SCRIPTS/postinstall" <<'EOF'
+#!/bin/bash
+# Runs as root; TIS registration must happen as the console user.
+u=$(stat -f%Su /dev/console)
+if [ -n "$u" ] && [ "$u" != "root" ]; then
+  sudo -u "$u" "/Library/Input Methods/IPAbet.app/Contents/MacOS/IPAbet" --register || true
+fi
+exit 0
+EOF
+chmod +x "$SCRIPTS/postinstall"
+
+pkgbuild --root "$PKGROOT" --component-plist "$PLIST" --scripts "$SCRIPTS" \
+	--install-location "/" \
 	--identifier "org.bikeshaving.inputmethod.IPAbet.pkg" --version "$VERSION" "$COMPONENT"
 
-# --- 4. wrap into a product installer, signed with the Installer identity ---
-productbuild --package "$COMPONENT" --sign "$DEVID_INST" "$PKG"
+# --- 4. wrap into a product installer with a conclusion page, signed ---
+RES="build/resources"
+mkdir -p "$RES"
+cat > "$RES/conclusion.html" <<'EOF'
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
+kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
+</style></head><body>
+<h3>IPAbet is installed and registered.</h3>
+<p>Pick <b>IPA</b> in the input menu (top-right of the menu bar) and start typing —
+<kbd>s</kbd> <kbd>⇧H</kbd> → ʃ. The cheat sheet lives in the same menu.</p>
+<p>If <b>IPA</b> is missing from the input menu, log out and back in once —
+macOS occasionally requires it for brand-new input methods — then add it under
+System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → <b>IPA</b>.</p>
+</body></html>
+EOF
+DIST="build/distribution.xml"
+cat > "$DIST" <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <title>IPAbet</title>
+    <conclusion file="conclusion.html"/>
+    <options customize="never" require-scripts="false"/>
+    <pkg-ref id="org.bikeshaving.inputmethod.IPAbet.pkg" version="$VERSION">IPAbet-component.pkg</pkg-ref>
+    <choices-outline>
+        <line choice="default"/>
+    </choices-outline>
+    <choice id="default" visible="false">
+        <pkg-ref id="org.bikeshaving.inputmethod.IPAbet.pkg"/>
+    </choice>
+</installer-gui-script>
+EOF
+productbuild --distribution "$DIST" --resources "$RES" --package-path build \
+	--sign "$DEVID_INST" "$PKG"
 
 # --- 5. notarize (waits for Apple) and staple the ticket ---
 echo "submitting to Apple notary — this usually takes a minute or two…"
