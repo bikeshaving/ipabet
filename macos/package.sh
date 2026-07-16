@@ -41,7 +41,13 @@ codesign --verify --strict --verbose=2 "$APP"
 rm -rf "$PKGROOT" "$COMPONENT" "$PKG"
 mkdir -p "$STAGE"
 cp -R "$APP" "$STAGE/"
-pkgbuild --root "$PKGROOT" --install-location "/" \
+# BundleIsRelocatable=false, or Installer "relocates": finding any other copy
+# of the bundle ID via Spotlight (a dev build, a Trash copy), it writes the
+# payload THERE and leaves /Library/Input Methods empty — receipt and all.
+PLIST="build/component.plist"
+pkgbuild --analyze --root "$PKGROOT" "$PLIST"
+/usr/libexec/PlistBuddy -c 'Set :0:BundleIsRelocatable false' "$PLIST"
+pkgbuild --root "$PKGROOT" --component-plist "$PLIST" --install-location "/" \
 	--identifier "org.bikeshaving.inputmethod.IPAbet.pkg" --version "$VERSION" "$COMPONENT"
 
 # --- 4. wrap into a product installer, signed with the Installer identity ---
