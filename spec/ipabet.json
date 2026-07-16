@@ -1189,6 +1189,20 @@
    "shiftSense": "twin"
   },
   {
+   "opt": "0",
+   "mark": "ʹ",
+   "type": "spacing",
+   "double": "ʺ",
+   "doubleCp": "U+02BA",
+   "doubleSpacing": true,
+   "group": "Transliteration",
+   "cp": "U+02B9",
+   "name": "MODIFIER LETTER PRIME (Cyrillic romanization's soft sign — Gorʹkij; ⇧ → ʺ double prime, the hard sign)",
+   "ipa": false,
+   "beyond": "tenant",
+   "shiftSense": "greater"
+  },
+  {
    "opt": "o",
    "mark": "̯",
    "clone": "˯",

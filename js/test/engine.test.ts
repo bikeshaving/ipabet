@@ -253,8 +253,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
 	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
 	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
-	test("the ⌥ number row is claimed 1–9 (⌥0 is open estate)", () => {
-		for (const d of "123456789")
+	test("the ⌥ number row is fully claimed, 1 through 0", () => {
+		for (const d of "1234567890")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
 	// The shifted digits give their native symbols directly now that the roots are
@@ -530,10 +530,10 @@ describe("East Asian coverage", () => {
 		expect(typed("~p", "k")).toBe(nfc("k\u{031A}"));
 	});
 	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~p", "p")).toBe(nfc("sɐp\u{031A}")));
-	// The strength dimension (fortis ◌͈ / weak ◌͉) retired to the graveyard in
-	// the linguist's review — ⌥0 and ⌥⇧f pass to the host.
-	test("⌥0 passes to the host (fortis retired)", () =>
-		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass"));
+	// The strength dimension lives on F now (⌥f weak, ⌥⇧f fortis); ⌥0 carries
+	// the Cyrillic primes.
+	test("fortis is on ⌥⇧f now: ⌥⇧f k → k͈", () =>
+		expect(typed("~+f", "k")).toBe(nfc("k\u{0348}")));
 
 	// Vowels East Asianists need, one digraph each.
 	test("ɨ ɯ ɤ ʌ are single digraphs", () => {
@@ -772,9 +772,9 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("⌥0 and ⌥⇧0 pass on both planes (open estate)", () => {
-		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");
-		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
+	test("the Cyrillic primes take the last pair: ⌥0 → ʹ, ⌥⇧0 → ʺ (Gorʹkij, obʺekt)", () => {
+		expect(typed("s", "~0")).toBe("s\u{02B9}");
+		expect(typed("~+0")).toBe("\u{02BA}");
 	});
 	test("comma above completes the comma key: ⌥⇧, k → k̓ (PNW glottalization)", () =>
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
