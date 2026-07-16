@@ -90,7 +90,7 @@ The bracket keys are semantic: <kbd>⌥[</kbd> opens the **primary** quote, <kbd
 | ru | « » | „ “ |
 | sv | ” ” | ’ ’ |
 
-On macOS set it with the IME's `quoteLocale` default; on the web editor, the picker. The grapheme brackets live beside them: <kbd>⌥\</kbd> ⟨ and <kbd>⌥⇧\</kbd> ⟩ — linguistics' third citation bracket (/phoneme/ [phone] ⟨grapheme⟩).
+On macOS pick it in the input menu (Quote Style); on the web editor, the picker. The grapheme brackets live beside them: <kbd>⌥\</kbd> ⟨ and <kbd>⌥⇧\</kbd> ⟩ — linguistics' third citation bracket (/phoneme/ [phone] ⟨grapheme⟩).
 
 ## Machine access
 
