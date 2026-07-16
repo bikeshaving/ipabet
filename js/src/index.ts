@@ -158,6 +158,18 @@ const SHIFTED_DIGITS: Record<string, string> = {
 	"6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
 };
 
+// Locale-semantic quotes on the bracket keys. The locale is CONFIGURATION,
+// not composition state — the engine stays stateless per keystroke.
+const QUOTE_LOCALES = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
+let quoteLocale = QUOTE_LOCALES.default;
+/** Set the active quote locale (en, de, fr, ch, pl, ru, sv). Unknown → default. */
+export function setQuoteLocale(locale: string): void {
+	quoteLocale = locale in QUOTE_LOCALES.locales ? locale : QUOTE_LOCALES.default;
+}
+function quoteQuad(): string[] {
+	return QUOTE_LOCALES.locales[quoteLocale] ?? QUOTE_LOCALES.locales[QUOTE_LOCALES.default];
+}
+
 // ⌥⇧<digit> slots spent on a character rather than the raw-US escape.
 const optShiftDigits: Record<string, string> =
 	(spec as {optShift?: Record<string, string>}).optShift ?? {};
@@ -448,6 +460,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			if (key === "j") return emitJoiner(textBefore, TIE_BELOW, pending);
 			// ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
 			if (key === "z") return withFlush(subscriptize(textBefore));
+			// Locale quotes: ⌥⇧[ closes primary, ⌥⇧] closes secondary.
+			if (key === "[") return withFlush({type: "insert", text: quoteQuad()[1]});
+			if (key === "]") return withFlush({type: "insert", text: quoteQuad()[3]});
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
@@ -471,6 +486,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
 			// immediately. ⌥j — j for JOIN. (Below-form ⌥⇧j is in the block above.)
 			if (key === "j") return emitJoiner(textBefore, TIE, pending);
+			// Locale quotes: ⌥[ opens primary, ⌥] opens secondary.
+			if (key === "[") return withFlush({type: "insert", text: quoteQuad()[0]});
+			if (key === "]") return withFlush({type: "insert", text: quoteQuad()[2]});
 			// Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
 			// so ˞ is a spacing character and the visual join onto the vowel is the
 			// font's job, not the engine's. The one real join the engine owes is

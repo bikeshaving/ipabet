@@ -210,6 +210,37 @@
      }
     }
    }
+  },
+  "quotes": {
+   "description": "Locale-semantic quotes on the bracket keys. `default` names a key of `locales`; each locale is the quad [openPrimary, closePrimary, openSecondary, closeSecondary].",
+   "type": "object",
+   "required": [
+    "about",
+    "default",
+    "locales"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "about": {
+     "type": "string"
+    },
+    "default": {
+     "type": "string"
+    },
+    "locales": {
+     "type": "object",
+     "minProperties": 1,
+     "additionalProperties": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    }
+   }
   }
  },
  "$defs": {

@@ -3,7 +3,7 @@
 // this port disagree with a row, one of them is wrong.
 
 import {describe, expect, test} from "bun:test";
-import {typeKeys, handleKey, handleBackspace, type Keystroke} from "../src/index.ts";
+import {typeKeys, handleKey, handleBackspace, setQuoteLocale, type Keystroke} from "../src/index.ts";
 
 // Compact keystroke notation: "s" bare, "+H" shift, "~n" option, "~+2"
 // option-shift, "^" prefix = shift was RELEASED before this key (breaks a
@@ -780,6 +780,28 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
 });
 
+describe("locale quotes on the bracket keys", () => {
+	test("en (default): ⌥[ “ ⌥⇧[ ” ⌥] ‘ ⌥⇧] ’ — byte-identical to native", () => {
+		expect(typed("~[") + typed("~+[") + typed("~]") + typed("~+]")).toBe("“”‘’");
+	});
+	test("de: low-9 primaries come back", () => {
+		setQuoteLocale("de");
+		expect(typed("~[") + typed("~+[")).toBe("„“");
+		expect(typed("~]") + typed("~+]")).toBe("‚‘");
+		setQuoteLocale("en");
+	});
+	test("fr: the guillemets return as primaries, singles as secondaries", () => {
+		setQuoteLocale("fr");
+		expect(typed("~[") + typed("~+[")).toBe("«»");
+		expect(typed("~]") + typed("~+]")).toBe("‹›");
+		setQuoteLocale("en");
+	});
+	test("unknown locale falls back to the default", () => {
+		setQuoteLocale("zz");
+		expect(typed("~[")).toBe("“");
+	});
+});
+
 describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
 	test("t⇧T → þ (Icelandic), capitals via held chain: ⇧T⇧T → Þ", () => {
 		expect(typed("t", "+t")).toBe("þ");
@@ -831,8 +853,8 @@ describe("option-shift raw escape", () => {
 		expect(typed("~\\")).toBe("⟨");
 		expect(typed("~+\\")).toBe("⟩");
 	});
-	test("⌥⇧[ passes (native typography)", () =>
-		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
+	test("⌥⇧[ is the locale's close-primary now (en: ”) — claimed, not passed", () =>
+		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "insert", text: "”"}));
 });
 
 describe("backspace peel", () => {

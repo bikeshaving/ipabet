@@ -1752,5 +1752,53 @@
   "3": "ʿ",
   "2": "ʾ",
   "5": "˭"
+ },
+ "quotes": {
+  "about": "Locale-semantic quotes on the bracket keys: ⌥[ opens primary, ⌥⇧[ closes primary, ⌥] opens secondary, ⌥⇧] closes secondary. Which characters those semantics emit is the quote locale — a configuration (IME: the `quoteLocale` user default; web: a picker), not composition state. Each locale is [openPrimary, closePrimary, openSecondary, closeSecondary]. The default `en` is byte-identical to the native macOS bracket keys.",
+  "default": "en",
+  "locales": {
+   "en": [
+    "“",
+    "”",
+    "‘",
+    "’"
+   ],
+   "de": [
+    "„",
+    "“",
+    "‚",
+    "‘"
+   ],
+   "fr": [
+    "«",
+    "»",
+    "‹",
+    "›"
+   ],
+   "ch": [
+    "»",
+    "«",
+    "›",
+    "‹"
+   ],
+   "pl": [
+    "„",
+    "”",
+    "«",
+    "»"
+   ],
+   "ru": [
+    "«",
+    "»",
+    "„",
+    "“"
+   ],
+   "sv": [
+    "”",
+    "”",
+    "’",
+    "’"
+   ]
+  }
  }
 }

@@ -76,6 +76,11 @@ struct Tables {
     /// ⌥⇧<digit> slots spent on a character instead of the raw-US escape
     /// (⌥⇧1 → ¡). See spec `optShift`.
     let optShiftDigits: [String: String]
+    /// Locale-semantic quotes: locale → [openPrimary, closePrimary, openSecondary,
+    /// closeSecondary]. The active locale is the `quoteLocale` user default —
+    /// configuration, not composition state.
+    let quoteLocales: [String: [String]]
+    let quoteDefault: String
 
     static let shared: Tables = {
         guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
@@ -113,6 +118,12 @@ struct Tables {
         for (k, v) in root["optShift"] as? [String: Any] ?? [:] {
             if k.count == 1, k.first!.isNumber, let ch = v as? String { optShiftDigits[k] = ch }
         }
+        var quoteLocales: [String: [String]] = [:]
+        var quoteDefault = "en"
+        if let q = root["quotes"] as? [String: Any] {
+            quoteLocales = q["locales"] as? [String: [String]] ?? [:]
+            quoteDefault = q["default"] as? String ?? "en"
+        }
         var sups: [String: String] = [:]
         if let s = root["superscripts"] as? [String: Any] {
             for r in s["table"] as? [[String: Any]] ?? [] {
@@ -137,7 +148,8 @@ struct Tables {
         }
         return Tables(letters: letters, optMarks: optMarks, sups: sups, subs: subs,
                       transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
-                      optShiftDigits: optShiftDigits)
+                      optShiftDigits: optShiftDigits,
+                      quoteLocales: quoteLocales, quoteDefault: quoteDefault)
     }()
 }
 
@@ -399,6 +411,9 @@ class InputController: IMKInputController {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
             if oc == "j" { emitJoiner(Self.tieBelow, client); return true }
+            // Locale quotes: ⌥⇧[ closes primary, ⌥⇧] closes secondary.
+            if oc == "[" { flushPending(client); insert(quoteQuad()[1], client); return true }
+            if oc == "]" { flushPending(client); insert(quoteQuad()[3], client); return true }
             // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
             if oc == "z" { flushPending(client); return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
@@ -432,6 +447,9 @@ class InputController: IMKInputController {
             // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
             // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
             if oc == "j" { emitJoiner(Self.tieAbove, client); return true }
+            // Locale quotes: ⌥[ opens primary, ⌥] opens secondary.
+            if oc == "[" { flushPending(client); insert(quoteQuad()[0], client); return true }
+            if oc == "]" { flushPending(client); insert(quoteQuad()[2], client); return true }
             // ⌥z raises the previous glyph — the operators live on the prime chord.
             if oc == "z" { flushPending(client); return superscriptize(client) }
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
@@ -708,6 +726,14 @@ class InputController: IMKInputController {
             pending.append(scalar)
         }
         updateMarked(client)
+    }
+
+    /// The active quote quad, from the `quoteLocale` user default (set with
+    /// `defaults write` against the IME's bundle id, or a future input menu).
+    private func quoteQuad() -> [String] {
+        let t = Tables.shared
+        let locale = UserDefaults.standard.string(forKey: "quoteLocale") ?? t.quoteDefault
+        return t.quoteLocales[locale] ?? t.quoteLocales[t.quoteDefault] ?? ["\u{201C}", "\u{201D}", "\u{2018}", "\u{2019}"]
     }
 
     /// ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or, if one was just
