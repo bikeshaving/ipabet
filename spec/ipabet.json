@@ -753,9 +753,19 @@
    "doubleCp": "U+0330",
    "group": "Nasalization",
    "cp": "U+0303",
-   "name": "COMBINING TILDE",
+   "name": "COMBINING TILDE (nasalized; press again: ͊ denasal → ͋ nasal escape → ͌ velopharyngeal friction — the nasal-port dimension)",
    "doubleClone": "˷",
-   "shiftSense": "below"
+   "shiftSense": "below",
+   "cycle": [
+    "͊",
+    "͋",
+    "͌"
+   ],
+   "cycleCp": [
+    "U+034A",
+    "U+034B",
+    "U+034C"
+   ]
   },
   {
    "opt": "u",
@@ -832,10 +842,7 @@
    "cp": "U+0328",
    "name": "COMBINING OGONEK",
    "ipa": false,
-   "beyond": "tenant",
-   "double": "͍",
-   "doubleCp": "U+034D",
-   "shiftSense": "twin"
+   "beyond": "tenant"
   },
   {
    "opt": "t",
@@ -907,13 +914,19 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031C",
-   "name": "COMBINING LEFT HALF RING BELOW",
+   "name": "COMBINING LEFT HALF RING BELOW (less rounded; press again: ͍ labial spreading — the un-rounding pole)",
    "double": "̹",
    "doubleCp": "U+0339",
    "clone": "˓",
    "doubleClone": "˒",
    "exclusive": true,
-   "shiftSense": "greater"
+   "shiftSense": "greater",
+   "cycle": [
+    "͍"
+   ],
+   "cycleCp": [
+    "U+034D"
+   ]
   },
   {
    "opt": "s",
@@ -1087,19 +1100,6 @@
    "group": "Tone",
    "cp": "U+02E5",
    "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR"
-  },
-  {
-   "opt": "8",
-   "mark": "͊",
-   "type": "combining",
-   "group": "Nasalization",
-   "cp": "U+034A",
-   "name": "COMBINING NOT TILDE ABOVE",
-   "double": "͋",
-   "doubleCp": "U+034B",
-   "shiftSense": "greater",
-   "ipa": false,
-   "beyond": "extIPA"
   },
   {
    "opt": "p",

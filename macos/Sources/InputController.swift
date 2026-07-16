@@ -50,6 +50,10 @@ struct Mark {
     /// Spacing form of a combining mark (´ for acute) — the dead-key preview
     /// glyph, and Apple's "terminator" concept. Nil for IPA-only marks.
     let clone: String?
+    /// Repeat-press family: pressing the key again on its own pending mark
+    /// advances through these forms and wraps (⌥n: ̃ → ͊ → ͋ → ͌). One
+    /// dimension only; the marked-text preview shows every step.
+    let cycle: [String]
 }
 
 struct Tables {
@@ -90,7 +94,8 @@ struct Tables {
                                  spacing: (r["type"] as? String) == "spacing",
                                  double: r["double"] as? String,
                                  doubleSpacing: r["doubleSpacing"] as? Bool == true,
-                                 clone: clone)
+                                 clone: clone,
+                                 cycle: r["cycle"] as? [String] ?? [])
             if let c = clone, let sc = mark.unicodeScalars.first { clones[sc] = c }
             if let dc = r["doubleClone"] as? String,
                let ds = (r["double"] as? String)?.unicodeScalars.first { clones[ds] = dc }
@@ -574,7 +579,7 @@ class InputController: IMKInputController {
             flushPending(client)          // a pending accent commits before a spacing mark
             applySpacing(scalarStr, client)
         } else {
-            applyCombining(scalarStr, client)
+            applyCombining(scalarStr, client, cycle: secondary ? [] : m.cycle)
         }
     }
 
@@ -675,11 +680,17 @@ class InputController: IMKInputController {
     }
 
     /// Combining ⌥ diacritic, PREFIX (dead-key style): stack the mark into the
-    /// marked-text preview. The same form again peels it back off; emptying the
-    /// stack clears the composition outright — no placeholder, nothing committed.
-    private func applyCombining(_ scalarStr: String, _ client: IMKTextInput) {
+    /// marked-text preview. The same form again peels it back off — unless the
+    /// key declares a CYCLE: a repeat press then advances the visible pending
+    /// through the family and wraps (⌥n: ̃ → ͊ → ͋ → ͌ → ̃). ⌫ still cancels.
+    /// Emptying the stack clears the composition outright. Mirrors
+    /// js/src/index.ts pendingDiacritic.
+    private func applyCombining(_ scalarStr: String, _ client: IMKTextInput, cycle: [String] = []) {
         let scalar = scalarStr.unicodeScalars.first!
-        if pending.last == scalar {
+        let family = [scalar] + cycle.compactMap { $0.unicodeScalars.first }
+        if !cycle.isEmpty, let top = pending.last, let at = family.firstIndex(of: top) {
+            pending[pending.count - 1] = family[(at + 1) % family.count]
+        } else if pending.last == scalar {
             pending.removeLast()                       // same form again: peel it off
         } else {
             // An exclusive dual replaces its twin — nothing is both advanced and

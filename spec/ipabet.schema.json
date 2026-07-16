@@ -1,213 +1,377 @@
 {
-	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://ipabet.org/ipabet.schema.json",
-	"title": "IPAbet notation spec",
-	"description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json. Read by the macOS IME (Swift), the TypeScript engine, and every page on ipabet.org. Keystroke notation: a `key` string is a sequence of US-layout characters; an uppercase letter or digit means that key with Shift. Marks live on the Option layer, keyed by their unshifted US character.",
-	"type": "object",
-	"required": ["modifiers", "letters", "marks", "superscripts", "subscripts", "classes"],
-	"additionalProperties": false,
-
-	"properties": {
-		"modifiers": {
-			"description": "Tier 1. Each ⇧-capital that transforms the glyph before it, and what it means.",
-			"type": "object",
-			"additionalProperties": {"type": "string"},
-			"propertyNames": {"pattern": "^[A-Z]$"}
-		},
-
-		"letters": {
-			"description": "Tier 1. Bases and digraphs: `key` typed in sequence yields `glyph`.",
-			"type": "array",
-			"minItems": 1,
-			"items": {
-				"type": "object",
-				"required": ["key", "glyph", "cp", "name"],
-				"additionalProperties": false,
-				"properties": {
-					"key": {
-						"description": "Keystrokes, e.g. \"s\", \"sH\" (s then ⇧H), \"5Y\" (the digit base 5 then ⇧Y → ə).",
-						"type": "string",
-						"minLength": 1
-					},
-					"glyph": {"type": "string", "minLength": 1},
-					"cp": {"$ref": "#/$defs/codepoints"},
-					"name": {"type": "string"}
-				}
-			}
-		},
-
-		"marks": {
-			"description": "Tier 2, the Option layer. Combining marks are prefix (dead-key): ⌥ then the base. Spacing marks are postfix: base then ⌥.",
-			"type": "array",
-			"minItems": 1,
-			"items": {"$ref": "#/$defs/mark"}
-		},
-
-		"superscripts": {
-			"description": "Tier 2. `operator` typed after a glyph raises it. The table is derived from Unicode <super> decompositions, not hand-listed.",
-			"type": "object",
-			"required": ["operator", "table", "rule"],
-			"additionalProperties": false,
-			"properties": {
-				"operator": {"type": "string"},
-				"rule": {"type": "string"},
-				"table": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"required": ["base", "sup"],
-						"additionalProperties": false,
-						"properties": {
-							"base": {"type": "string", "minLength": 1},
-							"sup": {"type": "string", "minLength": 1}
-						}
-					}
-				}
-			}
-		},
-
-		"optShift": {
-			"description": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is retired; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
-			"type": "object",
-			"required": ["about"],
-			"additionalProperties": {"type": "string"},
-			"propertyNames": {"pattern": "^(about|[0-9])$"}
-		},
-
-		"subscripts": {
-			"description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧q) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
-			"type": "object",
-			"required": ["operator", "table", "rule"],
-			"additionalProperties": false,
-			"properties": {
-				"operator": {"type": "string"},
-				"rule": {"type": "string"},
-				"table": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"required": ["base", "sub"],
-						"additionalProperties": false,
-						"properties": {
-							"base": {"type": "string", "minLength": 1},
-							"sub": {"type": "string", "minLength": 1}
-						}
-					}
-				}
-			}
-		},
-
-		"classes": {
-			"description": "Definitions for the flags carried by `marks`. Vocabulary only; membership lives on each mark.",
-			"type": "object",
-			"required": ["about", "ipa", "beyond", "arbitraryKey", "shiftSense", "exclusive"],
-			"additionalProperties": false,
-			"properties": {
-				"about": {"type": "string"},
-				"ipa": {"type": "string"},
-				"arbitraryKey": {"type": "string"},
-				"exclusive": {"type": "string"},
-				"beyond": {
-					"description": "One entry per allowed `beyond` value. A mark's `beyond` MUST be a key of this object.",
-					"type": "object",
-					"required": ["tenant", "tradition", "extIPA"],
-					"additionalProperties": {"type": "string"}
-				},
-				"shiftSense": {
-					"description": "One entry per allowed `shiftSense` value, plus `about`. A mark's `shiftSense` MUST be a key of this object.",
-					"type": "object",
-					"required": ["about", "greater", "extreme", "lesser", "below", "placement", "twin", "arbitrary"],
-					"additionalProperties": {"type": "string"}
-				}
-			}
-		}
-	},
-
-	"$defs": {
-		"codepoints": {
-			"description": "Space-separated Unicode codepoints of the glyph, e.g. \"U+0361\" or \"U+0074 U+0361\".",
-			"type": "string",
-			"pattern": "^U\\+[0-9A-F]{4,6}( U\\+[0-9A-F]{4,6})*$"
-		},
-
-		"mark": {
-			"type": "object",
-			"required": ["opt", "mark", "type", "group", "cp", "name"],
-			"additionalProperties": false,
-			"properties": {
-				"opt": {
-					"description": "The unshifted US character of the Option key holding this mark.",
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 1
-				},
-				"mark": {
-					"description": "The ⌥ (primary) form.",
-					"type": "string",
-					"minLength": 1
-				},
-				"double": {
-					"description": "The ⌥⇧ (secondary) form. Present iff `shiftSense` is present.",
-					"type": "string",
-					"minLength": 1
-				},
-				"doubleCp": {"$ref": "#/$defs/codepoints"},
-				"doubleSpacing": {
-					"description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining — spacing is a property of the form, not the key. (⌥9 is the combining seagull; ⌥⇧9 is the ₍ voicing bracket, a standalone character.) Requires `double`.",
-					"type": "boolean"
-				},
-				"type": {
-					"description": "combining = prefix dead-key, absorbed by the next base. spacing = postfix, inserted in place.",
-					"enum": ["combining", "spacing"]
-				},
-				"clone": {
-					"description": "The spacing (standalone) form of a combining mark, committed when no base follows — ⌥e then space → ´.",
-					"type": "string",
-					"minLength": 1
-				},
-				"doubleClone": {
-					"description": "The spacing form of `double`.",
-					"type": "string",
-					"minLength": 1
-				},
-				"group": {
-					"enum": ["Articulation", "Length", "Nasalization", "Phonation", "Prosody", "Syllabicity", "Tone", "Transliteration"]
-				},
-				"cp": {"$ref": "#/$defs/codepoints"},
-				"name": {"type": "string"},
-
-				"exclusive": {
-					"description": "The two forms are values of one dimension, so ⌥⇧ replaces rather than stacks. See classes.exclusive.",
-					"const": true
-				},
-				"shiftSense": {
-					"description": "What ⌥⇧ means for this pair. Present iff `double` is present. See classes.shiftSense.",
-					"enum": ["greater", "extreme", "lesser", "below", "placement", "twin", "arbitrary"]
-				},
-				"ipa": {
-					"description": "Present only as false, meaning: not on the IPA chart. Implies `beyond`. Such marks are excluded from /chart and /chart.json and listed on /keys.",
-					"const": false
-				},
-				"beyond": {
-					"description": "Which tradition a non-IPA mark answers to. Present iff `ipa` is false. See classes.beyond.",
-					"enum": ["tenant", "tradition", "extIPA"]
-				},
-				"arbitraryKey": {
-					"description": "The key claims this mark by neither phonetics, shape, nor convention.",
-					"const": true
-				}
-			},
-
-			"dependentRequired": {
-				"double": ["shiftSense"],
-				"shiftSense": ["double"],
-				"doubleCp": ["double"],
-				"doubleClone": ["double"],
-				"doubleSpacing": ["double"],
-				"exclusive": ["double"],
-				"ipa": ["beyond"],
-				"beyond": ["ipa"]
-			}
-		}
-	}
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://ipabet.org/ipabet.schema.json",
+ "title": "IPAbet notation spec",
+ "description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json. Read by the macOS IME (Swift), the TypeScript engine, and every page on ipabet.org. Keystroke notation: a `key` string is a sequence of US-layout characters; an uppercase letter or digit means that key with Shift. Marks live on the Option layer, keyed by their unshifted US character.",
+ "type": "object",
+ "required": [
+  "modifiers",
+  "letters",
+  "marks",
+  "superscripts",
+  "subscripts",
+  "classes"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "modifiers": {
+   "description": "Tier 1. Each ⇧-capital that transforms the glyph before it, and what it means.",
+   "type": "object",
+   "additionalProperties": {
+    "type": "string"
+   },
+   "propertyNames": {
+    "pattern": "^[A-Z]$"
+   }
+  },
+  "letters": {
+   "description": "Tier 1. Bases and digraphs: `key` typed in sequence yields `glyph`.",
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "key",
+     "glyph",
+     "cp",
+     "name"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "key": {
+      "description": "Keystrokes, e.g. \"s\", \"sH\" (s then ⇧H), \"5Y\" (the digit base 5 then ⇧Y → ə).",
+      "type": "string",
+      "minLength": 1
+     },
+     "glyph": {
+      "type": "string",
+      "minLength": 1
+     },
+     "cp": {
+      "$ref": "#/$defs/codepoints"
+     },
+     "name": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "marks": {
+   "description": "Tier 2, the Option layer. Combining marks are prefix (dead-key): ⌥ then the base. Spacing marks are postfix: base then ⌥.",
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "$ref": "#/$defs/mark"
+   }
+  },
+  "superscripts": {
+   "description": "Tier 2. `operator` typed after a glyph raises it. The table is derived from Unicode <super> decompositions, not hand-listed.",
+   "type": "object",
+   "required": [
+    "operator",
+    "table",
+    "rule"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "operator": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "table": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "base",
+       "sup"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "base": {
+        "type": "string",
+        "minLength": 1
+       },
+       "sup": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "optShift": {
+   "description": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is retired; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
+   "type": "object",
+   "required": [
+    "about"
+   ],
+   "additionalProperties": {
+    "type": "string"
+   },
+   "propertyNames": {
+    "pattern": "^(about|[0-9])$"
+   }
+  },
+  "subscripts": {
+   "description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧q) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
+   "type": "object",
+   "required": [
+    "operator",
+    "table",
+    "rule"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "operator": {
+     "type": "string"
+    },
+    "rule": {
+     "type": "string"
+    },
+    "table": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "base",
+       "sub"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "base": {
+        "type": "string",
+        "minLength": 1
+       },
+       "sub": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "classes": {
+   "description": "Definitions for the flags carried by `marks`. Vocabulary only; membership lives on each mark.",
+   "type": "object",
+   "required": [
+    "about",
+    "ipa",
+    "beyond",
+    "arbitraryKey",
+    "shiftSense",
+    "exclusive"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "about": {
+     "type": "string"
+    },
+    "ipa": {
+     "type": "string"
+    },
+    "arbitraryKey": {
+     "type": "string"
+    },
+    "exclusive": {
+     "type": "string"
+    },
+    "beyond": {
+     "description": "One entry per allowed `beyond` value. A mark's `beyond` MUST be a key of this object.",
+     "type": "object",
+     "required": [
+      "tenant",
+      "tradition",
+      "extIPA"
+     ],
+     "additionalProperties": {
+      "type": "string"
+     }
+    },
+    "shiftSense": {
+     "description": "One entry per allowed `shiftSense` value, plus `about`. A mark's `shiftSense` MUST be a key of this object.",
+     "type": "object",
+     "required": [
+      "about",
+      "greater",
+      "extreme",
+      "lesser",
+      "below",
+      "placement",
+      "twin",
+      "arbitrary"
+     ],
+     "additionalProperties": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "codepoints": {
+   "description": "Space-separated Unicode codepoints of the glyph, e.g. \"U+0361\" or \"U+0074 U+0361\".",
+   "type": "string",
+   "pattern": "^U\\+[0-9A-F]{4,6}( U\\+[0-9A-F]{4,6})*$"
+  },
+  "mark": {
+   "type": "object",
+   "required": [
+    "opt",
+    "mark",
+    "type",
+    "group",
+    "cp",
+    "name"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "opt": {
+     "description": "The unshifted US character of the Option key holding this mark.",
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 1
+    },
+    "mark": {
+     "description": "The ⌥ (primary) form.",
+     "type": "string",
+     "minLength": 1
+    },
+    "double": {
+     "description": "The ⌥⇧ (secondary) form. Present iff `shiftSense` is present.",
+     "type": "string",
+     "minLength": 1
+    },
+    "doubleCp": {
+     "$ref": "#/$defs/codepoints"
+    },
+    "doubleSpacing": {
+     "description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining — spacing is a property of the form, not the key. (⌥9 is the combining seagull; ⌥⇧9 is the ₍ voicing bracket, a standalone character.) Requires `double`.",
+     "type": "boolean"
+    },
+    "type": {
+     "description": "combining = prefix dead-key, absorbed by the next base. spacing = postfix, inserted in place.",
+     "enum": [
+      "combining",
+      "spacing"
+     ]
+    },
+    "clone": {
+     "description": "The spacing (standalone) form of a combining mark, committed when no base follows — ⌥e then space → ´.",
+     "type": "string",
+     "minLength": 1
+    },
+    "doubleClone": {
+     "description": "The spacing form of `double`.",
+     "type": "string",
+     "minLength": 1
+    },
+    "group": {
+     "enum": [
+      "Articulation",
+      "Length",
+      "Nasalization",
+      "Phonation",
+      "Prosody",
+      "Syllabicity",
+      "Tone",
+      "Transliteration"
+     ]
+    },
+    "cp": {
+     "$ref": "#/$defs/codepoints"
+    },
+    "name": {
+     "type": "string"
+    },
+    "exclusive": {
+     "description": "The two forms are values of one dimension, so ⌥⇧ replaces rather than stacks. See classes.exclusive.",
+     "const": true
+    },
+    "shiftSense": {
+     "description": "What ⌥⇧ means for this pair. Present iff `double` is present. See classes.shiftSense.",
+     "enum": [
+      "greater",
+      "extreme",
+      "lesser",
+      "below",
+      "placement",
+      "twin",
+      "arbitrary"
+     ]
+    },
+    "ipa": {
+     "description": "Present only as false, meaning: not on the IPA chart. Implies `beyond`. Such marks are excluded from /chart and /chart.json and listed on /keys.",
+     "const": false
+    },
+    "beyond": {
+     "description": "Which tradition a non-IPA mark answers to. Present iff `ipa` is false. See classes.beyond.",
+     "enum": [
+      "tenant",
+      "tradition",
+      "extIPA"
+     ]
+    },
+    "arbitraryKey": {
+     "description": "The key claims this mark by neither phonetics, shape, nor convention.",
+     "const": true
+    },
+    "cycle": {
+     "description": "Repeat-press family: pressing the same ⌥ key on its own pending mark advances through these forms and wraps (⌥n: ̃ → ͊ → ͋ → ͌). One dimension only — cycle members are mutually exclusive; cross-dimension marks keep separate keys so they can stack. Combining marks only: the composition preview makes every step visible.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "cycleCp": {
+     "description": "Codepoints of `cycle`, index-aligned.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "description": "Space-separated Unicode codepoints of the glyph, e.g. \"U+0361\" or \"U+0074 U+0361\".",
+      "type": "string",
+      "pattern": "^U\\+[0-9A-F]{4,6}( U\\+[0-9A-F]{4,6})*$"
+     }
+    }
+   },
+   "dependentRequired": {
+    "double": [
+     "shiftSense"
+    ],
+    "shiftSense": [
+     "double"
+    ],
+    "doubleCp": [
+     "double"
+    ],
+    "doubleClone": [
+     "double"
+    ],
+    "doubleSpacing": [
+     "double"
+    ],
+    "exclusive": [
+     "double"
+    ],
+    "ipa": [
+     "beyond"
+    ],
+    "beyond": [
+     "ipa"
+    ],
+    "cycle": [
+     "cycleCp"
+    ],
+    "cycleCp": [
+     "cycle"
+    ]
+   }
+  }
+ }
 }

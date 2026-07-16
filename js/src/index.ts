@@ -254,11 +254,20 @@ function flush(pending: Pending): Step {
 }
 
 /** Combining diacritic (⌥/⌥⇧): stack it into the pending composition. The same
- *  form again peels it off. An exclusive dual replaces its twin — nothing is
- *  both advanced and retracted; independent shape-twins (tilde/creaky) stack. */
-function pendingDiacritic(scalar: string, pending: Pending): Step {
+ *  form again peels it off — unless the key declares a CYCLE, in which case a
+ *  repeat press advances the visible pending through the family and wraps
+ *  (⌥n: ◌̃ → ◌͊ → ◌͋ → ◌͌ → ◌̃ — one dimension, deepest members behind repeat
+ *  presses; the composition preview shows every step, and ⌫ still cancels).
+ *  An exclusive dual replaces its twin — nothing is both advanced and
+ *  retracted; independent shape-twins (tilde/creaky) stack. */
+function pendingDiacritic(scalar: string, pending: Pending, cycle: string[] = []): Step {
 	let next: string[];
-	if (pending[pending.length - 1] === scalar) {
+	const top = pending[pending.length - 1];
+	const family = [scalar, ...cycle];
+	const at = top === undefined ? -1 : family.indexOf(top);
+	if (at >= 0 && cycle.length > 0) {
+		next = [...pending.slice(0, -1), family[(at + 1) % family.length]];
+	} else if (top === scalar) {
 		next = pending.slice(0, -1);
 	} else {
 		const twin = exclusiveTwin.get(scalar);
@@ -274,7 +283,7 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	// Spacing belongs to the FORM, not the key: ⌥9 is a combining seagull (prefix),
 	// while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
 	const spacing = secondary && m.double !== undefined ? m.doubleSpacing === true : m.spacing;
-	if (!spacing) return pendingDiacritic(scalar, pending);
+	if (!spacing) return pendingDiacritic(scalar, pending, secondary ? [] : m.cycle);
 	const f = flush(pending);                       // a pending accent commits first
 	const text = (f.edit.type === "insert" ? f.edit.text : "") + scalar;
 	return {edit: {type: "insert", text}, pending: []};

@@ -253,8 +253,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
 	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
 	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
-	test("the ⌥ number row is claimed through 9 (⌥0 passed back with fortis)", () => {
-		for (const d of "123456789")
+	test("the ⌥ number row: 1–7 and 9 claimed (8's nasal pair cycles behind ⌥n)", () => {
+		for (const d of "12345679")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
 	// The shifted digits give their native symbols directly now that the roots are
@@ -291,13 +291,31 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	// Pending lives in host state, not the document. Peeling the last mark leaves
 	// an EMPTY composition — nothing is written, so there is no sentinel to
 	// collide with a user's real NBSP.
-	test("⌥n ⌥n → nothing committed", () => expect(typed("~n", "~n")).toBe(""));
+	// ⌥n has a CYCLE now, so its repeat press advances instead of toggling;
+	// cancel is ⌫ (which always peeled pending anyway). Non-cycle keys toggle.
+	test("⌥u ⌥u → nothing committed", () => expect(typed("~u", "~u")).toBe(""));
 	// The ⌥⇧ second press toggles, exactly like the primary form — it stopped being
 	// the escape when the escape moved to ⌃⇧.
 	test("⌥⇧n ⌥⇧n → nothing committed", () => expect(typed("~+n", "~+n")).toBe(""));
 	test("single-form macron: ⌥a ⌥a → nothing", () => expect(typed("~a", "~a")).toBe(""));
-	test("a peeled composition leaves the next base untouched: ⌥n ⌥n x → x", () =>
-		expect(typed("~n", "~n", "x")).toBe("x"));
+	test("a peeled composition leaves the next base untouched: ⌥u ⌥u x → x", () =>
+		expect(typed("~u", "~u", "x")).toBe("x"));
+	test("the nasal-port cycle: ⌥n×1 ã, ×2 a͊, ×3 a͋, ×4 a͌, ×5 wraps to ã", () => {
+		expect(typed("~n", "a")).toBe(nfc("a\u{0303}"));
+		expect(typed("~n", "~n", "a")).toBe(nfc("a\u{034A}"));
+		expect(typed("~n", "~n", "~n", "a")).toBe(nfc("a\u{034B}"));
+		expect(typed("~n", "~n", "~n", "~n", "s")).toBe(nfc("s\u{034C}"));
+		expect(typed("~n", "~n", "~n", "~n", "~n", "a")).toBe(nfc("a\u{0303}"));
+	});
+	test("the un-rounding cycle: ⌥w ɔ → ɔ̜, ⌥w ⌥w → labial spreading ◌͍", () => {
+		expect(typed("~w", "~w", "o")).toBe(nfc("o\u{034D}"));
+	});
+	test("⌫ cancels a mid-cycle pending: ⌥n ⌥n ⌫ x → x", () =>
+		expect(typed("~n", "~n", "⌫", "x")).toBe("x"));
+	test("the 8 key passes on both planes (the nasal pair lives behind ⌥n now)", () => {
+		expect(handleKey("", {key: "8", option: true}).edit.type).toBe("pass");
+		expect(handleKey("", {key: "8", shift: true, option: true}).edit.type).toBe("pass");
+	});
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
 		expect(typed("~g", "~g")).toBe(""));
 	// The l key is the overlay pair: ⌥l stroke (orthography, ABC Extended's own

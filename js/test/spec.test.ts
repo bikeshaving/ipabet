@@ -128,7 +128,7 @@ describe("spec · the moved keys", () => {
 		const tie = byOpt.get("j")!;
 		expect(tie.mark).toBe("\u{0361}"); // tie above on ⌥j
 		expect(tie.double).toBe("\u{035C}"); // tie below on ⌥⇧j
-		expect(byOpt.get("8")!.cp).toBe("U+034A"); // ⌥8 is the denasal mark, not the tie
+		expect(byOpt.get("8")).toBeUndefined(); // ⌥8 passes native; the nasal pair cycles behind ⌥n
 		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
 	});
 
