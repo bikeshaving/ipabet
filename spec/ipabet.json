@@ -1048,6 +1048,20 @@
    "shiftSense": "greater"
   },
   {
+   "opt": "8",
+   "mark": "↓",
+   "type": "spacing",
+   "double": "↑",
+   "doubleCp": "U+2191",
+   "doubleSpacing": true,
+   "group": "Phonation",
+   "cp": "U+2193",
+   "name": "DOWNWARDS ARROW (ingressive airflow, extIPA; ⇧ → ↑ egressive — the digits' arrow run: step 6, contour 7, airflow 8)",
+   "ipa": false,
+   "beyond": "extIPA",
+   "shiftSense": "greater"
+  },
+  {
    "opt": "6",
    "mark": "ꜜ",
    "type": "spacing",

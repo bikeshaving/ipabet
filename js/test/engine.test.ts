@@ -253,8 +253,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
 	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
 	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
-	test("the ⌥ number row: 1–7 and 9 claimed (8's nasal pair cycles behind ⌥n)", () => {
-		for (const d of "12345679")
+	test("the ⌥ number row is claimed 1–9 (⌥0 is open estate)", () => {
+		for (const d of "123456789")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
 	// The shifted digits give their native symbols directly now that the roots are
@@ -312,9 +312,9 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	});
 	test("⌫ cancels a mid-cycle pending: ⌥n ⌥n ⌫ x → x", () =>
 		expect(typed("~n", "~n", "⌫", "x")).toBe("x"));
-	test("the 8 key passes on both planes (the nasal pair lives behind ⌥n now)", () => {
-		expect(handleKey("", {key: "8", option: true}).edit.type).toBe("pass");
-		expect(handleKey("", {key: "8", shift: true, option: true}).edit.type).toBe("pass");
+	test("airflow completes the arrow run: ⌥8 → ↓ ingressive, ⌥⇧8 → ↑ egressive", () => {
+		expect(typed("~8")).toBe("↓");
+		expect(typed("~+8")).toBe("↑");
 	});
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
 		expect(typed("~g", "~g")).toBe(""));
