@@ -71,6 +71,7 @@ interface Mark {
 	 *  a property of the FORM, not of the key. */
 	doubleSpacing?: boolean;
 	cycle: string[];
+	doubleCycle: string[];
 	/** Spacing clone (´, ^): the mark's standalone form. No clone → the
 	 * combining mark rides a no-break space. */
 	clone?: string;
@@ -100,6 +101,7 @@ for (const e of spec.marks as {
 	double?: string;
 	doubleSpacing?: boolean;
 	cycle?: string[];
+	doubleCycle?: string[];
 	clone?: string;
 	doubleClone?: string;
 	exclusive?: boolean;
@@ -110,6 +112,7 @@ for (const e of spec.marks as {
 		double: e.double,
 		doubleSpacing: e.doubleSpacing === true,
 		cycle: e.cycle ?? [],
+		doubleCycle: e.doubleCycle ?? [],
 		clone: e.clone,
 	});
 	if (e.exclusive === true && e.double !== undefined) {
@@ -283,7 +286,7 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	// Spacing belongs to the FORM, not the key: ⌥9 is a combining seagull (prefix),
 	// while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
 	const spacing = secondary && m.double !== undefined ? m.doubleSpacing === true : m.spacing;
-	if (!spacing) return pendingDiacritic(scalar, pending, secondary ? [] : m.cycle);
+	if (!spacing) return pendingDiacritic(scalar, pending, secondary ? m.doubleCycle : m.cycle);
 	const f = flush(pending);                       // a pending accent commits first
 	const text = (f.edit.type === "insert" ? f.edit.text : "") + scalar;
 	return {edit: {type: "insert", text}, pending: []};

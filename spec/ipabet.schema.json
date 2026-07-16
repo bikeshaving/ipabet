@@ -338,6 +338,25 @@
       "type": "string",
       "pattern": "^U\\+[0-9A-F]{4,6}( U\\+[0-9A-F]{4,6})*$"
      }
+    },
+    "doubleCycle": {
+     "description": "Repeat-press family for the ⌥⇧ form, exactly as `cycle` is for ⌥: pressing ⌥⇧key again on its own pending double advances and wraps. One dimension only; combining forms only. Requires `double`.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "doubleCycleCp": {
+     "description": "Codepoints of `doubleCycle`, index-aligned.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "description": "Space-separated Unicode codepoints of the glyph, e.g. \"U+0361\" or \"U+0074 U+0361\".",
+      "type": "string",
+      "pattern": "^U\\+[0-9A-F]{4,6}( U\\+[0-9A-F]{4,6})*$"
+     }
     }
    },
    "dependentRequired": {
@@ -370,6 +389,13 @@
     ],
     "cycleCp": [
      "cycle"
+    ],
+    "doubleCycle": [
+     "doubleCycleCp",
+     "double"
+    ],
+    "doubleCycleCp": [
+     "doubleCycle"
     ]
    }
   }

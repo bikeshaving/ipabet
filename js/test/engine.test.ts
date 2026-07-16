@@ -307,9 +307,10 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 		expect(typed("~n", "~n", "~n", "~n", "s")).toBe(nfc("s\u{034C}"));
 		expect(typed("~n", "~n", "~n", "~n", "~n", "a")).toBe(nfc("a\u{0303}"));
 	});
-	test("the lip-gesture cycle: ⌥w ×2 → spreading, ×3 → whistled", () => {
+	test("the rounding ladders: ⌥w×2 → spreading; ⌥⇧w×2 → whistled (rounding's endpoint)", () => {
 		expect(typed("~w", "~w", "o")).toBe(nfc("o\u{034D}"));
-		expect(typed("~w", "~w", "~w", "s")).toBe(nfc("s\u{034E}"));
+		expect(typed("~+w", "~+w", "s")).toBe(nfc("s\u{034E}"));
+		expect(typed("~+w", "~+w", "~+w", "o")).toBe(nfc("o\u{0339}"));  // wraps back to more-rounded
 	});
 	test("⌫ cancels a mid-cycle pending: ⌥n ⌥n ⌫ x → x", () =>
 		expect(typed("~n", "~n", "⌫", "x")).toBe("x"));

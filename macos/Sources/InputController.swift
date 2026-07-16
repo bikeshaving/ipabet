@@ -54,6 +54,8 @@ struct Mark {
     /// advances through these forms and wraps (⌥n: ̃ → ͊ → ͋ → ͌). One
     /// dimension only; the marked-text preview shows every step.
     let cycle: [String]
+    /// The ⌥⇧ form's repeat-press family, exactly as `cycle` is for ⌥.
+    let doubleCycle: [String]
 }
 
 struct Tables {
@@ -95,7 +97,8 @@ struct Tables {
                                  double: r["double"] as? String,
                                  doubleSpacing: r["doubleSpacing"] as? Bool == true,
                                  clone: clone,
-                                 cycle: r["cycle"] as? [String] ?? [])
+                                 cycle: r["cycle"] as? [String] ?? [],
+                                 doubleCycle: r["doubleCycle"] as? [String] ?? [])
             if let c = clone, let sc = mark.unicodeScalars.first { clones[sc] = c }
             if let dc = r["doubleClone"] as? String,
                let ds = (r["double"] as? String)?.unicodeScalars.first { clones[ds] = dc }
@@ -579,7 +582,7 @@ class InputController: IMKInputController {
             flushPending(client)          // a pending accent commits before a spacing mark
             applySpacing(scalarStr, client)
         } else {
-            applyCombining(scalarStr, client, cycle: secondary ? [] : m.cycle)
+            applyCombining(scalarStr, client, cycle: secondary ? m.doubleCycle : m.cycle)
         }
     }
 

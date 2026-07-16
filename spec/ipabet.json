@@ -917,7 +917,7 @@
    "type": "combining",
    "group": "Articulation",
    "cp": "U+031C",
-   "name": "COMBINING LEFT HALF RING BELOW (less rounded; press again: ͍ labial spreading → ͎ whistled — the lip gestures)",
+   "name": "COMBINING LEFT HALF RING BELOW (less rounded; press again: ͍ labial spreading — the un-rounding ladder. ⇧ → ̹ more rounded; press again: ͎ whistled — rounding taken to its endpoint)",
    "double": "̹",
    "doubleCp": "U+0339",
    "clone": "˓",
@@ -925,11 +925,15 @@
    "exclusive": true,
    "shiftSense": "greater",
    "cycle": [
-    "͍",
-    "͎"
+    "͍"
    ],
    "cycleCp": [
-    "U+034D",
+    "U+034D"
+   ],
+   "doubleCycle": [
+    "͎"
+   ],
+   "doubleCycleCp": [
     "U+034E"
    ]
   },
