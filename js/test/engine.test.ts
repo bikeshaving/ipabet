@@ -437,11 +437,13 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~+a", "t")).toBe(nfc("t\u{0331}"));
 		expect(typed("~+a", "d")).toBe(nfc("d\u{0331}"));
 	});
-	test("Semitic half-rings on the guttural key: ⌥q → ʿ, ⌥⇧q → ʾ", () => {
-		expect(typed("~q")).toBe("ʿ");
-		expect(typed("~+q")).toBe("ʾ");
-		expect(typed("d", "~q", "a")).toBe("dʿa");
+	test("half-rings on their arabizi roots: ⌥⇧3 → ʿ (3 = ع), ⌥⇧4 → ʾ", () => {
+		expect(typed("~+3")).toBe("ʿ");
+		expect(typed("~+4")).toBe("ʾ");
+		expect(typed("d", "~+3", "a")).toBe("dʿa");
 	});
+	test("⌥q passes to the host again — œ returns", () =>
+		expect(handleKey("", {key: "q", option: true}).edit.type).toBe("pass"));
 	test("⌥c is the cedilla — a dead key, exactly as on ABC Extended", () => {
 		const step = handleKey("", {key: "c", option: true}, []);
 		expect(step.edit.type).toBe("noop");        // a dead key writes nothing…
@@ -743,10 +745,7 @@ describe("rhotic hook on any vowel", () => {
 
 describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
-	test("currency rides its digits: ⌥⇧3 → £ (British ⇧3), ⌥⇧4 → ¢ (the $ key)", () => {
-		expect(typed("~+3")).toBe("£");
-		expect(typed("~+4")).toBe("¢");
-	});
+
 	// A ⌥⇧ letter with no second form declines, so the host types its own character
 	// and the ⇧-transform never fires. (⌥⇧c — the cedilla lost its ¢ spend.)
 	test("⌥⇧c declines, so no transform reaches back", () => expect(typed("s", "~+c")).toBe("sC"));

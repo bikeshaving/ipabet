@@ -983,20 +983,6 @@
    "shiftSense": "lesser"
   },
   {
-   "opt": "q",
-   "mark": "ʿ",
-   "type": "spacing",
-   "double": "ʾ",
-   "doubleCp": "U+02BE",
-   "doubleSpacing": true,
-   "group": "Transliteration",
-   "cp": "U+02BF",
-   "name": "MODIFIER LETTER LEFT HALF RING (ʿayn; ⇧ → ʾ hamza — the gutturals on the guttural key)",
-   "ipa": false,
-   "beyond": "tenant",
-   "shiftSense": "twin"
-  },
-  {
    "opt": "r",
    "mark": "˞",
    "type": "spacing",
@@ -1652,7 +1638,7 @@
  "optShift": {
   "about": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is fully retired: no shifted digit is an IPA glyph any more (the number-row roots are unshifted-digit digraphs, and the tie bar lives on ⌥j), so every ⇧<digit> types its native symbol directly. An unlisted ⌥⇧<digit> passes to the host — ⌥⇧2 €, ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all survive. Only the slots listed here are spent.",
   "1": "¡",
-  "3": "£",
-  "4": "¢"
+  "3": "ʿ",
+  "4": "ʾ"
  }
 }
