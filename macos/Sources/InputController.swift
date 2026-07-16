@@ -402,8 +402,8 @@ class InputController: IMKInputController {
         // Option-Shift: the secondary form of a two-form mark. NOT an escape —
         // the literal capital lives on Ctrl+Shift (see handle()'s top) — so a
         // ⌥⇧ key with no claim DECLINES and the host's own Option typography
-        // passes (⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚, ⌥⇧/ ¿). A few digit slots are spent
-        // deliberately (⌥⇧1 → ¡), and the bracket keys close the locale quotes.
+        // passes (⌥⇧/ ¿, ⌥⇧- —). A few digit slots are spent deliberately
+        // (⌥⇧1 → ¡), and the bracket keys close the locale quotes.
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).

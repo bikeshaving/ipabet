@@ -462,9 +462,10 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
-				// A slot spent deliberately (⌥⇧1 → ¡). Every other ⌥⇧<digit> passes to
-				// native — no shifted digit is an IPA glyph (the roots are digraphs, the
-				// tie lives on ⌥j) — so ⌥⇧2 €, ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all survive.
+				// A deliberately spent slot (⌥⇧1 → ¡, ⌥⇧2 ʾ, ⌥⇧3 ʿ, ⌥⇧5 ˭). The other
+				// digits never reach here — their marks' second forms claim the chord
+				// above — so the native fallthrough is a safety net for any future
+				// unclaimed slot, not a live route.
 				const over = optShiftDigits[key];
 				if (over !== undefined) return withFlush({type: "insert", text: over});
 				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
