@@ -433,6 +433,8 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 	// ʿayn/hamza are back — paired on ⌥q, the guttural key (⇧Q is the guttural
 	// modifier; 2⇧Q/3⇧Q/7⇧Q the guttural family). They transliterate the sounds
 	// ʔ ʕ already type. Spacing marks: they just emit.
+	test("candrabindu rides the cedilla key: ⌥⇧c m → m̐ (IAST)", () =>
+		expect(typed("~+c", "m")).toBe(nfc("m\u{0310}")));
 	test("macron below rides the macron key: ⌥⇧a → ◌̱ (Semitic ṯ ḏ ẖ)", () => {
 		expect(typed("~+a", "t")).toBe(nfc("t\u{0331}"));
 		expect(typed("~+a", "d")).toBe(nfc("d\u{0331}"));
@@ -579,10 +581,10 @@ describe("⌥⇧ is not an escape any more", () => {
 		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
-		// Declining is a `pass`: on macOS the host then types its own Ç. (typeKeys
+		// Declining is a `pass`: on macOS the host then types its own ¯. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		// ⌥⇧c is unclaimed since the cedilla lost its ¢ spend (⌥⇧y carries ↗ now).
-		expect(handleKey("", seq("~+c")[0]).edit.type).toBe("pass"));
+		// ⌥⇧, is unclaimed — the comma-below never grew a second form.
+		expect(handleKey("", seq("~+,")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
@@ -746,9 +748,10 @@ describe("rhotic hook on any vowel", () => {
 describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 
-	// A ⌥⇧ letter with no second form declines, so the host types its own character
-	// and the ⇧-transform never fires. (⌥⇧c — the cedilla lost its ¢ spend.)
-	test("⌥⇧c declines, so no transform reaches back", () => expect(typed("s", "~+c")).toBe("sC"));
+	// A ⌥⇧ key with no second form declines, so the host types its own character
+	// and the ⇧-transform never fires. (⌥⇧, — the comma-below has no second form.)
+	test("⌥⇧, declines, so no transform reaches back", () =>
+		expect(handleKey("s", {key: ",", shift: true, option: true}).edit.type).toBe("pass"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });

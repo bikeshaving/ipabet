@@ -806,7 +806,10 @@
    "cp": "U+0327",
    "name": "COMBINING CEDILLA",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "̐",
+   "doubleCp": "U+0310",
+   "shiftSense": "twin"
   },
   {
    "opt": ",",
