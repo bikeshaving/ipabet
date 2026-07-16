@@ -3,6 +3,28 @@ import InputMethodKit
 import Carbon
 import IOKit
 
+// The Raw-US Lock's menu-bar badge: a "raw" item that exists only while the
+// active client is locked, so the lock is visible without opening the input
+// menu. The input-source ICON itself cannot change dynamically (that would
+// take input-mode switching — macOS 15 IMK landmine territory), but the IME
+// is a full app, so it may own a status item.
+enum LockIndicator {
+    private static var item: NSStatusItem?
+    static func update(_ locked: Bool) {
+        DispatchQueue.main.async {
+            if locked, item == nil {
+                let it = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+                it.button?.title = "raw"
+                it.button?.toolTip = "IPAbet Raw-US Lock is on (⌃⇧Space toggles)"
+                item = it
+            } else if !locked, let it = item {
+                NSStatusBar.system.removeStatusItem(it)
+                item = nil
+            }
+        }
+    }
+}
+
 // Decodes a physical key (virtual keyCode) through a fixed US layout, so the
 // engine's ASCII-keyed tables work regardless of the active keyboard layout —
 // including the cosmetic IPAbet layout we override to for Keyboard Viewer. The
@@ -257,8 +279,13 @@ class InputController: IMKInputController {
         } else {
             Self.rawLock.toggle()
         }
+        LockIndicator.update(isRawLocked(for: bundleID))
     }
 
+    // The input menu IS the settings surface: System Settings' Input Sources
+    // pane offers third-party input methods no options UI, so everything
+    // configurable lives here. Rebuilt on every open, so the checkmarks are
+    // always current — including a lock toggled by ⌃⇧Space.
     override func menu() -> NSMenu! {
         let menu = NSMenu()
         let bundleID = clientBundleID()
@@ -272,6 +299,34 @@ class InputController: IMKInputController {
         perApp.target = self
         perApp.state = Self.perAppLock ? .on : .off
         menu.addItem(perApp)
+
+        menu.addItem(.separator())
+        let t = Tables.shared
+        let active = UserDefaults.standard.string(forKey: "quoteLocale") ?? t.quoteDefault
+        let quotes = NSMenuItem(title: "Quote Style", action: nil, keyEquivalent: "")
+        let sub = NSMenu()
+        for locale in t.quoteLocales.keys.sorted() {
+            let quad = t.quoteLocales[locale] ?? []
+            let sample = quad.count == 4 ? "   \(quad[0])a\(quad[1]) \(quad[2])a\(quad[3])" : ""
+            let item = NSMenuItem(title: locale + sample,
+                                  action: #selector(setQuoteLocaleItem(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = locale
+            item.state = locale == active ? .on : .off
+            sub.addItem(item)
+        }
+        quotes.submenu = sub
+        menu.addItem(quotes)
+
+        menu.addItem(.separator())
+        let chart = NSMenuItem(title: "IPA Cheat Sheet",
+                               action: #selector(openCheatSheet(_:)), keyEquivalent: "")
+        chart.target = self
+        menu.addItem(chart)
+        let site = NSMenuItem(title: "ipabet.org/keys",
+                              action: #selector(openSite(_:)), keyEquivalent: "")
+        site.target = self
+        menu.addItem(site)
         return menu
     }
 
@@ -281,6 +336,24 @@ class InputController: IMKInputController {
 
     @objc func togglePerApp(_ sender: Any?) {
         Self.perAppLock.toggle()
+        LockIndicator.update(isRawLocked(for: clientBundleID()))
+    }
+
+    @objc func setQuoteLocaleItem(_ sender: NSMenuItem) {
+        if let locale = sender.representedObject as? String {
+            UserDefaults.standard.set(locale, forKey: "quoteLocale")
+        }
+    }
+
+    /// The bundled one-page chart — the printable cheat sheet, offline.
+    @objc func openCheatSheet(_ sender: Any?) {
+        if let url = Bundle.main.url(forResource: "chart", withExtension: "pdf") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    @objc func openSite(_ sender: Any?) {
+        if let url = URL(string: "https://ipabet.org/keys") { NSWorkspace.shared.open(url) }
     }
 
 
@@ -293,6 +366,7 @@ class InputController: IMKInputController {
         // bare in-bundle name was a misrouting suspect on macOS 15.
         Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall
         Dbg.log("── activate app=\(clientBundleID()) ──")
+        LockIndicator.update(isRawLocked(for: clientBundleID()))
     }
 
     /// The host is taking the composition away (click, focus loss, input-source

@@ -19,6 +19,7 @@ fi
 cp Info.plist "$APP/Contents/"
 cp ../spec/ipabet.json "$APP/Contents/Resources/ipabet.json"
 cp ipabet.pdf "$APP/Contents/Resources/"
+cp ../www/src/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
 mkdir -p "$APP/Contents/Resources/en.lproj"
 cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 
