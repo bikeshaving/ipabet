@@ -1,9 +1,9 @@
 ---
 title: The design of IPAbet
-description: "How IPAbet — the IPA keyboard for macOS — works, and the five constraints that shaped it: identity preservation, a two-character bound, local determinism, a phonetic operator algebra, and reuse of existing conventions."
+description: "How IPAbet works, and the five constraints that shaped it: identity preservation, a two-character bound, local determinism, a phonetic operator algebra, and reuse of existing conventions."
 ---
 
-<Lede>IPAbet is an IPA keyboard for macOS — a system-wide input method that lets you type the International Phonetic Alphabet directly, at ordinary typing speed, in any application. Rather than replacing your keyboard layout, it adds the IPA to the standard US keyboard: unshifted keys type their normal characters, while the phonetic symbols live on the Shift and Option layers. Prose, code, and shortcuts type exactly as before; the IPA is one modifier key away.</Lede>
+<Lede>IPAbet is an IPA keyboard — a system-wide input method (native on macOS, with the full engine in any browser) that lets you type the International Phonetic Alphabet directly, at ordinary typing speed, in any application. Rather than replacing your keyboard layout, it adds the IPA to the standard US keyboard: unshifted keys type their normal characters, while the phonetic symbols live on the Shift and Option layers. Prose, code, and shortcuts type exactly as before; the IPA is one modifier key away.</Lede>
 
 Where character pickers and escape schemes like [X-SAMPA](https://en.wikipedia.org/wiki/X-SAMPA) convert a transliteration after the fact, IPAbet emits genuine Unicode as you type. The notation is compositional — most symbols are a base letter plus a single modifier, <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="t ⇧R" out="ʈ"/> <Combo keys="n ⇧G" out="ŋ"/> — and nearly every choice in it follows from five constraints.
 

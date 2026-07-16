@@ -1,6 +1,6 @@
 ---
-title: "IPAbet — an IPA keyboard for macOS, at typing speed"
-description: "IPAbet is a free, open-source IPA keyboard for macOS — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste."
+title: "IPAbet — type the IPA at typing speed"
+description: "IPAbet is a free, open-source IPA keyboard — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste. Native on macOS, full engine in any browser."
 ---
 
 <p style="text-align:center;margin-top:-1rem"><a href="/learn">Try it yourself — learn to type it, right in the browser →</a></p>

@@ -5,7 +5,7 @@ description: "A touch-typing tutor for the IPA. Drill the glyphs and a growing b
 
 <p class="tagline">Learn it like touch typing.</p>
 
-<p class="trust">Type what you see. A guided course — real words from the first lesson, one new sound at a time — drilled by the same engine as the macOS keyboard.</p>
+<p class="trust">Type what you see. A guided course — real words from the first lesson, one new sound at a time — drilled by the same engine as the native keyboard.</p>
 
 <Scaffold/>
 

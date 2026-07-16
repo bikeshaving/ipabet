@@ -97,7 +97,7 @@ export function Landing() {
 				<header>
 					<h1>IPA<span class="ipa">bet</span> <span class="beta">beta</span></h1>
 					<p class="tagline">IPA at typing speed.</p>
-					<p class="trust">A native macOS IPA keyboard · free · open source · fully offline · works in every app</p>
+					<p class="trust">A real IPA keyboard · free · open source · fully offline · native on macOS · full engine in any browser</p>
 				</header>
 
 				<div id="demo">
