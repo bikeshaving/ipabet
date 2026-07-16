@@ -433,6 +433,10 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 	// ʿayn/hamza are back — paired on ⌥q, the guttural key (⇧Q is the guttural
 	// modifier; 2⇧Q/3⇧Q/7⇧Q the guttural family). They transliterate the sounds
 	// ʔ ʕ already type. Spacing marks: they just emit.
+	test("macron below rides the macron key: ⌥⇧a → ◌̱ (Semitic ṯ ḏ ẖ)", () => {
+		expect(typed("~+a", "t")).toBe(nfc("t\u{0331}"));
+		expect(typed("~+a", "d")).toBe(nfc("d\u{0331}"));
+	});
 	test("Semitic half-rings on the guttural key: ⌥q → ʿ, ⌥⇧q → ʾ", () => {
 		expect(typed("~q")).toBe("ʿ");
 		expect(typed("~+q")).toBe("ʾ");
