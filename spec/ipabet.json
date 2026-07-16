@@ -930,6 +930,20 @@
    "shiftSense": "placement"
   },
   {
+   "opt": "f",
+   "mark": "͉",
+   "type": "combining",
+   "double": "͈",
+   "doubleCp": "U+0348",
+   "group": "Phonation",
+   "cp": "U+0349",
+   "name": "COMBINING LEFT ANGLE BELOW (weak articulation; ⇧ → ͈ strong/fortis, the Korean tense mark — F for force)",
+   "ipa": false,
+   "beyond": "extIPA",
+   "exclusive": true,
+   "shiftSense": "greater"
+  },
+  {
    "opt": "y",
    "mark": "‿",
    "type": "spacing",

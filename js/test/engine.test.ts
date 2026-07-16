@@ -593,10 +593,10 @@ describe("⌥⇧ is not an escape any more", () => {
 		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
-		// Declining is a `pass`: on macOS the host then types its own Ï. (typeKeys
+		// Declining is a `pass`: on macOS the host then types its own ¿. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		// ⌥⇧f is unclaimed since weak articulation retired.
-		expect(handleKey("", seq("~+f")[0]).edit.type).toBe("pass"));
+		// ⌥⇧/ is unclaimed — hỏi never grew a second form.
+		expect(handleKey("", seq("~+/")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
@@ -746,7 +746,7 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("⌥0 and ⌥⇧0 pass on both planes (the strength dimension is staged)", () => {
+	test("⌥0 and ⌥⇧0 pass on both planes (open estate)", () => {
 		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");
 		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
 	});
@@ -765,9 +765,9 @@ describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 
 	// A ⌥⇧ key with no second form declines, so the host types its own character
-	// and the ⇧-transform never fires. (⌥⇧f — weak articulation retired.)
-	test("⌥⇧f declines, so no transform reaches back", () =>
-		expect(handleKey("s", {key: "f", shift: true, option: true}).edit.type).toBe("pass"));
+	// and the ⇧-transform never fires. (⌥⇧/ — hỏi has no second form.)
+	test("⌥⇧/ declines, so no transform reaches back", () =>
+		expect(handleKey("s", {key: "/", shift: true, option: true}).edit.type).toBe("pass"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });
@@ -845,8 +845,9 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 		expect(typed("~+p", "t")).toBe(nfc("t̼"));
 	});
 
-	test("the 0 key passes on both planes (strength dimension retired)", () => {
-		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");
-		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
+	test("the force pair on F: ⌥f weak, ⌥⇧f strong (fortis), shift the greater pole", () => {
+		expect(typed("~f", "s")).toBe(nfc("s\u{0349}"));
+		expect(typed("~+f", "k")).toBe(nfc("k\u{0348}"));   // k͈ — Korean fortis
+		expect(typed("~f", "~+f", "k")).toBe(nfc("k\u{0348}"));  // one dimension: replaces
 	});
 });
