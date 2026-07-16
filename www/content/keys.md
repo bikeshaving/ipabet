@@ -66,6 +66,33 @@ The lowered twin, on the shifted operator: a glyph, then ⌥⇧z (`x` `2` ⌥⇧
 
 <SubTable/>
 
+## Tier 2 · cycles (press again)
+
+A combining key may carry a **cycle**: pressing it again on its own pending mark advances through a family and wraps, every step visible in the composition preview — ⌫ cancels. Cycles hold one dimension only; marks from different dimensions keep separate keys so they can stack (dental + laminal = t̪̻).
+
+| Key | Family |
+| --- | --- |
+| ⌥n ⌥n… | ◌̃ nasalized → ◌͊ denasal → ◌͋ nasal escape → ◌͌ velopharyngeal |
+| ⌥w ⌥w… | ◌̜ less rounded → ◌͍ labial spreading |
+| ⌥⇧w ⌥⇧w… | ◌̹ more rounded → ◌͎ whistled |
+| ⌥j ⌥j… | ◌͡ tie → ◌͜ tie below → ◌͢ sliding (a lookback walk on the emitted joiner) |
+
+## Quotes by locale
+
+The bracket keys are semantic: <kbd>⌥[</kbd> opens the **primary** quote, <kbd>⌥⇧[</kbd> closes it; <kbd>⌥]</kbd>/<kbd>⌥⇧]</kbd> are the **secondary** pair. Which characters they emit is the *quote locale* (default `en`):
+
+| Locale | Primary | Secondary |
+| --- | --- | --- |
+| en | “ ” | ‘ ’ |
+| de | „ “ | ‚ ‘ |
+| fr | « » | ‹ › |
+| ch | » « | › ‹ |
+| pl | „ ” | « » |
+| ru | « » | „ “ |
+| sv | ” ” | ’ ’ |
+
+On macOS set it with the IME's `quoteLocale` default; on the web editor, the picker. The grapheme brackets live beside them: <kbd>⌥\</kbd> ⟨ and <kbd>⌥⇧\</kbd> ⟩ — linguistics' third citation bracket (/phoneme/ [phone] ⟨grapheme⟩).
+
 ## Machine access
 
 `GET /ipabet.schema.json` is the JSON Schema (Draft 2020-12) for `ipabet.json`: every field, its meaning, and the invariants that hold between them (a mark has a `shiftSense` exactly when it has a `double`; `ipa: false` and `beyond` imply each other).
