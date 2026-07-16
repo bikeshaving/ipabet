@@ -117,7 +117,7 @@
    }
   },
   "subscripts": {
-   "description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧q) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
+   "description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧z) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
    "type": "object",
    "required": [
     "operator",
