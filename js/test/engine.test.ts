@@ -437,9 +437,9 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("~+a", "t")).toBe(nfc("t\u{0331}"));
 		expect(typed("~+a", "d")).toBe(nfc("d\u{0331}"));
 	});
-	test("half-rings on their arabizi roots: ⌥⇧3 → ʿ (3 = ع), ⌥⇧4 → ʾ", () => {
+	test("half-rings on their arabizi roots: ⌥⇧2 → ʾ (2 = ء), ⌥⇧3 → ʿ (3 = ع)", () => {
+		expect(typed("~+2")).toBe("ʾ");
 		expect(typed("~+3")).toBe("ʿ");
-		expect(typed("~+4")).toBe("ʾ");
 		expect(typed("d", "~+3", "a")).toBe("dʿa");
 	});
 	test("⌥q passes to the host again — œ returns", () =>
