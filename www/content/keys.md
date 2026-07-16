@@ -38,7 +38,7 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 | ⌃⇧+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
 | Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). ⇧ still means the modifier while locked. |
 | ⌥⇧1 | `¡` (a deliberate spend). Every other shifted digit types its symbol directly now, so the raw-US digit escape is retired. |
-| ⌥⇧Space | The **Raw-US Lock**: the whole keyboard goes native until pressed again. |
+| ⌃⇧Space | The **Raw-US Lock**: the whole keyboard goes native until pressed again — the sticky member of the ⌃⇧ escape family. |
 
 ## Tier 2 · diacritics & suprasegmentals (Option layer)
 

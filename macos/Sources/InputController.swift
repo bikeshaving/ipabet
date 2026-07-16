@@ -225,7 +225,7 @@ class InputController: IMKInputController {
 
     // Raw-US lock: when on, every keystroke is declined — the IME is
     // transparent (for code, camelCase, shifted symbols). Toggled by
-    // ⌥⇧Space or the input menu.
+    // ⌃⇧Space or the input menu.
     //
     // Two policies (input-menu preferences, UserDefaults-backed):
     //  - global (default): one lock, session-only, cleared on arrival
@@ -262,7 +262,7 @@ class InputController: IMKInputController {
     override func menu() -> NSMenu! {
         let menu = NSMenu()
         let bundleID = clientBundleID()
-        let lock = NSMenuItem(title: "Raw US Lock (⌥⇧Space)",
+        let lock = NSMenuItem(title: "Raw US Lock (⌃⇧Space)",
                               action: #selector(toggleRawLock(_:)), keyEquivalent: "")
         lock.target = self
         lock.state = isRawLocked(for: bundleID) ? .on : .off
@@ -351,6 +351,17 @@ class InputController: IMKInputController {
         if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flushPending(client); return false }
         if flags.contains(.control) {
             if flags.contains(.shift) {
+                // ⌃⇧Space toggles the raw-US lock: the whole IME goes transparent
+                // (every key native) until toggled back. The sticky member of the
+                // ⌃⇧ escape family — ⌃⇧letter is the literal capital, ⌃⇧Space is
+                // the literal keyboard. One bit of *settings* state; composition
+                // remains stateless. (Must sit before the lock check below so it
+                // can toggle OFF while locked.)
+                if event.keyCode == 49 {
+                    flushPending(client)
+                    toggleRaw(for: clientBundleID())
+                    return true
+                }
                 let oc = USLayout.char(event.keyCode, shift: false)
                 if oc.count == 1, oc.first!.isLetter {
                     flushPending(client)
@@ -368,15 +379,6 @@ class InputController: IMKInputController {
         let opt = flags.contains(.option)
         let shift = flags.contains(.shift)
 
-        // ⌥⇧Space toggles the raw-US lock: the whole IME goes transparent
-        // (every key native — code, camelCase, $, %) until toggled back.
-        // The sticky sibling of the ⌥⇧ escape. One bit of *settings* state;
-        // composition remains stateless.
-        if opt && shift && event.keyCode == 49 {
-            flushPending(client)
-            toggleRaw(for: clientBundleID())
-            return true
-        }
         if isRawLocked(for: clientBundleID()) { flushPending(client); return false }
 
         // Fold a pending shift release into the chain state: once broken, it stays
