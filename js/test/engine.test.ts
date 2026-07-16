@@ -239,8 +239,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
 	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
 	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
-	test("the ⌥ number row is fully claimed", () => {
-		for (const d of "1234567890")
+	test("the ⌥ number row is claimed through 9 (⌥0 passed back with fortis)", () => {
+		for (const d of "123456789")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
 	// The shifted digits give their native symbols directly now that the roots are
@@ -494,12 +494,10 @@ describe("East Asian coverage", () => {
 		expect(typed("~f", "k")).toBe(nfc("k\u{031A}"));
 	});
 	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~f", "p")).toBe(nfc("sɐp\u{031A}")));
-	test("Korean fortis on ⌥0: k͈ t͈ p͈ s͈", () => {
-		expect(typed("~0", "k")).toBe(nfc("k\u{0348}"));
-		expect(typed("~0", "s")).toBe(nfc("s\u{0348}"));
-	});
-	test("fortis affricate stacks with the tie: t ⌥j ⌥0 s⇧J → t͡ɕ͈", () =>
-		expect(typed("t", "~j", "~0", "s", "+j")).toBe("t\u{0361}ɕ\u{0348}"));
+	// The strength dimension (fortis ◌͈ / weak ◌͉) retired to the graveyard in
+	// the linguist's review — ⌥0 and ⌥⇧f pass to the host.
+	test("⌥0 passes to the host (fortis retired)", () =>
+		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass"));
 
 	// Vowels East Asianists need, one digraph each.
 	test("ɨ ɯ ɤ ʌ are single digraphs", () => {
@@ -812,11 +810,6 @@ describe("heng", () => {
 
 describe("extIPA marks land on the keys their SHAPE claims", () => {
 	// The four that derive. Each is one glyph already in the layout, relocated — so
-	// the key was never a choice, and none of them needed an invented mnemonic.
-	test("⌥⇧f is WEAK — U+0349 is a left angle BELOW, and ⌥f is the left angle ABOVE (unreleased)", () =>
-		// Weak would have sat beside `strong` on ⌥⇧0 by meaning; it sits with unreleased
-		// by shape. The pair moved off ⌥j when the tie bar took j (join).
-		expect(typed("~+f", "t")).toBe(nfc("t͉")));
 
 	test("⌥⇧t is DENTOLABIAL — the dental bridge, relocated above", () =>
 		expect(typed("~+t", "t")).toBe(nfc("t͆")));
@@ -834,8 +827,8 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 	test("the seagull sits on the lips letter: ⌥p t → t̼ (linguolabial)", () =>
 		expect(typed("~p", "t")).toBe(nfc("t̼")));
 
-	test("strong keeps ⌥0 alone now; ⌥⇧0 returns ‚ to the host", () => {
-		expect(typed("~0", "k")).toBe(nfc("k͈"));
+	test("the 0 key passes on both planes (strength dimension retired)", () => {
+		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");
 		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
 	});
 });

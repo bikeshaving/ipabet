@@ -1087,11 +1087,7 @@
    "cp": "U+031A",
    "name": "COMBINING LEFT ANGLE ABOVE",
    "clone": "˺",
-   "arbitraryKey": true,
-   "double": "͉",
-   "doubleCp": "U+0349",
-   "doubleClone": "˹",
-   "shiftSense": "placement"
+   "arbitraryKey": true
   },
   {
    "opt": "h",
@@ -1106,17 +1102,6 @@
    "doubleClone": "˱",
    "exclusive": true,
    "shiftSense": "greater"
-  },
-  {
-   "opt": "0",
-   "mark": "͈",
-   "type": "combining",
-   "group": "Phonation",
-   "cp": "U+0348",
-   "name": "COMBINING DOUBLE VERTICAL LINE BELOW",
-   "ipa": false,
-   "beyond": "tradition",
-   "arbitraryKey": true
   },
   {
    "opt": ".",
