@@ -26,8 +26,7 @@ const doc = docs.index;
 
 // The hero demo. Authored as KEYSTROKES; the cumulative output after each one is
 // computed by the real engine, exactly like curriculum.ts and the chart — so the
-// demo cannot drift from the notation. It had: the old hand-written steps still
-// typed "señor" with a POSTFIX ⌥n (s e n ⌥n o r), retroactively tilde-ing the n.
+// demo cannot drift from the notation (hand-written steps would, silently).
 // Combining marks are prefix dead-keys — ⌥n comes BEFORE its base.
 //
 // Compact keystroke notation (as curriculum.ts): "s" bare · "+h" ⇧ · "~n" ⌥.
@@ -53,7 +52,7 @@ function demo(word: string, ...keys: string[]) {
 const DEMO = [
 	demo("ship", "s", "+h", "i", "+h", "p"),
 	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
-	demo("about", "+5", "b", "a", "u", "+h", "t"),
+	demo("about", "5", "+y", "b", "a", "u", "+h", "t"),
 	demo("señor", "s", "e", "~n", "n", "o", "r"),
 	demo("click", "q", "+c", "a"),
 ];
@@ -79,8 +78,8 @@ const landingComponents = {
 				<td class="examples"><${Combo} keys="⌥e a" out="á"/> <${Combo} keys="a ⌥;" out="aː"/> <${Combo} keys="h ⌥z" out="ʰ"/></td></tr>
 			<tr><td><kbd>⌃⇧</kbd> + letter</td><td class="desc">escape to the literal capital — so “GitHub” stays GitHub</td>
 				<td class="examples"><${Combo} keys="⌃⇧H" out="H" plain/> <${Combo} keys="⌃⇧G ⌃⇧H" out="GH" plain/></td></tr>
-			<tr><td><kbd>⌥⇧</kbd> + number</td><td class="desc">escape to the raw shifted symbol the IPA layer claims</td>
-				<td class="examples"><${Combo} keys="⌥⇧2" out="@" plain/> <${Combo} keys="⌥⇧5" out="%" plain/></td></tr>
+			<tr><td><kbd>⌥⇧</kbd></td><td class="desc">a mark’s second form, plus a few deliberate spends</td>
+				<td class="examples"><${Combo} keys="⌥⇧n a" out="a̰"/> <${Combo} keys="⌥⇧2" out="ʾ"/></td></tr>
 			<tr><td><kbd>Caps Lock</kbd></td><td class="desc">a lock, not a modifier — letters type literal capitals, never transforms</td>
 				<td class="examples"><${Combo} keys="⇪T ⇪H" out="TH" plain/></td></tr>
 		</table></div>`,
