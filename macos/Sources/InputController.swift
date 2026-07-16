@@ -517,8 +517,11 @@ class InputController: IMKInputController {
             // fresh word, or the chain was ended by a shift release — it is a fresh
             // capital DIGRAPH (⇧A⇧E → Æ, ⇧N⇧G → Ŋ, phantom ⇧S⇧H → Ʃ, Greek ⇧T⇧H
             // → Θ). Release ends the chain, it does NOT escape to literal (that is
-            // Ctrl+Shift). See capitalOf for the exclusions.
-            if shift, base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
+            // Ctrl+Shift). Under Caps Lock the digraph DECLINES — a locked capital
+            // is inert text, and the lock is the promised all-caps mode. See
+            // capitalOf for the exclusions.
+            if shift, !flags.contains(.capsLock),
+               base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
                 let p2Segment = clusterBefore(r, client).map {
                     String($0).unicodeScalars.contains(where: isSegmentScalar)
                 } ?? false
@@ -534,8 +537,9 @@ class InputController: IMKInputController {
             // The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
             // (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
             // chain, so a shift release escapes to the literal (%Y). Same guard as
-            // the capital digraphs (⇧2⇧H → Ɂ). Mirrors js/src/index.ts.
-            if chainLive,
+            // the capital digraphs (⇧2⇧H → Ɂ), and it declines under Caps Lock
+            // like every digraph. Mirrors js/src/index.ts.
+            if chainLive, !flags.contains(.capsLock),
                let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
                             "^": "6", "&": "7", "*": "8", "(": "9", ")": "0"][base],
                let low = t.transforms[digit + s],

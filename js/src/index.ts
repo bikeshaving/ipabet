@@ -541,8 +541,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		//   chainLive — the chain has not been broken by a shift release since the
 		//              last segment. Releasing shift after ʃ makes ⇧I⇧H literal: ʃIH.
 		//   p2       — the char before the capital is a real IPA segment, not the
-		//              previous LITERAL capital. This is what keeps $PATH → ɾPATH:
-		//              the final T is preceded by A, so the run breaks there.
+		//              previous LITERAL capital. $PATH never *chains*: the final T
+		//              is preceded by A, so the run breaks there (the TH pair still
+		//              forms its fresh-capital digraph, Θ).
 		// A capital that never gets a modifier stays as typed (ʃ⇧T → ʃT).
 		// A shifted (capital) modifier-base has exactly one question: are we in a
 		// LIVE chain — shift held continuously since an IPA segment? If so, this
@@ -551,10 +552,12 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		// — a fresh word, or the chain was ended by a shift release — it is a fresh
 		// capital DIGRAPH: ⇧A⇧E → Æ, ⇧N⇧G → Ŋ. Release doesn't escape to literal
 		// (that is Ctrl+Shift); it just ends the chain, so the next capital is
-		// capital again. The segment test is a non-ASCII letter or combining mark,
-		// NOT merely non-ASCII: a terminal reports the empty start-of-line cell as
-		// U+00A0 NBSP (160 > 127), and a bare `> 127` test would rebase it into θ.
-		if (shift && /^[A-Z]$/.test(base)) {
+		// capital again. Under Caps Lock the digraph DECLINES — a locked capital is
+		// inert text, and the lock is the promised all-caps mode (SHIP stays SHIP).
+		// The segment test is a non-ASCII letter or combining mark, NOT merely
+		// non-ASCII: a terminal reports the empty start-of-line cell as U+00A0
+		// NBSP (160 > 127), and a bare `> 127` test would rebase it into θ.
+		if (shift && k.capsLock !== true && /^[A-Z]$/.test(base)) {
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
 			const p2Segment =
 				p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c));
@@ -576,8 +579,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		// (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
 		// chain, so a shift release escapes to the literal (%Y) — the same law
 		// as every capital digraph. Same guard: &⇧H → Ħ, and ⇧2⇧H → Ɂ, the
-		// Dene capital glottal.
-		if (shift && chainLive) {
+		// Dene capital glottal. Declines under Caps Lock, like every digraph.
+		if (shift && chainLive && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			if (digit !== undefined) {
 				const low = transforms.get(digit + s);

@@ -700,6 +700,11 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+b", "+h")).toBe("BH");
 		expect(typed("+q", "+h")).toBe("QH");
 	});
+	test("Caps Lock declines the digraph: locked T then locked-⇧H stays TH", () =>
+		expect(typeKeys([
+			{key: "t", capsLock: true},
+			{key: "h", shift: true, capsLock: true},
+		])).toBe("TH"));
 	test("ASCII uppercase excluded: ⇧T⇧J → TJ (not C)", () =>
 		expect(typed("+t", "+j")).toBe("TJ"));
 	test("a release starts a fresh capital, not a literal: ⇧A ^⇧E → Æ", () =>
