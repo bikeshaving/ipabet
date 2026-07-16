@@ -820,7 +820,10 @@
    "cp": "U+0326",
    "name": "COMBINING COMMA BELOW",
    "ipa": false,
-   "beyond": "tenant"
+   "beyond": "tenant",
+   "double": "̓",
+   "doubleCp": "U+0313",
+   "shiftSense": "twin"
   },
   {
    "opt": "m",
@@ -1137,19 +1140,6 @@
    "group": "Phonation",
    "cp": "U+208D",
    "name": "SUBSCRIPT LEFT PARENTHESIS (pre-voicing; ⇧ → ₎ post-voicing)",
-   "ipa": false,
-   "beyond": "extIPA",
-   "shiftSense": "twin"
-  },
-  {
-   "opt": "o",
-   "mark": "͎",
-   "type": "combining",
-   "double": "͌",
-   "doubleCp": "U+034C",
-   "group": "Articulation",
-   "cp": "U+034E",
-   "name": "COMBINING UPWARDS ARROW BELOW (whistled — o is the whistle; ⇧ → ͌ velopharyngeal friction)",
    "ipa": false,
    "beyond": "extIPA",
    "shiftSense": "twin"

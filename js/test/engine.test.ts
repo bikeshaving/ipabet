@@ -579,10 +579,10 @@ describe("⌥⇧ is not an escape any more", () => {
 		expect(typed("a", "~+e", "~+e")).toBe("a"));
 
 	test("a key with no second form declines, so the host's ⌥⇧ typography survives", () =>
-		// Declining is a `pass`: on macOS the host then types its own ¯. (typeKeys
+		// Declining is a `pass`: on macOS the host then types its own Ï. (typeKeys
 		// simulates a pass with the plain US character, hence the edit-level assert.)
-		// ⌥⇧, is unclaimed — the comma-below never grew a second form.
-		expect(handleKey("", seq("~+,")[0]).edit.type).toBe("pass"));
+		// ⌥⇧f is unclaimed since weak articulation retired.
+		expect(handleKey("", seq("~+f")[0]).edit.type).toBe("pass"));
 });
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
@@ -732,10 +732,12 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("the clinical couple on the whistle key: ⌥o s → s͎, ⌥⇧o s → s͌", () => {
-		expect(typed("~o", "s")).toBe(nfc("s\u{034E}"));
-		expect(typed("~+o", "s")).toBe(nfc("s\u{034C}"));
+	test("⌥o passes on both planes (the clinical couple staged back to the graveyard)", () => {
+		expect(handleKey("", {key: "o", option: true}).edit.type).toBe("pass");
+		expect(handleKey("", {key: "o", shift: true, option: true}).edit.type).toBe("pass");
 	});
+	test("comma above completes the comma key: ⌥⇧, k → k̓ (PNW glottalization)", () =>
+		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
 });
 
 describe("rhotic hook on any vowel", () => {
@@ -749,9 +751,9 @@ describe("option-shift raw escape", () => {
 	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 
 	// A ⌥⇧ key with no second form declines, so the host types its own character
-	// and the ⇧-transform never fires. (⌥⇧, — the comma-below has no second form.)
-	test("⌥⇧, declines, so no transform reaches back", () =>
-		expect(handleKey("s", {key: ",", shift: true, option: true}).edit.type).toBe("pass"));
+	// and the ⇧-transform never fires. (⌥⇧f — weak articulation retired.)
+	test("⌥⇧f declines, so no transform reaches back", () =>
+		expect(handleKey("s", {key: "f", shift: true, option: true}).edit.type).toBe("pass"));
 	test("⌥⇧[ passes (native typography)", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "pass"}));
 });

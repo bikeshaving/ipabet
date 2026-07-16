@@ -106,7 +106,7 @@ describe("spec · the moved keys", () => {
 		// comma-below mark riding shotgun on ⌥⇧. The cedilla went home to ⌥c (ABC
 		// Extended's key, and the letter it is named for), so shape identity holds.
 		expect(byOpt.get(",")!.mark).toBe("̦");        // comma below — ș ț
-		expect(byOpt.get(",")!.double).toBeUndefined();
+		expect(byOpt.get(",")!.double).toBe("̓");      // comma above — k̓ m̓ w̓, smooth breathing
 		expect(byOpt.get("c")!.mark).toBe("̧");        // cedilla — ç ş ţ ģ ņ
 	});
 
