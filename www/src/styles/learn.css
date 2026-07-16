@@ -67,9 +67,13 @@
 .kb:active { transform: translateY(1px); }
 .kb.wide { flex: 1.5 1 0; } .kb.space { flex: 6 1 0; }
 [data-keymode="pc"] .kb.wide { font-size: .78em; } /* "Shift"/"AltGr" caps, not ⇧/⌥ */
-.kb.hot { background: var(--accent); border-color: var(--accent); color: #fff;
+/* armed = the visitor toggled the modifier on (quiet outline). Ordered before
+   hot/need so a needed modifier lights up SOLID even while armed. */
+.kb.armed { border-color: var(--accent); color: var(--accent); }
+/* hot = the next key; need = a modifier the next keystroke requires. Same
+   solid light — the chord is one gesture, both halves glow alike. */
+.kb.hot, .kb.need { background: var(--accent); border-color: var(--accent); color: #fff;
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-.kb.armed, .kb.need { border-color: var(--accent); color: var(--accent); }
 #controls { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: 1.5rem 0 -.75rem; flex-wrap: wrap; }
 #lessonnav { display: flex; align-items: center; gap: .4rem; }
 #lessonnav button { appearance: none; border-radius: 999px;
