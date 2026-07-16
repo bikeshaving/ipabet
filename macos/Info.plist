@@ -2,104 +2,82 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleIdentifier</key>
-    <string>org.bikeshaving.inputmethod.IPAbet</string>
-    <!-- Name architecture (verified against Apple's TextInputSources.h and 7
-         shipping IMEs, incl. goftam/jyutping which are single-purpose like us):
-         each input SOURCE has one localized name (kTISPropertyLocalizedName)
-         used identically in the Settings line 1, the menu-bar dropdown, and
-         the fn cycler — they cannot differ. The gray Settings line 2 is the
-         owning METHOD's name (CFBundleName). So to get "I.P.A." / "IPAbet":
-         register ONE visible input mode named "I.P.A." (localized by its
-         TISInputSourceID in en.lproj/InfoPlist.strings) under a method named
-         "IPAbet". This is the goftam pattern. -->
-    <key>CFBundleName</key>
-    <string>IPAbet</string>
-    <key>LSHasLocalizedDisplayName</key>
-    <true/>
-    <key>NSHumanReadableCopyright</key>
-    <string>© 2026 Brian Kim. MIT License.</string>
-    <key>CFBundleIconFile</key>
-    <string>IPAbet</string>
-    <key>tsInputMethodIconFileKey</key>
-    <string>ipabet.pdf</string>
-    <key>TISIconIsTemplate</key>
-    <true/>
-    <!-- ONE visible mode. No tsInputModeDefaultStateKey (that key
-         phantom-enabled the source in an earlier attempt) and no programmatic
-         TISSelectInputSource. One icon (badge) on every icon key: there is no
-         Info.plist key for the fn cycler, so per-surface icons (badge in menu,
-         bare in cycler) are impossible for third parties — confirmed against
-         TextServices.h, which defines only menu/menu-hilited/palette keys. -->
-    <key>ComponentInputModeDict</key>
-    <dict>
-        <key>tsInputModeListKey</key>
-        <dict>
-            <key>org.bikeshaving.inputmethod.IPAbet.IPA</key>
-            <dict>
-                <key>TISInputSourceID</key>
-                <string>org.bikeshaving.inputmethod.IPAbet.IPA</string>
-                <key>TISIntendedLanguage</key>
-                <string>en</string>
-                <key>tsInputModeIsVisibleKey</key>
-                <true/>
-                <key>tsInputModeMenuIconFileKey</key>
-                <string>ipabet.pdf</string>
-                <key>tsInputModeAlternateMenuIconFileKey</key>
-                <string>ipabet.pdf</string>
-                <key>tsInputModePaletteIconFileKey</key>
-                <string>ipabet.pdf</string>
-                <key>tsInputModePrimaryInScriptKey</key>
-                <true/>
-                <key>tsInputModeScriptKey</key>
-                <string>smUnicodeScript</string>
-            </dict>
-        </dict>
-        <key>tsVisibleInputModeOrderedArrayKey</key>
-        <array>
-            <string>org.bikeshaving.inputmethod.IPAbet.IPA</string>
-        </array>
-    </dict>
-    <key>CFBundleExecutable</key>
-    <string>IPAbet</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
-    <key>CFBundleVersion</key>
-    <string>1</string>
-    <key>LSMinimumSystemVersion</key>
-    <string>13.0</string>
-    <!-- LSUIElement, NOT LSBackgroundOnly: the modern IMK stack hosts input
-         methods via ViewBridge, and background-only processes lose the event
-         reply channel (dropped keys, IMKCFRunLoopWakeUpReliable errors).
-         Squirrel sets LSBackgroundOnly=false explicitly; vChewing likewise. -->
-    <key>LSUIElement</key>
-    <true/>
-    <key>LSBackgroundOnly</key>
-    <false/>
-    <key>NSPrincipalClass</key>
-    <string>NSApplication</string>
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-    <key>TICapsLockLanguageSwitchCapable</key>
-    <true/>
-    <key>InputMethodConnectionName</key>
-    <string>IPAbet_Connection</string>
-    <key>InputMethodServerControllerClass</key>
-    <string>InputController</string>
-    <key>InputMethodServerDelegateClass</key>
-    <string>InputController</string>
-    <key>tsInputMethodCharacterRepertoireKey</key>
-    <array>
-        <string>Latn</string>
-    </array>
-    <key>TISInputSourceID</key>
-    <string>org.bikeshaving.inputmethod.IPAbet</string>
-    <!-- "en", not "und-fonipa": IPAbet is a US keyboard with IPA on the
-         shifted layers, and the picker groups by language — bare "und"
-         made it hard to find. -->
-    <key>TISIntendedLanguage</key>
-    <string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>IPAbet</string>
+	<key>CFBundleIconFile</key>
+	<string>IPAbet</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.bikeshaving.inputmethod.IPAbet</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>IPAbet</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>ComponentInputModeDict</key>
+	<dict>
+		<key>tsInputModeListKey</key>
+		<dict>
+			<key>org.bikeshaving.inputmethod.IPAbet.IPA</key>
+			<dict>
+				<key>TISInputSourceID</key>
+				<string>org.bikeshaving.inputmethod.IPAbet.IPA</string>
+				<key>TISIntendedLanguage</key>
+				<string>en</string>
+				<key>tsInputModeAlternateMenuIconFileKey</key>
+				<string>ipabet.pdf</string>
+				<key>tsInputModeIsVisibleKey</key>
+				<true/>
+				<key>tsInputModeMenuIconFileKey</key>
+				<string>ipabet.pdf</string>
+				<key>tsInputModePaletteIconFileKey</key>
+				<string>ipabet.pdf</string>
+				<key>tsInputModePrimaryInScriptKey</key>
+				<true/>
+				<key>tsInputModeScriptKey</key>
+				<string>smUnicodeScript</string>
+			</dict>
+		</dict>
+		<key>tsVisibleInputModeOrderedArrayKey</key>
+		<array>
+			<string>org.bikeshaving.inputmethod.IPAbet.IPA</string>
+		</array>
+	</dict>
+	<key>InputMethodConnectionName</key>
+	<string>IPAbet_Connection</string>
+	<key>InputMethodServerControllerClass</key>
+	<string>InputController</string>
+	<key>InputMethodServerDelegateClass</key>
+	<string>InputController</string>
+	<key>LSBackgroundOnly</key>
+	<false/>
+	<key>LSHasLocalizedDisplayName</key>
+	<true/>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2026 Brian Kim. MIT License.</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>TICapsLockLanguageSwitchCapable</key>
+	<true/>
+	<key>TISIconIsTemplate</key>
+	<true/>
+	<key>TISInputSourceID</key>
+	<string>org.bikeshaving.inputmethod.IPAbet</string>
+	<key>TISIntendedLanguage</key>
+	<string>en</string>
+	<key>tsInputMethodCharacterRepertoireKey</key>
+	<array>
+		<string>Latn</string>
+	</array>
+	<key>tsInputMethodIconFileKey</key>
+	<string>ipabet.pdf</string>
 </dict>
 </plist>
