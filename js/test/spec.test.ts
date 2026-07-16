@@ -25,6 +25,7 @@ interface Mark {
 	shiftSense?: string;
 	arbitraryKey?: boolean;
 	name?: string;
+	cp?: string;
 }
 
 const marks = spec.marks as Mark[];

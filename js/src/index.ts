@@ -670,7 +670,7 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let pending: Pending = [];
 	let chainBroken = false;
 	for (const k of keys) {
-		const step =
+		const step: Step =
 			k.key === "⌫" ? handleBackspace(text, pending) : handleKey(text, k, pending, chainBroken);
 		pending = step.pending;
 		chainBroken = step.chainBroken ?? false;
