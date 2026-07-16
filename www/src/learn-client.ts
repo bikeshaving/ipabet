@@ -21,7 +21,7 @@ import {
 } from "../../js/src/index.ts";
 
 interface Word { word: string; lang: string; gloss: string; target: string; labels: string[]; audio?: string; }
-interface Lesson { title: string; sound?: string; keys?: string[]; intro: string; audio?: string; words: Word[]; }
+interface Lesson { title: string; sound?: string; keys?: string[]; intro: string; part?: string; prose?: string; review?: boolean; audio?: string; words: Word[]; }
 declare global { interface Window { __CURRICULUM: Lesson[]; } }
 
 const LESSONS = window.__CURRICULUM;
@@ -36,6 +36,7 @@ let li = 0, wi = 0, buffer = "", misses = 0, streak = 0, hinted = false;
 let chainBroken = false;
 let ear = false, shown = false; // ear-training: hide the target, type from sound; `shown` = revealed this word
 let flash: "good" | "bad" | null = null; // the transient correct/wrong state on #typedwrap
+let finished = false;   // typed past the last word of the last lesson — the finish line
 let shiftArmed = false, optArmed = false;
 let pending: Pending = [];
 let indexOpen = false;  // the lesson index panel
@@ -106,6 +107,19 @@ function nextKeystroke(): Keystroke | null {
 // ------------------------------------------------------------- components
 function Drill() {
 	const les = lesson();
+	if (finished) {
+		return jsx`
+			<div id="finish">
+				<div class="big ipa">/kəmˈpliːt/</div>
+				<p>${LESSONS.length} lessons — every sound on the chart, under your fingers.
+				The course ends; the keyboard doesn't.</p>
+				<div class="acts">
+					<button id="hintbtn" onclick=${() => { finished = false; goWord(true); }}>Practice this lesson again</button>
+					<a href="/type">Open the scratchpad</a>
+					<a href="/chart">The chart</a>
+				</div>
+			</div>`;
+	}
 	const w = word();
 	const p = progress();
 	const earHide = ear && !shown;                       // ear mode hides the answer until solved/revealed
@@ -124,6 +138,7 @@ function Drill() {
 			}
 		</div>
 		<div id="note">${les.intro}</div>
+		${les.prose ? jsx`<details id="prose"><summary>more, if you're curious</summary><p>${les.prose}</p></details>` : null}
 		<div id="prog">${wi === 0 && les.sound ? "the new sound, on its own — keys shown" : `${wi + 1} / ${les.words.length}`}</div>
 		<div id="hero">
 			<div id="target" class=${earHide ? "ipa masked" : "ipa"}
@@ -181,11 +196,12 @@ function LessonIndex() {
 					+ (i === li ? " current" : "")
 					+ (i <= reached ? " visited" : "");
 				return jsx`
+					${l.part ? jsx`<li class="part">${l.part}</li>` : null}
 					<li>
 						<button class=${cls} onclick=${() => { indexOpen = false; goLesson(i); render(); }}>
 							<span class="n">${i + 1}</span>
 							<span class="t">${l.title}</span>
-							${l.sound ? jsx`<span class="s ipa">/${l.sound}/</span>` : null}
+							${l.review ? jsx`<span class="s rev">review</span>` : l.sound ? jsx`<span class="s ipa">/${l.sound}/</span>` : null}
 						</button>
 					</li>`;
 			})}
@@ -207,6 +223,7 @@ function syncNav() {
 
 // ------------------------------------------------------------ progression
 function goWord(newLesson: boolean) {
+	finished = false;
 	buffer = ""; misses = 0; shown = false; flash = null; pending = []; chainBroken = false;
 	hinted = !ear && wi === 0;   // first word of a lesson shows its keys — but never in ear mode
 	render();
@@ -219,8 +236,8 @@ function next() {
 	wi += 1;
 	if (wi < lesson().words.length) { goWord(false); return; }
 	wi = 0;
-	if (li < LESSONS.length - 1) { li += 1; save(); }  // advance a lesson (else linger on the last for practice)
-	goWord(true);
+	if (li < LESSONS.length - 1) { li += 1; save(); goWord(true); return; }
+	finished = true; save(); render();   // the last word of the last lesson IS the finish line
 }
 /** Jump to a lesson (prev/next buttons or the picker). Clamped; resets to word 1. */
 function goLesson(n: number) {
@@ -253,6 +270,7 @@ function check() {
 
 // ------------------------------------------------------------ input core
 function doBackspace() {
+	if (finished) return; // the finish line ignores typing
 	const step = handleBackspace(buffer, pending);
 	pending = step.pending;
 	if (step.edit.type === "noop") { render(); return; }
@@ -260,6 +278,7 @@ function doBackspace() {
 	render();
 }
 function sendKey(k: Keystroke) {
+	if (finished) return; // the finish line ignores typing
 	// Thread the shift-chain, exactly as bindIPAInput and the IME do: hold ⇧ across
 	// a run and each capital rebases for the next modifier; release ⇧ and the chain
 	// breaks. The engine owns the rule but not the flag — only the caller sees the
@@ -272,6 +291,7 @@ function sendKey(k: Keystroke) {
 	check();
 }
 function tapChar(ch: string) {
+	if (finished) return; // the finish line ignores typing
 	const k: Keystroke = {key: ch, shift: shiftArmed, option: optArmed};
 	shiftArmed = false; optArmed = false; // the on-screen modifiers are one-shot
 	sendKey(k);

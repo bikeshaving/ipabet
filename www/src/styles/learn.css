@@ -116,3 +116,22 @@
 #ear[aria-pressed="true"] .dot { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
 #target.masked { filter: blur(15px); opacity: .5; cursor: default; transition: filter .35s ease, opacity .35s ease; }
 @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
+
+/* The finish line — the drill's terminal state. */
+#finish { text-align: center; padding: 2.25rem 1rem; }
+#finish .big { font-size: 2.4rem; margin-bottom: .8rem; }
+#finish p { color: var(--dim); max-width: 26rem; margin: 0 auto 1.4rem; }
+#finish .acts { display: flex; gap: .9rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+#finish .acts a { color: var(--accent); font-size: .9rem; }
+
+/* Lesson prose — skippable by design: collapsed, quiet, off the drill's path. */
+#prose { margin: .3rem auto 0; max-width: 34rem; font-size: .85rem; color: var(--dim); }
+#prose summary { cursor: pointer; text-align: center; }
+#prose p { text-align: left; margin: .45rem 0 0; line-height: 1.55; }
+
+/* Part headers group the index; review chips mark the mixed drills. */
+.lessonlist .part { grid-column: 1 / -1; font-size: .68rem; font-weight: 600;
+	letter-spacing: .09em; text-transform: uppercase; color: var(--dim);
+	padding: .6rem .4rem .15rem; }
+.lessonitem .s.rev { font-family: inherit; font-size: .62rem; letter-spacing: .05em;
+	text-transform: uppercase; color: var(--accent); }
