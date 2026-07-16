@@ -780,6 +780,26 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
 });
 
+describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
+	test("t⇧T → þ (Icelandic), capitals via held chain: ⇧T⇧T → Þ", () => {
+		expect(typed("t", "+t")).toBe("þ");
+		expect(typed("+t", "+t")).toBe("Þ");
+	});
+	test("i⇧I → ı (Turkish) — and ⇧I⇧I stays II (ı uppercases to plain ASCII I)", () => {
+		expect(typed("i", "+i")).toBe("ı");
+		expect(typed("+i", "+i")).toBe("II");
+	});
+	test("the West African hooks: k⇧K → ƙ, y⇧Y → ƴ, f⇧F → ƒ", () => {
+		expect(typed("k", "+k")).toBe("ƙ");
+		expect(typed("y", "+y")).toBe("ƴ");
+		expect(typed("f", "+f")).toBe("ƒ");
+	});
+	test("Catalan in one chord: l⇧L → l·l (cel·la)", () => {
+		expect(typed("c", "e", "l", "+l", "a")).toBe("cel·la");
+		expect(typed("+l", "+l")).toBe("LL");   // uppercase of l·l is 3 chars — excluded, caps safe
+	});
+});
+
 describe("the joiner family (⌥j repeat-walks: tie → tie-below → sliding)", () => {
 	test("t ⌥j s → t͡s; a second ⌥j advances the emitted joiner, never stacks", () => {
 		expect(typed("t", "~j", "s")).toBe(nfc("t\u{0361}s"));

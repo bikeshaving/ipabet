@@ -675,6 +675,42 @@
    "glyph": "ɫ",
    "cp": "U+026B",
    "name": "LATIN SMALL LETTER L WITH MIDDLE TILDE"
+  },
+  {
+   "key": "tT",
+   "glyph": "þ",
+   "cp": "U+00FE",
+   "name": "LATIN SMALL LETTER THORN (Icelandic — the doubled-letter law: X⇧X is X's orthographic cousin)"
+  },
+  {
+   "key": "iI",
+   "glyph": "ı",
+   "cp": "U+0131",
+   "name": "LATIN SMALL LETTER DOTLESS I (Turkish, Azeri, Kazakh — the doubled-letter law)"
+  },
+  {
+   "key": "kK",
+   "glyph": "ƙ",
+   "cp": "U+0199",
+   "name": "LATIN SMALL LETTER K WITH HOOK (Hausa — the doubled-letter law)"
+  },
+  {
+   "key": "yY",
+   "glyph": "ƴ",
+   "cp": "U+01B4",
+   "name": "LATIN SMALL LETTER Y WITH HOOK (Fula — the doubled-letter law)"
+  },
+  {
+   "key": "fF",
+   "glyph": "ƒ",
+   "cp": "U+0192",
+   "name": "LATIN SMALL LETTER F WITH HOOK (Ewe — the doubled-letter law)"
+  },
+  {
+   "key": "lL",
+   "glyph": "l·l",
+   "cp": "U+006C U+00B7 U+006C",
+   "name": "ela geminada (Catalan — the whole trigraph in one chord; the punt volat never occurs outside l_l)"
   }
  ],
  "marks": [
