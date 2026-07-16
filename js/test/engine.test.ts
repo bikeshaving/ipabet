@@ -279,7 +279,7 @@ describe("dental family — spread across keys, no cycle", () => {
 		expect(typed("~t", "d")).toBe(nfc("d\u{032A}"));   // dental
 		expect(typed("~d", "d")).toBe(nfc("d\u{033A}"));   // apical (tip)
 		expect(typed("~+d", "d")).toBe(nfc("d\u{033B}"));  // laminal (blade)
-		expect(typed("~p", "d")).toBe(nfc("d\u{033C}"));   // linguolabial (the lips letter)
+		expect(typed("~+p", "d")).toBe(nfc("d\u{033C}"));  // linguolabial (shifted)
 	});
 });
 
@@ -500,10 +500,10 @@ describe("East Asian coverage", () => {
 
 	// Korean/Cantonese/Thai coda stops are unreleased; Korean has a fortis series.
 	test("unreleased coda stops on ⌥f", () => {
-		expect(typed("~f", "p")).toBe(nfc("p\u{031A}"));
-		expect(typed("~f", "k")).toBe(nfc("k\u{031A}"));
+		expect(typed("~p", "p")).toBe(nfc("p\u{031A}"));
+		expect(typed("~p", "k")).toBe(nfc("k\u{031A}"));
 	});
-	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~f", "p")).toBe(nfc("sɐp\u{031A}")));
+	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~p", "p")).toBe(nfc("sɐp\u{031A}")));
 	// The strength dimension (fortis ◌͈ / weak ◌͉) retired to the graveyard in
 	// the linguist's review — ⌥0 and ⌥⇧f pass to the host.
 	test("⌥0 passes to the host (fortis retired)", () =>
@@ -701,8 +701,8 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 describe("superscript operator ⌥z", () => {
 	test("aspiration: t h ⌥z → tʰ", () => expect(typed("t", "h", "~z")).toBe("tʰ"));
 	test("no superscriptable base → literal z", () => expect(typed("~z")).toBe("z"));
-	test("⌥p no longer raises — it's the linguolabial dead key now", () =>
-		expect(typed("~p", "b")).toBe(nfc("b\u{033C}")));
+	test("⌥p no longer raises — it's the no-release dead key now", () =>
+		expect(typed("~p", "b")).toBe(nfc("b\u{031A}")));
 });
 
 describe("rhoticity ⌥r — postfix like length", () => {
@@ -836,8 +836,10 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 		expect(typed("~9", "z")).toBe("₍z");   // spacing: it just lands
 	});
 
-	test("the seagull sits on the lips letter: ⌥p t → t̼ (linguolabial)", () =>
-		expect(typed("~p", "t")).toBe(nfc("t̼")));
+	test("the p key: no-release unshifted by frequency, the seagull on the shift", () => {
+		expect(typed("~p", "k")).toBe(nfc("k̚"));
+		expect(typed("~+p", "t")).toBe(nfc("t̼"));
+	});
 
 	test("the 0 key passes on both planes (strength dimension retired)", () => {
 		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");

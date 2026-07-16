@@ -1087,21 +1087,15 @@
   },
   {
    "opt": "p",
-   "mark": "̼",
-   "type": "combining",
-   "group": "Articulation",
-   "cp": "U+033C",
-   "name": "COMBINING SEAGULL BELOW (linguolabial — the lips letter)"
-  },
-  {
-   "opt": "f",
    "mark": "̚",
+   "clone": "˺",
    "type": "combining",
+   "double": "̼",
+   "doubleCp": "U+033C",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE",
-   "clone": "˺",
-   "arbitraryKey": true
+   "name": "COMBINING LEFT ANGLE ABOVE (no audible release, on the plosive letter; ⇧ → ̼ linguolabial, the lips)",
+   "shiftSense": "twin"
   },
   {
    "opt": "h",
