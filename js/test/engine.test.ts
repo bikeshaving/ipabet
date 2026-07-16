@@ -217,8 +217,12 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~'")).toBe("ˈ");
 		expect(typed("~+'")).toBe("ˌ");
 	});
-	test("non-syllabic: ⌥⇧b a → a̯ (diphthong glide; the breve BELOW, on the breve key)", () =>
-		expect(typed("~+b", "a")).toBe(nfc("a\u{032F}")));
+	test("non-syllabic: ⌥o a → a̯ (the diphthong glide — a vowel mark on the vowel key)", () =>
+		expect(typed("~o", "a")).toBe(nfc("a\u{032F}")));
+	test("the inverted breves pair on o: ⌥⇧o e → ȇ (Slavic long-falling)", () =>
+		expect(typed("~+o", "e")).toBe(nfc("e\u{0311}")));
+	test("the plain breves pair on b: ⌥⇧b h → ḫ (DIN Arabic)", () =>
+		expect(typed("~+b", "h")).toBe(nfc("h\u{032E}")));
 	test("breathy: ⌥⇧u a → a̤", () => expect(typed("~+u", "a")).toBe(nfc("a\u{0324}")));
 	test("half-long is spacing, still postfix: a ⌥; → aː, ⌥⇧; → ˑ", () => {
 		expect(typed("a", "~;")).toBe("aː");
@@ -742,9 +746,9 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("⌥o passes on both planes (the clinical couple staged back to the graveyard)", () => {
-		expect(handleKey("", {key: "o", option: true}).edit.type).toBe("pass");
-		expect(handleKey("", {key: "o", shift: true, option: true}).edit.type).toBe("pass");
+	test("⌥0 and ⌥⇧0 pass on both planes (the strength dimension is staged)", () => {
+		expect(handleKey("", {key: "0", option: true}).edit.type).toBe("pass");
+		expect(handleKey("", {key: "0", shift: true, option: true}).edit.type).toBe("pass");
 	});
 	test("comma above completes the comma key: ⌥⇧, k → k̓ (PNW glottalization)", () =>
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));

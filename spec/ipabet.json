@@ -773,14 +773,13 @@
    "opt": "b",
    "mark": "̆",
    "clone": "˘",
-   "double": "̯",
-   "doubleCp": "U+032F",
-   "doubleClone": "˯",
-   "shiftSense": "below",
    "type": "combining",
+   "double": "̮",
+   "doubleCp": "U+032E",
    "group": "Syllabicity",
    "cp": "U+0306",
-   "name": "COMBINING BREVE"
+   "name": "COMBINING BREVE (extra-short; ⇧ → ̮ breve below — DIN Arabic ḫ. Shape-aligned at last)",
+   "shiftSense": "below"
   },
   {
    "opt": "k",
@@ -919,14 +918,14 @@
   {
    "opt": "s",
    "mark": "̩",
+   "clone": "ˌ",
    "type": "combining",
+   "double": "̍",
+   "doubleCp": "U+030D",
+   "doubleClone": "ˈ",
    "group": "Syllabicity",
    "cp": "U+0329",
    "name": "COMBINING VERTICAL LINE BELOW",
-   "double": "̍",
-   "doubleCp": "U+030D",
-   "clone": "ˌ",
-   "doubleClone": "ˈ",
    "exclusive": true,
    "shiftSense": "placement"
   },
@@ -1147,6 +1146,18 @@
    "name": "SUBSCRIPT LEFT PARENTHESIS (pre-voicing; ⇧ → ₎ post-voicing)",
    "ipa": false,
    "beyond": "extIPA",
+   "shiftSense": "twin"
+  },
+  {
+   "opt": "o",
+   "mark": "̯",
+   "clone": "˯",
+   "type": "combining",
+   "double": "̑",
+   "doubleCp": "U+0311",
+   "group": "Syllabicity",
+   "cp": "U+032F",
+   "name": "COMBINING INVERTED BREVE BELOW (non-syllabic — the diphthong glide, a vowel mark on the vowel key; ⇧ → ̑ the Slavic long-falling accent)",
    "shiftSense": "twin"
   }
  ],
