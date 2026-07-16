@@ -1663,6 +1663,7 @@
   "about": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is fully retired: no shifted digit is an IPA glyph any more (the number-row roots are unshifted-digit digraphs, and the tie bar lives on ⌥j), so every ⇧<digit> types its native symbol directly. An unlisted ⌥⇧<digit> passes to the host — ⌥⇧2 €, ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all survive. Only the slots listed here are spent.",
   "1": "¡",
   "3": "ʿ",
-  "2": "ʾ"
+  "2": "ʾ",
+  "5": "˭"
  }
 }
