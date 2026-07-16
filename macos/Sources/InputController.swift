@@ -139,10 +139,10 @@ struct Tables {
         var transforms: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
-            // A leading digit is a LITERAL base: the number-row families hang off the
-            // bare digit now (5H → ɜ, 2Q → ʡ), and the roots are digraphs too (5Y → ə,
-            // 2H → ʔ), so ⇧2–7 pass through to native @ # $ % ^ &, and the tie bar
-            // left the number row for ⌥j. Mirrors js/src/index.ts.
+            // A leading digit is a LITERAL base a modifier transforms (5H → ɜ,
+            // 2Q → ʡ), and the roots are digraphs too (5Y → ə, 2H → ʔ), so ⇧2–7
+            // pass through to native @ # $ % ^ & and the tie bar lives on ⌥j.
+            // Mirrors js/src/index.ts.
             let prev = base.first!.isNumber ? base : letters[base]
             if let prev = prev { transforms[prev + mod] = glyph }
         }
@@ -399,16 +399,11 @@ class InputController: IMKInputController {
             return handleBackspace(client)
         }
 
-        // Option-Shift: the raw-US escape on the number row. The letter escape
-        // moved to Ctrl+Shift (see handle()'s top); ⌥⇧<letter> now declines, so
-        // the host's own Option typography passes through. On digits the escape
-        // exists only because ⇧<digit> is an IPA glyph, leaving the shifted
-        // character otherwise unreachable. Now that the digit roots are digraphs
-        // and the tie left for ⌥j, NO shifted digit is an IPA glyph, so every ⇧<digit>
-        // types its symbol directly, the escape is redundant and we DECLINE, letting the
-        // host's ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ survive. One digit slot is spent
-        // deliberately (⌥⇧1 → ¡). On punctuation it always
-        // declines, so Mac's Option typography passes (⌥⇧[ → ”, ⌥⇧\ → », ⌥⇧/ → ¿).
+        // Option-Shift: the secondary form of a two-form mark. NOT an escape —
+        // the literal capital lives on Ctrl+Shift (see handle()'s top) — so a
+        // ⌥⇧ key with no claim DECLINES and the host's own Option typography
+        // passes (⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚, ⌥⇧/ ¿). A few digit slots are spent
+        // deliberately (⌥⇧1 → ¡), and the bracket keys close the locale quotes.
         if opt && shift {
             let oc = USLayout.char(event.keyCode, shift: false)
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
@@ -419,16 +414,13 @@ class InputController: IMKInputController {
             // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
             if oc == "z" { flushPending(client); return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
-            // stress). A capital that forms a digraph ("GitHub" → Giθub) is escaped
-            // with Ctrl+Shift now (see handle()'s top), so this no longer competes
-            // with a raw-capital escape — it just applies the mark's second form.
+            // stress).
             if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
                 applyMark(m, secondary: true, client); return true
             }
-            // The raw-US escape survives only on the number row: ⇧<digit> is an IPA
-            // glyph, so the shifted symbol is otherwise unreachable (⌥⇧2 → @). A
-            // letter here declines (the guard rejects it), letting the host's ⌥⇧
-            // typography pass — the capital escape lives on Ctrl+Shift.
+            // Digits: a deliberately spent slot inserts its glyph (⌥⇧1 → ¡);
+            // everything else declines, letting the host's ⌥⇧ typography pass —
+            // the capital escape lives on Ctrl+Shift.
             guard let c = oc.first, c.isNumber else { flushPending(client); return false }
             if let spent = t.optShiftDigits[oc] { flushPending(client); insert(spent, client); return true }
             guard t.letters[oc] != nil else { flushPending(client); return false }
@@ -466,16 +458,15 @@ class InputController: IMKInputController {
             }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
-            // ⌥7 ¶, ⌥8 • survive. (This used to insert the bare digit, destroying
-            // them to produce a character the unshifted digit key already types.)
+            // ⌥7 ¶, ⌥8 • survive.
             flushPending(client)
             return false
         }
 
         // Number row: bare → decline (native passthrough) so a digit key is a real
         // digit key (tmux/vim/app commands). Shift → native symbol too: the roots are
-        // digraphs and the tie bar left for ⌥j, so no shifted digit is claimed. A
-        // pending prefix diacritic absorbs onto the (bare) digit base (⌥g then 5 ⇧A → ɐ̞).
+        // digraphs and the tie bar is ⌥j, so no shifted digit is claimed. A pending
+        // prefix diacritic absorbs onto the (bare) digit base (⌥g then 5 ⇧A → ɐ̞).
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
             if !shift, !pending.isEmpty { emitBase(bareKey, client); return true }
@@ -609,16 +600,12 @@ class InputController: IMKInputController {
     // Mark PLACEMENT is the transcriber's, never the engine's.
     //
     // Three marks have an above/below form — the tie bar, the voiceless ring, and
-    // the syllabic line — and this used to choose two of them for you, by looking
-    // the base up in a hardcoded set of "glyphs with descenders". That is a
-    // TYPOGRAPHY model inside a NOTATION engine, and it was wrong both ways: it
-    // silently pushed an explicit ring back below (so å, a LETTER, could not be
-    // typed at all), and the descender list had drifted — ɲ ʎ ɸ β ç ʑ and ɧ were
-    // all missing, so it buried rings in their tails anyway. Nobody catches that
-    // class of bug: the codepoint is right and only the rendering collides.
-    //
-    // The list is gone. Every placement is a keystroke now — ⌥k / ⌥⇧k for the ring,
-    // ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie.
+    // the syllabic line — and each placement is its own keystroke: ⌥k / ⌥⇧k for
+    // the ring, ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie. Choosing
+    // placement from a hardcoded "descender" set would be a TYPOGRAPHY model
+    // inside a NOTATION engine — it makes explicit requests unreachable (å needs
+    // an above-ring on a "descender" base) and such lists drift silently, because
+    // the codepoint stays right and only the rendering collides.
 
     // MARK: - the pending accent (real marked text, like the US dead keys)
     //

@@ -104,7 +104,7 @@
    }
   },
   "optShift": {
-   "description": "Deliberate ⌥⇧<digit> spends. The raw-US digit escape is retired; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
+   "description": "Deliberate ⌥⇧<digit> spends. There is no raw-US digit escape; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
    "type": "object",
    "required": [
     "about"

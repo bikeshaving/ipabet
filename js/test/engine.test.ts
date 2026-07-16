@@ -76,7 +76,7 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// them, so the pending-base rule never fires (two-glyph lookback).
 	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
-	// Held-shift acronyms whose pair is a Latin-uppercase digraph now FORM it —
+	// Held-shift acronyms whose pair is a Latin-uppercase digraph FORM it —
 	// SHA → ƩA — because capital digraphs are always-on; literal comes from a
 	// shift release (or the raw-lock). Greek-uppercase (TH→Θ) and ASCII pairs
 	// stay literal, so THE and PHP are safe untouched.
@@ -127,12 +127,12 @@ describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥⇧q mar
 		expect(typed("j", "+p")).toBe("ʄ");
 		expect(typed("g", "+p")).toBe("ɠ");
 	});
-	test("uvular implosive is qP now; gG retired to literal", () => {
+	test("uvular implosive is qP; gG is a literal digraph", () => {
 		expect(typed("q", "+p")).toBe("ʛ");
-		expect(typed("g", "+g")).toBe("gG"); // gG→ʛ removed; ɢ stays on gQ
+		expect(typed("g", "+g")).toBe("gG"); // ʛ is qP only; ɢ stays on gQ
 		expect(typed("g", "+q")).toBe("ɢ");
 	});
-	// The ejective moved to the mark tier: kʼ is k + U+02BC, a spacing modifier
+	// The ejective lives on the mark tier: kʼ is k + U+02BC, a spacing modifier
 	// letter — the same encoding shape as rhoticity, so the same law applies
 	// (⇧ transforms into atomic glyphs; appended marks live on ⌥). ⌥q is the
 	// guttural key and ejectives are the glottalic airstream. No guard: the
@@ -152,7 +152,7 @@ describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥⇧q mar
 		expect(typed("~q")).toBe("\u{02BB}");
 		expect(typed("o", "~q")).toBe("o\u{02BB}");
 	});
-	test("⇧X is retired — X after any base is a literal", () => {
+	test("there is no ⇧X modifier — X after any base is a literal", () => {
 		expect(typed("k", "+x")).toBe("kX");
 		expect(typed("a", "+x")).toBe("aX");
 	});
@@ -183,7 +183,7 @@ describe("number-row bases", () => {
 	test("⇧9 passes (native paren)", () => {
 		expect(handleKey("", {key: "9", shift: true}).edit).toEqual({type: "pass"});
 	});
-	test("⇧8 passes now (solidus removed — type / manually)", () => {
+	test("⇧8 passes (native asterisk — type / manually for the solidus)", () => {
 		expect(handleKey("", {key: "8", shift: true}).edit).toEqual({type: "pass"});
 	});
 });
@@ -237,9 +237,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~g", "a")).toBe(nfc("a\u{031E}"));
 		expect(typed("~+g", "a")).toBe(nfc("a\u{031D}"));
 	});
-	// ⌥h matches ⌥='s polarity: shift is the *advanced* pole on both keys. RTR/ATR
-	// was promoted here from the poor ⌥z key (which now holds the operators —
-	// the prime chord went to the workhorse).
+	// ⌥h matches ⌥='s polarity: shift is the *advanced* pole on both keys
+	// (⌥z holds the operators — the prime chord belongs to the workhorse).
 	test("tongue-root on ⌥h: RTR ⌥h a → a̙, ATR ⌥⇧h a → a̘", () => {
 		expect(typed("~h", "a")).toBe(nfc("a\u{0319}"));
 		expect(typed("~+h", "a")).toBe(nfc("a\u{0318}"));
@@ -248,19 +247,18 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typed("~w", "o")).toBe(nfc("o\u{031C}"));
 		expect(typed("~+w", "o")).toBe(nfc("o\u{0339}"));
 	});
-	// The ⌥ number row is the tone system in increasing scope, then extIPA:
-	// ⌥1–⌥5 Chao tone bars, ⌥6 downstep (⇧ upstep), ⌥7 global fall (⇧ rise),
-	// ⌥8 denasal, ⌥9 linguolabial, ⌥0 strong. It used to leave ⌥6 §, ⌥7 ¶,
-	// ⌥8 • to the host — a lawyer's row, not a phonetician's. (The horn left
-	// ⌥7 — VNI's digit — for ⌥⇧i, ABC Extended's own horn key.)
+	// The ⌥ number row is the tone system in increasing scope, then airflow and
+	// transliteration: ⌥1–⌥5 Chao tone bars, ⌥6 downstep (⇧ upstep), ⌥7 global
+	// fall (⇧ rise), ⌥8 ingressive (⇧ egressive), ⌥9 the voicing brackets,
+	// ⌥0 the Cyrillic primes.
 	test("the ⌥ number row is fully claimed, 1 through 0", () => {
 		for (const d of "1234567890")
 			expect(handleKey("", {key: d, option: true}, []).edit.type, `⌥${d}`).not.toBe("pass");
 	});
-	// The shifted digits give their native symbols directly now that the roots are
-	// two-key digraphs (⇧2 @, ⇧7 &), so the old ⌥⇧-digit raw escapes are redundant
-	// and free up. ⌥⇧9/⌥⇧0 stay the voicing brackets — marks by shape, since ⇧9/⇧0
-	// were never IPA. Every ⌥⇧-digit escape is retired now (the tie left ⇧6 for ⌥j); ⌥⇧1 → ¡ is the one spend.
+	// The roots are two-key digraphs, so every shifted digit gives its native
+	// symbol directly (⇧2 @, ⇧7 &) and no ⌥⇧-digit escape exists; ⌥⇧1 → ¡ is the
+	// one deliberate spend. ⌥⇧9 is the closing voicing bracket — a mark, not an
+	// escape.
 	test("shifted digits are native symbols directly — no escape needed", () => {
 		expect(typed("+2")).toBe("@");
 		expect(typed("+7")).toBe("&");
@@ -270,8 +268,8 @@ describe("second forms on ⌥⇧ (no cycling)", () => {
 		expect(typeKeys(seq("~+9"))).toBe("₎");
 	});
 	test("the one spent ⌥⇧ digit slot: ⌥⇧1 → ¡", () => expect(typed("~+1")).toBe("¡"));
-	test("⇧6 is native ^ now the tie moved to ⌥j", () => expect(typed("+6")).toBe("^"));
-	test("⇧1 is ! (never was IPA)", () => expect(typed("+1")).toBe("!"));
+	test("⇧6 is native ^", () => expect(typed("+6")).toBe("^"));
+	test("⇧1 is ! (not IPA)", () => expect(typed("+1")).toBe("!"));
 });
 
 describe("dental family — spread across keys, no cycle", () => {
@@ -291,11 +289,10 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	// Pending lives in host state, not the document. Peeling the last mark leaves
 	// an EMPTY composition — nothing is written, so there is no sentinel to
 	// collide with a user's real NBSP.
-	// ⌥n has a CYCLE now, so its repeat press advances instead of toggling;
-	// cancel is ⌫ (which always peeled pending anyway). Non-cycle keys toggle.
+	// ⌥n has a CYCLE, so its repeat press advances instead of toggling; ⌫
+	// cancels. Non-cycle keys toggle.
 	test("⌥u ⌥u → nothing committed", () => expect(typed("~u", "~u")).toBe(""));
-	// The ⌥⇧ second press toggles, exactly like the primary form — it stopped being
-	// the escape when the escape moved to ⌃⇧.
+	// The ⌥⇧ second press toggles, exactly like the primary form.
 	test("⌥⇧n ⌥⇧n → nothing committed", () => expect(typed("~+n", "~+n")).toBe(""));
 	test("single-form macron: ⌥a ⌥a → nothing", () => expect(typed("~a", "~a")).toBe(""));
 	test("a peeled composition leaves the next base untouched: ⌥u ⌥u x → x", () =>
@@ -344,9 +341,9 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 });
 
 describe("no sentinel: a user's NBSP is just text", () => {
-	// The old engine wrote NBSP+combining into the document to represent a pending
-	// accent. NBSP — and even NBSP+combining — occur in real pasted text, so it
-	// could be mistaken for ours. Pending is host state now; nothing to confuse.
+	// NBSP — and even NBSP+combining — occur in real pasted text, so a pending
+	// accent must never be represented as document text where it could be
+	// mistaken for the user's. Pending is host state; nothing to confuse.
 	test("a bare NBSP before the cursor is untouched", () =>
 		expect(typeKeys(seq("x"), "\u{00A0}")).toBe("\u{00A0}x"));
 	test("a pasted NBSP+tilde is NOT absorbed", () =>
@@ -442,11 +439,11 @@ describe("dot-above / dot-below (⌥g, a Latin-tenant shape twin)", () => {
 });
 
 describe("Latin tenants: orthography the layout must not silently corrupt", () => {
-	// ⌥c s used to give ş (cedilla, U+015F) where Romanian needs ș (U+0219).
-	// Silent corruption — it looked right. The two below-hooks now share ⌥c.
+	// Romanian ș ț (comma below) and Turkish ş ţ (cedilla) are different letters
+	// that look alike — the classic silent corruption. Each hook has its own key.
 	test("Romanian comma-below vs Turkish cedilla are distinct — each on its own key", () => {
-		// The cedilla went home to ⌥c: ABC Extended's cedilla key, and the letter the
-		// mark is named for. That finally let the comma key carry the comma-shaped mark.
+		// The cedilla is ⌥c — ABC Extended's cedilla key, and the letter the mark is
+		// named for; the comma key carries the comma-shaped marks.
 		expect(typed("~,", "s")).toBe(nfc("ș"));    // U+0219 Romanian — comma below, ⌥,
 		expect(typed("~,", "t")).toBe(nfc("ț"));    // U+021B
 		expect(typed("~c", "s")).toBe(nfc("ş"));    // U+015F Turkish — cedilla, ⌥c
@@ -530,9 +527,9 @@ describe("East Asian coverage", () => {
 		expect(typed("~p", "k")).toBe(nfc("k\u{031A}"));
 	});
 	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~p", "p")).toBe(nfc("sɐp\u{031A}")));
-	// The strength dimension lives on F now (⌥f weak, ⌥⇧f fortis); ⌥0 carries
+	// The strength dimension lives on F (⌥f weak, ⌥⇧f fortis); ⌥0 carries
 	// the Cyrillic primes.
-	test("fortis is on ⌥⇧f now: ⌥⇧f k → k͈", () =>
+	test("fortis is ⌥⇧f: ⌥⇧f k → k͈", () =>
 		expect(typed("~+f", "k")).toBe(nfc("k\u{0348}")));
 
 	// Vowels East Asianists need, one digraph each.
@@ -545,19 +542,19 @@ describe("East Asian coverage", () => {
 });
 
 describe("placement is the transcriber's, not the engine's", () => {
-	// The engine used to choose above-vs-below by looking the base up in a hardcoded
-	// set of "glyphs with descenders" — a typography model inside a notation engine.
-	// It was wrong both ways: it shoved an explicit ring back below (so å, a LETTER,
-	// could not be typed at all), and the list was missing ɲ ʎ ɸ β ç ʑ and ɧ.
+	// Choosing above-vs-below from a hardcoded "descender" set would be a
+	// typography model inside a notation engine: it makes explicit requests
+	// unreachable (å needs an above-ring on a "descender" base) and such lists
+	// drift silently. Placement is a keystroke.
 	//
-	// The RING now defaults ABOVE, because that is ABC Extended's ring key and every
+	// The RING defaults ABOVE, because that is ABC Extended's ring key and every
 	// Mac finger already knows it. The LINE defaults BELOW, because n̩ l̩ m̩ r̩ are what
 	// anyone actually types. Each follows its own frequency; there is no shape rule.
 	test("⌥k is the ring ABOVE — always, whatever the base", () => {
 		expect(typed("~k", "n", "+g")).toBe(nfc("ŋ\u030A"));  // ŋ̊
 		expect(typed("~k", "j")).toBe(nfc("j\u030A"));        // j̊
 	});
-	test("so å comes back on one modifier, exactly as on ABC Extended", () => {
+	test("å is one modifier, exactly as on ABC Extended", () => {
 		expect(typed("~k", "a")).toBe("å");
 		expect(typed("~k", "+a")).toBe("Å");
 	});
@@ -576,11 +573,9 @@ describe("placement is the transcriber's, not the engine's", () => {
 });
 
 // ⇧<letter> transforms the glyph before it (t ⇧H → θ), so a capital that forms a
-// digraph is otherwise untypeable: "GitHub" comes out "Giθub". ⌥⇧<letter> is the
-// escape. On keys whose ⌥⇧ already holds a mark's second form, the FIRST press
-// leaves that mark pending and emits nothing; a SECOND press commits the raw
-// capital instead. Nothing is lost: a second press used to empty pending and emit
-// nothing at all, and backspace still cancels a pending mark silently.
+// digraph is otherwise untypeable: "GitHub" comes out "Giθub". ⌃⇧<letter> is the
+// escape: it commits the raw capital, bypassing the ⇧-modifier transforms, the
+// shift-chain, and the capital-digraph rule.
 describe("⌃⇧ escape: the literal capital", () => {
 	const spell = (w: string) => [...w].map((c) => (/[A-Z]/.test(c) ? "+" + c.toLowerCase() : c));
 
@@ -604,10 +599,9 @@ describe("⌃⇧ escape: the literal capital", () => {
 		expect(typed("~e", "!+a")).toBe("´A"));
 });
 
-// ⌥⇧<letter> USED to be the escape (and shared the chord with a mark's second form
-// via a double-press hack). It moved to ⌃⇧, which freed the layer: a ⌥⇧<letter>
-// with no second form now DECLINES, so the host's own Option typography survives.
-describe("⌥⇧ is not an escape any more", () => {
+// A ⌥⇧<letter> with no second form DECLINES, so the host's own Option
+// typography survives.
+describe("⌥⇧ is not an escape", () => {
 	test("a key whose mark has a second form still applies it: a ⌥⇧e b → ab̋", () =>
 		expect(typed("a", "~+e", "b")).toBe(nfc("ab\u{030B}")));
 
@@ -623,8 +617,8 @@ describe("⌥⇧ is not an escape any more", () => {
 
 // Shift-chaining rebases a capital only when a real IPA SEGMENT sits before it —
 // a non-ASCII letter or combining mark. Terminals report the empty cell before
-// the cursor as U+00A0 NBSP; the old "non-ASCII" test read that as a segment and
-// rebased every start-of-line capital, so "TH" became θ. (typeKeys(seq, initial)
+// the cursor as U+00A0 NBSP; a bare "non-ASCII" test would read that as a
+// segment and rebase every start-of-line capital, turning "TH" into θ. (typeKeys(seq, initial)
 // seeds the buffer, standing in for what the app reports before the cursor.)
 describe("chaining seeds only on a real segment, not any non-ASCII char", () => {
 	const withInitial = (init: string, ...ks: string[]) => typeKeys(seq(...ks), init);
@@ -727,7 +721,7 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 describe("superscript operator ⌥z", () => {
 	test("aspiration: t h ⌥z → tʰ", () => expect(typed("t", "h", "~z")).toBe("tʰ"));
 	test("no superscriptable base → literal z", () => expect(typed("~z")).toBe("z"));
-	test("⌥p no longer raises — it's the no-release dead key now", () =>
+	test("⌥p is the no-release dead key, not a raise operator", () =>
 		expect(typed("~p", "b")).toBe(nfc("b\u{031A}")));
 });
 
@@ -739,7 +733,7 @@ describe("rhoticity ⌥r — postfix like length", () => {
 		expect(nfc(typed("~n", "5", "+y", "~r"))).toBe(nfc("ɚ\u{0303}")));
 	test("⌥⇧r is the retroflex hook below, prefix: ⌥⇧r a → a̢", () =>
 		expect(nfc(typed("~+r", "a"))).toBe(nfc("a\u{0322}")));
-	test("vowel ⇧R no longer rhoticizes — the modifier tier only transforms", () =>
+	test("vowel ⇧R does not rhoticize — the modifier tier only transforms", () =>
 		expect(typed("a", "+r")).toBe("aR"));
 });
 
@@ -843,8 +837,8 @@ describe("rhotic hook on any vowel", () => {
 	});
 });
 
-describe("option-shift raw escape", () => {
-	test("⇧2 → @ (root moved to 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
+describe("option-shift digits pass native", () => {
+	test("⇧2 → @ (the root is 2 ⇧H)", () => expect(typed("+2")).toBe("@"));
 
 	// A ⌥⇧ key with no second form declines, so the host types its own character
 	// and the ⇧-transform never fires. (⌥⇧/ — hỏi has no second form.)
@@ -854,7 +848,7 @@ describe("option-shift raw escape", () => {
 		expect(typed("~\\")).toBe("⟨");
 		expect(typed("~+\\")).toBe("⟩");
 	});
-	test("⌥⇧[ is the locale's close-primary now (en: ”) — claimed, not passed", () =>
+	test("⌥⇧[ is the locale's close-primary (en: ”) — claimed, not passed", () =>
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "insert", text: "”"}));
 });
 

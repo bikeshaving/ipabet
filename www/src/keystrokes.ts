@@ -7,9 +7,8 @@
 //   "~n"   ⌥n
 //   "~+2"  ⌥⇧2
 //
-// This was reimplemented five times — seq/label in curriculum.ts, lessons.ts and
-// wordbank.ts, parseKey/keyLabel in landing.ts, keystrokeFromLabel in
-// learn-client.ts — which is how notations quietly drift apart.
+// One definition on purpose: parallel per-module reimplementations are how
+// notations quietly drift apart.
 
 import {type Keystroke} from "../../js/src/index.ts";
 
@@ -51,8 +50,8 @@ export function keystrokeFromLabel(lab: string): Keystroke {
 // so the notation can't fork again.
 
 /** The chart's compact form: "sH" → "sH", "2H" → "2H". A digit is a bare base
- *  (2H → 2 then ⇧H — the tie left the number row for ⌥j, so no lone-digit spec key
- *  remains); a trailing capital is the shift-modifier, shown bare. */
+ *  (2H → 2 then ⇧H; no lone-digit spec key exists); a trailing capital is the
+ *  shift-modifier, shown bare. */
 export function keyText(key: string): string {
 	const digitBare = key.length > 1;
 	return [...key].map((c) => (/[0-9]/.test(c) && !digitBare ? "⇧" + c : c)).join("");
@@ -60,7 +59,7 @@ export function keyText(key: string): string {
 
 /** The /keys reference form: "sH" → "s ⇧H", "5Y" → "5 ⇧Y". Explicit — every shift
  *  is spelled out, space-separated. A digit leading a key is a bare base; uppercase
- *  letters are ⇧. (No lone-digit spec keys remain; the tie moved to ⌥j.) */
+ *  letters are ⇧. (No lone-digit spec key exists.) */
 export function keySpelled(key: string): string {
 	const digitBare = key.length > 1;
 	return [...key]

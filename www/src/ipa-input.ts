@@ -4,7 +4,7 @@
 // bindIPAInput. Surfaces without a text field (/learn, which reads the whole
 // window and has its own on-screen keyboard) import keyFromEvent/keyFromChar so
 // the keystroke derivation is still shared. Nothing here gets reimplemented per
-// surface — that duplication is exactly how these drifted and broke apart.
+// surface — per-surface copies drift.
 
 import {
 	handleKey,

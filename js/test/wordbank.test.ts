@@ -2,10 +2,8 @@
 //
 // www/src/harvest-words.json is a generated artifact that is committed, and its
 // generator needs corpora that aren't in the repo — so it does not get re-run
-// when the layout changes, and nothing re-checked it. By the time this test was
-// written, 394 of its 3100 entries (12.7%) no longer typed their own target:
-// the vowel-space shuffles retired the aU/aO digraphs, and cedilla landing on
-// ⌥, silently repointed twenty German ç words at a key that had become ʿayn.
+// when the layout changes, and nothing else re-checks it: a key reassignment
+// can silently repoint hundreds of entries at glyphs they no longer produce.
 //
 // /learn teaches these keystrokes to a human. A wrong label is worse than a
 // missing one. This test types every entry and demands its target back.

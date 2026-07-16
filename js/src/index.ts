@@ -141,11 +141,9 @@ for (const e of (spec.subscripts as {table: {base: string; sub: string}[]})
 const transforms = new Map<string, string>();
 for (const [key, glyph] of letters) {
 	if (key.length === 2) {
-		// A leading digit is a LITERAL base. The number-row families used to hang off
-		// the shifted-digit root glyph (⇧5 → ə, then ə+H → ɜ); now the bare digit is
-		// the base a modifier transforms — 5H → ɜ, 2Q → ʡ — and the roots are ordinary
-		// two-key digraphs too (5Y → ə, 2H → ʔ). So ⇧2–7 fall through to native
-		// @ # $ % ^ &, and the tie bar left the number row for ⌥j (join).
+		// A leading digit is a LITERAL base a modifier transforms — 5H → ɜ, 2Q → ʡ —
+		// and the roots are ordinary two-key digraphs too (5Y → ə, 2H → ʔ). ⇧2–7
+		// fall through to native @ # $ % ^ &; the tie bar lives on ⌥j (join).
 		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
 	}
@@ -212,17 +210,13 @@ function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
 // Mark PLACEMENT is the transcriber's, never the engine's.
 //
 // Three marks have an above/below form — the tie bar, the voiceless ring, and the
-// syllabic line — and the engine used to choose two of them for you, by looking up
-// the base in a hardcoded set of "glyphs with descenders". That is a TYPOGRAPHY
-// model living inside a NOTATION engine, and it was wrong in both directions: it
-// silently pushed an explicit ring back below (so å, a letter, was untypeable), and
-// its descender list had drifted — ɲ ʎ ɸ β ç ʑ and ɧ were all missing, so it buried
-// rings in their tails anyway. Nobody notices that class of bug, because the
-// codepoint is right and only the rendering collides.
-//
-// So the list is gone. Every placement is now a keystroke: ⌥k / ⌥⇧k for the ring,
-// ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie. The engine emits exactly
-// the mark you asked for, on the base you asked for.
+// syllabic line — and each placement is its own keystroke: ⌥k / ⌥⇧k for the ring,
+// ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie. Choosing placement from a
+// descender list would be a TYPOGRAPHY model living inside a NOTATION engine — it
+// makes explicit requests unreachable (å needs an above-ring on a "descender"
+// base) and the list drifts silently, because the codepoint stays right and only
+// the rendering collides. The engine emits exactly the mark you asked for, on the
+// base you asked for.
 
 // ---------------------------------------------------------------- unicode
 
@@ -434,10 +428,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// ⌃⇧G ⌃⇧H is a literal "GH" and ⌃⇧A ⌃⇧E a literal "AE".
 	//
 	// It lives on Control because Control is inert here — ⌃ chords are leader keys
-	// and the host keeps them, so nothing else competes. Letters only. It used to
-	// live on ⌥⇧<letter>, which is why that layer could never be spent; the IME
-	// moved years of logic here and this engine was left behind, so the website had
-	// no escape at all (⇧-digraph capitals were simply untypeable on /type).
+	// and the host keeps them, so nothing else competes. Letters only.
 	if (k.control === true) {
 		if (shift && /^[a-z]$/.test(key)) {
 			return withFlush({type: "insert", text: key.toUpperCase()});
@@ -446,14 +437,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	}
 
 	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
-	// ⌥⇧' → secondary stress), and on the number row the raw-US escape.
-	//
-	// It is NOT the literal-capital escape any more — that moved to ⌃⇧<letter>,
-	// which the browser owns and the IME implements. This engine still carried the
-	// retired version (⌥⇧H → H, plus a double-press-on-a-pending-mark hack to share
-	// the chord with a mark's second form), so the web and the IME disagreed: the
-	// same keystroke escaped on one and applied a mark on the other. A ⌥⇧<letter>
-	// with no second form now DECLINES, so the host's own Option typography passes.
+	// ⌥⇧' → secondary stress). NOT the literal-capital escape — that is
+	// ⌃⇧<letter>. A ⌥⇧<letter> with no second form DECLINES, so the host's
+	// own Option typography passes.
 		if (option && shift) {
 			// The tie bar's BELOW form (⌥⇧j → U+035C, for colliding descenders: t͜ɕ,
 			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
@@ -467,10 +453,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
-				// A slot spent deliberately (⌥⇧1 → ¡). Every other ⌥⇧<digit> now passes
-				// to native: no shifted digit is an IPA glyph any more (the roots are
-				// digraphs, the tie left for ⌥j), so the raw-US escape is fully retired
-				// and ⌥⇧2 restores €, with ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all surviving.
+				// A slot spent deliberately (⌥⇧1 → ¡). Every other ⌥⇧<digit> passes to
+				// native — no shifted digit is an IPA glyph (the roots are digraphs, the
+				// tie lives on ⌥j) — so ⌥⇧2 €, ⌥⇧8 °, ⌥⇧9 ·, ⌥⇧0 ‚ all survive.
 				const over = optShiftDigits[key];
 				if (over !== undefined) return withFlush({type: "insert", text: over});
 				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
@@ -480,8 +465,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 
 		// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
 		// An unassigned key passes — digits included, so the host's ⌥6 §, ⌥7 ¶, ⌥8 •
-		// survive. (This used to insert the bare digit, destroying them to produce a
-		// character the unshifted digit key already types.)
+		// survive.
 		if (option) {
 			// The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): it attaches to
 			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
@@ -557,7 +541,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		// (that is Ctrl+Shift); it just ends the chain, so the next capital is
 		// capital again. The segment test is a non-ASCII letter or combining mark,
 		// NOT merely non-ASCII: a terminal reports the empty start-of-line cell as
-		// U+00A0 NBSP (160 > 127), which the old bare `> 127` rebased into θ.
+		// U+00A0 NBSP (160 > 127), and a bare `> 127` test would rebase it into θ.
 		if (shift && /^[A-Z]$/.test(base)) {
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
 			const p2Segment =

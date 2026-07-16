@@ -2,14 +2,13 @@
 //
 // spec/ipabet.json is the source both engines and the website read. Its prose
 // (`laws`, `classes`, each mark's `name`) is the only place the *reasoning* for
-// a key assignment lives, and prose does not typecheck. When cedilla moved from
-// ⌥c to ⌥, the laws still said "⌥c cedilla" and "⌥⇧x dot-below" — one naming an
-// unassigned key, the other naming the wrong mark entirely. Nothing caught it.
+// a key assignment lives, and prose does not typecheck — nothing else catches a
+// stale "⌥c cedilla" the moment that mark changes keys.
 //
-// The structural fix was to move membership onto the marks (`ipa`, `beyond`,
-// `shiftSense`, `arbitraryKey`) and leave `laws`/`classes` to define terms.
-// These tests hold that line: prose may not claim membership, every flag must
-// be drawn from the declared vocabulary, and every declared term must be used.
+// So membership lives on the marks (`ipa`, `beyond`, `shiftSense`,
+// `arbitraryKey`), and `laws`/`classes` only define terms. These tests hold
+// that line: prose may not claim membership, every flag must be drawn from the
+// declared vocabulary, and every declared term must be used.
 
 import {describe, expect, test} from "bun:test";
 import spec from "../../spec/ipabet.json";
@@ -79,8 +78,8 @@ describe("spec · prose does not hardcode membership", () => {
 					? Object.values(obj).flatMap(prose)
 					: [];
 
-	// Every ⌥-key named in the classes prose must be a key that exists. This is the
-	// check that "⌥c cedilla" would have failed the moment cedilla moved.
+	// Every ⌥-key named in the classes prose must be a key that exists — the
+	// check a stale "⌥<key> <mark>" claim fails.
 	test("every ⌥key named in classes is assigned", () => {
 		const text = [...prose(classes)].join(" ");
 		const named = [...text.matchAll(/⌥⇧?([a-z0-9=.,`';-])/g)].map((m) => m[1]);
@@ -101,11 +100,11 @@ describe("spec · prose does not hardcode membership", () => {
 	});
 });
 
-describe("spec · the moved keys", () => {
-	test("the comma key carries the comma-shaped mark — at last", () => {
-		// The cedilla used to squat here on its comma shape, which left the actual
-		// comma-below mark riding shotgun on ⌥⇧. The cedilla went home to ⌥c (ABC
-		// Extended's key, and the letter it is named for), so shape identity holds.
+describe("spec · placements the laws lean on", () => {
+	test("the comma key carries the comma-shaped marks", () => {
+		// The cedilla lives on ⌥c (ABC Extended's key, and the letter it is named
+		// for), so the comma key is free to hold both comma-shaped marks: shape
+		// identity, one key per hook family.
 		expect(byOpt.get(",")!.mark).toBe("̦");        // comma below — ș ț
 		expect(byOpt.get(",")!.double).toBe("̓");      // comma above — k̓ m̓ w̓, smooth breathing
 		expect(byOpt.get("c")!.mark).toBe("̧");        // cedilla — ç ş ţ ģ ņ
@@ -124,12 +123,12 @@ describe("spec · the moved keys", () => {
 		expect(g.shiftSense).toBe("greater");
 	});
 
-	test("the tie bar is a postfix joiner on ⌥j, not a number-row glyph or a ⇧-letter", () => {
+	test("the tie bar is a postfix joiner on ⌥j, and nowhere else", () => {
 		expect((spec.letters as {key: string}[]).find((l) => l.key === "6")).toBeUndefined();
 		const tie = byOpt.get("j")!;
 		expect(tie.mark).toBe("\u{0361}"); // tie above on ⌥j
 		expect(tie.double).toBe("\u{035C}"); // tie below on ⌥⇧j
-		expect(byOpt.get("8")!.mark).toBe("↓"); // ⌥8 is airflow now (the nasal pair cycles behind ⌥n)
+		expect(byOpt.get("8")!.mark).toBe("↓"); // ⌥8 is airflow (the nasal family cycles behind ⌥n)
 		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
 	});
 

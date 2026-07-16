@@ -9,9 +9,8 @@
 //
 // These live in data, not markup, for two reasons: `/chart.json` serves them
 // verbatim to machines, and js/test/chart.test.ts types every `keys` string
-// through the engine to prove the label produces the glyph. Hardcoded labels
-// silently drifted twice before this existed (secondary stress and half-long
-// still described the double-press cycling we retired in 2024).
+// through the engine to prove the label produces the glyph — hardcoded labels
+// drift silently otherwise.
 
 export interface ChartEntry {
 	/** the IPA symbol, with ◌ where it's a combining mark */

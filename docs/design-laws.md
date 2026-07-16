@@ -8,8 +8,8 @@ archaeology of every decision.
 
 **The tier law.** ⇧ transforms the previous glyph into an atomic segment
 (s⇧H → ʃ). Anything that *appends a mark* lives on ⌥ — that is why rhoticity
-is ⌥r and the ejective is ⌥⇧q, and why the X modifier retired. Segments never
-sit on the Option layer (the extIPA percussive letters stay unplaced).
+is ⌥r and the ejective is ⌥⇧q. Segments never sit on the Option layer (the
+extIPA percussive letters stay unplaced).
 
 **The pairing law.** Defer to ABC Extended's dead-key positions unless a pair
 earns the key: above/below (dot, macron, comma, breve, inverted breve),

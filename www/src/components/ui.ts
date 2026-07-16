@@ -1,8 +1,8 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 
-// The IPAbet domain vocabulary — the units that were hand-written as HTML
-// hundreds of times across the old string templates. Usable both in data-driven
-// page components and, via marked-components.ts, inline in Markdown documents.
+// The IPAbet domain vocabulary — the keystroke/glyph units every page is built
+// from. Usable both in data-driven page components and, via
+// marked-components.ts, inline in Markdown documents.
 
 /** A styled key cap: <Kbd>⇧H</Kbd>. */
 export function Kbd({children}: {children?: unknown}) {
