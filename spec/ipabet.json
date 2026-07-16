@@ -989,14 +989,14 @@
   },
   {
    "opt": "q",
-   "mark": "ʼ",
+   "mark": "ʻ",
    "type": "spacing",
-   "double": "ʻ",
-   "doubleCp": "U+02BB",
+   "double": "ʼ",
+   "doubleCp": "U+02BC",
    "doubleSpacing": true,
    "group": "Phonation",
-   "cp": "U+02BC",
-   "name": "MODIFIER LETTER APOSTROPHE (ejective — glottalic, on the guttural key; ⇧ → ʻ okina)",
+   "cp": "U+02BB",
+   "name": "MODIFIER LETTER TURNED COMMA (ʻokina — Hawaiian, Uzbek oʻ; ⇧ → ʼ ejective. Opening form unshifted, as on every quote key)",
    "shiftSense": "twin"
   },
   {
