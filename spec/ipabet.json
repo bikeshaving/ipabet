@@ -1155,6 +1155,19 @@
    "ipa": false,
    "beyond": "extIPA",
    "shiftSense": "twin"
+  },
+  {
+   "opt": "o",
+   "mark": "͎",
+   "type": "combining",
+   "double": "͌",
+   "doubleCp": "U+034C",
+   "group": "Articulation",
+   "cp": "U+034E",
+   "name": "COMBINING UPWARDS ARROW BELOW (whistled — o is the whistle; ⇧ → ͌ velopharyngeal friction)",
+   "ipa": false,
+   "beyond": "extIPA",
+   "shiftSense": "twin"
   }
  ],
  "superscripts": {

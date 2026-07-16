@@ -734,8 +734,10 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("⌥o and ⌥y pass to the host again (ø and the half-rings' key)", () =>
-		expect(handleKey("", {key: "o", option: true}).edit.type).toBe("pass"));
+	test("the clinical couple on the whistle key: ⌥o s → s͎, ⌥⇧o s → s͌", () => {
+		expect(typed("~o", "s")).toBe(nfc("s\u{034E}"));
+		expect(typed("~+o", "s")).toBe(nfc("s\u{034C}"));
+	});
 });
 
 describe("rhotic hook on any vowel", () => {
