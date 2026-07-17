@@ -1,0 +1,11 @@
+.blog { max-width: 42rem; }
+.bloglede { color: var(--dim); margin-top: .35rem; }
+.postlist { list-style: none; padding: 0; margin-top: 2rem; display: grid; gap: 1.4rem; }
+.postlist time, .postmeta { color: var(--dim); font-size: .82rem; letter-spacing: .03em; }
+.postlist a { font-size: 1.15rem; font-weight: 600; display: block; margin-top: .15rem; }
+.postlist p { color: var(--dim); margin-top: .3rem; }
+.post h1 { text-wrap: balance; }
+.crumbs { font-size: .85rem; margin-bottom: 1.5rem; }
+.postmeta { margin: .4rem 0 2rem; }
+.postmeta .draft { color: #c43a3a; border: 1px solid #c43a3a; border-radius: 999px;
+	padding: .05rem .5rem; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; }

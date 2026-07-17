@@ -1,4 +1,5 @@
 import {Router} from "@b9g/router";
+import {BlogIndex, BlogPost, findPost, atomFeed} from "./blog.ts";
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Landing} from "./landing.ts";
 import {Chart, CHART_JSON} from "./chart.ts";
@@ -55,6 +56,20 @@ router.route("/design").get(() => page(jsx`<${Design} />`));
 router.route("/learn").get(() => page(jsx`<${Learn} />`));
 
 router.route("/type").get(() => page(jsx`<${Type} />`));
+
+router.route("/blog").get(() => page(jsx`<${BlogIndex} />`));
+
+router.route("/blog/:slug").get((_req: Request, context: {params: {slug: string}}) => {
+	const post = findPost(context.params.slug);
+	if (post === undefined) return new Response("not found", {status: 404});
+	return page(jsx`<${BlogPost} post=${post} />`);
+});
+
+// The Atom feed — the planet contract: bikeshaving.org (and any feed reader)
+// consumes this and nothing else.
+router.route("/feed.xml").get(() => new Response(atomFeed(), {
+	headers: {"Content-Type": "application/atom+xml; charset=utf-8"},
+}));
 
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {

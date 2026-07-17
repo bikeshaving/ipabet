@@ -123,6 +123,7 @@ export function Landing() {
 					<a href="/learn">Learn to type it</a>
 					<a href="/type">Scratchpad</a>
 					<a href="/design">Design</a>
+					<a href="/blog">Blog</a>
 					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 				</footer>
 			</main>
