@@ -363,7 +363,7 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	return {edit: {type: "insert", text}, pending: []};
 }
 
-// The stroke overlay's precomposed family (⌥l is ABC Extended's stroke dead key):
+// The stroke overlay's precomposed family (the ⌥y stroke dead key):
 // NFC cannot fuse an overlay, so these must be emitted atomic, like ɫ. The set
 // matches what ABC Extended itself resolves — Polish ł, Vietnamese đ, Sámi ŧ ǥ,
 // Maltese ħ, ƀ ƶ. An unlisted base takes the raw combining overlay.
@@ -379,7 +379,7 @@ function emitBase(glyph: string, pending: Pending): Step {
 	if (pending.length === 1 && pending[0] === "\u{0334}" && glyph === "l") {
 		return {edit: {type: "insert", text: "ɫ"}, pending: []};
 	}
-	// stroke overlay: the orthographic letters are precomposed (⌥l l → ł, ⌥l d → đ)
+	// stroke overlay: the orthographic letters are precomposed (⌥y l → ł, ⌥y d → đ)
 	if (pending.length === 1 && pending[0] === "\u{0335}") {
 		const s = STROKED.get(glyph);
 		if (s !== undefined) return {edit: {type: "insert", text: s}, pending: []};

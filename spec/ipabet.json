@@ -921,7 +921,7 @@
    "shiftSense": "greater"
   },
   {
-   "opt": "l",
+   "opt": "y",
    "mark": "̵",
    "clone": "-",
    "type": "combining",
@@ -930,8 +930,9 @@
    "doubleClone": "˜",
    "group": "Transliteration",
    "cp": "U+0335",
-   "name": "COMBINING SHORT STROKE OVERLAY",
-   "shiftSense": "twin"
+   "name": "COMBINING SHORT STROKE OVERLAY (⇧ → ̴ tilde overlay, velarized-or-pharyngealized; ¥ — y is the world's best-known stroked letter — is a memory hook, not a claim)",
+   "shiftSense": "twin",
+   "arbitraryKey": true
   },
   {
    "opt": "g",
@@ -1002,16 +1003,15 @@
    "shiftSense": "greater"
   },
   {
-   "opt": "y",
+   "opt": "l",
    "mark": "‿",
    "type": "spacing",
    "group": "Prosody",
    "cp": "U+203F",
-   "name": "UNDERTIE",
+   "name": "UNDERTIE (linking — L for liaison, the mark's most famous work; ⇧ → ‖ the major-group double bar: l is a bar, shift doubles it, and its partner | is the literal ⇧\\ key)",
    "double": "‖",
    "doubleCp": "U+2016",
-   "shiftSense": "twin",
-   "arbitraryKey": true
+   "shiftSense": "twin"
   },
   {
    "opt": "j",

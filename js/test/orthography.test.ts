@@ -78,8 +78,8 @@ describe("Vietnamese — every vowel precomposes, in either mark order", () => {
 	});
 
 	test("đ is atomic U+0111, capitals ride the base", () => {
-		emits([opt("l"), K("d")], "đ");
-		emits([opt("l"), K("d", {shift: true})], "Đ");
+		emits([opt("y"), K("d")], "đ");
+		emits([opt("y"), K("d", {shift: true})], "Đ");
 		emits([circ, acute, K("e", {shift: true})], "Ế");
 	});
 });
@@ -104,7 +104,7 @@ describe("Polish, Romanian, Turkish — the hook wars stay won", () => {
 		for (const [want, mark, base] of [
 			["ą", opt("m"), "a"], ["ę", opt("m"), "e"], ["ć", opt("e"), "c"],
 			["ń", opt("e"), "n"], ["ś", opt("e"), "s"], ["ź", opt("e"), "z"],
-			["ż", opt("."), "z"], ["ł", opt("l"), "l"], ["ó", opt("e"), "o"],
+			["ż", opt("."), "z"], ["ł", opt("y"), "l"], ["ó", opt("e"), "o"],
 		] as const) emits([mark, K(base)], want);
 	});
 	test("Romanian comma ≠ Turkish cedilla, still", () => {

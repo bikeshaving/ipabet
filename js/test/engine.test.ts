@@ -326,23 +326,27 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	});
 	test("clone-less single-form toggles too: ⌥. ⌥. → nothing", () =>
 		expect(typed("~g", "~g")).toBe(""));
-	// The l key is the overlay pair: ⌥l stroke (orthography, ABC Extended's own
-	// dead key), ⌥⇧l tilde overlay (IPA velarized-or-pharyngealized).
-	test("dark l is atomic: ⌥⇧l l → ɫ; ⌥⇧l ⌥⇧l l → l (velarization lifted)", () => {
-		expect(typed("~+l", "l")).toBe("ɫ");
-		expect(typed("~+l", "~+l", "l")).toBe("l");
+	// The y key is the overlay pair: ⌥y stroke, ⌥⇧y tilde overlay (IPA
+	// velarized-or-pharyngealized). The l key carries linking ‿ and ‖.
+	test("dark l is atomic: ⌥⇧y l → ɫ; ⌥⇧y ⌥⇧y l → l (velarization lifted)", () => {
+		expect(typed("~+y", "l")).toBe("ɫ");
+		expect(typed("~+y", "~+y", "l")).toBe("l");
 	});
-	test("velarization elsewhere stays an overlay: ⌥⇧l t → t̴", () =>
-		expect(typed("~+l", "t")).toBe("t\u{0334}"));
+	test("velarization elsewhere stays an overlay: ⌥⇧y t → t̴", () =>
+		expect(typed("~+y", "t")).toBe("t\u{0334}"));
 	test("guttural digraph: l ⇧Q → ɫ (velarized OR pharyngealized, the chart's wording)", () =>
 		expect(typed("l", "+q")).toBe("ɫ"));
-	test("stroke fuses to the alphabet: ⌥l l → ł, ⌥l d → đ, capitals too", () => {
-		expect(typed("~l", "l")).toBe("ł");
-		expect(typed("~l", "d")).toBe("đ");
-		expect(typed("~l", "+d")).toBe("Đ");        // pending absorbs the capital
+	test("stroke fuses to the alphabet: ⌥y l → ł, ⌥y d → đ, capitals too", () => {
+		expect(typed("~y", "l")).toBe("ł");
+		expect(typed("~y", "d")).toBe("đ");
+		expect(typed("~y", "+d")).toBe("Đ");        // pending absorbs the capital
 	});
-	test("stroke on an unlisted base stays a raw overlay: ⌥l s → s̵", () =>
-		expect(typed("~l", "s")).toBe("s\u{0335}"));
+	test("stroke on an unlisted base stays a raw overlay: ⌥y s → s̵", () =>
+		expect(typed("~y", "s")).toBe("s\u{0335}"));
+	test("the linking pair on l: ⌥l → ‿, ⌥⇧l → ‖", () => {
+		expect(typed("a", "~l")).toBe("a‿");
+		expect(typed("a", "~+l")).toBe("a‖");
+	});
 	test("backspace peels the pending accent before touching the document", () => {
 		expect(typed("~n", "⌫")).toBe("");
 		expect(typed("~n", "~e", "⌫", "a")).toBe(nfc("ã"));
@@ -498,9 +502,9 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("+s", "t", "r", "a", "s", "+s", "e")).toBe("Straße");
 		expect(typed("s", "s")).toBe("ss"); // lowercase ss is untouched
 	});
-	test("prosodic boundaries: ‿ linking, ‖ major group", () => {
-		expect(typed("~y")).toBe("‿");
-		expect(typed("~+y")).toBe("‖");
+	test("prosodic boundaries: ‿ linking on L (liaison), ‖ major group", () => {
+		expect(typed("~l")).toBe("‿");
+		expect(typed("~+l")).toBe("‖");
 	});
 });
 

@@ -465,7 +465,7 @@ class InputController: IMKInputController {
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
             // so ˞ is a spacing character and the visual join onto the vowel is the
             // font's job. The one join the engine owes is ə/ɜ → precomposed ɚ/ɝ,
-            // fused the way ⌥l + l fuses to ɫ. Other bases fall through to the
+            // fused the way ⌥⇧y + l fuses to ɫ. Other bases fall through to the
             // marks table, which inserts the bare ˞. Mirrors js/src/index.ts.
             if oc == "r", pending.isEmpty, let (p, r) = lastCluster(client) {
                 let (base, marks) = decompose(p)
@@ -652,7 +652,7 @@ class InputController: IMKInputController {
     /// flips placement in place, and the SAME chord again toggles sliding ͢
     /// (extIPA) and back. Lookback rewrites, like the ɚ fusion.
     private static let slide: Unicode.Scalar = "\u{0362}"
-    /// The stroke overlay's precomposed family (⌥l, ABC Extended's stroke key).
+    /// The stroke overlay's precomposed family (the ⌥y stroke dead key).
     private static let stroked: [String: String] = [
         "l": "ł", "L": "Ł", "d": "đ", "D": "Đ", "t": "ŧ", "T": "Ŧ",
         "g": "ǥ", "G": "Ǥ", "h": "ħ", "H": "Ħ", "b": "ƀ", "z": "ƶ", "Z": "Ƶ",
@@ -781,8 +781,8 @@ class InputController: IMKInputController {
             Dbg.log("    emitBase: commit ɫ")
             insert("ɫ", client); return
         }
-        // stroke overlay: the orthographic letters are precomposed (⌥l l → ł,
-        // ⌥l d → đ) — NFC cannot fuse an overlay. Set mirrors js/src/index.ts.
+        // stroke overlay: the orthographic letters are precomposed (⌥y l → ł,
+        // ⌥y d → đ) — NFC cannot fuse an overlay. Set mirrors js/src/index.ts.
         if marks.count == 1, marks[0] == "\u{0335}",
            let s = Self.stroked[glyph] {
             Dbg.log("    emitBase: commit \(s)")
