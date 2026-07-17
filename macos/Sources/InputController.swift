@@ -150,10 +150,9 @@ struct Tables {
             if let prev = prev { transforms[prev + mod] = glyph }
         }
         return Tables(letters: letters, optMarks: optMarks, sups: sups, subs: subs,
-                      transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
+                      transforms: transforms, unconvertKey: unconvertKey, clones: clones, exclusiveTwin: exclusiveTwin,
                       optShiftDigits: optShiftDigits,
-                      quoteLocales: quoteLocales, quoteDefault: quoteDefault,
-                      unconvertKey: unconvertKey)
+                      quoteLocales: quoteLocales, quoteDefault: quoteDefault)
     }()
 }
 
@@ -837,7 +836,7 @@ class InputController: IMKInputController {
         let (base, marks) = decompose(p)
         guard marks.isEmpty, !base.isEmpty else { return false }
         let low = base.lowercased()
-        guard let key = t.unconvertKey[low] else { return false }
+        guard let key = Tables.shared.unconvertKey[low] else { return false }
         let text = base == low ? key : key.uppercased()
         Dbg.log("  → unconvert \(Dbg.str(base)) ⇒ '\(text)'")
         replace(r, with: text, client)
