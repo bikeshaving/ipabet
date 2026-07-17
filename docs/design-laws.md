@@ -14,8 +14,8 @@ extIPA percussive letters stay unplaced).
 **The pairing law.** Defer to ABC Extended's dead-key positions unless a pair
 earns the key: above/below (dot, macron, comma, breve, inverted breve),
 one dimension greater/lesser (=, g, h, f), a placement pair (ring, syllabic,
-tie), or a reunited family. Verify against the real layout with
-`macos/tools/dump-us-layer.swift`.
+tie), or a reunited family. (git history has a layer-dump tool from when the
+board was being laid, if a future change needs to re-check ABC Extended.)
 
 **The polarity law.** Shift is the greater / upward member: raised, advanced,
 ATR, fortis, upstep, rise, egressive, the double prime.

@@ -11,8 +11,11 @@
 # The flag refreshes on focus change (activateServer), so `on`/`off` take
 # effect the next time you switch into a text field — no reinstall needed.
 set -euo pipefail
-LOG="$HOME/Library/Logs/IPAbet.log"
-SENTINEL="$HOME/.ipabet-debug"
+# The IME is App-Sandboxed: its home-relative paths resolve into the app
+# container, so the sentinel and log live there — not in the real $HOME.
+DATA="$HOME/Library/Containers/org.bikeshaving.inputmethod.IPAbet/Data"
+LOG="$DATA/Library/Logs/IPAbet.log"
+SENTINEL="$DATA/.ipabet-debug"
 
 case "${1:-tail}" in
   on)    touch "$SENTINEL"
