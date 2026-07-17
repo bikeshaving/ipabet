@@ -170,28 +170,12 @@ export const CURRICULUM: Lesson[] = [
 	// ── Phase 6 · diacritics (the Option layer) ─────────────────────
 	{title: "Nasal vowels — ◌̃", part: "The Option layer", sound: "◌̃", keys: ["⌥n"], intro: "Nasal vowels — the air escapes through the nose (French).", words: [
 		w("bon", "French", "good", "b", "~n", "o", "+h"), w("vin", "French", "wine", "v", "~n", "e", "+h"),
-		w("sim", "Portuguese", "yes", "s", "~n", "i"),
+		w("blanc", "French", "white", "b", "l", "~n", "a", "+h"), w("sim", "Portuguese", "yes", "s", "~n", "i"),
 	]},
 	{title: "Length — ː", sound: "ː", keys: ["⌥;"], intro: "Length — hold the previous sound long.", words: [
 		w("Tee", "German", "tea", "t", "e", "~;"), w("kuu", "Finnish", "moon", "k", "u", "~;"), w("Boot", "German", "boat", "b", "o", "~;", "t"),
 	]},
 ];
-
-// Introduce each new sound ON ITS OWN first — the singleton glyph before any
-// word, so the phoneme you hear (and the keys you press) match exactly what's on
-// screen. Skipped for diacritics/length, which can't stand alone.
-function kFromLabel(lab: string): Keystroke {
-	const option = lab.includes("⌥"), shift = lab.includes("⇧");
-	let key = lab.replace(/[⌥⇧]/g, "");
-	if (key.length === 1 && /[A-Z]/.test(key)) key = key.toLowerCase();
-	return {key, shift, option};
-}
-for (const les of CURRICULUM) {
-	if (!les.sound || !les.keys) continue;
-	const target = typeKeys(les.keys.map(kFromLabel));
-	if (target === les.sound)
-		les.words.unshift({word: les.sound, lang: "", gloss: "the new sound on its own", target, labels: les.keys});
-}
 
 // False friends — real words where the spelling can't be trusted but the sound
 // is one already taught. Appended to the END of each lesson as the payoff: the
@@ -237,3 +221,32 @@ const DIPHTHONG_REVIEW: Lesson = {
 	],
 };
 CURRICULUM.splice(CURRICULUM.findIndex((l) => l.title === "The rolled r — r"), 0, DIPHTHONG_REVIEW);
+
+// ɑ — the open back vowel the French nasals stand on (and “spa”). Spliced
+// rather than inlined for the same numbering reason as the reviews.
+const A_LESSON: Lesson = {
+	title: "The open ɑ — “spa”", sound: "ɑ", keys: ["a", "⇧H"],
+	intro: "The deep, open vowel in “spa” — a, pushed to the back of the mouth.",
+	words: [
+		en("spa", "s", "p", "a", "+h"), en("palm", "p", "a", "+h", "m"),
+		en("calm", "k", "a", "+h", "m"), en("lava", "l", "a", "+h", "v", "5", "+y"),
+	],
+};
+CURRICULUM.splice(CURRICULUM.findIndex((l) => l.title.startsWith("Nasal vowels")), 0, A_LESSON);
+
+// Introduce each new sound ON ITS OWN first — the singleton glyph before any
+// word, so the phoneme you hear (and the keys you press) match exactly what's
+// on screen. Runs after every splice, so late-added lessons get theirs too.
+// Skipped for diacritics/length, which can't stand alone.
+function kFromLabel(lab: string): Keystroke {
+	const option = lab.includes("⌥"), shift = lab.includes("⇧");
+	let key = lab.replace(/[⌥⇧]/g, "");
+	if (key.length === 1 && /[A-Z]/.test(key)) key = key.toLowerCase();
+	return {key, shift, option};
+}
+for (const les of CURRICULUM) {
+	if (!les.sound || !les.keys) continue;
+	const target = typeKeys(les.keys.map(kFromLabel));
+	if (target === les.sound)
+		les.words.unshift({word: les.sound, lang: "", gloss: "the new sound on its own", target, labels: les.keys});
+}
