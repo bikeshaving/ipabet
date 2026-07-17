@@ -10,14 +10,41 @@ import {CURRICULUM} from "../src/curriculum.ts";
 
 describe("curriculum · ordering", () => {
 	test("every word uses only keystrokes taught by its lesson", () => {
-		const taught = new Set<string>();
+		// The unit of teaching is the PAIR: i⇧H teaches ɪ, not "⇧H after
+		// anything" — shrimp's r⇧H is untaught at lesson 9 even though bare r
+		// and i⇧H both are. ⌥ marks are taught singly (prefix, any base).
+		const pairs = new Set<string>();
+		const marks = new Set<string>();
 		for (const les of CURRICULUM) {
-			for (const k of les.keys ?? []) taught.add(k);
+			const ks = les.keys ?? [];
+			for (let i = 0; i < ks.length; i++) {
+				if (ks[i].startsWith("⌥")) marks.add(ks[i]);
+				else if (i > 0 && ks[i].startsWith("⇧")) pairs.add(ks[i - 1] + " " + ks[i]);
+			}
 			for (const wd of les.words) {
-				for (const lab of wd.labels) {
-					if (/^[a-z]$/.test(lab)) continue;
-					expect(taught.has(lab), `"${wd.word}" in "${les.title}" uses ${lab} before it's taught`).toBe(true);
+				const L = wd.labels;
+				for (let i = 0; i < L.length; i++) {
+					if (L[i].startsWith("⌥")) {
+						expect(marks.has(L[i]), `"${wd.word}" in "${les.title}" uses ${L[i]} before it's taught`).toBe(true);
+					} else if (L[i].startsWith("⇧")) {
+						const pair = (L[i - 1] ?? "") + " " + L[i];
+						expect(pairs.has(pair), `"${wd.word}" in "${les.title}" uses ${pair} before it's taught`).toBe(true);
+					}
 				}
+			}
+		}
+	});
+
+	test("a prefix ⌥ mark never dangles at the end of a word", () => {
+		// A pending mark with no base flushes as a SPACING clone — bɔ˜ instead
+		// of bɔ̃ — a wrong transcription that still "types its own target".
+		// A spacing-clone final char (˜ ´ ¨ ˙ ˇ …) is the flush's fingerprint;
+		// legitimate postfix ⌥ marks end in real IPA (ː ˈ tone bars).
+		const CLONES = /[˜´`¨ˆ˙˘ˇ¸˛]$/;
+		for (const les of CURRICULUM) {
+			for (const wd of les.words) {
+				expect(CLONES.test(wd.target),
+					`"${wd.word}" in "${les.title}" ends with a flushed prefix mark (${wd.target})`).toBe(false);
 			}
 		}
 	});

@@ -80,7 +80,7 @@ export const CURRICULUM: Lesson[] = [
 	{title: "“ng” — ŋ", sound: "ŋ", keys: ["n", "⇧G"], intro: "The “ng” at the back of “sing”.", words: [
 		en("sing", "s", "i", "+h", "n", "+g"), en("king", "k", "i", "+h", "n", "+g"), en("long", "l", "o", "+h", "n", "+g"),
 		en("song", "s", "o", "+h", "n", "+g"), en("bang", "b", "a", "+e", "n", "+g"), en("sung", "s", "u", "+a", "n", "+g"),
-		en("shrimp", "s", "+h", "r", "+h", "i", "+h", "m", "p"), en("bring", "b", "r", "+h", "i", "+h", "n", "+g"),
+		en("swing", "s", "w", "i", "+h", "n", "+g"), en("young", "j", "u", "+a", "n", "+g"),
 	]},
 	{title: "“th” — θ", sound: "θ", keys: ["t", "⇧H"], intro: "The voiceless “th” in “thin”.", words: [
 		en("thin", "t", "+h", "i", "+h", "n"), en("thick", "t", "+h", "i", "+h", "k"), en("bath", "b", "a", "+e", "t", "+h"),
@@ -169,8 +169,8 @@ export const CURRICULUM: Lesson[] = [
 
 	// ── Phase 6 · diacritics (the Option layer) ─────────────────────
 	{title: "Nasal vowels — ◌̃", part: "The Option layer", sound: "◌̃", keys: ["⌥n"], intro: "Nasal vowels — the air escapes through the nose (French).", words: [
-		w("bon", "French", "good", "b", "o", "+h", "~n"), w("vin", "French", "wine", "v", "e", "+h", "~n"),
-		w("blanc", "French", "white", "b", "l", "a", "+h", "~n"),
+		w("bon", "French", "good", "b", "~n", "o", "+h"), w("vin", "French", "wine", "v", "~n", "e", "+h"),
+		w("sim", "Portuguese", "yes", "s", "~n", "i"),
 	]},
 	{title: "Length — ː", sound: "ː", keys: ["⌥;"], intro: "Length — hold the previous sound long.", words: [
 		w("Tee", "German", "tea", "t", "e", "~;"), w("kuu", "Finnish", "moon", "k", "u", "~;"), w("Boot", "German", "boat", "b", "o", "~;", "t"),
