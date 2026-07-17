@@ -141,6 +141,56 @@ describe("spec · placements the laws lean on", () => {
 	});
 });
 
+// Encoding lints: the spec is the source of every glyph both engines emit, so
+// encoding rot starts here or not at all. Three invariants: every emitted
+// string is NFC (a decomposed spec glyph would ship decomposed text through
+// every engine); every cp field matches its glyph's actual codepoints (the
+// documentation may not lie about the encoding); and no glyph has two
+// spellings (the unconvert reverse map must stay unambiguous).
+describe("spec · encoding lints", () => {
+	const cpOf = (g: string) =>
+		[...g].map((c) => "U+" + c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")).join(" ");
+	const letters = spec.letters as {key: string; glyph: string; cp: string}[];
+
+	test("every emitted string in the spec is NFC", () => {
+		const check = (v: unknown, where: string) => {
+			if (typeof v !== "string") return;
+			expect(v.normalize("NFC"), where).toBe(v);
+		};
+		for (const l of letters) check(l.glyph, l.key);
+		for (const m of marks as unknown as Record<string, unknown>[]) {
+			for (const f of ["mark", "double", "clone", "doubleClone"]) check(m[f], `⌥${m.opt}.${f}`);
+			for (const f of ["cycle", "doubleCycle"]) {
+				for (const c of (m[f] as string[] | undefined) ?? []) check(c, `⌥${m.opt}.${f}`);
+			}
+		}
+		for (const t of (spec.superscripts as {table: {base: string; sup: string}[]}).table) check(t.sup, t.base);
+		for (const t of (spec.subscripts as {table: {base: string; sub: string}[]}).table) check(t.sub, t.base);
+		for (const quad of Object.values((spec as any).quotes.locales as Record<string, string[]>)) {
+			for (const q of quad) check(q, "quotes");
+		}
+	});
+
+	test("every cp field states its glyph's true codepoints", () => {
+		for (const l of letters) expect(l.cp, l.key).toBe(cpOf(l.glyph));
+		for (const m of marks as unknown as Record<string, string>[]) {
+			expect(m.cp, `⌥${m.opt}`).toBe(cpOf(m.mark));
+			if (m.double !== undefined && m.doubleCp !== undefined) {
+				expect(m.doubleCp, `⌥${m.opt} double`).toBe(cpOf(m.double));
+			}
+		}
+	});
+
+	test("no glyph has two keystroke spellings", () => {
+		const seen = new Map<string, string>();
+		for (const l of letters) {
+			if (l.key.length !== 2) continue;
+			expect(seen.get(l.glyph) ?? l.key, `${l.glyph} spelled ${seen.get(l.glyph)} and ${l.key}`).toBe(l.key);
+			seen.set(l.glyph, l.key);
+		}
+	});
+});
+
 // spec/ipabet.schema.json documents the file for outside consumers. A schema
 // nobody runs is just more prose, and adding a validator dependency to ship one
 // assertion is not worth it — so enforce its structural claims about `marks`
