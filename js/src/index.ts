@@ -269,8 +269,31 @@ function decompose(cluster: string): {base: string; marks: string[]} {
 	return {base, marks};
 }
 
+// NFC folds cross-class mark order by itself, but marks of the SAME combining
+// class never reorder — a tone typed before its shape mark would freeze as
+// é+̂, a permanent homoglyph of ế that no normalization can repair. So
+// composition is order-insensitive: try every arrangement of the pending
+// marks (≤3 in practice) and keep the shortest NFC — precomposition wins
+// whichever order was typed. Ties keep typed order, so deliberate IPA
+// stacking (t̪̻ dental+laminal) is untouched.
 function recompose(base: string, marks: readonly string[]): string {
-	return (base + marks.join("")).normalize("NFC");
+	if (marks.length <= 1) return (base + marks.join("")).normalize("NFC");
+	let best: string | undefined;
+	for (const perm of permutations([...marks])) {
+		const s = (base + perm.join("")).normalize("NFC");
+		if (best === undefined || [...s].length < [...best].length) best = s;
+	}
+	return best!;
+}
+
+function permutations<T>(items: T[]): T[][] {
+	if (items.length <= 1) return [items];
+	const out: T[][] = [];
+	for (let i = 0; i < items.length; i++) {
+		const rest = [...items.slice(0, i), ...items.slice(i + 1)];
+		for (const p of permutations(rest)) out.push([items[i], ...p]);
+	}
+	return out;
 }
 
 function replaceCluster(cluster: string, text: string): Edit {

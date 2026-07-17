@@ -932,11 +932,38 @@ class InputController: IMKInputController {
         return (base, marks)
     }
 
+    // NFC folds cross-class mark order by itself, but marks of the SAME
+    // combining class never reorder — a tone typed before its shape mark would
+    // freeze as é+̂, a permanent homoglyph of ế that no normalization can
+    // repair. So composition is order-insensitive: try every arrangement of
+    // the marks (≤3 in practice) and keep the shortest NFC — precomposition
+    // wins whichever order was typed. Ties keep typed order, so deliberate
+    // IPA stacking (t̪̻) is untouched. Mirrors js/src/index.ts recompose.
     private func recompose<S: Sequence>(_ base: String, _ marks: S) -> String
     where S.Element == Unicode.Scalar {
-        var s = base
-        s.unicodeScalars.append(contentsOf: marks)
-        return s.precomposedStringWithCanonicalMapping
+        let list = Array(marks)
+        func fold(_ order: [Unicode.Scalar]) -> String {
+            var s = base
+            s.unicodeScalars.append(contentsOf: order)
+            return s.precomposedStringWithCanonicalMapping
+        }
+        if list.count <= 1 { return fold(list) }
+        func permutations(_ items: [Unicode.Scalar]) -> [[Unicode.Scalar]] {
+            if items.count <= 1 { return [items] }
+            var out: [[Unicode.Scalar]] = []
+            for i in items.indices {
+                var rest = items
+                rest.remove(at: i)
+                for p in permutations(rest) { out.append([items[i]] + p) }
+            }
+            return out
+        }
+        var best: String?
+        for perm in permutations(list) {
+            let s = fold(perm)
+            if best == nil || s.unicodeScalars.count < best!.unicodeScalars.count { best = s }
+        }
+        return best!
     }
 
     // A capital digraph capitalizes the digraph's result. Every real uppercase
