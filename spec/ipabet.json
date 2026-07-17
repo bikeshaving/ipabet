@@ -1595,9 +1595,649 @@
    {
     "base": "χ",
     "sup": "ᵡ"
+   },
+   {
+    "base": "ნ",
+    "sup": "ჼ"
+   },
+   {
+    "base": "A",
+    "sup": "ᴬ"
+   },
+   {
+    "base": "Æ",
+    "sup": "ᴭ"
+   },
+   {
+    "base": "B",
+    "sup": "ᴮ"
+   },
+   {
+    "base": "D",
+    "sup": "ᴰ"
+   },
+   {
+    "base": "E",
+    "sup": "ᴱ"
+   },
+   {
+    "base": "Ǝ",
+    "sup": "ᴲ"
+   },
+   {
+    "base": "G",
+    "sup": "ᴳ"
+   },
+   {
+    "base": "H",
+    "sup": "ᴴ"
+   },
+   {
+    "base": "I",
+    "sup": "ᴵ"
+   },
+   {
+    "base": "J",
+    "sup": "ᴶ"
+   },
+   {
+    "base": "K",
+    "sup": "ᴷ"
+   },
+   {
+    "base": "L",
+    "sup": "ᴸ"
+   },
+   {
+    "base": "M",
+    "sup": "ᴹ"
+   },
+   {
+    "base": "N",
+    "sup": "ᴺ"
+   },
+   {
+    "base": "O",
+    "sup": "ᴼ"
+   },
+   {
+    "base": "Ȣ",
+    "sup": "ᴽ"
+   },
+   {
+    "base": "P",
+    "sup": "ᴾ"
+   },
+   {
+    "base": "R",
+    "sup": "ᴿ"
+   },
+   {
+    "base": "T",
+    "sup": "ᵀ"
+   },
+   {
+    "base": "U",
+    "sup": "ᵁ"
+   },
+   {
+    "base": "W",
+    "sup": "ᵂ"
+   },
+   {
+    "base": "ᴂ",
+    "sup": "ᵆ"
+   },
+   {
+    "base": "ᴖ",
+    "sup": "ᵔ"
+   },
+   {
+    "base": "ᴗ",
+    "sup": "ᵕ"
+   },
+   {
+    "base": "ᴝ",
+    "sup": "ᵙ"
+   },
+   {
+    "base": "ᴥ",
+    "sup": "ᵜ"
+   },
+   {
+    "base": "γ",
+    "sup": "ᵞ"
+   },
+   {
+    "base": "δ",
+    "sup": "ᵟ"
+   },
+   {
+    "base": "φ",
+    "sup": "ᵠ"
+   },
+   {
+    "base": "н",
+    "sup": "ᵸ"
+   },
+   {
+    "base": "ɩ",
+    "sup": "ᶥ"
+   },
+   {
+    "base": "ᵻ",
+    "sup": "ᶧ"
+   },
+   {
+    "base": "ᶅ",
+    "sup": "ᶪ"
+   },
+   {
+    "base": "ƫ",
+    "sup": "ᶵ"
+   },
+   {
+    "base": "ᴜ",
+    "sup": "ᶸ"
+   },
+   {
+    "base": "+",
+    "sup": "⁺"
+   },
+   {
+    "base": "−",
+    "sup": "⁻"
+   },
+   {
+    "base": "=",
+    "sup": "⁼"
+   },
+   {
+    "base": "(",
+    "sup": "⁽"
+   },
+   {
+    "base": ")",
+    "sup": "⁾"
+   },
+   {
+    "base": "V",
+    "sup": "ⱽ"
+   },
+   {
+    "base": "ⵡ",
+    "sup": "ⵯ"
+   },
+   {
+    "base": "一",
+    "sup": "㆒"
+   },
+   {
+    "base": "二",
+    "sup": "㆓"
+   },
+   {
+    "base": "三",
+    "sup": "㆔"
+   },
+   {
+    "base": "四",
+    "sup": "㆕"
+   },
+   {
+    "base": "上",
+    "sup": "㆖"
+   },
+   {
+    "base": "中",
+    "sup": "㆗"
+   },
+   {
+    "base": "下",
+    "sup": "㆘"
+   },
+   {
+    "base": "甲",
+    "sup": "㆙"
+   },
+   {
+    "base": "乙",
+    "sup": "㆚"
+   },
+   {
+    "base": "丙",
+    "sup": "㆛"
+   },
+   {
+    "base": "丁",
+    "sup": "㆜"
+   },
+   {
+    "base": "天",
+    "sup": "㆝"
+   },
+   {
+    "base": "地",
+    "sup": "㆞"
+   },
+   {
+    "base": "人",
+    "sup": "㆟"
+   },
+   {
+    "base": "ъ",
+    "sup": "ꚜ"
+   },
+   {
+    "base": "ь",
+    "sup": "ꚝ"
+   },
+   {
+    "base": "ꝯ",
+    "sup": "ꝰ"
+   },
+   {
+    "base": "C",
+    "sup": "ꟲ"
+   },
+   {
+    "base": "F",
+    "sup": "ꟳ"
+   },
+   {
+    "base": "Q",
+    "sup": "ꟴ"
+   },
+   {
+    "base": "Ħ",
+    "sup": "ꟸ"
+   },
+   {
+    "base": "ꜧ",
+    "sup": "ꭜ"
+   },
+   {
+    "base": "ꬷ",
+    "sup": "ꭝ"
+   },
+   {
+    "base": "ɫ",
+    "sup": "ꭞ"
+   },
+   {
+    "base": "ꭒ",
+    "sup": "ꭟ"
+   },
+   {
+    "base": "ː",
+    "sup": "𐞁"
+   },
+   {
+    "base": "ˑ",
+    "sup": "𐞂"
+   },
+   {
+    "base": "æ",
+    "sup": "𐞃"
+   },
+   {
+    "base": "ʙ",
+    "sup": "𐞄"
+   },
+   {
+    "base": "ɓ",
+    "sup": "𐞅"
+   },
+   {
+    "base": "ʣ",
+    "sup": "𐞇"
+   },
+   {
+    "base": "ꭦ",
+    "sup": "𐞈"
+   },
+   {
+    "base": "ʥ",
+    "sup": "𐞉"
+   },
+   {
+    "base": "ʤ",
+    "sup": "𐞊"
+   },
+   {
+    "base": "ɖ",
+    "sup": "𐞋"
+   },
+   {
+    "base": "ɗ",
+    "sup": "𐞌"
+   },
+   {
+    "base": "ᶑ",
+    "sup": "𐞍"
+   },
+   {
+    "base": "ɘ",
+    "sup": "𐞎"
+   },
+   {
+    "base": "ɞ",
+    "sup": "𐞏"
+   },
+   {
+    "base": "ʩ",
+    "sup": "𐞐"
+   },
+   {
+    "base": "ɤ",
+    "sup": "𐞑"
+   },
+   {
+    "base": "ɢ",
+    "sup": "𐞒"
+   },
+   {
+    "base": "ɠ",
+    "sup": "𐞓"
+   },
+   {
+    "base": "ʛ",
+    "sup": "𐞔"
+   },
+   {
+    "base": "ħ",
+    "sup": "𐞕"
+   },
+   {
+    "base": "ʜ",
+    "sup": "𐞖"
+   },
+   {
+    "base": "ɧ",
+    "sup": "𐞗"
+   },
+   {
+    "base": "ʄ",
+    "sup": "𐞘"
+   },
+   {
+    "base": "ʪ",
+    "sup": "𐞙"
+   },
+   {
+    "base": "ʫ",
+    "sup": "𐞚"
+   },
+   {
+    "base": "ɬ",
+    "sup": "𐞛"
+   },
+   {
+    "base": "𝼄",
+    "sup": "𐞜"
+   },
+   {
+    "base": "ꞎ",
+    "sup": "𐞝"
+   },
+   {
+    "base": "ɮ",
+    "sup": "𐞞"
+   },
+   {
+    "base": "𝼅",
+    "sup": "𐞟"
+   },
+   {
+    "base": "ʎ",
+    "sup": "𐞠"
+   },
+   {
+    "base": "𝼆",
+    "sup": "𐞡"
+   },
+   {
+    "base": "ø",
+    "sup": "𐞢"
+   },
+   {
+    "base": "ɶ",
+    "sup": "𐞣"
+   },
+   {
+    "base": "ɷ",
+    "sup": "𐞤"
+   },
+   {
+    "base": "q",
+    "sup": "𐞥"
+   },
+   {
+    "base": "ɺ",
+    "sup": "𐞦"
+   },
+   {
+    "base": "𝼈",
+    "sup": "𐞧"
+   },
+   {
+    "base": "ɽ",
+    "sup": "𐞨"
+   },
+   {
+    "base": "ɾ",
+    "sup": "𐞩"
+   },
+   {
+    "base": "ʀ",
+    "sup": "𐞪"
+   },
+   {
+    "base": "ʨ",
+    "sup": "𐞫"
+   },
+   {
+    "base": "ʦ",
+    "sup": "𐞬"
+   },
+   {
+    "base": "ꭧ",
+    "sup": "𐞭"
+   },
+   {
+    "base": "ʧ",
+    "sup": "𐞮"
+   },
+   {
+    "base": "ʈ",
+    "sup": "𐞯"
+   },
+   {
+    "base": "ⱱ",
+    "sup": "𐞰"
+   },
+   {
+    "base": "ʏ",
+    "sup": "𐞲"
+   },
+   {
+    "base": "ʡ",
+    "sup": "𐞳"
+   },
+   {
+    "base": "ʢ",
+    "sup": "𐞴"
+   },
+   {
+    "base": "ʘ",
+    "sup": "𐞵"
+   },
+   {
+    "base": "ǀ",
+    "sup": "𐞶"
+   },
+   {
+    "base": "ǁ",
+    "sup": "𐞷"
+   },
+   {
+    "base": "ǂ",
+    "sup": "𐞸"
+   },
+   {
+    "base": "𝼊",
+    "sup": "𐞹"
+   },
+   {
+    "base": "𝼞",
+    "sup": "𐞺"
+   },
+   {
+    "base": "а",
+    "sup": "𞀰"
+   },
+   {
+    "base": "б",
+    "sup": "𞀱"
+   },
+   {
+    "base": "в",
+    "sup": "𞀲"
+   },
+   {
+    "base": "г",
+    "sup": "𞀳"
+   },
+   {
+    "base": "д",
+    "sup": "𞀴"
+   },
+   {
+    "base": "е",
+    "sup": "𞀵"
+   },
+   {
+    "base": "ж",
+    "sup": "𞀶"
+   },
+   {
+    "base": "з",
+    "sup": "𞀷"
+   },
+   {
+    "base": "и",
+    "sup": "𞀸"
+   },
+   {
+    "base": "к",
+    "sup": "𞀹"
+   },
+   {
+    "base": "л",
+    "sup": "𞀺"
+   },
+   {
+    "base": "м",
+    "sup": "𞀻"
+   },
+   {
+    "base": "о",
+    "sup": "𞀼"
+   },
+   {
+    "base": "п",
+    "sup": "𞀽"
+   },
+   {
+    "base": "р",
+    "sup": "𞀾"
+   },
+   {
+    "base": "с",
+    "sup": "𞀿"
+   },
+   {
+    "base": "т",
+    "sup": "𞁀"
+   },
+   {
+    "base": "у",
+    "sup": "𞁁"
+   },
+   {
+    "base": "ф",
+    "sup": "𞁂"
+   },
+   {
+    "base": "х",
+    "sup": "𞁃"
+   },
+   {
+    "base": "ц",
+    "sup": "𞁄"
+   },
+   {
+    "base": "ч",
+    "sup": "𞁅"
+   },
+   {
+    "base": "ш",
+    "sup": "𞁆"
+   },
+   {
+    "base": "ы",
+    "sup": "𞁇"
+   },
+   {
+    "base": "э",
+    "sup": "𞁈"
+   },
+   {
+    "base": "ю",
+    "sup": "𞁉"
+   },
+   {
+    "base": "ꚉ",
+    "sup": "𞁊"
+   },
+   {
+    "base": "ә",
+    "sup": "𞁋"
+   },
+   {
+    "base": "і",
+    "sup": "𞁌"
+   },
+   {
+    "base": "ј",
+    "sup": "𞁍"
+   },
+   {
+    "base": "ө",
+    "sup": "𞁎"
+   },
+   {
+    "base": "ү",
+    "sup": "𞁏"
+   },
+   {
+    "base": "ӏ",
+    "sup": "𞁐"
+   },
+   {
+    "base": "ҫ",
+    "sup": "𞁫"
+   },
+   {
+    "base": "ꙑ",
+    "sup": "𞁬"
+   },
+   {
+    "base": "ұ",
+    "sup": "𞁭"
    }
   ],
-  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a modifier letter (Lm) or superscript digit (No) whose compatibility decomposition is <super> of it. Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition. Latin Extended-F forms (U+10780+, Unicode 14) are excluded — correct but near-universally tofu. One further exception: bare `g` is U+0067 for the plain-US constraint, but it stands for IPA ɡ (U+0261), so it superscripts to ᶢ (ɡ's form), not ᵍ."
+  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a character whose compatibility decomposition is <super> of it — any script, any plane, one table entry per base (the first Unicode form wins). Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition and are kept by hand."
  },
  "subscripts": {
   "operator": "opt+shift+z",
@@ -1721,9 +2361,145 @@
    {
     "base": "χ",
     "sub": "ᵪ"
+   },
+   {
+    "base": "γ",
+    "sub": "ᵧ"
+   },
+   {
+    "base": "ρ",
+    "sub": "ᵨ"
+   },
+   {
+    "base": "φ",
+    "sub": "ᵩ"
+   },
+   {
+    "base": "+",
+    "sub": "₊"
+   },
+   {
+    "base": "−",
+    "sub": "₋"
+   },
+   {
+    "base": "=",
+    "sub": "₌"
+   },
+   {
+    "base": "(",
+    "sub": "₍"
+   },
+   {
+    "base": ")",
+    "sub": "₎"
+   },
+   {
+    "base": "а",
+    "sub": "𞁑"
+   },
+   {
+    "base": "б",
+    "sub": "𞁒"
+   },
+   {
+    "base": "в",
+    "sub": "𞁓"
+   },
+   {
+    "base": "г",
+    "sub": "𞁔"
+   },
+   {
+    "base": "д",
+    "sub": "𞁕"
+   },
+   {
+    "base": "е",
+    "sub": "𞁖"
+   },
+   {
+    "base": "ж",
+    "sub": "𞁗"
+   },
+   {
+    "base": "з",
+    "sub": "𞁘"
+   },
+   {
+    "base": "и",
+    "sub": "𞁙"
+   },
+   {
+    "base": "к",
+    "sub": "𞁚"
+   },
+   {
+    "base": "л",
+    "sub": "𞁛"
+   },
+   {
+    "base": "о",
+    "sub": "𞁜"
+   },
+   {
+    "base": "п",
+    "sub": "𞁝"
+   },
+   {
+    "base": "с",
+    "sub": "𞁞"
+   },
+   {
+    "base": "у",
+    "sub": "𞁟"
+   },
+   {
+    "base": "ф",
+    "sub": "𞁠"
+   },
+   {
+    "base": "х",
+    "sub": "𞁡"
+   },
+   {
+    "base": "ц",
+    "sub": "𞁢"
+   },
+   {
+    "base": "ч",
+    "sub": "𞁣"
+   },
+   {
+    "base": "ш",
+    "sub": "𞁤"
+   },
+   {
+    "base": "ъ",
+    "sub": "𞁥"
+   },
+   {
+    "base": "ы",
+    "sub": "𞁦"
+   },
+   {
+    "base": "ґ",
+    "sub": "𞁧"
+   },
+   {
+    "base": "і",
+    "sub": "𞁨"
+   },
+   {
+    "base": "ѕ",
+    "sub": "𞁩"
+   },
+   {
+    "base": "џ",
+    "sub": "𞁪"
    }
   ],
-  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a modifier letter (Lm) or subscript digit (No) whose compatibility decomposition is <sub> of it — filtered, as the superscripts are, to bases this layout produces (or plain ASCII) and to BMP forms, so the astral Cyrillic subscripts of U+1E0xx (Unicode 16) are excluded as near-universal tofu. No exceptions: there is no ʔ/ʕ analogue and no subscript ɡ, so bare `g` does not subscript. Lives on the shifted twin of the superscript operator (⌥⇧z), so Shift flips a raised glyph to a lowered one."
+  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a character whose compatibility decomposition is <sub> of it — any script, any plane, one table entry per base."
  },
  "classes": {
   "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
