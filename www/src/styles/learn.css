@@ -135,3 +135,44 @@
 	padding: .6rem .4rem .15rem; }
 .lessonitem .s.rev { font-family: inherit; font-size: .62rem; letter-spacing: .05em;
 	text-transform: uppercase; color: var(--accent); }
+
+/* The part reveal — a roguelike tech-tree branch: here's what this chapter
+   unlocks, tap any card to hear it, any key to begin. */
+#partintro { text-align: center; padding: 1.6rem .5rem 1.2rem; }
+#partintro .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+	text-transform: uppercase; color: var(--accent); }
+#partintro h2 { margin: .35rem 0 .4rem; font-size: 1.6rem; }
+#partintro .lore { color: var(--dim); font-size: .92rem; max-width: 32rem; margin: 0 auto .5rem; }
+.scards { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center;
+	margin: 1.1rem auto; max-width: 30rem; }
+.scard { appearance: none; display: grid; gap: .15rem; place-items: center;
+	min-width: 4.4rem; padding: .6rem .7rem .5rem; cursor: pointer;
+	background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+	transition: border-color .15s, transform .12s, box-shadow .15s; }
+.scard:hover { border-color: var(--accent); transform: translateY(-2px);
+	box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 14%, transparent); }
+.scard .g { font-size: 1.7rem; color: var(--fg); }
+.scard .k { font: .68rem ui-monospace, Menlo, monospace; color: var(--dim); }
+#begin { appearance: none; margin-top: .4rem; padding: .55rem 1.4rem; cursor: pointer;
+	border: 1px solid var(--accent); border-radius: 999px; background: var(--accent);
+	color: #fff; font-size: .9rem; font-weight: 600;
+	transition: transform .12s, box-shadow .15s; }
+#begin:hover { transform: translateY(-1px);
+	box-shadow: 0 3px 12px color-mix(in srgb, var(--accent) 30%, transparent); }
+
+/* The unlock badge on a lesson's first word. */
+#prog .unlock { display: inline-block; background: var(--accent); color: #fff;
+	border-radius: 999px; padding: .1rem .55rem; margin-right: .3rem;
+	font-weight: 700; letter-spacing: .08em; }
+
+/* The collection — every sound unlocked so far, tap to hear. */
+.owned { margin: 1.25rem 0 0; padding: .7rem .8rem; background: var(--card);
+	border: 1px solid var(--line); border-radius: 14px; display: flex;
+	flex-wrap: wrap; gap: .35rem; align-items: center; }
+.owned .olabel { flex-basis: 100%; font-size: .66rem; font-weight: 600;
+	letter-spacing: .09em; text-transform: uppercase; color: var(--dim);
+	margin-bottom: .15rem; }
+.ochip { appearance: none; border: 1px solid var(--line); background: var(--bg);
+	color: var(--fg); border-radius: 8px; padding: .25rem .55rem; cursor: pointer;
+	font-size: 1.05rem; transition: border-color .15s, color .15s; }
+.ochip:hover { border-color: var(--accent); color: var(--accent); }

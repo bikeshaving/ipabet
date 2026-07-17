@@ -37,6 +37,7 @@ let chainBroken = false;
 let ear = false, shown = false; // ear-training: hide the target, type from sound; `shown` = revealed this word
 let flash: "good" | "bad" | null = null; // the transient correct/wrong state on #typedwrap
 let finished = false;   // typed past the last word of the last lesson — the finish line
+let partIntro: string | null = null; // a part's tech-tree reveal is on stage
 let shiftArmed = false, optArmed = false;
 let pending: Pending = [];
 let indexOpen = false;  // the lesson index panel
@@ -105,8 +106,35 @@ function nextKeystroke(): Keystroke | null {
 }
 
 // ------------------------------------------------------------- components
+/** The sounds a part unlocks — the current lesson's part, walked forward. */
+function partSounds() {
+	const out: {sound: string; keys: string[]; audio?: string; title: string}[] = [];
+	for (let i = li; i < LESSONS.length && (i === li || !LESSONS[i].part); i++) {
+		const l = LESSONS[i];
+		if (l.sound) out.push({sound: l.sound, keys: l.keys ?? [], audio: l.audio, title: l.title});
+	}
+	return out;
+}
+
 function Drill() {
 	const les = lesson();
+	if (partIntro) {
+		const sounds = partSounds();
+		return jsx`
+			<div id="partintro">
+				<div class="eyebrow">new technology</div>
+				<h2>${partIntro}</h2>
+				${les.prose ? jsx`<p class="lore">${les.prose}</p>` : null}
+				${sounds.length ? jsx`<div class="scards">${sounds.map((s) => jsx`
+					<button class="scard" title=${s.title + " — tap to hear"} onclick=${() => play(s.audio)}>
+						<span class="g ipa">${s.sound}</span>
+						<span class="k">${s.keys.map((k) => displayKeys(k)).join(" ")}</span>
+					</button>`)}</div>` : null}
+				<button id="begin" onclick=${() => { partIntro = null; goWord(true); }}>${
+					sounds.length > 1 ? `Begin — ${sounds.length} new sounds` : "Begin"
+				}</button>
+			</div>`;
+	}
 	if (finished) {
 		return jsx`
 			<div id="finish">
@@ -139,7 +167,7 @@ function Drill() {
 		</div>
 		<div id="note">${les.intro}</div>
 		${les.prose ? jsx`<details id="prose"><summary>more, if you're curious</summary><p>${les.prose}</p></details>` : null}
-		<div id="prog">${wi === 0 && les.sound ? "the new sound, on its own — keys shown" : `${wi + 1} / ${les.words.length}`}</div>
+		<div id="prog">${wi === 0 && les.sound ? jsx`<span class="unlock">new sound</span> on its own first — keys shown` : `${wi + 1} / ${les.words.length}`}</div>
 		<div id="hero">
 			<div id="target" class=${earHide ? "ipa masked" : "ipa"}
 				style=${`cursor:${w.audio ? "pointer" : "default"}`}
@@ -189,7 +217,12 @@ function Keyboard() {
  *  31-lesson course is browsable instead of a linear tunnel. */
 function LessonIndex() {
 	if (!indexOpen) return null;
+	const owned = LESSONS.slice(0, Math.max(reached, li) + 1).filter((l) => l.sound);
 	return jsx`
+		${owned.length ? jsx`<div class="owned">
+			<span class="olabel">sounds you own · ${owned.length}</span>
+			${owned.map((l) => jsx`<button class="ochip ipa" title=${l.title} onclick=${() => play(l.audio)}>${l.sound}</button>`)}
+		</div>` : null}
 		<ol class="lessonlist">
 			${LESSONS.map((l, i) => {
 				const cls = "lessonitem"
@@ -227,6 +260,7 @@ function goWord(newLesson: boolean) {
 	buffer = ""; misses = 0; shown = false; flash = null; pending = []; chainBroken = false;
 	hinted = !ear && wi === 0;   // first word of a lesson shows its keys — but never in ear mode
 	render();
+	if (partIntro) return;       // the reveal holds the stage; Begin (or any key) plays
 	if (ear) playWord();                              // ear mode: always play the thing to transcribe
 	else if (newLesson && lesson().audio) playSound(); // else: new-sound lessons open on the phoneme
 	else playWord();
@@ -236,7 +270,11 @@ function next() {
 	wi += 1;
 	if (wi < lesson().words.length) { goWord(false); return; }
 	wi = 0;
-	if (li < LESSONS.length - 1) { li += 1; save(); goWord(true); return; }
+	if (li < LESSONS.length - 1) {
+		li += 1; save();
+		if (LESSONS[li].part) partIntro = LESSONS[li].part!;
+		goWord(true); return;
+	}
 	finished = true; save(); render();   // the last word of the last lesson IS the finish line
 }
 /** Jump to a lesson (prev/next buttons or the picker). Clamped; resets to word 1. */
@@ -244,6 +282,7 @@ function goLesson(n: number) {
 	const clamped = Math.min(Math.max(n, 0), LESSONS.length - 1);
 	if (clamped === li && wi === 0) return;
 	li = clamped; wi = 0; save();
+	if (LESSONS[li].part) partIntro = LESSONS[li].part!;
 	goWord(true);
 }
 function check() {
@@ -270,6 +309,7 @@ function check() {
 
 // ------------------------------------------------------------ input core
 function doBackspace() {
+	if (partIntro) { partIntro = null; goWord(true); return; } // any key begins
 	if (finished) return; // the finish line ignores typing
 	const step = handleBackspace(buffer, pending);
 	pending = step.pending;
@@ -278,6 +318,7 @@ function doBackspace() {
 	render();
 }
 function sendKey(k: Keystroke) {
+	if (partIntro) { partIntro = null; goWord(true); return; } // any key begins
 	if (finished) return; // the finish line ignores typing
 	// Thread the shift-chain, exactly as bindIPAInput and the IME do: hold ⇧ across
 	// a run and each capital rebases for the next modifier; release ⇧ and the chain
@@ -291,6 +332,7 @@ function sendKey(k: Keystroke) {
 	check();
 }
 function tapChar(ch: string) {
+	if (partIntro) { partIntro = null; goWord(true); return; } // any key begins
 	if (finished) return; // the finish line ignores typing
 	const k: Keystroke = {key: ch, shift: shiftArmed, option: optArmed};
 	shiftArmed = false; optArmed = false; // the on-screen modifiers are one-shot
@@ -325,4 +367,5 @@ earBtn?.addEventListener("click", () => {
 	goWord(false); // re-cast the current word under the new mode
 });
 
+if (lesson().part) partIntro = lesson().part!; // arriving on a branch shows its reveal
 goWord(true);

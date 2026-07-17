@@ -25,6 +25,7 @@ const audioFor = (g?: string): string | undefined => (g ? (AUDIO_OF[g] ?? AUDIO_
 
 const LESSONS = CURRICULUM.map((l) => ({
 	title: l.title, sound: l.sound, keys: l.keys, intro: l.intro,
+	part: l.part, prose: l.prose, review: l.review,
 	audio: audioFor(l.sound) ?? (l.sound ? WORD_AUDIO[l.sound] : undefined),
 	words: l.words.map((wd) => ({...wd, audio: wd.lang ? WORD_AUDIO[wd.target] : (audioFor(wd.target) ?? WORD_AUDIO[wd.target])})),
 }));
