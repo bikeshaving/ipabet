@@ -610,6 +610,37 @@ describe("⌃⇧ escape: the literal capital", () => {
 
 // A ⌥⇧<letter> with no second form DECLINES, so the host's own Option
 // typography survives.
+// Terminators and unconvert. Esc and space resolve a pending composition by
+// COMMITTING the spacing clones — the US layout's own dead-key behavior
+// (⌥e Esc → ´, ⌥e ␣ → ´, probe-verified against the uchr state machine; the
+// terminator is consumed). ⌃⌫ is the Japanese IMEs' Ctrl+Backspace: the
+// committed transform before the cursor becomes its keystroke spelling.
+describe("Esc/space terminate the composition; ⌃⌫ unconverts", () => {
+	const K = (key: string, o: Partial<Keystroke> = {}) => ({key, ...o});
+	test("Esc commits the pending clone: ⌥e Esc → ´", () =>
+		expect(typeKeys([K("e", {option: true}), K("Escape")])).toBe("´"));
+	test("⌥n Esc → ˜", () =>
+		expect(typeKeys([K("n", {option: true}), K("Escape")])).toBe("˜"));
+	test("Esc with nothing pending passes — vim keeps its key", () =>
+		expect(typeKeys([K("a"), K("Escape")])).toBe("a"));
+	test("space is the same terminator, consumed: ⌥e ␣ → ´ alone", () =>
+		expect(typeKeys([K("e", {option: true}), K(" ")])).toBe("´"));
+	test("space with nothing pending is a space", () =>
+		expect(typeKeys([K("a"), K(" ")])).toBe("a "));
+	test("⌃⌫ unconverts the transform: θ → tH (Giθub repairs to GitHub)", () =>
+		expect(typeKeys([K("t"), K("h", {shift: true}), K("⌫", {control: true})])).toBe("tH"));
+	test("a capital digraph unconverts uppercase: Θ ⌃⌫ → TH", () =>
+		expect(typeKeys([K("t", {shift: true}), K("h", {shift: true}), K("⌫", {control: true})])).toBe("TH"));
+	test("digit-base glyphs unconvert to their key spelling: ə ⌃⌫ → 5Y", () =>
+		expect(typeKeys([K("5"), K("y", {shift: true}), K("⌫", {control: true})])).toBe("5Y"));
+	test("an identity glyph refuses — the chord stays the host's: s ⌃⌫ → s", () =>
+		expect(typeKeys([K("s"), K("⌫", {control: true})])).toBe("s"));
+	test("a cluster carrying marks refuses (⌫ peels first): ã ⌃⌫ → ã", () =>
+		expect(typeKeys([K("n", {option: true}), K("a"), K("⌫", {control: true})])).toBe(nfc("ã")));
+	test("⌃⌫ while marks pend peels, like plain ⌫: ⌥n ⌃⌫ x → x", () =>
+		expect(typeKeys([K("n", {option: true}), K("⌫", {control: true}), K("x")])).toBe("x"));
+});
+
 describe("⌥⇧ is not an escape", () => {
 	test("a key whose mark has a second form still applies it: a ⌥⇧e b → ab̋", () =>
 		expect(typed("a", "~+e", "b")).toBe(nfc("ab\u{030B}")));

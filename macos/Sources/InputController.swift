@@ -66,6 +66,8 @@ struct Tables {
     let subs: [String: String]
     // transformation index: (previous output glyph + keystroke) → combined glyph
     let transforms: [String: String]
+    /// glyph → its two-key spelling, for ⌃⌫ unconvert (θ → "tH"). First key wins.
+    let unconvertKey: [String: String]
     /// combining scalar → its spacing form, for the dead-key preview.
     let clones: [Unicode.Scalar: String]
     /// Exclusive duals: a mark and its ⌥⇧ twin are the two values of ONE feature
@@ -136,7 +138,9 @@ struct Tables {
             }
         }
         var transforms: [String: String] = [:]
+        var unconvertKey: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
+            if unconvertKey[glyph] == nil { unconvertKey[glyph] = k }
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
             // A leading digit is a LITERAL base a modifier transforms (5H → ɜ,
             // 2Q → ʡ), and the roots are digraphs too (5Y → ə, 2H → ʔ), so ⇧2–7
@@ -148,7 +152,8 @@ struct Tables {
         return Tables(letters: letters, optMarks: optMarks, sups: sups, subs: subs,
                       transforms: transforms, clones: clones, exclusiveTwin: exclusiveTwin,
                       optShiftDigits: optShiftDigits,
-                      quoteLocales: quoteLocales, quoteDefault: quoteDefault)
+                      quoteLocales: quoteLocales, quoteDefault: quoteDefault,
+                      unconvertKey: unconvertKey)
     }()
 }
 
@@ -357,6 +362,18 @@ class InputController: IMKInputController {
                     return true
                 }
             }
+            // ⌃⌫ — unconvert, the Japanese IMEs' Ctrl+Backspace: the committed
+            // transform before the cursor becomes its literal keystroke spelling
+            // (θ → "tH", so "Giθub" repairs to "GitHub"). While marks pend it
+            // peels like plain ⌫; anything unconvertible passes.
+            if event.keyCode == 51 {
+                if !pending.isEmpty {
+                    pending.removeLast()
+                    updateMarked(client)
+                    return true
+                }
+                return unconvert(client)
+            }
             Dbg.log("  → pass (ctrl chord — leader keys land here)")
             flushPending(client)
             return false
@@ -382,6 +399,21 @@ class InputController: IMKInputController {
                 return true
             }
             return handleBackspace(client)
+        }
+
+        // ESCAPE and SPACE terminate a pending composition by COMMITTING the
+        // spacing clones — the US layout's own dead-key behavior (⌥e Esc → ´,
+        // ⌥e ␣ → ´, both probe-verified against the uchr; the terminator is
+        // consumed). With nothing pending both pass untouched — Esc stays
+        // vim's key, space stays a space.
+        if event.keyCode == 53, !flags.contains(.option) {
+            if pending.isEmpty { return false }
+            flushPending(client)
+            return true
+        }
+        if event.keyCode == 49, !flags.contains(.option), !pending.isEmpty {
+            flushPending(client)
+            return true
         }
 
         // Option-Shift: the secondary form of a two-form mark. NOT an escape —
@@ -798,6 +830,20 @@ class InputController: IMKInputController {
     /// n̥ peels to n, regardless of whether Unicode fused the pair); a bare
     /// glyph is declined so the host deletes it natively — Korean's
     /// jamo-peel-then-native pattern.
+    /// ⌃⌫: replace the transform before the cursor with its keystroke spelling.
+    /// Stateless via the reverse map; bare clusters only (marks peel with ⌫).
+    private func unconvert(_ client: IMKTextInput) -> Bool {
+        guard let (p, r) = lastCluster(client) else { return false }
+        let (base, marks) = decompose(p)
+        guard marks.isEmpty, !base.isEmpty else { return false }
+        let low = base.lowercased()
+        guard let key = t.unconvertKey[low] else { return false }
+        let text = base == low ? key : key.uppercased()
+        Dbg.log("  → unconvert \(Dbg.str(base)) ⇒ '\(text)'")
+        replace(r, with: text, client)
+        return true
+    }
+
     private func handleBackspace(_ client: IMKTextInput) -> Bool {
         guard let (p, r) = lastCluster(client) else { return false }
         let (base, marks) = decompose(p)

@@ -29,18 +29,19 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 ## Tier 1 · escapes (getting a literal character back)
 
-`⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". Three ways out, none of which need the IPA layer turned off — and the OS's own fourth:
+`⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". The ways out, none of which need the IPA layer turned off:
 
 | Keystroke | Effect |
 | --- | --- |
 | `⌃⇧`+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
+| `⌃⌫` | **Unconvert** — after the fact: the transform before the cursor becomes its literal keystrokes (θ → tH, so "Giθub" repairs to "GitHub" in place). The Japanese IMEs' Ctrl+Backspace. |
 | Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). `⇧` still means the modifier while locked. |
 | `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly; there is no raw-US digit escape. |
 | `⌃Space` | Not IPAbet's key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
 
 ## Tier 2 · diacritics & suprasegmentals (Option layer)
 
-Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky, `⌥⇧'` → secondary stress). Backspace cancels a pending mark. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
+Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky, `⌥⇧'` → secondary stress). Backspace peels a pending mark; Space or Esc commits it as its spacing form (`⌥e` Esc → ´), exactly like the US layout's dead keys. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
 
 <MarkTable kind="ipa"/>
 

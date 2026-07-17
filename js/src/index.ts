@@ -137,6 +137,9 @@ for (const e of (spec.subscripts as {table: {base: string; sub: string}[]})
 	subs.set(e.base, e.sub);
 }
 
+// glyph → its two-key spelling, for ⌃⌫ unconvert (θ → "tH"). First key wins.
+const unconvertKey = new Map<string, string>();
+
 // transformation index: (previous output glyph + keystroke) → combined glyph
 const transforms = new Map<string, string>();
 for (const [key, glyph] of letters) {
@@ -146,6 +149,7 @@ for (const [key, glyph] of letters) {
 		// fall through to native @ # $ % ^ &; the tie bar lives on ⌥j (join).
 		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
+		if (!unconvertKey.has(glyph)) unconvertKey.set(glyph, key);
 	}
 }
 
@@ -433,6 +437,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
 		return {edit, pending: []};
 	};
+	// ESCAPE terminates a pending composition by COMMITTING the spacing clones —
+	// the US layout's own dead-key behavior (⌥e Esc → ´, probe-verified against
+	// the uchr state machine), extended to the whole mark layer. Consumed only
+	// while marks pend; otherwise it passes untouched — Esc stays vim's key.
+	if (key === "Escape" && k.control !== true && !option) {
+		return pending.length > 0 ? flush(pending) : {edit: {type: "pass"}, pending};
+	}
 	// Non-typing keys (arrows, Enter): defer entirely, and leave the composition
 	// alone — swallowing them to commit an accent would eat navigation.
 	if (key.length !== 1) return {edit: {type: "pass"}, pending};
@@ -450,6 +461,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			return withFlush({type: "insert", text: key.toUpperCase()});
 		}
 		return {edit: {type: "pass"}, pending}; // leader keys: the host owns them
+	}
+
+	// SPACE terminates a pending composition the same way — the clone commits
+	// and the space is CONSUMED (US ⌥e space → ´ alone, probe-verified). A
+	// space with nothing pending stays a native space.
+	if (key === " " && !option && pending.length > 0) {
+		return flush(pending);
 	}
 
 	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
@@ -645,6 +663,30 @@ export function handleBackspace(textBefore: string, pending: Pending = []): Step
 }
 
 /**
+ * ⌃⌫ — unconvert. The committed transform before the cursor becomes its
+ * literal keystroke spelling: θ → "tH" (so "Giθub" repairs to "GitHub"),
+ * ʃ → "sH", Æ → "AE". The Japanese IMEs' Ctrl+Backspace (kakutei-undo),
+ * stateless via the reverse map. While marks pend it peels, like plain ⌫;
+ * a cluster still carrying combining marks, or an unconvertible glyph,
+ * passes to the host untouched.
+ */
+export function handleUnconvert(textBefore: string, pending: Pending = []): Step {
+	if (pending.length > 0) return handleBackspace(textBefore, pending);
+	const p = lastCluster(textBefore);
+	if (p !== undefined) {
+		const {base, marks} = decompose(p);
+		if (marks.length === 0 && base.length > 0) {
+			const low = base.toLowerCase();
+			const key = unconvertKey.get(low);
+			if (key !== undefined) {
+				return {edit: replaceCluster(p, base === low ? key : key.toUpperCase()), pending: []};
+			}
+		}
+	}
+	return {edit: {type: "pass"}, pending: []};
+}
+
+/**
  * Apply an edit to a buffer. `pass` inserts the keystroke's native character
  * when one is given (what the host would have typed), else nothing.
  */
@@ -681,13 +723,20 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let chainBroken = false;
 	for (const k of keys) {
 		const step: Step =
-			k.key === "⌫" ? handleBackspace(text, pending) : handleKey(text, k, pending, chainBroken);
+			k.key === "⌫"
+				? k.control === true
+					? handleUnconvert(text, pending)
+					: handleBackspace(text, pending)
+				: handleKey(text, k, pending, chainBroken);
 		pending = step.pending;
 		chainBroken = step.chainBroken ?? false;
 		if (k.key === "⌫" && step.edit.type === "pass") {
-			// native delete: drop the last grapheme cluster
-			const p = lastCluster(text);
-			text = p === undefined ? text : text.slice(0, text.length - p.length);
+			// Plain ⌫: the host's native delete drops the last grapheme cluster.
+			// ⌃⌫ that found nothing to unconvert stays the host's chord — no edit.
+			if (k.control !== true) {
+				const p = lastCluster(text);
+				text = p === undefined ? text : text.slice(0, text.length - p.length);
+			}
 		} else {
 			text = applyEdit(text, step.edit, nativeChar(k));
 		}

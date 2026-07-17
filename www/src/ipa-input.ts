@@ -9,6 +9,7 @@
 import {
 	handleKey,
 	handleBackspace,
+	handleUnconvert,
 	previewString,
 	nativeChar,
 	type Pending,
@@ -21,6 +22,9 @@ import {
 const CODE_KEYS: Record<string, string> = {
 	Backquote: "`", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]",
 	Backslash: "\\", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/",
+	// Space reaches the engine so a pending composition terminates exactly as
+	// the IME's: the clone commits and the space is consumed (⌥e ␣ → ´).
+	Space: " ",
 };
 
 /** Desktop: the physical key, from e.code. Gives us ⇧ and ⌥ exactly — and Caps
@@ -147,6 +151,17 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 		fire();
 	}
 
+	/** ⌃⌫ — unconvert the committed transform before the caret (θ → "tH"). */
+	function engineUnconvert(e: Event) {
+		if (el.selectionStart !== el.selectionEnd) return;
+		const step = handleUnconvert(el.value.slice(0, caret()), pending);
+		pending = step.pending;
+		if (step.edit.type === "pass") return; // nothing unconvertible: the host's chord
+		e.preventDefault();
+		if (step.edit.type !== "noop") applyAtCaret(step.edit, "");
+		fire();
+	}
+
 	el.addEventListener("keydown", (ev) => {
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
@@ -155,8 +170,17 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 		// capital that would otherwise be eaten by the ⇧-modifier ("GitHub" → Giθub).
 		// The engine owns that rule; we just have to stop swallowing the keystroke.
 		if (e.metaKey) return;
+		// ⌃⌫ is the unconvert chord (the Japanese IMEs' Ctrl+Backspace) — the one
+		// ⌃ chord besides ⌃⇧<letter> the engine claims.
+		if (e.ctrlKey && e.key === "Backspace") { consumed = true; engineUnconvert(e); return; }
 		if (e.ctrlKey && !(e.shiftKey && /^Key[A-Z]$/.test(e.code))) return;
 		if (mediatedByIME(e)) return;
+		// Escape terminates a pending composition (commits the clones, like the
+		// US dead keys). With nothing pending it stays the page's key.
+		if (e.key === "Escape") {
+			if (pending.length > 0) { consumed = true; e.preventDefault(); sendKeystroke({key: "Escape"}); }
+			return;
+		}
 		if (e.key === "Backspace") { consumed = true; engineBackspace(e); return; }
 		const k = keyFromEvent(e);
 		if (k === null) return; // native key, or a soft keyboard → beforeinput takes it
