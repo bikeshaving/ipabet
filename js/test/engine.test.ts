@@ -332,8 +332,19 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 		expect(typed("~+y", "l")).toBe("ɫ");
 		expect(typed("~+y", "~+y", "l")).toBe("l");
 	});
-	test("velarization elsewhere stays an overlay: ⌥⇧y t → t̴", () =>
-		expect(typed("~+y", "t")).toBe("t\u{0334}"));
+	test("velarization fuses to the middle-tilde atoms: ⌥⇧y m → ᵯ, ⌥⇧y ⇧L → Ɫ", () => {
+		expect(typed("~+y", "m")).toBe("ᵯ");
+		expect(typed("~+y", "+l")).toBe("Ɫ");
+	});
+	test("velarization on an unlisted base stays an overlay: ⌥⇧y a → a̴", () =>
+		expect(typed("~+y", "a")).toBe("a\u{0334}"));
+	test("the barred atoms fuse — never the i̵ homoglyph: ⌥y i → ɨ, u → ʉ, o → ɵ, j → ɟ", () => {
+		expect(typed("~y", "i")).toBe("\u{0268}");
+		expect(typed("~y", "u")).toBe("\u{0289}");
+		expect(typed("~y", "o")).toBe("\u{0275}");
+		expect(typed("~y", "j")).toBe("\u{025F}");
+		expect(typed("~y", "+i")).toBe("\u{0197}"); // Ɨ
+	});
 	test("guttural digraph: l ⇧Q → ɫ (velarized OR pharyngealized, the chart's wording)", () =>
 		expect(typed("l", "+q")).toBe("ɫ"));
 	test("stroke fuses to the alphabet: ⌥y l → ł, ⌥y d → đ, capitals too", () => {

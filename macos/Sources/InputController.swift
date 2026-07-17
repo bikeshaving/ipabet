@@ -652,10 +652,24 @@ class InputController: IMKInputController {
     /// flips placement in place, and the SAME chord again toggles sliding ͢
     /// (extIPA) and back. Lookback rewrites, like the ɚ fusion.
     private static let slide: Unicode.Scalar = "\u{0362}"
-    /// The stroke overlay's precomposed family (the ⌥y stroke dead key).
+    /// The stroke overlay's precomposed families: every combination Unicode
+    /// encodes atomically must be emitted atomic — the raw combining render is
+    /// a permanent homoglyph (i̵ beside ɨ fails search forever). Horizontal-bar
+    /// atoms only; diagonal-slash atoms (ø ⱥ) are a different gesture. ł keeps
+    /// its pragmatic exception. Mirrors js/src/index.ts STROKED/TILDED.
     private static let stroked: [String: String] = [
         "l": "ł", "L": "Ł", "d": "đ", "D": "Đ", "t": "ŧ", "T": "Ŧ",
-        "g": "ǥ", "G": "Ǥ", "h": "ħ", "H": "Ħ", "b": "ƀ", "z": "ƶ", "Z": "Ƶ",
+        "g": "ǥ", "G": "Ǥ", "h": "ħ", "H": "Ħ", "b": "ƀ", "B": "Ƀ",
+        "z": "ƶ", "Z": "Ƶ", "i": "ɨ", "I": "Ɨ", "u": "ʉ", "U": "Ʉ",
+        "o": "ɵ", "O": "Ɵ", "j": "ɟ", "r": "ɍ", "R": "Ɍ", "y": "ɏ",
+        "Y": "Ɏ", "c": "ȼ", "C": "Ȼ", "p": "ᵽ", "P": "Ᵽ", "k": "ꝁ",
+        "K": "Ꝁ", "2": "ƻ",
+    ]
+
+    /// The tilde overlay's family — the middle-tilde atoms plus the dark ls.
+    private static let tilded: [String: String] = [
+        "l": "ɫ", "L": "Ɫ", "b": "ᵬ", "d": "ᵭ", "f": "ᵮ", "m": "ᵯ",
+        "n": "ᵰ", "p": "ᵱ", "r": "ᵲ", "s": "ᵴ", "t": "ᵵ", "z": "ᵶ",
     ]
 
     /// What the highlighted preview shows: each pending mark as its *spacing*
@@ -776,10 +790,11 @@ class InputController: IMKInputController {
         }
         let marks = pending
         pending = []
-        // dark l: overlay + l is the atomic ɫ, not a ragged l̴ (also a digraph, l⇧Q)
-        if marks.count == 1, marks[0] == "\u{0334}", glyph == "l" {
-            Dbg.log("    emitBase: commit ɫ")
-            insert("ɫ", client); return
+        // tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
+        if marks.count == 1, marks[0] == "\u{0334}",
+           let t = Self.tilded[glyph] {
+            Dbg.log("    emitBase: commit \(t)")
+            insert(t, client); return
         }
         // stroke overlay: the orthographic letters are precomposed (⌥y l → ł,
         // ⌥y d → đ) — NFC cannot fuse an overlay. Set mirrors js/src/index.ts.

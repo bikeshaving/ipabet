@@ -363,21 +363,36 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	return {edit: {type: "insert", text}, pending: []};
 }
 
-// The stroke overlay's precomposed family (the ⌥y stroke dead key):
-// NFC cannot fuse an overlay, so these must be emitted atomic, like ɫ. The set
-// matches what ABC Extended itself resolves — Polish ł, Vietnamese đ, Sámi ŧ ǥ,
-// Maltese ħ, ƀ ƶ. An unlisted base takes the raw combining overlay.
+// The stroke overlay's precomposed families: NFC cannot fuse an overlay, so
+// every combination Unicode encodes atomically must be emitted atomic — the
+// raw combining render would be a permanent homoglyph (i̵ beside ɨ fails
+// search forever). The orthographic set (ł đ ŧ ǥ ħ) plus every HORIZONTAL-bar
+// atom, IPA's barred letters included. Diagonal-slash atoms (ø ⱥ ɇ) are a
+// different graphical gesture and stay out; ł keeps its pragmatic exception
+// (technically a slash, but it is what every Pole means). An unlisted base
+// takes the raw combining overlay.
 const STROKED = new Map(Object.entries({
 	l: "ł", L: "Ł", d: "đ", D: "Đ", t: "ŧ", T: "Ŧ", g: "ǥ", G: "Ǥ",
-	h: "ħ", H: "Ħ", b: "ƀ", z: "ƶ", Z: "Ƶ",
+	h: "ħ", H: "Ħ", b: "ƀ", B: "Ƀ", z: "ƶ", Z: "Ƶ",
+	i: "ɨ", I: "Ɨ", u: "ʉ", U: "Ʉ", o: "ɵ", O: "Ɵ", j: "ɟ",
+	r: "ɍ", R: "Ɍ", y: "ɏ", Y: "Ɏ", c: "ȼ", C: "Ȼ", p: "ᵽ", P: "Ᵽ",
+	k: "ꝁ", K: "Ꝁ", "2": "ƻ",
+}));
+
+// The tilde overlay's family — Unicode's "middle tilde" letters, the extIPA
+// velarized-or-pharyngealized set, plus the dark ls.
+const TILDED = new Map(Object.entries({
+	l: "ɫ", L: "Ɫ", b: "ᵬ", d: "ᵭ", f: "ᵮ", m: "ᵯ", n: "ᵰ",
+	p: "ᵱ", r: "ᵲ", s: "ᵴ", t: "ᵵ", z: "ᵶ",
 }));
 
 /** Emit a base glyph, committing any pending prefix diacritics onto it. */
 function emitBase(glyph: string, pending: Pending): Step {
 	if (pending.length === 0) return {edit: {type: "insert", text: glyph}, pending: []};
-	// dark l: overlay + l is the atomic ɫ, not a ragged l̴ (also a digraph, l⇧Q)
-	if (pending.length === 1 && pending[0] === "\u{0334}" && glyph === "l") {
-		return {edit: {type: "insert", text: "ɫ"}, pending: []};
+	// tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
+	if (pending.length === 1 && pending[0] === "\u{0334}") {
+		const t = TILDED.get(glyph);
+		if (t !== undefined) return {edit: {type: "insert", text: t}, pending: []};
 	}
 	// stroke overlay: the orthographic letters are precomposed (⌥y l → ł, ⌥y d → đ)
 	if (pending.length === 1 && pending[0] === "\u{0335}") {

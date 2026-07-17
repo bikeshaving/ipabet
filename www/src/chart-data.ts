@@ -21,6 +21,8 @@ export interface ChartEntry {
 	name: string;
 	/** the base glyph the mark is demonstrated on, as the chart prints it */
 	on?: string;
+	/** the ATOM the demo base+mark fuses to (overlay fusion), for the typing test */
+	fuses?: string;
 	/** keystrokes producing `on`. Defaults to `on` itself when it's its own key. */
 	onKeys?: string;
 }
@@ -49,7 +51,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "ʲ", keys: "j ~z", name: "Palatalized", on: "t"},
 	{glyph: "ˠ", keys: "g +H ~z", name: "Velarized", on: "t"},
 	{glyph: "ˤ", keys: "3 +H ~z", name: "Pharyngealized", on: "t"},
-	{glyph: "◌̴", keys: "~+y", name: "Velarized or pharyngealized", on: "t"},
+	{glyph: "◌̴", keys: "~+y", name: "Velarized or pharyngealized", on: "t", fuses: "ᵵ"},
 	{glyph: "◌̝", keys: "~+g", name: "Raised", on: "e"},
 	{glyph: "◌̞", keys: "~g", name: "Lowered", on: "e"},
 	{glyph: "◌̘", keys: "~+h", name: "Advanced tongue root", on: "e"},

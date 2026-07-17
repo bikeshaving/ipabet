@@ -46,7 +46,8 @@ const baseKeys = (e: ChartEntry) => (e.onKeys ?? e.on!).split(" ");
 function trial(e: ChartEntry): {keys: string[]; expected: string} {
 	const keys = e.keys.split(" ");
 	if (e.glyph.startsWith("◌")) {
-		return {keys: [...keys, ...baseKeys(e)], expected: e.on! + e.glyph.slice(1)};
+		// An overlay whose demo base has a precomposed atom fuses to it (ᵵ).
+		return {keys: [...keys, ...baseKeys(e)], expected: e.fuses ?? e.on! + e.glyph.slice(1)};
 	}
 	if (e.on) return {keys: [...baseKeys(e), ...keys], expected: e.on + e.glyph};
 	return {keys, expected: e.glyph};
