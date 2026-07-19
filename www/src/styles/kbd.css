@@ -47,24 +47,18 @@
 .kbd--ref .cap.chrome { opacity: .55; }
 .kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .7rem;
 	color: var(--dim); font-size: .8rem; flex-wrap: wrap; }
-.layers { display: flex; gap: .3rem; }
-.layers input { position: absolute; opacity: 0; pointer-events: none; }
-.layers label {
-	font: .75rem ui-monospace, Menlo, monospace; color: var(--dim);
-	border: 1px solid var(--line); border-radius: 999px; padding: .22rem .7rem;
-	cursor: pointer; transition: color .12s, border-color .12s, background .12s;
-}
-.layers label:hover { color: var(--accent); border-color: var(--accent); }
-.kbd:has(#klayer-opt:checked) label[for="klayer-opt"],
-.kbd:has(#klayer-optshift:checked) label[for="klayer-optshift"] {
-	color: #fff; background: var(--accent); border-color: var(--accent);
+/* the chord caps are the visible layer state */
+.kbd:has(#klayer-opt:checked) .cap.ck[data-chrome="option"],
+.kbd:has(#klayer-optshift:checked) .cap.ck.chord,
+.kbd:has(#klayer-shift:checked) .cap.ck[data-chrome="shift"] {
+	color: #fff; background: var(--accent);
 }
 .kbd--ref .cap .h { display: none; }
 .kbd:has(#klayer-opt:checked) .cap .h.p { display: block; }
 .kbd:has(#klayer-optshift:checked) .cap .h.s { display: block; }
-/* the ⇧ layer: each modifier letter's emblematic transform (t⇧H → θ) */
+/* the ⇧ layer: the modifier capitals themselves, meanings on hover */
 .kbd:has(#klayer-shift:checked) .cap .h.t { display: block; }
-.kbd:has(#klayer-shift:checked) .cap.ck.chord[data-chrome="shift"] { color: var(--accent); }
+.cap .h.t { font: 600 1.1rem ui-monospace, Menlo, monospace; color: var(--fg); }
 
 /* --- drill: bare chars, functional chrome, states ------------------------- */
 .kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; padding: 0; }

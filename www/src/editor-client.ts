@@ -107,7 +107,14 @@ if (board !== null && pad !== null) {
 			return;
 		}
 		if (chrome === "backspace") { ipa.backspace(); return; }
-		if (chrome === "option") (document.getElementById("klayer-opt") as HTMLInputElement).checked = true;
-		if (chrome === "shift") (document.getElementById("klayer-shift") as HTMLInputElement).checked = true;
+		// The chord caps are the layer switch: ⌥ → marks, ⇧ → modifiers, and
+		// clicking the second of the pair combines them (⌥ view + ⇧ → ⌥⇧).
+		const radio = (id: string) => document.getElementById(id) as HTMLInputElement;
+		if (chrome === "option") {
+			radio(radio("klayer-shift").checked ? "klayer-optshift" : "klayer-opt").checked = true;
+		}
+		if (chrome === "shift") {
+			radio(radio("klayer-opt").checked ? "klayer-optshift" : "klayer-shift").checked = true;
+		}
 	});
 }

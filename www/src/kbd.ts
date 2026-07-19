@@ -17,14 +17,7 @@ interface MarkE {
 const marks = new Map((spec.marks as MarkE[]).map((m) => [m.opt, m]));
 const modifiers = spec.modifiers as Record<string, string>;
 
-// The ⇧ layer's emblem: for each modifier capital, a representative digraph
-// result (H → θ via tH) — the first lowercase-base entry in the spec.
-const emblem = new Map<string, {out: string; via: string}>();
-for (const e of spec.letters as {key: string; glyph: string}[]) {
-	if (e.key.length === 2 && /[a-z]/.test(e.key[0]) && /[A-Z]/.test(e.key[1]) && !emblem.has(e.key[1])) {
-		emblem.set(e.key[1], {out: e.glyph, via: e.key});
-	}
-}
+
 const quotes = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
 const quad = quotes.locales[quotes.default];
 
@@ -105,14 +98,17 @@ export function capBody(ch: string) {
 	const m = marks.get(ch);
 	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
 	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
-	const em = /[a-z]/.test(ch) ? emblem.get(ch.toUpperCase()) : undefined;
+	// The ⇧ view shows what is per-key TRUE: which capitals are modifiers —
+	// the letter itself, its meaning in the tooltip. Products depend on the
+	// base, so they live on /keys and the chart, never invented per cap.
+	const mod = /[a-z]/.test(ch) ? modifiers[ch.toUpperCase()] : undefined;
 	const wide = sp !== undefined ? " wide" : "";
 	return jsx`<span class="b">${ch}</span>${
 		p === undefined ? null : jsx`<span class=${"h p ipa" + wide}>${p}</span>`
 	}${
 		s === undefined ? null : jsx`<span class=${"h s ipa" + wide}>${s}</span>`
 	}${
-		em === undefined ? null : jsx`<span class="h t ipa" title=${`${em.via[0]}⇧${em.via[1]} → ${em.out}`}>${em.out}</span>`
+		mod === undefined ? null : jsx`<span class="h t">${ch.toUpperCase()}</span>`
 	}`;
 }
 
@@ -165,16 +161,13 @@ export function KeyboardRef() {
 								: ghost(k))}
 					</div>`)}
 			</div>
+			<div class="layers" hidden>
+				<input type="radio" name="klayer" id="klayer-opt" checked />
+				<input type="radio" name="klayer" id="klayer-optshift" />
+				<input type="radio" name="klayer" id="klayer-shift" />
+			</div>
 			<div class="kcaption">
-				<div class="layers" role="tablist" aria-label="Keyboard layer">
-					<input type="radio" name="klayer" id="klayer-opt" checked />
-					<label for="klayer-opt">⌥</label>
-					<input type="radio" name="klayer" id="klayer-optshift" />
-					<label for="klayer-optshift">⌥⇧</label>
-					<input type="radio" name="klayer" id="klayer-shift" />
-					<label for="klayer-shift">⇧</label>
-				</div>
-				<span>hold the chord or switch here · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
+				<span>hold — or click — <kbd>⌥</kbd> / <kbd>⌥⇧</kbd> / <kbd>⇧</kbd> to switch layers · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
 			</div>
 		</div>`;
 }
