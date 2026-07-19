@@ -59,9 +59,18 @@ export const KB_ROWS: PhysKey[][] = [
 	],
 ];
 
-const shown = (glyph: string, type: string) => (type === "combining" ? "◌" + glyph : glyph);
+/** Render a mark: combining forms (and the anchorless rhotic hook) as two
+ *  stacked layers — a faint carrier ring behind, the mark itself in full ink
+ *  riding an invisible base in front — so the MARK is the figure and the
+ *  carrier a whisper. Other spacing glyphs stand alone. */
+function shown(glyph: string, type: string) {
+	if (type === "combining" || glyph === "˞") {
+		return jsx`<span class="ring">◌</span><span class="ink">${"\u00A0" + glyph}</span>`;
+	}
+	return glyph;
+}
 
-const SPECIALS: Record<string, {main: string; second: string; title: string}> = {
+const SPECIALS: Record<string, {main: unknown; second: unknown; title: string}> = {
 	j: {main: "◌͡◌", second: "◌͜◌", title: "⌥j tie bar (joins the two segments around it) · ⌥⇧j tie below, for colliding descenders · again ⇄ ͢ sliding"},
 	z: {main: "◌ᶻ", second: "◌₂", title: "⌥z superscript the previous glyph (t h ⌥z → tʰ) · ⌥⇧z subscript it"},
 	"[": {main: quad[0], second: quad[1], title: `⌥[ opening primary quote · ⌥⇧[ closing (locale ${quotes.default}; set in the input menu)`},

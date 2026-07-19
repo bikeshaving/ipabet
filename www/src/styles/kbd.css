@@ -6,17 +6,22 @@
 .krow { display: grid; grid-template-columns: repeat(60, 1fr); gap: .28rem; margin-top: .28rem; }
 .cap {
 	position: relative; display: grid; place-items: center; min-width: 0;
-	height: clamp(2.6rem, 6vw, 3.6rem);
-	border: 1px solid var(--kbd-line); border-bottom-width: 2.5px;
-	background: var(--kbd-bg); border-radius: 7px;
+	height: clamp(2.7rem, 6.2vw, 3.8rem);
+	border: 1px solid var(--kbd-line);
+	background: var(--card, #fff); border-radius: 6px;
+	box-shadow: 0 1.5px 0 var(--kbd-line);
 	transition: border-color .12s, background .12s, color .12s, box-shadow .12s, transform .08s;
 }
 .cap .b {
 	position: absolute; top: .22rem; left: .35rem;
 	font: .66rem ui-monospace, Menlo, monospace; color: var(--dim);
 }
-.cap .h { grid-area: 1 / 1; font-size: clamp(1.05rem, 2.6vw, 1.6rem); line-height: 1.1; color: var(--accent); }
-.cap .h.wide { font-size: clamp(.8rem, 1.9vw, 1.15rem); }
+.cap .h { grid-area: 1 / 1; display: grid; place-items: center;
+	font-size: clamp(1.15rem, 2.8vw, 1.75rem); line-height: 1.1; color: var(--fg); }
+.cap .h.wide { font-size: clamp(.85rem, 2vw, 1.2rem); }
+/* the mark is the figure; the carrier is a whisper behind it */
+.cap .h .ring, .cap .h .ink { grid-area: 1 / 1; }
+.cap .h .ring { color: var(--dim); opacity: .35; font-weight: 400; }
 .cap.chrome {
 	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
 }
