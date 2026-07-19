@@ -95,8 +95,19 @@ export function capBody(ch: string) {
 
 const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
 
-/** The reference board on /type: ⌥ layer by default, ⌥⇧ on the toggle. */
+/** The reference board on /type: only the keys that carry marks. The chrome
+ *  is elided — it answers nothing here — but the stagger it causes is kept:
+ *  each row is indented by its real leading chrome width, so the geometry
+ *  stays physical, just unfurnished. (The drill draws the full board; its
+ *  chrome works.) ⌥ layer by default, ⌥⇧ on the toggle. */
 export function KeyboardRef() {
+	const rows = KB_ROWS.map((row) => {
+		let indent = 0;
+		let i = 0;
+		while (i < row.length && row[i].ch === undefined) indent += row[i++].w;
+		const keys = row.slice(i).filter((k) => k.ch !== undefined);
+		return {indent, keys};
+	}).filter((r) => r.keys.length > 0);
 	return jsx`
 		<div class="kbd kbd--ref">
 			<div class="layers" role="tablist" aria-label="Keyboard layer">
@@ -105,12 +116,10 @@ export function KeyboardRef() {
 				<input type="radio" name="klayer" id="klayer-optshift" />
 				<label for="klayer-optshift">⌥⇧ forms</label>
 			</div>
-			${KB_ROWS.map((row) => jsx`
+			${rows.map(({indent, keys}) => jsx`
 				<div class="krow">
-					${row.map((k) =>
-						k.ch !== undefined
-							? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
-							: jsx`<div class="cap chrome" style=${capStyle(k)}>${k.label}</div>`)}
+					${indent === 0 ? null : jsx`<div class="kgap" style=${`grid-column: span ${Math.round(indent * 4)}`}></div>`}
+					${keys.map((k) => jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch!)}>${capBody(k.ch!)}</div>`)}
 				</div>`)}
 			<p class="klegend">The Option layer, on the board it lives on — switch to the <span class="ipa">⌥⇧</span> forms above; hover any key for names. Combining marks (drawn on ◌) are dead keys: chord first, then the base. The <kbd>⇧</kbd>-capital modifiers live in the tooltips and on <a href="/keys">/keys</a>.</p>
 		</div>`;
