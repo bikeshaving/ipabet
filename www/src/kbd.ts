@@ -125,7 +125,7 @@ export function KeyboardRef() {
 		const title = CHROME_TITLES[k.chrome ?? ""];
 		if (title === undefined) return jsx`<div class="cap ghost" style=${capStyle(k)}></div>`;
 		const chorded = k.chrome === "option" || k.chrome === "shift";
-		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title}>${k.label}</div>`;
+		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title} data-chrome=${k.chrome}>${k.label}</div>`;
 	};
 	// The reference gives ⌥ no row of its own (Brian's call): each ⌥ tucks
 	// beside its ⇧ inside the shift's own slot — ⇧1.25+⌥1 on the left,
@@ -149,7 +149,7 @@ export function KeyboardRef() {
 					<div class="krow">
 						${row.map((k) =>
 							k.ch !== undefined
-								? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
+								? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)} data-key=${k.ch}>${capBody(k.ch)}</div>`
 								: ghost(k))}
 					</div>`)}
 			</div>

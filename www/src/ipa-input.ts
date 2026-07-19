@@ -210,5 +210,26 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 	return {
 		pendingText: () => previewString(pending),
 		reset: () => { pending = []; chainBroken = false; fire(); },
+		/** Inject a keystroke as if typed — the clickable board's path in. */
+		sendKey: (k: Keystroke) => sendKeystroke(k),
+		/** Injected backspace: peel a pending mark, else delete before the caret. */
+		backspace: () => {
+			const step = handleBackspace(el.value.slice(0, caret()), pending);
+			pending = step.pending;
+			if (step.edit.type === "noop") { fire(); return; }
+			if (step.edit.type === "pass") {
+				const at = caret();
+				if (at > 0) {
+					const before = el.value.slice(0, at);
+					const cluster = [...new Intl.Segmenter().segment(before)].pop()?.segment ?? "";
+					el.value = before.slice(0, before.length - cluster.length) + el.value.slice(at);
+					const pos = at - cluster.length;
+					el.setSelectionRange(pos, pos);
+				}
+				fire(); return;
+			}
+			applyAtCaret(step.edit, "");
+			fire();
+		},
 	};
 }

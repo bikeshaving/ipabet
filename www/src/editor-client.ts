@@ -79,3 +79,26 @@ if (optRadio !== null && shiftRadio !== null) {
 	window.addEventListener("keydown", sync);
 	window.addEventListener("keyup", sync);
 }
+
+// The board is clickable: a mark key sends its chord for the visible layer
+// through the engine; ⌫ deletes; the ⇧/⌥ caps switch layers. mousedown is
+// prevented so the pad keeps focus and the caret never blinks away.
+const board = document.getElementById("kbdref");
+const pad = document.getElementById("ed") as HTMLTextAreaElement | null;
+if (board !== null && pad !== null) {
+	board.addEventListener("mousedown", (e) => e.preventDefault());
+	board.addEventListener("click", (e) => {
+		const cap = (e.target as Element).closest<HTMLElement>(".cap");
+		if (cap === null) return;
+		pad.focus();
+		const chrome = cap.dataset.chrome;
+		const shiftLayer = (document.getElementById("klayer-optshift") as HTMLInputElement | null)?.checked === true;
+		if (cap.dataset.key !== undefined) {
+			ipa.sendKey({key: cap.dataset.key, option: true, shift: shiftLayer});
+			return;
+		}
+		if (chrome === "backspace") { ipa.backspace(); return; }
+		if (chrome === "option") (document.getElementById("klayer-opt") as HTMLInputElement).checked = true;
+		if (chrome === "shift") (document.getElementById("klayer-optshift") as HTMLInputElement).checked = true;
+	});
+}
