@@ -67,6 +67,14 @@ export const KB_ROWS: PhysKey[][] = [
  *  stacked layers — a faint carrier ring behind, the mark itself in full ink
  *  riding an invisible base in front — so the MARK is the figure and the
  *  carrier a whisper. Other spacing glyphs stand alone. */
+// The ⇧ plane's literal characters — what a shifted key EMITS when it isn't
+// transforming: uppercase letters, the digit symbols, shifted punctuation.
+const SHIFT_PLANE: Record<string, string> = {
+	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&",
+	"8": "*", "9": "(", "0": ")", "`": "~", "-": "_", "=": "+",
+	"[": "{", "]": "}", "\\": "|", ";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
+};
+
 function shown(glyph: string, type: string) {
 	if (type === "combining" || glyph === "˞") {
 		return jsx`<span class="ring">◌</span><span class="ink">${"\u00A0" + glyph}</span>`;
@@ -98,17 +106,19 @@ export function capBody(ch: string) {
 	const m = marks.get(ch);
 	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
 	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
-	// The ⇧ view shows what is per-key TRUE: which capitals are modifiers —
-	// the letter itself, its meaning in the tooltip. Products depend on the
-	// base, so they live on /keys and the chart, never invented per cap.
-	const mod = /[a-z]/.test(ch) ? modifiers[ch.toUpperCase()] : undefined;
+	// The ⇧ view is the truthful shift plane: what the key EMITS (uppercase
+	// letter, digit symbol, shifted punct) — with modifier capitals marked as
+	// potential transforms (they act on the glyph before the cursor; the
+	// meaning is in the tooltip, the products on /keys and the chart).
+	const isModifier = /[a-z]/.test(ch) && modifiers[ch.toUpperCase()] !== undefined;
+	const shifted = /[a-z]/.test(ch) ? ch.toUpperCase() : SHIFT_PLANE[ch];
 	const wide = sp !== undefined ? " wide" : "";
 	return jsx`<span class="b">${ch}</span>${
 		p === undefined ? null : jsx`<span class=${"h p ipa" + wide}>${p}</span>`
 	}${
 		s === undefined ? null : jsx`<span class=${"h s ipa" + wide}>${s}</span>`
 	}${
-		mod === undefined ? null : jsx`<span class="h t">${ch.toUpperCase()}</span>`
+		shifted === undefined ? null : jsx`<span class=${"h t" + (isModifier ? " mod" : "")}>${shifted}</span>`
 	}`;
 }
 
@@ -162,12 +172,13 @@ export function KeyboardRef() {
 					</div>`)}
 			</div>
 			<div class="layers" hidden>
-				<input type="radio" name="klayer" id="klayer-opt" checked />
+				<input type="radio" name="klayer" id="klayer-base" checked />
+				<input type="radio" name="klayer" id="klayer-opt" />
 				<input type="radio" name="klayer" id="klayer-optshift" />
 				<input type="radio" name="klayer" id="klayer-shift" />
 			</div>
 			<div class="kcaption">
-				<span>hold — or click — <kbd>⌥</kbd> / <kbd>⌥⇧</kbd> / <kbd>⇧</kbd> to switch layers · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
+				<span>hold — or click — <kbd>⌥</kbd> / <kbd>⌥⇧</kbd> / <kbd>⇧</kbd> to see each layer · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
 			</div>
 		</div>`;
 }

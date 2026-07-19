@@ -47,18 +47,23 @@
 .kbd--ref .cap.chrome { opacity: .55; }
 .kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .7rem;
 	color: var(--dim); font-size: .8rem; flex-wrap: wrap; }
-/* the chord caps are the visible layer state */
+/* the chord caps light only when their layer is engaged; base = nothing lit */
 .kbd:has(#klayer-opt:checked) .cap.ck[data-chrome="option"],
 .kbd:has(#klayer-optshift:checked) .cap.ck.chord,
 .kbd:has(#klayer-shift:checked) .cap.ck[data-chrome="shift"] {
 	color: #fff; background: var(--accent);
 }
+/* base view: the resting board is just a keyboard — bare chars centered */
+.kbd:has(#klayer-base:checked) .cap .b {
+	position: static; grid-area: 1 / 1; font-size: 1rem; color: var(--fg); opacity: .8;
+}
 .kbd--ref .cap .h { display: none; }
 .kbd:has(#klayer-opt:checked) .cap .h.p { display: block; }
 .kbd:has(#klayer-optshift:checked) .cap .h.s { display: block; }
-/* the ⇧ layer: the modifier capitals themselves, meanings on hover */
+/* the ⇧ layer: the emitted character; modifier capitals marked as transforms */
 .kbd:has(#klayer-shift:checked) .cap .h.t { display: block; }
-.cap .h.t { font: 600 1.1rem ui-monospace, Menlo, monospace; color: var(--fg); }
+.cap .h.t { font: 500 1.15rem ui-monospace, Menlo, monospace; color: var(--fg); }
+.cap .h.t.mod { color: var(--accent); font-weight: 700; }
 
 /* --- drill: bare chars, functional chrome, states ------------------------- */
 .kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; padding: 0; }

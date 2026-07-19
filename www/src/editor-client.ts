@@ -67,17 +67,18 @@ const optRadio = document.getElementById("klayer-opt") as HTMLInputElement | nul
 const shiftRadio = document.getElementById("klayer-optshift") as HTMLInputElement | null;
 if (optRadio !== null && shiftRadio !== null) {
 	const shiftOnlyRadio = document.getElementById("klayer-shift") as HTMLInputElement;
-	let chosen: HTMLInputElement = optRadio;
+	const baseRadio = document.getElementById("klayer-base") as HTMLInputElement;
+	let chosen: HTMLInputElement = baseRadio;
 	const sync = (e: KeyboardEvent) => {
 		if (e.altKey) {
 			(e.shiftKey ? shiftRadio : optRadio).checked = true;
-		} else if (e.shiftKey && e.type === "keydown") {
+		} else if (e.shiftKey) {
 			shiftOnlyRadio.checked = true;
 		} else {
 			chosen.checked = true;
 		}
 	};
-	for (const r of [optRadio, shiftRadio, shiftOnlyRadio]) {
+	for (const r of [baseRadio, optRadio, shiftRadio, shiftOnlyRadio]) {
 		r.addEventListener("change", () => { if (r.checked) chosen = r; });
 	}
 	window.addEventListener("keydown", sync);
@@ -96,25 +97,31 @@ if (board !== null && pad !== null) {
 		if (cap === null) return;
 		pad.focus();
 		const chrome = cap.dataset.chrome;
-		const optShift = (document.getElementById("klayer-optshift") as HTMLInputElement | null)?.checked === true;
-		const shiftOnly = (document.getElementById("klayer-shift") as HTMLInputElement | null)?.checked === true;
+		const radioOf = (id: string) => document.getElementById(id) as HTMLInputElement;
 		if (cap.dataset.key !== undefined) {
-			// ⇧ view: the click is the transforming modifier (needs a glyph before
-			// the caret); ⌥ views: the click is the mark chord.
-			ipa.sendKey(shiftOnly
-				? {key: cap.dataset.key, shift: true}
-				: {key: cap.dataset.key, option: true, shift: optShift});
+			// A click types the visible layer: base char, the ⇧ plane
+			// (transforms when a glyph precedes, else the literal), or the
+			// mark chords.
+			const k = cap.dataset.key;
+			ipa.sendKey(
+				radioOf("klayer-base").checked ? {key: k} :
+				radioOf("klayer-shift").checked ? {key: k, shift: true} :
+				{key: k, option: true, shift: radioOf("klayer-optshift").checked});
 			return;
 		}
 		if (chrome === "backspace") { ipa.backspace(); return; }
-		// The chord caps are the layer switch: ⌥ → marks, ⇧ → modifiers, and
-		// clicking the second of the pair combines them (⌥ view + ⇧ → ⌥⇧).
-		const radio = (id: string) => document.getElementById(id) as HTMLInputElement;
+		// The chord caps toggle their layer lock: ⌥ ⇄ marks, ⇧ ⇄ the shift
+		// plane, the second of the pair combines (⌥ view + ⇧ click = ⌥⇧);
+		// clicking a lit chord returns to base.
 		if (chrome === "option") {
-			radio(radio("klayer-shift").checked ? "klayer-optshift" : "klayer-opt").checked = true;
+			radioOf(
+				radioOf("klayer-opt").checked || radioOf("klayer-optshift").checked ? "klayer-base" :
+				radioOf("klayer-shift").checked ? "klayer-optshift" : "klayer-opt").checked = true;
 		}
 		if (chrome === "shift") {
-			radio(radio("klayer-opt").checked ? "klayer-optshift" : "klayer-shift").checked = true;
+			radioOf(
+				radioOf("klayer-shift").checked || radioOf("klayer-optshift").checked ? "klayer-base" :
+				radioOf("klayer-opt").checked ? "klayer-optshift" : "klayer-shift").checked = true;
 		}
 	});
 }
