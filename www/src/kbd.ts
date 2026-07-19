@@ -1,10 +1,14 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 
-// THE keyboard — the one board every surface renders. /type shows it as a
-// reference (marks emphasized, names in tooltips); /learn renders the same
-// caps interactively (bare char emphasized, hot/armed states). One markup,
-// one stylesheet (kbd.css); modes are CSS emphasis, not separate keyboards.
+// THE keyboard — one component, real ANSI geometry, never improvised.
+// Unit widths are the physical standard (quarter-key grid, 15u per row):
+//   `1234567890-=  ⌫2u · tab1.5u qwertyuiop[]\\1.5u · caps1.75u …' ⏎2.25u ·
+//   ⇧2.25u zxcvbnm,./ ⇧2.75u · fn ⌃ ⌥ ⌘1.25u ␣(fill) ⌘1.25u ⌥
+// Surfaces: /type renders it as reference (.kbd--ref: ⌥/⌥⇧ layer toggle,
+// tooltips, chrome inert); /learn renders the same board as the drill
+// (.kbd--drill: bare chars, hot/armed states, functional ⇧ ⌥ ⌫ ␣; when ⌥ is
+// armed the caps show the ⌥ layer — Keyboard Viewer's own convention).
 
 interface MarkE {
 	opt: string; mark: string; type: string; double?: string; name?: string;
@@ -15,11 +19,44 @@ const modifiers = spec.modifiers as Record<string, string>;
 const quotes = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
 const quad = quotes.locales[quotes.default];
 
-export const KB_ROWS: [string, number][] = [
-	["`1234567890-=", 0],
-	["qwertyuiop[]\\", 1.5],
-	["asdfghjkl;'", 1.85],
-	["zxcvbnm,./", 2.4],
+/** A physical key: a typing key (`ch`) or chrome (`label`), `w` in key units. */
+export interface PhysKey {
+	ch?: string;
+	label?: string;
+	/** chrome id for drill wiring: shift/backspace/option/space/… */
+	chrome?: string;
+	w: number;
+}
+
+export const KB_ROWS: PhysKey[][] = [
+	[
+		...[..."`1234567890-="].map((ch) => ({ch, w: 1})),
+		{label: "⌫", chrome: "backspace", w: 2},
+	],
+	[
+		{label: "tab", chrome: "tab", w: 1.5},
+		...[..."qwertyuiop[]"].map((ch) => ({ch, w: 1})),
+		{ch: "\\", w: 1.5},
+	],
+	[
+		{label: "caps", chrome: "caps", w: 1.75},
+		...[..."asdfghjkl;'"].map((ch) => ({ch, w: 1})),
+		{label: "⏎", chrome: "enter", w: 2.25},
+	],
+	[
+		{label: "⇧", chrome: "shift", w: 2.25},
+		...[..."zxcvbnm,./"].map((ch) => ({ch, w: 1})),
+		{label: "⇧", chrome: "shift", w: 2.75},
+	],
+	[
+		{label: "fn", chrome: "fn", w: 1},
+		{label: "⌃", chrome: "control", w: 1},
+		{label: "⌥", chrome: "option", w: 1},
+		{label: "⌘", chrome: "command", w: 1.25},
+		{label: "", chrome: "space", w: 6.5},
+		{label: "⌘", chrome: "command", w: 1.25},
+		{label: "⌥", chrome: "option", w: 1},
+	],
 ];
 
 const shown = (glyph: string, type: string) => (type === "combining" ? "◌" + glyph : glyph);
@@ -31,7 +68,6 @@ const SPECIALS: Record<string, {main: string; second: string; title: string}> = 
 	"]": {main: quad[2], second: quad[3], title: `⌥] opening secondary quote · ⌥⇧] closing`},
 };
 
-/** A key's tooltip: its ⌥ tenants plus, for a modifier letter, its ⇧ meaning. */
 export function capTitle(ch: string): string {
 	const mod = /[a-z]/.test(ch) ? modifiers[ch.toUpperCase()] : undefined;
 	const modTitle = mod === undefined ? "" : ` — ⇧${ch.toUpperCase()} modifier: ${mod}`;
@@ -42,34 +78,40 @@ export function capTitle(ch: string): string {
 	return (ch === "-" ? "⌥- reserved — the host's dashes pass through" : `⌥${ch} passes to the host`) + modTitle;
 }
 
-/** The inside of a cap: bare char plus the Option-layer tenants. Same body in
- *  both modes; the mode class decides what is emphasized. */
+/** A typing cap's body: bare char in the corner, ⌥ and ⌥⇧ glyphs as layers.
+ *  Which layer is visible is the board's concern (mode + layer classes). */
 export function capBody(ch: string) {
 	const sp = SPECIALS[ch];
 	const m = marks.get(ch);
-	if (sp !== undefined) {
-		return jsx`<span class="b">${ch}</span>
-			<span class="h p ipa wide">${sp.main}</span><span class="h s ipa wide">${sp.second}</span>`;
-	}
-	if (m !== undefined) {
-		if (m.double === undefined) {
-			return jsx`<span class="b">${ch}</span><span class="h p ipa solo">${shown(m.mark, m.type)}</span>`;
-		}
-		return jsx`<span class="b">${ch}</span>
-			<span class="h p ipa">${shown(m.mark, m.type)}</span>
-			<span class="h s ipa">${shown(m.double, m.type)}</span>`;
-	}
-	return jsx`<span class="b solo">${ch}</span>`;
+	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
+	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
+	const wide = sp !== undefined ? " wide" : "";
+	return jsx`<span class="b">${ch}</span>${
+		p === undefined ? null : jsx`<span class=${"h p ipa" + wide}>${p}</span>`
+	}${
+		s === undefined ? null : jsx`<span class=${"h s ipa" + wide}>${s}</span>`
+	}`;
 }
 
-/** The reference board: static caps, tooltips, the legend. */
+const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
+
+/** The reference board on /type: ⌥ layer by default, ⌥⇧ on the toggle. */
 export function KeyboardRef() {
 	return jsx`
 		<div class="kbd kbd--ref">
-			${KB_ROWS.map(([chars, indent]) => jsx`
-				<div class="krow" style=${`padding-left:${indent}rem`}>
-					${[...chars].map((ch) => jsx`<div class="cap" title=${capTitle(ch)}>${capBody(ch)}</div>`)}
+			<div class="layers" role="tablist" aria-label="Keyboard layer">
+				<input type="radio" name="klayer" id="klayer-opt" checked />
+				<label for="klayer-opt">⌥ marks</label>
+				<input type="radio" name="klayer" id="klayer-optshift" />
+				<label for="klayer-optshift">⌥⇧ forms</label>
+			</div>
+			${KB_ROWS.map((row) => jsx`
+				<div class="krow">
+					${row.map((k) =>
+						k.ch !== undefined
+							? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
+							: jsx`<div class="cap chrome" style=${capStyle(k)}>${k.label}</div>`)}
 				</div>`)}
-			<p class="klegend">Each key: bare char, then <span class="p">⌥ mark</span> · <span class="s">⌥⇧ form</span> — hover for names. Combining marks (drawn on ◌) are dead keys: chord first, then the base. The <kbd>⇧</kbd>-capital modifiers live in the tooltips and on <a href="/keys">/keys</a>.</p>
+			<p class="klegend">The Option layer, on the board it lives on — switch to the <span class="ipa">⌥⇧</span> forms above; hover any key for names. Combining marks (drawn on ◌) are dead keys: chord first, then the base. The <kbd>⇧</kbd>-capital modifiers live in the tooltips and on <a href="/keys">/keys</a>.</p>
 		</div>`;
 }

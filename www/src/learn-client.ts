@@ -191,29 +191,39 @@ function Drill() {
 
 function Keyboard() {
 	const nk = nextKeystroke(); // the key that should light next
-	// THE board (kbd.ts) rendered interactively: same caps as /type's
-	// reference, plus chrome (⇧ ⌫ ⌥ space) and the drill's hot/armed states.
-	const chrome = (txt: string, cls: string, on: () => void) => jsx`
-		<button class=${"cap chrome " + cls}
-			onmousedown=${(e: Event) => e.preventDefault()}
-			onclick=${(e: Event) => { e.preventDefault(); on(); }}>${txt}</button>`;
-	const key = (ch: string) => jsx`
-		<button class=${"cap" + (nk !== null && nk.key === ch ? " hot" : "")} title=${capTitle(ch)}
+	// THE board (kbd.ts), real ANSI geometry, rendered interactively. Chrome:
+	// ⇧ ⌥ toggle their armed state, ⌫ and space act, the rest sit inert.
+	const capStyle = (w: number) => `grid-column: span ${Math.round(w * 4)}`;
+	const mod = (armed: boolean, need: boolean) => (armed ? " armed" : "") + (need ? " need" : "");
+	const chromeCap = (k: {label?: string; chrome?: string; w: number}) => {
+		const c = k.chrome!;
+		const act =
+			c === "shift" ? () => { shiftArmed = !shiftArmed; render(); } :
+			c === "option" ? () => { optArmed = !optArmed; render(); } :
+			c === "backspace" ? doBackspace :
+			c === "space" ? () => tapChar(" ") : null;
+		const label =
+			c === "shift" ? displayKeys("⇧") :
+			c === "option" ? displayKeys("⌥") : k.label;
+		const cls = "cap chrome" + (act === null ? " inert" : "") +
+			(c === "shift" ? mod(shiftArmed, nk?.shift === true) :
+			 c === "option" ? mod(optArmed, nk?.option === true) :
+			 c === "space" && nk !== null && nk.key === " " ? " hot" : "");
+		return jsx`
+			<button class=${cls} style=${capStyle(k.w)} disabled=${act === null}
+				onmousedown=${(e: Event) => e.preventDefault()}
+				onclick=${(e: Event) => { e.preventDefault(); act?.(); }}>${label}</button>`;
+	};
+	const key = (ch: string, w: number) => jsx`
+		<button class=${"cap" + (nk !== null && nk.key === ch ? " hot" : "")} style=${capStyle(w)} title=${capTitle(ch)}
 			onmousedown=${(e: Event) => e.preventDefault()}
 			onclick=${(e: Event) => { e.preventDefault(); tapChar(ch); }}>${capBody(ch)}</button>`;
-	const mod = (armed: boolean, need: boolean) => (armed ? " armed" : "") + (need ? " need" : "");
 
 	return jsx`
-		${KB_ROWS.map(([chars], ri) => jsx`
+		${KB_ROWS.map((row) => jsx`
 			<div class="krow">
-				${ri === 3 ? chrome(displayKeys("⇧"), "wide2" + mod(shiftArmed, nk?.shift === true), () => { shiftArmed = !shiftArmed; render(); }) : null}
-				${[...chars].map((ch) => key(ch))}
-				${ri === 3 ? chrome("⌫", "wide2", doBackspace) : null}
-			</div>`)}
-		<div class="krow">
-			${chrome(displayKeys("⌥"), "wide2" + mod(optArmed, nk?.option === true), () => { optArmed = !optArmed; render(); })}
-			${chrome("space", "space" + (nk !== null && nk.key === " " ? " hot" : ""), () => tapChar(" "))}
-		</div>`;
+				${row.map((k) => (k.ch !== undefined ? key(k.ch, k.w) : chromeCap(k)))}
+			</div>`)}`;
 }
 
 /** The lesson index: every lesson in the course, visible at once. The one you're
@@ -248,7 +258,15 @@ function LessonIndex() {
 // ---------------------------------------------------------------- render
 function render() {
 	if (drillEl) renderer.render(jsx`<${Drill} />`, drillEl);
-	if (kbdEl) renderer.render(jsx`<div class="kbd kbd--drill"><${Keyboard} /></div>`, kbdEl);
+	if (kbdEl) {
+		// Keyboard Viewer convention: an armed/needed ⌥ flips the board to the
+		// ⌥ layer (⌥⇧ when shift rides along).
+		const nk2 = nextKeystroke();
+		const optLayer = optArmed || nk2?.option === true;
+		const shiftLayer = shiftArmed || (nk2?.option === true && nk2?.shift === true);
+		const cls = "kbd kbd--drill" + (optLayer ? " layer-opt" : "") + (optLayer && shiftLayer ? " layer-shift" : "");
+		renderer.render(jsx`<div class=${cls}><${Keyboard} /></div>`, kbdEl);
+	}
 	if (indexEl) renderer.render(jsx`<${LessonIndex} />`, indexEl);
 	syncNav();
 }

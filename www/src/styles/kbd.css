@@ -1,54 +1,72 @@
-/* THE keyboard — one board, one stylesheet. Modes: .kbd--ref (reference,
-   marks emphasized) and .kbd--drill (interactive, bare char emphasized). */
+/* THE keyboard — real ANSI geometry on a quarter-key grid (60 columns/row).
+   .kbd--ref: /type reference — one visible layer (⌥ default, ⌥⇧ via toggle),
+   chrome inert. .kbd--drill: /learn — bare chars, hot/armed states; when ⌥ is
+   armed the board shows the ⌥ layer (Keyboard Viewer's convention). */
 .kbd { margin: 1.25rem 0 0; user-select: none; }
-.krow { display: flex; gap: .3rem; margin-top: .3rem; }
+.krow { display: grid; grid-template-columns: repeat(60, 1fr); gap: .28rem; margin-top: .28rem; }
 .cap {
-	flex: 1 1 0; min-width: 0; aspect-ratio: 1 / 1.05; position: relative;
-	display: grid; grid-template-columns: 1fr 1fr; align-items: end;
-	padding-bottom: .3rem;
+	position: relative; display: grid; place-items: center; min-width: 0;
+	height: clamp(2.6rem, 6vw, 3.6rem);
 	border: 1px solid var(--kbd-line); border-bottom-width: 2.5px;
-	background: var(--kbd-bg); border-radius: 8px;
+	background: var(--kbd-bg); border-radius: 7px;
 	transition: border-color .12s, background .12s, color .12s, box-shadow .12s, transform .08s;
 }
-.kbd--ref .cap { cursor: help; }
-.kbd--ref .cap:hover { border-color: var(--accent); }
 .cap .b {
-	position: absolute; top: .25rem; left: .38rem;
-	font: .68rem ui-monospace, Menlo, monospace; color: var(--dim);
+	position: absolute; top: .22rem; left: .35rem;
+	font: .66rem ui-monospace, Menlo, monospace; color: var(--dim);
 }
-.cap .h { justify-self: center; font-size: 1.55rem; line-height: 1.1; }
-.cap .h.p { color: var(--accent); }
-.cap .h.s { color: var(--fg); opacity: .5; }
-.cap .h.solo { grid-column: 1 / -1; }
-.cap .h.wide { font-size: 1.05rem; }
-.cap .b.solo { position: static; grid-column: 1 / -1; justify-self: center; align-self: center;
-	font-size: 1rem; color: var(--fg); opacity: .55; }
+.cap .h { grid-area: 1 / 1; font-size: clamp(1.05rem, 2.6vw, 1.6rem); line-height: 1.1; color: var(--accent); }
+.cap .h.wide { font-size: clamp(.8rem, 1.9vw, 1.15rem); }
+.cap.chrome {
+	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
+}
 
-/* Drill mode: the same caps as buttons — bare char forward, marks receded. */
-.kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; }
+/* --- reference: layer toggle, one glyph per cap --------------------------- */
+.kbd--ref .cap:not(.chrome) { cursor: help; }
+.kbd--ref .cap:not(.chrome):hover { border-color: var(--accent); }
+.kbd--ref .cap.chrome { opacity: .55; }
+.layers { display: flex; gap: .35rem; margin-bottom: .75rem; }
+.layers input { position: absolute; opacity: 0; pointer-events: none; }
+.layers label {
+	font: .8rem ui-monospace, Menlo, monospace; color: var(--dim);
+	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .9rem;
+	cursor: pointer; transition: color .12s, border-color .12s, background .12s;
+}
+.layers label:hover { color: var(--accent); border-color: var(--accent); }
+.kbd:has(#klayer-opt:checked) label[for="klayer-opt"],
+.kbd:has(#klayer-optshift:checked) label[for="klayer-optshift"] {
+	color: #fff; background: var(--accent); border-color: var(--accent);
+}
+.kbd--ref .cap .h { display: none; }
+.kbd:has(#klayer-opt:checked) .cap .h.p { display: block; }
+.kbd:has(#klayer-optshift:checked) .cap .h.s { display: block; }
+
+/* --- drill: bare chars, functional chrome, states ------------------------- */
+.kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; padding: 0; }
 .kbd--drill .cap:active { transform: translateY(1px); }
-.kbd--drill .cap .b { font-size: .95rem; color: var(--fg); }
-.kbd--drill .cap .h { font-size: .95rem; opacity: .45; }
-.kbd--drill .cap.chrome { aspect-ratio: auto; display: grid; place-items: center;
-	font-family: ui-monospace, Menlo, monospace; font-size: .85rem; }
-.kbd--drill .cap.wide2 { flex: 1.5 1 0; }
-.kbd--drill .cap.space { flex: 6 1 0; }
-/* armed = a modifier the visitor toggled on (quiet outline); hot/need = the
-   next keystroke lights SOLID — the chord is one gesture, both halves glow. */
+.kbd--drill .cap .b { position: static; grid-area: 1 / 1; font-size: .95rem; color: var(--fg); }
+.kbd--drill .cap .h { display: none; }
+.kbd--drill .cap.chrome { cursor: pointer; color: var(--fg); opacity: 1; }
+.kbd--drill .cap.chrome.inert { cursor: default; opacity: .4; }
+/* Keyboard Viewer convention: with ⌥ armed, the board shows the ⌥ layer. */
+.kbd--drill.layer-opt .cap .b { position: absolute; top: .22rem; left: .35rem; font-size: .66rem; color: var(--dim); }
+.kbd--drill.layer-opt .cap .h.p { display: block; font-size: 1.1rem; }
+.kbd--drill.layer-opt.layer-shift .cap .h.p { display: none; }
+.kbd--drill.layer-opt.layer-shift .cap .h.s { display: block; font-size: 1.1rem; }
 .kbd--drill .cap.armed { border-color: var(--accent); color: var(--accent); }
+.kbd--drill .cap.armed.chrome { color: var(--accent); }
 .kbd--drill .cap.hot, .kbd--drill .cap.need {
-	background: var(--accent); border-color: var(--accent); color: #fff;
+	background: var(--accent); border-color: var(--accent);
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 .kbd--drill .cap.hot .b, .kbd--drill .cap.need .b,
-.kbd--drill .cap.hot .h, .kbd--drill .cap.need .h { color: #fff; opacity: 1; }
-[data-keymode="pc"] .kbd--drill .cap.chrome { font-size: .72rem; }
+.kbd--drill .cap.hot .h, .kbd--drill .cap.need .h { color: #fff; }
+.kbd--drill .cap.hot.chrome, .kbd--drill .cap.need.chrome { color: #fff; }
+[data-keymode="pc"] .kbd--drill .cap.chrome { font-size: .62rem; }
 
 .klegend { color: var(--dim); font-size: .82rem; margin-top: .8rem; }
-.klegend .p { color: var(--accent); }
-.klegend .s { opacity: .6; }
 @media (max-width: 40rem) {
-	.cap .h { font-size: 1.05rem; }
-	.cap .h.wide { font-size: .8rem; }
-	.cap .b { font-size: .55rem; }
+	.cap { height: 2.1rem; border-radius: 5px; }
+	.cap .b { font-size: .5rem; }
+	.krow { gap: .18rem; }
 }
