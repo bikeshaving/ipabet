@@ -115,15 +115,20 @@ export function KeyboardRef() {
 			chorded ? k.label : null
 		}</div>`;
 	};
+	// Compact: only the rows that carry marks — the modifier row's sole cargo
+	// (the ⌥ prints) is the caption's job.
+	const rows = KB_ROWS.filter((row) => row.some((k) => k.ch !== undefined));
 	return jsx`
 		<div class="kbd kbd--ref" id="kbdref">
-			${KB_ROWS.map((row) => jsx`
-				<div class="krow">
-					${row.map((k) =>
-						k.ch !== undefined
-							? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
-							: ghost(k))}
-				</div>`)}
+			<div class="plate">
+				${rows.map((row) => jsx`
+					<div class="krow">
+						${row.map((k) =>
+							k.ch !== undefined
+								? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
+								: ghost(k))}
+					</div>`)}
+			</div>
 			<div class="kcaption">
 				<div class="layers" role="tablist" aria-label="Keyboard layer">
 					<input type="radio" name="klayer" id="klayer-opt" checked />

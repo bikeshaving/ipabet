@@ -5,12 +5,13 @@
 .kbd { margin: 1.25rem 0 0; user-select: none; }
 /* the reference sits on a PLATE: one solid surface, caps floating on it in
    true positions, chrome as bare plate — the silhouette comes from the plate,
-   not from ghost buttons. */
-.kbd--ref { background: var(--kbd-bg); padding: .75rem; border-radius: 14px; }
-.krow { display: grid; grid-template-columns: repeat(60, 1fr); gap: .28rem; margin-top: .28rem; }
+   not from ghost buttons. Compact: the plate hugs the four content rows. */
+.kbd--ref .plate { background: var(--kbd-bg); padding: .55rem; border-radius: 12px; }
+.krow { display: grid; grid-template-columns: repeat(60, 1fr); gap: .24rem; }
+.krow + .krow { margin-top: .24rem; }
 .cap {
 	position: relative; display: grid; place-items: center; min-width: 0;
-	height: clamp(3rem, 6.8vw, 4.1rem);
+	height: clamp(2.6rem, 5.9vw, 3.4rem);
 	border: none;
 	background: var(--card, #fff); border-radius: 7px;
 	box-shadow: 0 1px 2px color-mix(in srgb, var(--fg) 12%, transparent);
@@ -41,8 +42,8 @@
 .kbd--ref .cap:not(.chrome) { cursor: help; }
 .kbd--ref .cap:not(.chrome):hover { border-color: var(--accent); }
 .kbd--ref .cap.chrome { opacity: .55; }
-.kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .8rem;
-	color: var(--dim); font-size: .8rem; }
+.kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .7rem;
+	color: var(--dim); font-size: .8rem; flex-wrap: wrap; }
 .layers { display: flex; gap: .3rem; }
 .layers input { position: absolute; opacity: 0; pointer-events: none; }
 .layers label {
