@@ -44,13 +44,12 @@ function afterChange(pendingText: string) {
 }
 
 const ipa = bindIPAInput(ta, afterChange, () => {
-	// The native IME took the field — say so where the pending chip lives.
-	const bar = document.getElementById("count");
-	if (bar !== null) {
-		const note = document.createElement("span");
-		note.id = "engmode";
-		note.textContent = "native IME detected — the page engine stood down";
-		bar.after(note);
+	// The native IME took the field. Silence is the feature — the only trace
+	// is the keys pill quietly telling the truth.
+	const pill = document.getElementById("keymode-pill");
+	if (pill !== null) {
+		pill.textContent = "keys: native IME";
+		pill.title = "The IPAbet input method is active — this page's own engine is off";
 	}
 });
 
