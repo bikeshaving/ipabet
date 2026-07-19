@@ -43,7 +43,16 @@ function afterChange(pendingText: string) {
 	save();
 }
 
-const ipa = bindIPAInput(ta, afterChange);
+const ipa = bindIPAInput(ta, afterChange, () => {
+	// The native IME took the field — say so where the pending chip lives.
+	const bar = document.getElementById("count");
+	if (bar !== null) {
+		const note = document.createElement("span");
+		note.id = "engmode";
+		note.textContent = "native IME detected — the page engine stood down";
+		bar.after(note);
+	}
+});
 
 copyBtn.addEventListener("click", async () => {
 	try {

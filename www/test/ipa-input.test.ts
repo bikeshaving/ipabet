@@ -56,7 +56,7 @@ function setup() {
 		mods: {shift?: boolean; option?: boolean; isComposing?: boolean; keyCode?: number;
 			capsLock?: boolean; control?: boolean} = {},
 	) => {
-		f.dispatch("keydown", ev({
+		const e = f.dispatch("keydown", ev({
 			...KEY[ch],
 			shiftKey: !!mods.shift,
 			altKey: !!mods.option,
@@ -67,6 +67,7 @@ function setup() {
 		}));
 		// the caret always trails the text in these sequences
 		f.selectionStart = f.selectionEnd = f.value.length;
+		return e;
 	};
 	/** A soft keyboard: no usable e.code, so only beforeinput carries the character. */
 	const tap = (data: string) => {
@@ -283,3 +284,26 @@ test("a plain ⌃ chord is still the host's (leader keys, shortcuts)", () => {
 	expect(f.value).toBe("");         // ^b never reached the engine…
 	expect(e.defaultPrevented).toBe(false); // …and tmux still gets it
 });
+
+// The native-IME standdown: at the first signature of a system input method
+// acting on the field, the page engine stops consuming keys entirely.
+test("a composition stands the engine down — keys cede to the native path", () => {
+	const {f, press} = setup();
+	f.dispatch("compositionstart", ev({}));
+	// After standdown the binding neither consumes keydowns nor edits the
+	// field — in a browser, the native input method inserts instead.
+	expect(press("s").defaultPrevented).toBe(false);
+	expect(press("h", {shift: true}).defaultPrevented).toBe(false);
+	expect(f.value).toBe("");
+});
+
+test("a replacement insertion (macOS IME signature) stands the engine down", () => {
+	const {f, press} = setup();
+	press("s");
+	expect(f.value).toBe("s"); // page engine alive until the signature
+	f.dispatch("beforeinput", ev({inputType: "insertReplacementText", data: "ʃ"}));
+	// With s before the caret, a live engine would transform ⇧H → ʃ. It must not.
+	expect(press("h", {shift: true}).defaultPrevented).toBe(false);
+	expect(f.value).toBe("s");
+});
+

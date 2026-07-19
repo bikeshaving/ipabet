@@ -27,3 +27,6 @@
 	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
 	border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
 #pending-chip .g { font-family: "Charis SIL","Doulos SIL",serif; font-size: 1rem; color: var(--fg); }
+
+#engmode { color: var(--dim); font: .72rem ui-monospace, Menlo, monospace;
+	border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }

@@ -99,8 +99,27 @@ export interface IPAInput {
 /** Wire a real text field to the engine. The field holds the text, so the caret,
  *  selection, editing and the mobile keyboard come from the browser. `onChange`
  *  fires after every engine edit, carrying the pending accent to display. */
-export function bindIPAInput(el: Field, onChange: (pendingText: string) => void = () => {}): IPAInput {
+export function bindIPAInput(
+	el: Field,
+	onChange: (pendingText: string) => void = () => {},
+	onStanddown: () => void = () => {},
+): IPAInput {
 	let pending: Pending = [];
+	// NATIVE-IME STANDDOWN — two engines over one field is a race the user
+	// always loses. At the first signature of a system IME acting here (a
+	// composition, a replacement insertion, or unconsumed non-ASCII text
+	// arriving), this binding stands down for good: keys stop being consumed
+	// and the native input method owns the field. The page engine is for
+	// visitors who don't have the real IME.
+	let stood = false;
+	const standDown = () => {
+		if (stood) return;
+		stood = true;
+		pending = [];
+		onChange("");
+		onStanddown();
+	};
+	el.addEventListener("compositionstart", standDown);
 	// The shift-chain: hold ⇧ across a run and each capital is a base for the next
 	// modifier (s⇧H⇧I⇧H → ʃɪ); RELEASE ⇧ and the chain breaks, so the next capitals
 	// are literal or a fresh digraph (⇧A⇧E → Æ). The engine owns the rule but not
@@ -165,6 +184,7 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 	el.addEventListener("keydown", (ev) => {
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
+		if (stood) return;
 		// ⌘ chords are the host's (copy, paste, undo). ⌃ chords are too — EXCEPT
 		// ⌃⇧<letter>, the literal-capital escape, which is the only way to type a
 		// capital that would otherwise be eaten by the ⇧-modifier ("GitHub" → Giθub).
@@ -190,10 +210,23 @@ export function bindIPAInput(el: Field, onChange: (pendingText: string) => void 
 	});
 
 	el.addEventListener("beforeinput", (e) => {
-		if (consumed) { consumed = false; return; }
 		const ie = e as InputEvent;
+		// A replacement insertion is the macOS replace-style IME's signature —
+		// the native IPAbet transforming the field. Stand down.
+		if (ie.inputType === "insertReplacementText" || ie.inputType === "insertCompositionText") {
+			standDown();
+			return;
+		}
+		if (stood) return;
+		if (consumed) { consumed = false; return; }
 		if (ie.inputType === "deleteContentBackward") { engineBackspace(e); return; }
 		if (ie.inputType.startsWith("insert") && ie.data) {
+			// Unconsumed non-ASCII arriving means something else is composing
+			// text into the field — an IME. Stand down and let it through.
+			if (ie.inputType === "insertText" && [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
+				standDown();
+				return;
+			}
 			const keys = [...ie.data].map(keyFromChar);
 			if (keys.some((k) => k === null)) return; // space, emoji, pasted text — leave it native
 			e.preventDefault();
