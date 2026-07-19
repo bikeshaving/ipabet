@@ -104,19 +104,17 @@ export function capBody(ch: string) {
 
 const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
 
-/** The reference board on /type: only the keys that carry marks. The chrome
- *  is elided — it answers nothing here — but the stagger it causes is kept:
- *  each row is indented by its real leading chrome width, so the geometry
- *  stays physical, just unfurnished. (The drill draws the full board; its
- *  chrome works.) ⌥ layer by default, ⌥⇧ on the toggle. */
+/** The reference board on /type: the full physical rectangle, with the
+ *  chrome GHOSTED — blank faint outlines that give the true silhouette while
+ *  spending no ink — except ⌥ and ⇧, the keys the chords actually hold,
+ *  which keep a quiet label. ⌥ layer by default, ⌥⇧ on the toggle. */
 export function KeyboardRef() {
-	const rows = KB_ROWS.map((row) => {
-		let indent = 0;
-		let i = 0;
-		while (i < row.length && row[i].ch === undefined) indent += row[i++].w;
-		const keys = row.slice(i).filter((k) => k.ch !== undefined);
-		return {indent, keys};
-	}).filter((r) => r.keys.length > 0);
+	const ghost = (k: PhysKey) => {
+		const chorded = k.chrome === "option" || k.chrome === "shift";
+		return jsx`<div class=${"cap ghost" + (chorded ? " chord" : "")} style=${capStyle(k)}>${
+			chorded ? k.label : null
+		}</div>`;
+	};
 	return jsx`
 		<div class="kbd kbd--ref">
 			<div class="layers" role="tablist" aria-label="Keyboard layer">
@@ -125,10 +123,12 @@ export function KeyboardRef() {
 				<input type="radio" name="klayer" id="klayer-optshift" />
 				<label for="klayer-optshift">⌥⇧ forms</label>
 			</div>
-			${rows.map(({indent, keys}) => jsx`
+			${KB_ROWS.map((row) => jsx`
 				<div class="krow">
-					${indent === 0 ? null : jsx`<div class="kgap" style=${`grid-column: span ${Math.round(indent * 4)}`}></div>`}
-					${keys.map((k) => jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch!)}>${capBody(k.ch!)}</div>`)}
+					${row.map((k) =>
+						k.ch !== undefined
+							? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
+							: ghost(k))}
 				</div>`)}
 			<p class="klegend">The Option layer, on the board it lives on — switch to the <span class="ipa">⌥⇧</span> forms above; hover any key for names. Combining marks (drawn on ◌) are dead keys: chord first, then the base. The <kbd>⇧</kbd>-capital modifiers live in the tooltips and on <a href="/keys">/keys</a>.</p>
 		</div>`;

@@ -26,6 +26,14 @@
 	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
 }
 
+/* ghosts: the chrome as silhouette — shape, no ink. The chord keys (⌥, ⇧)
+   keep a whisper of a label. */
+.cap.ghost { background: transparent; box-shadow: none;
+	border-color: color-mix(in srgb, var(--kbd-line) 55%, transparent); }
+.cap.ghost.chord { font: .72rem ui-monospace, Menlo, monospace;
+	color: var(--dim); opacity: .6; }
+.kbd:has(#klayer-optshift:checked) .cap.ghost.chord { opacity: .95; color: var(--accent); }
+
 /* --- reference: layer toggle, one glyph per cap --------------------------- */
 .kbd--ref .cap:not(.chrome) { cursor: help; }
 .kbd--ref .cap:not(.chrome):hover { border-color: var(--accent); }
