@@ -116,13 +116,7 @@ export function KeyboardRef() {
 		}</div>`;
 	};
 	return jsx`
-		<div class="kbd kbd--ref">
-			<div class="layers" role="tablist" aria-label="Keyboard layer">
-				<input type="radio" name="klayer" id="klayer-opt" checked />
-				<label for="klayer-opt">⌥ marks</label>
-				<input type="radio" name="klayer" id="klayer-optshift" />
-				<label for="klayer-optshift">⌥⇧ forms</label>
-			</div>
+		<div class="kbd kbd--ref" id="kbdref">
 			${KB_ROWS.map((row) => jsx`
 				<div class="krow">
 					${row.map((k) =>
@@ -130,6 +124,14 @@ export function KeyboardRef() {
 							? jsx`<div class="cap" style=${capStyle(k)} title=${capTitle(k.ch)}>${capBody(k.ch)}</div>`
 							: ghost(k))}
 				</div>`)}
-			<p class="klegend">The Option layer, on the board it lives on — switch to the <span class="ipa">⌥⇧</span> forms above; hover any key for names. Combining marks (drawn on ◌) are dead keys: chord first, then the base. The <kbd>⇧</kbd>-capital modifiers live in the tooltips and on <a href="/keys">/keys</a>.</p>
+			<div class="kcaption">
+				<div class="layers" role="tablist" aria-label="Keyboard layer">
+					<input type="radio" name="klayer" id="klayer-opt" checked />
+					<label for="klayer-opt">⌥</label>
+					<input type="radio" name="klayer" id="klayer-optshift" />
+					<label for="klayer-optshift">⌥⇧</label>
+				</div>
+				<span>hold the chord or switch here · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
+			</div>
 		</div>`;
 }

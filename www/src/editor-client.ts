@@ -60,3 +60,22 @@ clearBtn.addEventListener("click", () => {
 
 afterChange(ipa.pendingText());
 ta.focus();
+
+// The reference board follows the hands: holding ⌥ (or ⌥⇧) flips the visible
+// layer, exactly like Keyboard Viewer; releasing restores the radio's choice.
+const optRadio = document.getElementById("klayer-opt") as HTMLInputElement | null;
+const shiftRadio = document.getElementById("klayer-optshift") as HTMLInputElement | null;
+if (optRadio !== null && shiftRadio !== null) {
+	let chosen: "opt" | "optshift" = "opt";
+	const sync = (e: KeyboardEvent) => {
+		if (e.altKey) {
+			(e.shiftKey ? shiftRadio : optRadio).checked = true;
+		} else {
+			(chosen === "opt" ? optRadio : shiftRadio).checked = true;
+		}
+	};
+	optRadio.addEventListener("change", () => { chosen = "opt"; });
+	shiftRadio.addEventListener("change", () => { chosen = "optshift"; });
+	window.addEventListener("keydown", sync);
+	window.addEventListener("keyup", sync);
+}

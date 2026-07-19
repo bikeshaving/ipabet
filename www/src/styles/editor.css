@@ -1,6 +1,6 @@
 #pad { display: flex; flex-direction: column; gap: .9rem; margin: 1.5rem 0; }
 #ed {
-	width: 100%; min-height: 48vh; resize: vertical;
+	width: 100%; min-height: 10.5rem; resize: vertical;
 	background: var(--card); color: var(--fg);
 	border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem;
 	font-family: "Charis SIL","Doulos SIL","Times New Roman",serif;

@@ -28,8 +28,8 @@
 
 /* ghosts: the chrome as silhouette — shape, no ink. The chord keys (⌥, ⇧)
    keep a whisper of a label. */
-.cap.ghost { background: transparent; box-shadow: none;
-	border-color: color-mix(in srgb, var(--kbd-line) 55%, transparent); }
+.cap.ghost { box-shadow: none; border: none;
+	background: color-mix(in srgb, var(--kbd-bg) 45%, transparent); }
 .cap.ghost.chord { font: .72rem ui-monospace, Menlo, monospace;
 	color: var(--dim); opacity: .6; }
 .kbd:has(#klayer-optshift:checked) .cap.ghost.chord { opacity: .95; color: var(--accent); }
@@ -38,11 +38,13 @@
 .kbd--ref .cap:not(.chrome) { cursor: help; }
 .kbd--ref .cap:not(.chrome):hover { border-color: var(--accent); }
 .kbd--ref .cap.chrome { opacity: .55; }
-.layers { display: flex; gap: .35rem; margin-bottom: .75rem; }
+.kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .8rem;
+	color: var(--dim); font-size: .8rem; }
+.layers { display: flex; gap: .3rem; }
 .layers input { position: absolute; opacity: 0; pointer-events: none; }
 .layers label {
-	font: .8rem ui-monospace, Menlo, monospace; color: var(--dim);
-	border: 1px solid var(--line); border-radius: 999px; padding: .3rem .9rem;
+	font: .75rem ui-monospace, Menlo, monospace; color: var(--dim);
+	border: 1px solid var(--line); border-radius: 999px; padding: .22rem .7rem;
 	cursor: pointer; transition: color .12s, border-color .12s, background .12s;
 }
 .layers label:hover { color: var(--accent); border-color: var(--accent); }
