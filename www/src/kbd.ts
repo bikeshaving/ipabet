@@ -109,15 +109,24 @@ const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
  *  spending no ink — except ⌥ and ⇧, the keys the chords actually hold,
  *  which keep a quiet label. ⌥ layer by default, ⌥⇧ on the toggle. */
 export function KeyboardRef() {
-	const ghost = (k: PhysKey) => {
-		const chorded = k.chrome === "option" || k.chrome === "shift";
-		return jsx`<div class=${"cap ghost" + (chorded ? " chord" : "")} style=${capStyle(k)}>${
-			chorded ? k.label : null
-		}</div>`;
+	// Chrome with MEANING renders as real caps (with the meaning in the
+	// tooltip); the rest is bare plate.
+	const CHROME_TITLES: Record<string, string> = {
+		shift: "⇧ — the transforming modifier (⇧letter transforms the glyph before it); with ⌥, the second-form chord",
+		option: "⌥ — the mark chord: hold with a mark key, then type the base",
+		caps: "Caps Lock — a lock, not a modifier: letters type literal capitals and never transform",
+		backspace: "⌫ — peels a pending mark first, then native delete · ⌃⌫ unconverts the transform before the cursor",
+		tab: "passes through untouched",
+		enter: "passes through untouched",
 	};
-	// Compact: only the rows that carry marks — the modifier row's sole cargo
-	// (the ⌥ prints) is the caption's job.
-	const rows = KB_ROWS.filter((row) => row.some((k) => k.ch !== undefined));
+	const ghost = (k: PhysKey) => {
+		const title = CHROME_TITLES[k.chrome ?? ""];
+		if (title === undefined) return jsx`<div class="cap ghost" style=${capStyle(k)}></div>`;
+		const chorded = k.chrome === "option" || k.chrome === "shift";
+		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title}>${k.label}</div>`;
+	};
+	// Every row: the bottom row carries the ⌥ chord keys.
+	const rows = KB_ROWS;
 	return jsx`
 		<div class="kbd kbd--ref" id="kbdref">
 			<div class="plate">

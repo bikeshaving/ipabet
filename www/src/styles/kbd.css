@@ -34,9 +34,10 @@
 /* ghosts: the chrome as silhouette — shape, no ink. The chord keys (⌥, ⇧)
    keep a whisper of a label. */
 .cap.ghost { box-shadow: none; border: none; background: transparent; }
-.cap.ghost.chord { font: .78rem ui-monospace, Menlo, monospace;
-	color: var(--dim); opacity: .75; }
-.kbd:has(#klayer-optshift:checked) .cap.ghost.chord { opacity: .95; color: var(--accent); }
+/* meaningful chrome: real caps, quiet labels, tooltips carrying the meaning */
+.cap.ck { font: .72rem ui-monospace, Menlo, monospace; color: var(--dim); cursor: help; }
+.cap.ck:hover { color: var(--fg); }
+.kbd:has(#klayer-optshift:checked) .cap.ck.chord { color: var(--accent); }
 
 /* --- reference: layer toggle, one glyph per cap --------------------------- */
 .kbd--ref .cap:not(.chrome) { cursor: help; }
