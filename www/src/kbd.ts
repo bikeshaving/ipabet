@@ -127,8 +127,18 @@ export function KeyboardRef() {
 		const chorded = k.chrome === "option" || k.chrome === "shift";
 		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title}>${k.label}</div>`;
 	};
-	// Every row: the bottom row carries the ⌥ chord keys.
-	const rows = KB_ROWS;
+	// The reference presents the bottom row as just the ⌥ pair, anchored at
+	// the edges under the shifts (Brian's call — the floating true-ANSI alt
+	// positions read as orphans with the other modifiers unrendered). The
+	// drill keeps the physical positions; its keys work.
+	const rows = [
+		...KB_ROWS.slice(0, -1),
+		[
+			{label: "⌥", chrome: "option", w: 1.25},
+			{w: 12.5},
+			{label: "⌥", chrome: "option", w: 1.25},
+		] as PhysKey[],
+	];
 	return jsx`
 		<div class="kbd kbd--ref" id="kbdref">
 			<div class="plate">
