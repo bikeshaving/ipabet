@@ -11,6 +11,7 @@ import {jsx, renderer} from "@b9g/crank/standalone";
 import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
 import {keystrokeFromLabel} from "./keystrokes.ts";
 import {displayKeys, KEYMODE_EVENT} from "./keycaps.ts";
+import {KB_ROWS, capBody, capTitle} from "./kbd.ts";
 import {
 	handleKey,
 	handleBackspace,
@@ -188,27 +189,30 @@ function Drill() {
 		<div id="streak">${streak > 2 ? `${streak} in a row` : ""}</div>`;
 }
 
-const KB_ROWS = ["1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./"];
 function Keyboard() {
 	const nk = nextKeystroke(); // the key that should light next
-	const cap = (txt: string, cls: string, k: string, on: () => void) => jsx`
-		<button class=${cls} data-k=${k || undefined}
+	// THE board (kbd.ts) rendered interactively: same caps as /type's
+	// reference, plus chrome (⇧ ⌫ ⌥ space) and the drill's hot/armed states.
+	const chrome = (txt: string, cls: string, on: () => void) => jsx`
+		<button class=${"cap chrome " + cls}
 			onmousedown=${(e: Event) => e.preventDefault()}
 			onclick=${(e: Event) => { e.preventDefault(); on(); }}>${txt}</button>`;
-	const hot = (ch: string) => "kb" + (nk !== null && nk.key === ch ? " hot" : "");
-	const mod = (base: string, armed: boolean, need: boolean) =>
-		base + (armed ? " armed" : "") + (need ? " need" : "");
+	const key = (ch: string) => jsx`
+		<button class=${"cap" + (nk !== null && nk.key === ch ? " hot" : "")} title=${capTitle(ch)}
+			onmousedown=${(e: Event) => e.preventDefault()}
+			onclick=${(e: Event) => { e.preventDefault(); tapChar(ch); }}>${capBody(ch)}</button>`;
+	const mod = (armed: boolean, need: boolean) => (armed ? " armed" : "") + (need ? " need" : "");
 
 	return jsx`
-		${KB_ROWS.map((chars, ri) => jsx`
-			<div class="kbrow">
-				${ri === 3 ? cap(displayKeys("⇧"), mod("kb wide mshift", shiftArmed, nk?.shift === true), "", () => { shiftArmed = !shiftArmed; render(); }) : null}
-				${[...chars].map((ch) => cap(ch, hot(ch), ch, () => tapChar(ch)))}
-				${ri === 3 ? cap("⌫", "kb wide", "", doBackspace) : null}
+		${KB_ROWS.map(([chars], ri) => jsx`
+			<div class="krow">
+				${ri === 3 ? chrome(displayKeys("⇧"), "wide2" + mod(shiftArmed, nk?.shift === true), () => { shiftArmed = !shiftArmed; render(); }) : null}
+				${[...chars].map((ch) => key(ch))}
+				${ri === 3 ? chrome("⌫", "wide2", doBackspace) : null}
 			</div>`)}
-		<div class="kbrow">
-			${cap(displayKeys("⌥"), mod("kb wide mopt", optArmed, nk?.option === true), "", () => { optArmed = !optArmed; render(); })}
-			${cap("space", hot(" ") + " space", " ", () => tapChar(" "))}
+		<div class="krow">
+			${chrome(displayKeys("⌥"), "wide2" + mod(optArmed, nk?.option === true), () => { optArmed = !optArmed; render(); })}
+			${chrome("space", "space" + (nk !== null && nk.key === " " ? " hot" : ""), () => tapChar(" "))}
 		</div>`;
 }
 
@@ -244,7 +248,7 @@ function LessonIndex() {
 // ---------------------------------------------------------------- render
 function render() {
 	if (drillEl) renderer.render(jsx`<${Drill} />`, drillEl);
-	if (kbdEl) renderer.render(jsx`<${Keyboard} />`, kbdEl);
+	if (kbdEl) renderer.render(jsx`<div class="kbd kbd--drill"><${Keyboard} /></div>`, kbdEl);
 	if (indexEl) renderer.render(jsx`<${LessonIndex} />`, indexEl);
 	syncNav();
 }

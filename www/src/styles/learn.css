@@ -58,22 +58,8 @@
 
 .notice { color: var(--dim); font-size: .88rem; text-align: center; max-width: 34rem; margin: 0 auto; }
 
-#kbd { max-width: 34rem; margin: 1.5rem auto .5rem; user-select: none; }
-.kbrow { display: flex; gap: .3rem; justify-content: center; margin-top: .3rem; }
-.kb { flex: 1 1 0; min-width: 0; padding: .55rem 0; border: 1px solid var(--kbd-line);
-	background: var(--kbd-bg); color: var(--fg); border-radius: 7px; cursor: pointer;
-	font-family: ui-monospace, Menlo, monospace; font-size: .85rem;
-	transition: transform .08s, background .12s, border-color .12s, color .12s, box-shadow .12s; }
-.kb:active { transform: translateY(1px); }
-.kb.wide { flex: 1.5 1 0; } .kb.space { flex: 6 1 0; }
-[data-keymode="pc"] .kb.wide { font-size: .78em; } /* "Shift"/"AltGr" caps, not ⇧/⌥ */
-/* armed = the visitor toggled the modifier on (quiet outline). Ordered before
-   hot/need so a needed modifier lights up SOLID even while armed. */
-.kb.armed { border-color: var(--accent); color: var(--accent); }
-/* hot = the next key; need = a modifier the next keystroke requires. Same
-   solid light — the chord is one gesture, both halves glow alike. */
-.kb.hot, .kb.need { background: var(--accent); border-color: var(--accent); color: #fff;
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+#kbd { max-width: 34rem; margin: 1.5rem auto .5rem; }
+
 #controls { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: 1.5rem 0 -.75rem; flex-wrap: wrap; }
 #lessonnav { display: flex; align-items: center; gap: .4rem; }
 #lessonnav button { appearance: none; border-radius: 999px;

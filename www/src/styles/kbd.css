@@ -1,0 +1,54 @@
+/* THE keyboard — one board, one stylesheet. Modes: .kbd--ref (reference,
+   marks emphasized) and .kbd--drill (interactive, bare char emphasized). */
+.kbd { margin: 1.25rem 0 0; user-select: none; }
+.krow { display: flex; gap: .3rem; margin-top: .3rem; }
+.cap {
+	flex: 1 1 0; min-width: 0; aspect-ratio: 1 / 1.05; position: relative;
+	display: grid; grid-template-columns: 1fr 1fr; align-items: end;
+	padding-bottom: .3rem;
+	border: 1px solid var(--kbd-line); border-bottom-width: 2.5px;
+	background: var(--kbd-bg); border-radius: 8px;
+	transition: border-color .12s, background .12s, color .12s, box-shadow .12s, transform .08s;
+}
+.kbd--ref .cap { cursor: help; }
+.kbd--ref .cap:hover { border-color: var(--accent); }
+.cap .b {
+	position: absolute; top: .25rem; left: .38rem;
+	font: .68rem ui-monospace, Menlo, monospace; color: var(--dim);
+}
+.cap .h { justify-self: center; font-size: 1.55rem; line-height: 1.1; }
+.cap .h.p { color: var(--accent); }
+.cap .h.s { color: var(--fg); opacity: .5; }
+.cap .h.solo { grid-column: 1 / -1; }
+.cap .h.wide { font-size: 1.05rem; }
+.cap .b.solo { position: static; grid-column: 1 / -1; justify-self: center; align-self: center;
+	font-size: 1rem; color: var(--fg); opacity: .55; }
+
+/* Drill mode: the same caps as buttons — bare char forward, marks receded. */
+.kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; }
+.kbd--drill .cap:active { transform: translateY(1px); }
+.kbd--drill .cap .b { font-size: .95rem; color: var(--fg); }
+.kbd--drill .cap .h { font-size: .95rem; opacity: .45; }
+.kbd--drill .cap.chrome { aspect-ratio: auto; display: grid; place-items: center;
+	font-family: ui-monospace, Menlo, monospace; font-size: .85rem; }
+.kbd--drill .cap.wide2 { flex: 1.5 1 0; }
+.kbd--drill .cap.space { flex: 6 1 0; }
+/* armed = a modifier the visitor toggled on (quiet outline); hot/need = the
+   next keystroke lights SOLID — the chord is one gesture, both halves glow. */
+.kbd--drill .cap.armed { border-color: var(--accent); color: var(--accent); }
+.kbd--drill .cap.hot, .kbd--drill .cap.need {
+	background: var(--accent); border-color: var(--accent); color: #fff;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.kbd--drill .cap.hot .b, .kbd--drill .cap.need .b,
+.kbd--drill .cap.hot .h, .kbd--drill .cap.need .h { color: #fff; opacity: 1; }
+[data-keymode="pc"] .kbd--drill .cap.chrome { font-size: .72rem; }
+
+.klegend { color: var(--dim); font-size: .82rem; margin-top: .8rem; }
+.klegend .p { color: var(--accent); }
+.klegend .s { opacity: .6; }
+@media (max-width: 40rem) {
+	.cap .h { font-size: 1.05rem; }
+	.cap .h.wide { font-size: .8rem; }
+	.cap .b { font-size: .55rem; }
+}

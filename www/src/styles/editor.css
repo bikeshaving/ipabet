@@ -21,36 +21,3 @@
 .tips { color: var(--dim); font-size: .9rem; line-height: 1.6; }
 .tips kbd { font-size: .82rem; }
 .tips .combo { white-space: nowrap; }
-
-/* The keyboard reference — the Option board drawn in place. */
-.kbdref { margin: 1.25rem 0 0; }
-.krow { display: flex; gap: .3rem; margin-top: .3rem; }
-.cap {
-	flex: 1 1 0; min-width: 0; aspect-ratio: 1 / 1.05; position: relative;
-	display: grid; grid-template-columns: 1fr 1fr; align-items: end;
-	padding-bottom: .3rem;
-	border: 1px solid var(--kbd-line); border-bottom-width: 2.5px;
-	background: var(--kbd-bg); border-radius: 8px;
-	cursor: help; transition: border-color .12s;
-}
-.cap:hover { border-color: var(--accent); }
-.cap .b {
-	position: absolute; top: .25rem; left: .38rem;
-	font: .68rem ui-monospace, Menlo, monospace; color: var(--dim);
-}
-.cap .h { justify-self: center; font-size: 1.55rem; line-height: 1.1; }
-.cap .h.p { color: var(--accent); }
-.cap .h.s { color: var(--fg); opacity: .5; }
-.cap .h.solo { grid-column: 1 / -1; }
-.cap .h.wide { font-size: 1.05rem; }
-.cap.bare { align-items: center; }
-.cap.bare .b { position: static; grid-column: 1 / -1; justify-self: center;
-	font-size: 1rem; color: var(--fg); opacity: .5; }
-.klegend { color: var(--dim); font-size: .82rem; margin-top: .8rem; }
-.klegend .p { color: var(--accent); }
-.klegend .s { opacity: .6; }
-@media (max-width: 40rem) {
-	.cap .h { font-size: 1.05rem; }
-	.cap .h.wide { font-size: .8rem; }
-	.cap .b { font-size: .55rem; }
-}

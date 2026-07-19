@@ -3,11 +3,13 @@ import {Marked} from "@b9g/crankdown";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.gen.ts";
-import {KeyboardRef} from "./keyboard.ts";
+import {KeyboardRef} from "./kbd.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import editorCss from "./styles/editor.css" with {assetBase: "/assets/"};
+// @ts-ignore
+import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
 
@@ -35,7 +37,7 @@ const Pad = () => jsx`
 
 export function Type() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, editorCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, editorCss, kbdCss]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>

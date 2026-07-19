@@ -12,6 +12,8 @@ import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import learnCss from "./styles/learn.css" with {assetBase: "/assets/"};
 // @ts-ignore
+import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
+// @ts-ignore
 import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
 
 // /learn — the graded IPAbet course. Prose (tagline, notice, footer) lives as a
@@ -51,7 +53,7 @@ const Scaffold = () => jsx`
 
 export function Learn() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, learnCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, learnCss, kbdCss]}>
 			<main>
 				<header>
 					<h1><a href="/" style="text-decoration:none;color:inherit">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/learn</span></h1>
