@@ -25,7 +25,7 @@ const doc = docs.type;
 const Pad = () => jsx`
 	<div id="pad">
 		<textarea id="ed" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
-			placeholder="Start typing… s⇧H → ʃ · 5⇧Y → ə · a⌥; → aː · ⌥n n → ñ"></textarea>
+			placeholder="Type IPA…"></textarea>
 		<div id="bar2">
 			<span id="count">0</span>
 			<span class="grow"></span>

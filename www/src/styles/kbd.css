@@ -3,35 +3,38 @@
    chrome inert. .kbd--drill: /learn — bare chars, hot/armed states; when ⌥ is
    armed the board shows the ⌥ layer (Keyboard Viewer's convention). */
 .kbd { margin: 1.25rem 0 0; user-select: none; }
+/* the reference sits on a PLATE: one solid surface, caps floating on it in
+   true positions, chrome as bare plate — the silhouette comes from the plate,
+   not from ghost buttons. */
+.kbd--ref { background: var(--kbd-bg); padding: .75rem; border-radius: 14px; }
 .krow { display: grid; grid-template-columns: repeat(60, 1fr); gap: .28rem; margin-top: .28rem; }
 .cap {
 	position: relative; display: grid; place-items: center; min-width: 0;
-	height: clamp(2.7rem, 6.2vw, 3.8rem);
-	border: 1px solid var(--kbd-line);
-	background: var(--card, #fff); border-radius: 6px;
-	box-shadow: 0 1.5px 0 var(--kbd-line);
+	height: clamp(3rem, 6.8vw, 4.1rem);
+	border: none;
+	background: var(--card, #fff); border-radius: 7px;
+	box-shadow: 0 1px 2px color-mix(in srgb, var(--fg) 12%, transparent);
 	transition: border-color .12s, background .12s, color .12s, box-shadow .12s, transform .08s;
 }
 .cap .b {
-	position: absolute; top: .22rem; left: .35rem;
-	font: .66rem ui-monospace, Menlo, monospace; color: var(--dim);
+	position: absolute; top: .24rem; left: .38rem;
+	font: .6rem ui-monospace, Menlo, monospace; color: var(--dim); opacity: .8;
 }
 .cap .h { grid-area: 1 / 1; display: grid; place-items: center;
-	font-size: clamp(1.15rem, 2.8vw, 1.75rem); line-height: 1.1; color: var(--fg); }
-.cap .h.wide { font-size: clamp(.85rem, 2vw, 1.2rem); }
+	font-size: clamp(1.4rem, 3.3vw, 2.05rem); line-height: 1.1; color: var(--fg); }
+.cap .h.wide { font-size: clamp(1rem, 2.3vw, 1.4rem); }
 /* the mark is the figure; the carrier is a whisper behind it */
 .cap .h .ring, .cap .h .ink { grid-area: 1 / 1; }
-.cap .h .ring { color: var(--dim); opacity: .35; font-weight: 400; }
+.cap .h .ring { color: var(--dim); opacity: .25; font-weight: 400; }
 .cap.chrome {
 	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
 }
 
 /* ghosts: the chrome as silhouette — shape, no ink. The chord keys (⌥, ⇧)
    keep a whisper of a label. */
-.cap.ghost { box-shadow: none; border: none;
-	background: color-mix(in srgb, var(--kbd-bg) 45%, transparent); }
-.cap.ghost.chord { font: .72rem ui-monospace, Menlo, monospace;
-	color: var(--dim); opacity: .6; }
+.cap.ghost { box-shadow: none; border: none; background: transparent; }
+.cap.ghost.chord { font: .78rem ui-monospace, Menlo, monospace;
+	color: var(--dim); opacity: .75; }
 .kbd:has(#klayer-optshift:checked) .cap.ghost.chord { opacity: .95; color: var(--accent); }
 
 /* --- reference: layer toggle, one glyph per cap --------------------------- */
