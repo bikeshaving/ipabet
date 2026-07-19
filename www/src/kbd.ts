@@ -127,16 +127,19 @@ export function KeyboardRef() {
 		const chorded = k.chrome === "option" || k.chrome === "shift";
 		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title}>${k.label}</div>`;
 	};
-	// The reference presents the bottom row as just the ⌥ pair, anchored at
-	// the edges under the shifts (Brian's call — the floating true-ANSI alt
-	// positions read as orphans with the other modifiers unrendered). The
-	// drill keeps the physical positions; its keys work.
+	// The reference gives ⌥ no row of its own (Brian's call): each ⌥ tucks
+	// beside its ⇧ inside the shift's own slot — ⇧1.25+⌥1 on the left,
+	// ⌥1.25+⇧1.5 on the right — so the chord pair reads as one unit and the
+	// board is four rows. The drill keeps the physical board; its keys work.
+	const shiftRow = KB_ROWS[3].filter((k) => k.ch !== undefined);
 	const rows = [
-		...KB_ROWS.slice(0, -1),
+		...KB_ROWS.slice(0, 3),
 		[
+			{label: "⇧", chrome: "shift", w: 1.25},
+			{label: "⌥", chrome: "option", w: 1},
+			...shiftRow,
 			{label: "⌥", chrome: "option", w: 1.25},
-			{w: 12.5},
-			{label: "⌥", chrome: "option", w: 1.25},
+			{label: "⇧", chrome: "shift", w: 1.5},
 		] as PhysKey[],
 	];
 	return jsx`
