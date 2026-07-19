@@ -21,3 +21,9 @@
 .tips { color: var(--dim); font-size: .9rem; line-height: 1.6; }
 .tips kbd { font-size: .82rem; }
 .tips .combo { white-space: nowrap; }
+
+/* The pending composition, as a labeled chip beside the count. */
+#pending-chip { display: inline-flex; align-items: center; gap: .4rem;
+	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
+	border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
+#pending-chip .g { font-family: "Charis SIL","Doulos SIL",serif; font-size: 1rem; color: var(--fg); }

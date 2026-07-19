@@ -28,11 +28,11 @@ const Pad = () => jsx`
 			placeholder="Type IPA…"></textarea>
 		<div id="bar2">
 			<span id="count">0</span>
+			<span id="pending-mount"></span>
 			<span class="grow"></span>
 			<button id="clear">Clear</button>
 			<button id="copy">Copy</button>
 		</div>
-		<span id="pending-mount"></span>
 	</div>`;
 
 export function Type() {

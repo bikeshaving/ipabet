@@ -23,7 +23,7 @@ const KEY = "ipabet-editor-v1";
 // user's own NBSP (common in pasted text) can never be mistaken for it. A
 // <textarea> can't style a sub-range, so the preview is a chip, not marked text.
 function PendingChip({text}: {text: string}) {
-	return text === "" ? null : jsx`<span id="pending-chip">${text}</span>`;
+	return text === "" ? null : jsx`<span id="pending-chip">pending <span class="g">${"◌" + text}</span></span>`;
 }
 
 try {
@@ -66,16 +66,20 @@ ta.focus();
 const optRadio = document.getElementById("klayer-opt") as HTMLInputElement | null;
 const shiftRadio = document.getElementById("klayer-optshift") as HTMLInputElement | null;
 if (optRadio !== null && shiftRadio !== null) {
-	let chosen: "opt" | "optshift" = "opt";
+	const shiftOnlyRadio = document.getElementById("klayer-shift") as HTMLInputElement;
+	let chosen: HTMLInputElement = optRadio;
 	const sync = (e: KeyboardEvent) => {
 		if (e.altKey) {
 			(e.shiftKey ? shiftRadio : optRadio).checked = true;
+		} else if (e.shiftKey && e.type === "keydown") {
+			shiftOnlyRadio.checked = true;
 		} else {
-			(chosen === "opt" ? optRadio : shiftRadio).checked = true;
+			chosen.checked = true;
 		}
 	};
-	optRadio.addEventListener("change", () => { chosen = "opt"; });
-	shiftRadio.addEventListener("change", () => { chosen = "optshift"; });
+	for (const r of [optRadio, shiftRadio, shiftOnlyRadio]) {
+		r.addEventListener("change", () => { if (r.checked) chosen = r; });
+	}
 	window.addEventListener("keydown", sync);
 	window.addEventListener("keyup", sync);
 }
@@ -92,13 +96,18 @@ if (board !== null && pad !== null) {
 		if (cap === null) return;
 		pad.focus();
 		const chrome = cap.dataset.chrome;
-		const shiftLayer = (document.getElementById("klayer-optshift") as HTMLInputElement | null)?.checked === true;
+		const optShift = (document.getElementById("klayer-optshift") as HTMLInputElement | null)?.checked === true;
+		const shiftOnly = (document.getElementById("klayer-shift") as HTMLInputElement | null)?.checked === true;
 		if (cap.dataset.key !== undefined) {
-			ipa.sendKey({key: cap.dataset.key, option: true, shift: shiftLayer});
+			// ⇧ view: the click is the transforming modifier (needs a glyph before
+			// the caret); ⌥ views: the click is the mark chord.
+			ipa.sendKey(shiftOnly
+				? {key: cap.dataset.key, shift: true}
+				: {key: cap.dataset.key, option: true, shift: optShift});
 			return;
 		}
 		if (chrome === "backspace") { ipa.backspace(); return; }
 		if (chrome === "option") (document.getElementById("klayer-opt") as HTMLInputElement).checked = true;
-		if (chrome === "shift") (document.getElementById("klayer-optshift") as HTMLInputElement).checked = true;
+		if (chrome === "shift") (document.getElementById("klayer-shift") as HTMLInputElement).checked = true;
 	});
 }

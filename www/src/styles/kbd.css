@@ -62,6 +62,9 @@
 .kbd--ref .cap .h { display: none; }
 .kbd:has(#klayer-opt:checked) .cap .h.p { display: block; }
 .kbd:has(#klayer-optshift:checked) .cap .h.s { display: block; }
+/* the ⇧ layer: each modifier letter's emblematic transform (t⇧H → θ) */
+.kbd:has(#klayer-shift:checked) .cap .h.t { display: block; }
+.kbd:has(#klayer-shift:checked) .cap.ck.chord[data-chrome="shift"] { color: var(--accent); }
 
 /* --- drill: bare chars, functional chrome, states ------------------------- */
 .kbd--drill .cap { cursor: pointer; appearance: none; font: inherit; color: inherit; padding: 0; }
