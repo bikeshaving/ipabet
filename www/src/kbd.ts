@@ -2,9 +2,9 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.
-// Unit widths are the physical standard (quarter-key grid, 15u per row):
+// Unit widths are the ANSI standard (quarter-key grid, 15u per row):
 //   `1234567890-=  ⌫2u · tab1.5u qwertyuiop[]\\1.5u · caps1.75u …' ⏎2.25u ·
-//   ⇧2.25u zxcvbnm,./ ⇧2.75u · fn ⌃ ⌥ ⌘1.25u ␣(fill) ⌘1.25u ⌥
+//   ⇧2.25u zxcvbnm,./ ⇧2.75u · seven 1.25u modifiers around a 6.25u spacebar
 // Surfaces: /type renders it as reference (.kbd--ref: ⌥/⌥⇧ layer toggle,
 // tooltips, chrome inert); /learn renders the same board as the drill
 // (.kbd--drill: bare chars, hot/armed states, functional ⇧ ⌥ ⌫ ␣; when ⌥ is
@@ -48,14 +48,16 @@ export const KB_ROWS: PhysKey[][] = [
 		...[..."zxcvbnm,./"].map((ch) => ({ch, w: 1})),
 		{label: "⇧", chrome: "shift", w: 2.75},
 	],
+	// The ANSI bottom row: 1.25u×3 + 6.25u space + 1.25u×4 = 15u exactly.
 	[
-		{label: "fn", chrome: "fn", w: 1},
-		{label: "⌃", chrome: "control", w: 1},
-		{label: "⌥", chrome: "option", w: 1},
-		{label: "⌘", chrome: "command", w: 1.25},
-		{label: "", chrome: "space", w: 6.5},
-		{label: "⌘", chrome: "command", w: 1.25},
-		{label: "⌥", chrome: "option", w: 1},
+		{label: "⌃", chrome: "control", w: 1.25},
+		{label: "", chrome: "meta", w: 1.25},
+		{label: "⌥", chrome: "option", w: 1.25},
+		{label: "", chrome: "space", w: 6.25},
+		{label: "⌥", chrome: "option", w: 1.25},
+		{label: "", chrome: "meta", w: 1.25},
+		{label: "", chrome: "menu", w: 1.25},
+		{label: "⌃", chrome: "control", w: 1.25},
 	],
 ];
 

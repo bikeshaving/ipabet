@@ -78,7 +78,7 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
 	// Held-shift acronyms whose pair is a capital digraph FORM it — SHA → ƩA,
 	// THE → ΘE — because capital digraphs are always-on; the literal comes from
-	// Caps Lock or ⌃⇧ (the Caps Lock law exists for all-caps words). ASCII
+	// Caps Lock or ⌃⇧ (Caps Lock types literal capitals, so all-caps words). ASCII
 	// pairs stay literal, and pH's ɸ is caseless, so PHP is safe untouched.
 	// SHA: ⇧S⇧H is a fresh capital digraph Ʃ whether held or (released → still a
 	// fresh capital), then ⇧A appends. Literal "SHA" comes from Ctrl+Shift, not a
@@ -112,7 +112,7 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	});
 	// Daily-driver: held-shift caps keep their capitals UNLESS a pair is a
 	// digraph — PATH ends in the TH pair, so it forms Θ, exactly as PUSH forms
-	// Ʃ. All-caps words belong to Caps Lock (the law); terminals to the plain
+	// Ʃ. All-caps words type under Caps Lock; terminals switch to the plain
 	// US input source (⌃Space).
 	test("held ⇧P⇧A⇧T⇧H forms the theta: ɾPAΘ (Caps Lock types the literal)", () =>
 		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾPAΘ"));
