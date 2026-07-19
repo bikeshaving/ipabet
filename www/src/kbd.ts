@@ -106,11 +106,10 @@ export function capBody(ch: string) {
 	const m = marks.get(ch);
 	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
 	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
-	// The ⇧ view is the truthful shift plane: what the key EMITS (uppercase
-	// letter, digit symbol, shifted punct) — with modifier capitals marked as
-	// potential transforms (they act on the glyph before the cursor; the
-	// meaning is in the tooltip, the products on /keys and the chart).
-	const isModifier = /[a-z]/.test(ch) && modifiers[ch.toUpperCase()] !== undefined;
+	// The ⇧ view is LIVE on /type: the island repaints each capital with the
+	// transform it would perform on the glyph before the caret (or its plain
+	// uppercase where it would just emit). Server-rendered state is the
+	// empty-pad truth: plain emissions everywhere.
 	const shifted = /[a-z]/.test(ch) ? ch.toUpperCase() : SHIFT_PLANE[ch];
 	const wide = sp !== undefined ? " wide" : "";
 	return jsx`<span class="b">${ch}</span>${
@@ -118,7 +117,7 @@ export function capBody(ch: string) {
 	}${
 		s === undefined ? null : jsx`<span class=${"h s ipa" + wide}>${s}</span>`
 	}${
-		shifted === undefined ? null : jsx`<span class=${"h t" + (isModifier ? " mod" : "")}>${shifted}</span>`
+		shifted === undefined ? null : jsx`<span class="h t">${shifted}</span>`
 	}`;
 }
 

@@ -10,6 +10,7 @@
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {bindIPAInput} from "./ipa-input.ts";
+import {handleKey} from "../../js/src/index.ts";
 
 const ta = document.getElementById("ed") as HTMLTextAreaElement;
 const countEl = document.getElementById("count") as HTMLElement;
@@ -36,6 +37,7 @@ function save() {
 }
 
 function afterChange(pendingText: string) {
+	queueMicrotask(() => paintShiftPreview());
 	countEl.textContent = `${[...ta.value].length}`;
 	if (chipMount) renderer.render(jsx`<${PendingChip} text=${pendingText} />`, chipMount);
 	save();
@@ -90,7 +92,36 @@ if (optRadio !== null && shiftRadio !== null) {
 // prevented so the pad keeps focus and the caret never blinks away.
 const board = document.getElementById("kbdref");
 const pad = document.getElementById("ed") as HTMLTextAreaElement | null;
+
+// The ⇧ view is LIVE: for the glyph currently before the caret, each capital
+// shows the transform it would perform right now (s before the caret → the H
+// cap shows ʃ), or its plain uppercase where it would just emit. The real
+// engine answers per capital; the island repaints on every edit and caret
+// move.
+function paintShiftPreview() {
+	if (board === null || pad === null) return;
+	const before = pad.value.slice(0, pad.selectionStart ?? pad.value.length);
+	for (const cap of board.querySelectorAll<HTMLElement>(".cap[data-key]")) {
+		const k = cap.dataset.key!;
+		if (!/^[a-z]$/.test(k)) continue;
+		const t = cap.querySelector<HTMLElement>(".h.t");
+		if (t === null) continue;
+		const step = handleKey(before, {key: k, shift: true}, [], false);
+		if (step.edit.type === "replace") {
+			t.textContent = step.edit.text;
+			t.classList.add("mod", "ipa");
+		} else {
+			t.textContent = k.toUpperCase();
+			t.classList.remove("mod", "ipa");
+		}
+	}
+}
+document.addEventListener("selectionchange", () => {
+	if (document.activeElement === pad) paintShiftPreview();
+});
+
 if (board !== null && pad !== null) {
+	paintShiftPreview();
 	board.addEventListener("mousedown", (e) => e.preventDefault());
 	board.addEventListener("click", (e) => {
 		const cap = (e.target as Element).closest<HTMLElement>(".cap");
