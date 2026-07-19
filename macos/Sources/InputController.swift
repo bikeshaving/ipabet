@@ -804,10 +804,15 @@ class InputController: IMKInputController {
         let a = NSMutableAttributedString()
         // The open cluster is dressed as PLAIN text — composition is plumbing
         // here, not chrome; only the dead-key preview earns the highlight.
+        // Browsers repaint the composition from extracted spans and treat
+        // "no underline attribute" as "draw my default one" — so declare an
+        // underline and paint it TRANSPARENT: engines that honor the span
+        // draw an invisible line, and AppKit hosts stay invisible too.
         if !composed.isEmpty {
             a.append(NSAttributedString(string: composed, attributes: [
                 .foregroundColor: NSColor.textColor,
-                .underlineStyle: 0,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .underlineColor: NSColor.clear,
             ]))
         }
         if !pv.isEmpty {
