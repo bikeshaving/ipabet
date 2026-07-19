@@ -17,6 +17,11 @@ Bare keys type plain US; the IPA lives on the shifted positions.
 (<Combo keys="2 ⇧H" out="ʔ"/>),
 <span class="combo"><kbd>⌥</kbd></span> adds diacritics
 (<Combo keys="a ⌥;" out="aː"/>),
-and <span class="combo"><kbd>⌃⇧</kbd>+letter</span> escapes to a literal capital. The
-<a href="/chart">full chart</a> has every key.
+and <span class="combo"><kbd>⌃⇧</kbd>+letter</span> escapes to a literal capital.
 </p>
+
+## The keyboard
+
+What every key carries on the Option layer — the second of the two references, beside [the chart](/chart) (which answers the other direction: sound → keystrokes).
+
+<Keyboard/>

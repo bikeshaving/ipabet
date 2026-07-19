@@ -5,13 +5,17 @@ date: "2026-07-17"
 draft: true
 ---
 
-The International Phonetic Alphabet (IPA) is the universal standard for documenting human speech, capable of transcribing the sounds of any language on Earth. Yet, if you want to type it today your options are limited. You can use a website with a virtual keyboard to write out letters one click at a time, turning the process of transcription into a slow copy-paste exercise. Or, if you’re a professional linguist, your best bet might be to install Keyman: a complex tool which sits between your OS and your keyboard, designed less for IPA and more for highly complex scripts like Khmer or Tibetan.
+The International Phonetic Alphabet (IPA) is the universal standard for documenting human speech, capable of transcribing the sounds of any language on Earth. But if you want to type it today your options are limited. You can use a website with a virtual keyboard to write out letters one click at a time, turning the process of transcription into a slow copy-paste exercise. If you’re looking for a professional typing situation, your best bet might be to install Keyman: a complex, older tool which sits between your OS and your keyboard, designed less for IPA and more for highly complex scripts like Khmer or Tibetan.
 
 As a programmer, the situation has always struck me as absurd. IPA is over 130 years old. It is used by linguists, singers, actors, speech pathologists, news broadcasters — basically anyone who cares about describing and reproducing human speech with scientific precision. Nevertheless, it's still harder to type than languages like Chinese and Japanese, which use complex input method editors (IMEs) to map Latin characters to thousands of logographs.
+
+<!-- the transition here is a bit abrupt -->
 
 Armed with Claude, who can both vibe-code a macOS IME and draw on a deep well of knowledge about IPA, phonetics, and orthography, I set out to solve this problem. The result is IPAbet, a fast, intuitive, and native keyboard layout designed specifically for phonetic transcription.
 
 The challenge with building IPAbet had less to do with engineering or technical issues, and more to do with design. The problem is simple: while IPA’s range of symbols is smaller than some world writing systems — officially 107 vowels and consonants, plus around 50 diacritics and other markers — this is still way more than can be represented on the standard ANSI keyboard, which has only 47 keys for letters, numbers, and punctuation.
+
+<!-- Claude generation -->
 
 So where do the other hundred symbols go? The first decision was that the base layer shouldn't change at all. Every unshifted key on an IPAbet keyboard types exactly what it normally types, so email, code, passwords, and terminal sessions all work like they always did. This matters because the alternative is what every special-purpose layout ends up being: a mode you switch into, type three symbols, and switch back out of. If the keyboard is going to be worth leaving on all day, normal typing has to stay normal.
 
