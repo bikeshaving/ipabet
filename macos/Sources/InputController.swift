@@ -928,8 +928,20 @@ class InputController: IMKInputController {
         client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
     }
 
+    /// Rewrite the previous cluster — the transform edit, the only edit that
+    /// was ever fragile. It travels as a FLASH COMPOSITION: the committed
+    /// cluster becomes marked text carrying the result (the reconversion
+    /// shape), then commits in the same event cycle. Bare typing never
+    /// composes; nothing persists long enough to paint (pixel-verified in
+    /// tools/hilite-probe.swift); composition-aware hosts see
+    /// compositionstart/end around the mutation and defer per the standard
+    /// mechanism. A host that ignores replacementRange fails the same way
+    /// the plain insertText path fails — flash is never worse.
     private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
-        client.insertText(new, replacementRange: range)
+        client.setMarkedText(NSAttributedString(string: new, attributes: [.underlineStyle: 0]),
+                             selectionRange: NSRange(location: (new as NSString).length, length: 0),
+                             replacementRange: range)
+        client.insertText(new, replacementRange: NSRange(location: NSNotFound, length: 0))
     }
 
     /// A cluster's canonical decomposition, split into the base glyph and its
