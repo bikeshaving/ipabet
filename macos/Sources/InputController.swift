@@ -938,10 +938,29 @@ class InputController: IMKInputController {
     /// mechanism. A host that ignores replacementRange fails the same way
     /// the plain insertText path fails — flash is never worse.
     private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
-        client.setMarkedText(NSAttributedString(string: new, attributes: [.underlineStyle: 0]),
+        let none = NSRange(location: NSNotFound, length: 0)
+        // 1. Open the composition over the committed cluster (reconversion
+        //    shape). Sync hosts (AppKit, WebKit) apply it now; Chromium queues
+        //    setMarkedText during a keydown and only the LAST call survives.
+        client.setMarkedText(NSAttributedString(string: new, attributes: [
+                                 .underlineStyle: NSUnderlineStyle.single.rawValue,
+                                 .underlineColor: NSColor.clear,
+                             ]),
                              selectionRange: NSRange(location: (new as NSString).length, length: 0),
                              replacementRange: range)
-        client.insertText(new, replacementRange: NSRange(location: NSNotFound, length: 0))
+        // 2. The authoritative replacement, carrying the range itself: every
+        //    engine executes a range-carrying insertText immediately
+        //    (Chromium: ImeCommitText → ReplaceTextAndKeepSelection), whether
+        //    or not step 1 ran.
+        client.insertText(new, replacementRange: range)
+        // 3. A trailing empty mark: in Chromium it is the sole survivor of the
+        //    keydown coalescing (a no-op clear instead of a stray
+        //    composition); where calls run synchronously the composition is
+        //    already closed and clearing is a no-op — and clearing is always
+        //    setMarkedText(""), never insertText("") (the transport drops
+        //    empty inserts).
+        client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0),
+                             replacementRange: none)
     }
 
     /// A cluster's canonical decomposition, split into the base glyph and its

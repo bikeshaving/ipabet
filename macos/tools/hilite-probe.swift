@@ -160,8 +160,12 @@ do {
                      selectedRange: NSRange(location: 1, length: 0),
                      replacementRange: sRange)
     let midMarked = tv.hasMarkedText()
-    // …and commit it immediately, same cycle.
-    tv.insertText("ʃ", replacementRange: NSRange(location: NSNotFound, length: 0))
+    // …commit it with the EXPLICIT range (Chromium's immediate path), then a
+    // trailing empty mark — the benign survivor of Chromium's keydown
+    // coalescing, a no-op where calls run synchronously.
+    tv.insertText("ʃ", replacementRange: sRange)
+    tv.setMarkedText("", selectedRange: NSRange(location: 0, length: 0),
+                     replacementRange: NSRange(location: NSNotFound, length: 0))
     let after = tv.string
     print("  replacementRange honored: \(after == "abc ʃ" ? "YES" : "NO — got '\(after)'")")
     print("  marked mid-flash: \(midMarked), after commit: \(tv.hasMarkedText())")
