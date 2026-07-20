@@ -19,22 +19,13 @@ one.
 
 ## Architecture
 
-The **active cluster composes**: the most recently typed cluster stays open in
-the client's marked-text range — styled as plain text, so nothing looks
-composed — and every previous-glyph rule rewrites it there via
-`setMarkedText`, the path every host tests hardest because CJK typing depends
-on it. Browsers therefore see a real composition (`compositionstart`,
-`isComposing`), so IME-aware pages defer to the engine instead of racing it.
-A boundary — any declined key, space, Esc, a click, focus loss — commits the
-cluster as ordinary text.
-
-Edits to already-committed text (click after an old glyph, then transform it)
-use `insertText(_:replacementRange:)` — the call pattern captured from
-Apple's 2-Set Korean with `tools/probe.swift`. In **direct hosts** (terminals
-and modal editors — Terminal, iTerm2, kitty, alacritty, wezterm, ghostty,
-MacVim, Emacs) nothing ever composes: marked text would hold each keystroke
-back from the pty until the next one arrives, so there every keystroke
-commits immediately and rewrites go through `replacementRange`.
+The engine mimics Apple's Korean (2-Set) input method, whose exact client
+protocol we captured with `tools/probe.swift`: **no marked text, ever**. Each
+keystroke either inserts text at the cursor or rewrites the previous grapheme
+cluster in place via `insertText(_:replacementRange:)` — the call pattern every
+Mac app must support or Hangul typing would break in it. There is no
+composition session: no underline, no state to flush on clicks/focus
+changes/input-source switches, and nothing for a host to desync.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
 `⇧R`, ejective `⇧X`, superscript `⌥p`, spacing marks, backspace) operate on
@@ -52,8 +43,8 @@ jamo-peel-then-native pattern.
 
 - `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation
   policy + the raw-lock-clears-on-arrival observer.
-- `Sources/InputController.swift` — the engine described above, plus the
-  secure-field handling. Loads `ipabet.json`.
+- `Sources/InputController.swift` — the stateless engine described above,
+  plus the raw-US lock and secure-field handling. Loads `ipabet.json`.
 - `ipabet.json` — the mapping, copied from `spec/ipabet.json` at build time.
 - `Info.plist` — bundle ID must contain `.inputmethod.`; registers one
   visible input mode (see the icon/name notes inline). See the macOS 15
