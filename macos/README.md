@@ -19,13 +19,23 @@ one.
 
 ## Architecture
 
-The engine mimics Apple's Korean (2-Set) input method, whose exact client
-protocol we captured with `tools/probe.swift`: **no marked text, ever**. Each
-keystroke either inserts text at the cursor or rewrites the previous grapheme
-cluster in place via `insertText(_:replacementRange:)` — the call pattern every
-Mac app must support or Hangul typing would break in it. There is no
-composition session: no underline, no state to flush on clicks/focus
-changes/input-source switches, and nothing for a host to desync.
+The engine is **stateless by default**, mimicking Apple's Korean (2-Set) input
+method, whose client protocol we captured with `tools/probe.swift`: each
+keystroke inserts text at the cursor or rewrites the previous grapheme cluster
+in place via `insertText(_:replacementRange:)` — the call pattern every Mac app
+must support or Hangul typing would break. No composition session, no
+underline, nothing for a host to desync. The only marked text is the dead-key
+*preview* of a pending prefix diacritic (`⌥e` → ´), committed by the next base.
+
+A **read-back guard** handles the one thing stateless can't see: a host that
+silently drops the rewrite. After the first cursor-advancing commit of a
+session the engine reads `selectedRange` back (Apple's Korean trick); if the
+cursor didn't advance — an async, multi-process client — it switches that
+session to marked-text composition instead of corrupting text. In practice it
+stays off: Chrome, the async host we most feared, reads back **fresh** and the
+stateless rewrite lands correctly, so it never triggers there. It's a cheap
+safety net (one read per session), not the common path. Terminals are locked
+stateless — composing would lag a pty by a keystroke.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
 `⇧R`, ejective `⇧X`, superscript `⌥p`, spacing marks, backspace) operate on

@@ -156,24 +156,35 @@ struct Tables {
     }()
 }
 
-// Committed text follows Apple's Korean (2-Set) protocol, captured with
-// tools/probe.swift: each keystroke either inserts at the cursor or rewrites
-// the previous grapheme cluster in place via insertText(_:replacementRange:) —
-// the call pattern every Mac app must support or Hangul typing would break.
+// The ACTIVE CLUSTER composes. The most recently typed cluster stays open in
+// the client's marked-text range — styled as plain text, so nothing looks
+// composed — and every previous-glyph rule (⇧-transforms, joiners, ⌥z, the
+// fusions) rewrites it there via setMarkedText: the IME path every host
+// tests hardest, because CJK typing depends on it. A boundary — any declined
+// key, space, Esc, a click, focus loss — commits the cluster as ordinary
+// text. Hosts also SEE the composition (compositionstart/isComposing in
+// browsers), so IME-aware pages defer to this engine instead of racing it.
 //
-// The one exception is the *pending prefix diacritic*, which is a preview, not
-// document content. It lives in the client's marked-text range (highlighted,
-// uncommitted) exactly as the US layout's ⌥e dead key does — the only correct
-// representation, and the one that works in hosts like Terminal.app where a
-// committed NBSP+combining sequence renders as "<032a>". Composition state is
-// therefore a single [Unicode.Scalar] stack, flushed on commitComposition and
-// deactivateServer.
+// Edits to already-committed text (click after an old glyph, then transform
+// it) use insertText(_:replacementRange:) — the pattern Apple's 2-Set Korean
+// uses, captured with tools/probe.swift.
 //
-// Backspace: stacked combining marks peel off one scalar at a time (rewriting
-// the cluster in place); single-codepoint glyphs are declined so the host
-// performs its native delete — exactly Korean's jamo-peel-then-native pattern.
+// In DIRECT hosts (terminals and modal editors, where a keystroke is a
+// command and latency is the interface) nothing ever composes: every
+// keystroke commits immediately and rewrites use replacementRange, so `dd`
+// in vim and a tmux prefix stay single-keystroke.
 //
-// Hard-won macOS 15 rules (probe- and crash-verified this session; see README):
+// The *pending prefix diacritic* is a preview, not document content: it
+// trails the active cluster in the marked range, highlighted exactly as the
+// US layout's ⌥e dead key is — the representation that works even in hosts
+// like Terminal.app where a committed NBSP+combining renders as "<032a>".
+// The next base absorbs it.
+//
+// Backspace: stacked combining marks peel off one scalar at a time; a bare
+// open cluster clears; a bare committed glyph is declined so the host
+// performs its native delete — Korean's jamo-peel-then-native pattern.
+//
+// Hard-won macOS 15 rules (probe- and crash-verified; see README):
 //  - never call updateComposition()/composedString() — segfaults in the bridge
 //  - never insertText an empty string — the IMK transport silently drops it
 //  - the bundle must declare NSPrincipalClass, LSUIElement (not
@@ -285,10 +296,34 @@ class InputController: IMKInputController {
     }
 
 
-    // Stateless: no pending marks, no modes, nothing to desync. Every keystroke
-    // reads the document and acts.
+    // Hosts where a keystroke is a command, not text: composing would hold
+    // each key in the marked range until the next one arrives, lagging
+    // vim/tmux/readline by a full keystroke. These hosts get the direct
+    // path — immediate commits, replacementRange rewrites — which they
+    // already handle (Hangul depends on it).
+    private static let directHosts: Set<String> = [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "net.kovidgoyal.kitty",
+        "io.alacritty",
+        "com.github.wez.wezterm",
+        "com.mitchellh.ghostty",
+        "org.vim.MacVim",
+        "org.gnu.Emacs",
+    ]
+    // Stateless by default; a stale read-back flips this to composition for the
+    // session (Apple's Korean/Vietnamese trick). Terminals are LOCKED direct —
+    // never composed, never probed — because composing lags a pty by a keystroke.
+    private var direct = true
+    private var directLocked = false
+    private var probed = false
 
     override func activateServer(_ sender: Any!) {
+        composed = ""
+        pending = []
+        directLocked = Self.directHosts.contains(clientBundleID())
+        direct = true
+        probed = directLocked
         // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
         // reference IMEs only pass full system TIS layout IDs here, and the
         // bare in-bundle name was a misrouting suspect on macOS 15.
@@ -297,13 +332,14 @@ class InputController: IMKInputController {
     }
 
     /// The host is taking the composition away (click, focus loss, input-source
-    /// switch). Commit the pending accent rather than stranding it.
+    /// switch). Commit the open cluster and any pending accent rather than
+    /// stranding them.
     override func commitComposition(_ sender: Any!) {
-        if let c = (sender as? IMKTextInput) ?? client() { flushPending(c) }
+        if let c = (sender as? IMKTextInput) ?? client() { flush(c) }
     }
 
     override func deactivateServer(_ sender: Any!) {
-        if let c = (sender as? IMKTextInput) ?? client() { flushPending(c) }
+        if let c = (sender as? IMKTextInput) ?? client() { flush(c) }
     }
 
     // Shift-chaining state. The chain is BROKEN by a shift release (so releasing
@@ -349,12 +385,12 @@ class InputController: IMKInputController {
         // the shift-chain, and the capital-digraph rule — so "GitHub" stays GitHub
         // (not Giθub) and ⌃⇧A ⌃⇧E is a literal "AE" (not Æ). Letters only:
         // Ctrl+Shift+<digit/punct> keeps its native chord.
-        if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flushPending(client); return false }
+        if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flush(client); return false }
         if flags.contains(.control) {
             if flags.contains(.shift) {
                 let oc = USLayout.char(event.keyCode, shift: false)
                 if oc.count == 1, oc.first!.isLetter {
-                    flushPending(client)
+                    flush(client)
                     let cap = oc.uppercased()
                     insert(cap, client)
                     Dbg.log("  → ⌃⇧ escape → literal '\(cap)'")
@@ -371,10 +407,12 @@ class InputController: IMKInputController {
                     updateMarked(client)
                     return true
                 }
-                return unconvert(client)
+                if unconvert(client) { return true }
+                flush(client)   // declining with an open cluster would desync it
+                return false
             }
             Dbg.log("  → pass (ctrl chord — leader keys land here)")
-            flushPending(client)
+            flush(client)
             return false
         }
 
@@ -397,6 +435,17 @@ class InputController: IMKInputController {
                 updateMarked(client)
                 return true
             }
+            if !composed.isEmpty {
+                let (base, marks) = decompose(composed.last!)
+                if !marks.isEmpty, !base.isEmpty {
+                    composed = recompose(base, marks.dropLast())
+                } else {
+                    composed = ""            // bare open glyph: gone entirely
+                }
+                Dbg.log("  → backspace peels open cluster → '\(Dbg.str(composed))'")
+                updateMarked(client)
+                return true
+            }
             return handleBackspace(client)
         }
 
@@ -406,12 +455,12 @@ class InputController: IMKInputController {
         // consumed). With nothing pending both pass untouched — Esc stays
         // vim's key, space stays a space.
         if event.keyCode == 53, !flags.contains(.option) {
-            if pending.isEmpty { return false }
-            flushPending(client)
-            return true
+            if !pending.isEmpty { flush(client); return true }
+            flush(client)          // commit the open cluster; Esc stays the app's
+            return false
         }
         if event.keyCode == 49, !flags.contains(.option), !pending.isEmpty {
-            flushPending(client)
+            flush(client)
             return true
         }
 
@@ -425,10 +474,10 @@ class InputController: IMKInputController {
             // The tie bar's BELOW form (⌥⇧j → U+035C, colliding descenders: t͜ɕ d͜ʒ).
             if oc == "j" { emitJoiner(Self.tieBelow, client); return true }
             // Locale quotes: ⌥⇧[ closes primary, ⌥⇧] closes secondary.
-            if oc == "[" { flushPending(client); insert(quoteQuad()[1], client); return true }
-            if oc == "]" { flushPending(client); insert(quoteQuad()[3], client); return true }
+            if oc == "[" { flush(client); insert(quoteQuad()[1], client); return true }
+            if oc == "]" { flush(client); insert(quoteQuad()[3], client); return true }
             // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
-            if oc == "z" { flushPending(client); return subscriptize(client) }
+            if oc == "z" { if !pending.isEmpty { flush(client) }; return subscriptize(client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
             // stress).
             if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
@@ -437,12 +486,12 @@ class InputController: IMKInputController {
             // Digits: a deliberately spent slot inserts its glyph (⌥⇧1 → ¡);
             // everything else declines, letting the host's ⌥⇧ typography pass —
             // the capital escape lives on Ctrl+Shift.
-            guard let c = oc.first, c.isNumber else { flushPending(client); return false }
-            if let spent = t.optShiftDigits[oc] { flushPending(client); insert(spent, client); return true }
-            guard t.letters[oc] != nil else { flushPending(client); return false }
+            guard let c = oc.first, c.isNumber else { flush(client); return false }
+            if let spent = t.optShiftDigits[oc] { flush(client); insert(spent, client); return true }
+            guard t.letters[oc] != nil else { flush(client); return false }
             let raw = USLayout.char(event.keyCode, shift: true)
-            guard !raw.isEmpty else { flushPending(client); return false }
-            flushPending(client)
+            guard !raw.isEmpty else { flush(client); return false }
+            flush(client)
             insert(raw, client)
             return true
         }
@@ -453,24 +502,24 @@ class InputController: IMKInputController {
         // PREFIX (dead-key style, é/ñ); spacing marks stay postfix.
         if opt {
             let oc = USLayout.char(event.keyCode, shift: false)
-            guard oc.count == 1 else { flushPending(client); return false }
+            guard oc.count == 1 else { flush(client); return false }
             // The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): attaches to the
             // PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits now.
             if oc == "j" { emitJoiner(Self.tieAbove, client); return true }
             // Locale quotes: ⌥[ opens primary, ⌥] opens secondary.
-            if oc == "[" { flushPending(client); insert(quoteQuad()[0], client); return true }
-            if oc == "]" { flushPending(client); insert(quoteQuad()[2], client); return true }
+            if oc == "[" { flush(client); insert(quoteQuad()[0], client); return true }
+            if oc == "]" { flush(client); insert(quoteQuad()[2], client); return true }
             // ⌥z raises the previous glyph — the operators live on the prime chord.
-            if oc == "z" { flushPending(client); return superscriptize(client) }
+            if oc == "z" { if !pending.isEmpty { flush(client) }; return superscriptize(client) }
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
             // so ˞ is a spacing character and the visual join onto the vowel is the
             // font's job. The one join the engine owes is ə/ɜ → precomposed ɚ/ɝ,
             // fused the way ⌥⇧y + l fuses to ɫ. Other bases fall through to the
             // marks table, which inserts the bare ˞. Mirrors js/src/index.ts.
-            if oc == "r", pending.isEmpty, let (p, r) = lastCluster(client) {
+            if oc == "r", pending.isEmpty, let (p, site) = prevCluster(client) {
                 let (base, marks) = decompose(p)
-                if base == "ə" { replace(r, with: recompose("ɚ", marks), client); return true }
-                if base == "ɜ" { replace(r, with: recompose("ɝ", marks), client); return true }
+                if base == "ə" { rewrite(site, with: recompose("ɚ", marks), client); return true }
+                if base == "ɜ" { rewrite(site, with: recompose("ɝ", marks), client); return true }
             }
             // ⌥. on its own pending dot commits the INTERPUNCT — the dot key's
             // free-floating form (the Catalan punt volat: l ⌥. ⌥. l → l·l). One
@@ -478,13 +527,14 @@ class InputController: IMKInputController {
             // Mirrors js/src/index.ts.
             if oc == ".", pending.count == 1, pending[0].value == 0x0307 {
                 pending = []
+                flush(client)                 // the open cluster commits; the dot is spent
                 insert("\u{00B7}", client)
                 return true
             }
             if let m = t.optMarks[oc] { applyMark(m, secondary: false, client); return true }
             // An unassigned ⌥ key declines — digits included, so the host's ⌥6 §,
             // ⌥7 ¶, ⌥8 • survive.
-            flushPending(client)
+            flush(client)
             return false
         }
 
@@ -495,7 +545,7 @@ class InputController: IMKInputController {
         let bareKey = USLayout.char(event.keyCode, shift: false)
         if bareKey.count == 1, bareKey.first!.isNumber {
             if !shift, !pending.isEmpty { emitBase(bareKey, client); return true }
-            flushPending(client)
+            flush(client)
             return false
         }
 
@@ -517,13 +567,13 @@ class InputController: IMKInputController {
 
         // Decode the physical key through US for the ASCII-keyed tables.
         let s = USLayout.char(event.keyCode, shift: shift)
-        guard s.count == 1 else { return false }
+        guard s.count == 1 else { flush(client); return false }
 
         // Shift-letter modifiers transform the previous glyph in place; any
         // combining marks already on it survive the swap (decomposed view).
         // Skipped while an accent is pending — the next base absorbs it instead
         // of a modifier reaching back past the composition.
-        if pending.isEmpty, let (p, r) = lastCluster(client) {
+        if pending.isEmpty, let (p, site) = prevCluster(client) {
             let (base0, marks) = decompose(p)
             var base = base0
             // Shift-chaining: a capital typed right after a special (non-ASCII) IPA
@@ -547,15 +597,23 @@ class InputController: IMKInputController {
             // capitalOf for the exclusions.
             if shift, !flags.contains(.capsLock),
                base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
-                let p2Segment = clusterBefore(r, client).map {
-                    String($0).unicodeScalars.contains(where: isSegmentScalar)
-                } ?? false
+                // Chain capitals always decline first (committing the open
+                // cluster), so a capital in the OPEN cluster can only be
+                // Caps-Lock text — freshest, with nothing chained behind it.
+                let p2Segment: Bool
+                switch site {
+                case .open: p2Segment = false
+                case .doc(let r):
+                    p2Segment = clusterBefore(r, client).map {
+                        String($0).unicodeScalars.contains(where: isSegmentScalar)
+                    } ?? false
+                }
                 if p2Segment, chainLive {
                     base = base.lowercased()
                 } else if let low = t.transforms[base.lowercased() + s],
                           let up = Self.capitalOf(low) {
                     Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
-                    replace(r, with: recompose(up, marks), client)
+                    rewrite(site, with: recompose(up, marks), client)
                     chainBroken = false; return true
                 }
             }
@@ -570,12 +628,12 @@ class InputController: IMKInputController {
                let low = t.transforms[digit + s],
                let up = Self.capitalOf(low) {
                 Dbg.log("  → digit capital \(base)+\(s) ⇒ \(Dbg.str(up))")
-                replace(r, with: recompose(up, marks), client)
+                rewrite(site, with: recompose(up, marks), client)
                 chainBroken = false; return true
             }
             if let combo = t.transforms[base + s] {
                 Dbg.log("  → transform \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(combo))")
-                replace(r, with: recompose(combo, marks), client)
+                rewrite(site, with: recompose(combo, marks), client)
                 chainBroken = false; return true
             }
         }
@@ -599,7 +657,7 @@ class InputController: IMKInputController {
         }
         // Not a base: a pending accent commits as its spacing form (⌥e space → ´),
         // then the key passes. Capitals with no transform, punctuation, 8/9/0.
-        flushPending(client)
+        flush(client)
         Dbg.log("  → pass (literal '\(s)')")
         return false
     }
@@ -613,7 +671,7 @@ class InputController: IMKInputController {
         // while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
         let spacing = (secondary && m.double != nil) ? m.doubleSpacing : m.spacing
         if spacing {
-            flushPending(client)          // a pending accent commits before a spacing mark
+            flush(client)          // a pending accent commits before a spacing mark
             applySpacing(scalarStr, client)
         } else {
             applyCombining(scalarStr, client, cycle: secondary ? m.doubleCycle : m.cycle)
@@ -644,6 +702,66 @@ class InputController: IMKInputController {
 
     /// The accumulated prefix diacritics awaiting a base. Empty = no composition.
     private var pending: [Unicode.Scalar] = []
+    /// The ACTIVE CLUSTER: the most recently typed glyph, held open in the
+    /// marked range (dressed as plain text) so every previous-glyph rule
+    /// rewrites it on the composition path. At most one grapheme cluster;
+    /// always empty in direct hosts.
+    private var composed = ""
+
+    /// Where the previous cluster lives: the open composition, or the document.
+    private enum PrevSite { case open, doc(NSRange) }
+
+    /// The grapheme cluster before the cursor — the open cluster when one
+    /// exists (no document read needed), else read from the document.
+    private func prevCluster(_ client: IMKTextInput) -> (Character, PrevSite)? {
+        if let last = composed.last { return (last, .open) }
+        return lastCluster(client).map { ($0.0, .doc($0.1)) }
+    }
+
+    /// Rewrite the previous cluster: the open one via marked text (the
+    /// well-paved path), a committed one via replacementRange (the fallback).
+    private func rewrite(_ site: PrevSite, with new: String, _ client: IMKTextInput) {
+        switch site {
+        case .open:
+            composed = new
+            updateMarked(client)
+        case .doc(let r):
+            replace(r, with: new, client)
+        }
+    }
+
+    /// Apple's Korean read-back: after a direct commit the cursor must reflect
+    /// the write. A host that answers stale (an async, multi-process client —
+    /// Chromium, Electron) will silently drop our stateless replacementRange
+    /// rewrites, so switch this session to composition. Probed once, on the
+    /// first commit that should have moved the cursor.
+    private func probeWriteModel(expected loc: Int, _ client: IMKTextInput) {
+        guard !probed else { return }
+        probed = true
+        let got = client.selectedRange().location
+        if got != loc {
+            Dbg.log("  read-back stale (want \(loc) got \(got)) → composition for the session")
+            direct = false
+        } else {
+            Dbg.log("  read-back fresh (\(got)) → staying stateless")
+        }
+    }
+
+    /// Emit `s` as the new active cluster: the previous one commits, `s`
+    /// opens in the marked range. Direct hosts commit immediately instead.
+    private func openCluster(_ s: String, _ client: IMKTextInput) {
+        if direct {
+            let before = client.selectedRange().location
+            insert(s, client)
+            if !directLocked, before != NSNotFound {
+                probeWriteModel(expected: before + (s as NSString).length, client)
+            }
+            return
+        }
+        if !composed.isEmpty { insert(composed, client) }  // commits the old cluster
+        composed = s
+        updateMarked(client)
+    }
 
     /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
@@ -687,9 +805,11 @@ class InputController: IMKInputController {
         return s
     }
 
-    /// Push `pending` into the client's marked-text range (or clear it).
+    /// Push the composition — the open cluster, then the pending preview —
+    /// into the client's marked-text range (or clear it).
     private func updateMarked(_ client: IMKTextInput) {
-        let s = previewString()
+        let pv = previewString()
+        let s = composed + pv
         let none = NSRange(location: NSNotFound, length: 0)
         guard !s.isEmpty else {
             Dbg.log("    marked: clear")
@@ -709,24 +829,42 @@ class InputController: IMKInputController {
         // ourselves and suppress the underline. (This is the same lever xkey
         // uses in reverse — it omits backgroundColor "to prevent highlighting".)
         let len = (s as NSString).length
-        let attrs: [NSAttributedString.Key: Any] = [
-            .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
-            .foregroundColor: NSColor.textColor,
-            .underlineStyle: 0,
-        ]
-        Dbg.log("    marked: '\(Dbg.str(s))' sel=(\(len),0) hilite=yellow")
-        client.setMarkedText(NSAttributedString(string: s, attributes: attrs),
+        let a = NSMutableAttributedString()
+        // The open cluster is dressed as PLAIN text — composition is plumbing
+        // here, not chrome; only the dead-key preview earns the highlight.
+        // Browsers repaint the composition from extracted spans and treat
+        // "no underline attribute" as "draw my default one" — so declare an
+        // underline and paint it TRANSPARENT: engines that honor the span
+        // draw an invisible line, and AppKit hosts stay invisible too.
+        if !composed.isEmpty {
+            a.append(NSAttributedString(string: composed, attributes: [
+                .foregroundColor: NSColor.textColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .underlineColor: NSColor.clear,
+            ]))
+        }
+        if !pv.isEmpty {
+            a.append(NSAttributedString(string: pv, attributes: [
+                .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
+                .foregroundColor: NSColor.textColor,
+                .underlineStyle: 0,
+            ]))
+        }
+        Dbg.log("    marked: '\(Dbg.str(s))' sel=(\(len),0)")
+        client.setMarkedText(a,
                              selectionRange: NSRange(location: len, length: 0),
                              replacementRange: none)
     }
 
-    /// Commit a pending accent as literal text (dead key + non-base = the
-    /// spacing accent), clearing the composition. No-op when nothing pends.
-    private func flushPending(_ client: IMKTextInput) {
-        guard !pending.isEmpty else { return }
-        let s = previewString()
+    /// Commit everything open — the active cluster, then any pending accent
+    /// as its spacing clone (dead key + non-base = the spacing accent) —
+    /// closing the composition. No-op when nothing is open.
+    private func flush(_ client: IMKTextInput) {
+        let s = composed + previewString()
+        guard !s.isEmpty else { return }
+        composed = ""
         pending = []
-        Dbg.log("    flush pending → '\(Dbg.str(s))'")
+        Dbg.log("    flush → '\(Dbg.str(s))'")
         insert(s, client)   // insertText over marked text commits & clears it
     }
 
@@ -766,7 +904,7 @@ class InputController: IMKInputController {
     /// just emitted: same chord again ⇄ sliding, other chord = placement flip.
     /// Mirrors js emitJoiner.
     private func emitJoiner(_ start: Unicode.Scalar, _ client: IMKTextInput) {
-        if pending.isEmpty, let (p, r) = lastCluster(client), let last = p.unicodeScalars.last {
+        if pending.isEmpty, let (p, site) = prevCluster(client), let last = p.unicodeScalars.last {
             let ties: [Unicode.Scalar] = [Self.tieAbove, Self.tieBelow]
             let next: Unicode.Scalar? =
                 last == start ? Self.slide :
@@ -775,66 +913,82 @@ class InputController: IMKInputController {
             if let next = next {
                 var scalars = Array(p.unicodeScalars.dropLast())
                 scalars.append(next)
-                replace(r, with: String(String.UnicodeScalarView(scalars)), client)
+                rewrite(site, with: String(String.UnicodeScalarView(scalars)), client)
                 return
             }
+            // No walk: the joiner APPENDS to the previous segment — into the
+            // open cluster when one exists, else straight after the committed
+            // text (same cluster either way; a lone combining mark must never
+            // open a composition of its own).
+            if case .open = site {
+                composed += String(start)
+                updateMarked(client)
+                return
+            }
+            insert(String(start), client)
+            return
         }
-        emitBase(String(start), client)
+        if !pending.isEmpty { emitBase(String(start), client); return }
+        insert(String(start), client)
     }
 
-    /// Emit a base glyph, committing any pending prefix diacritics onto it.
+    /// Emit a base glyph — absorbing any pending prefix diacritics — as the
+    /// new active cluster.
     private func emitBase(_ glyph: String, _ client: IMKTextInput) {
         guard !pending.isEmpty else {
-            Dbg.log("    emitBase: no pending → insert '\(glyph)'")
-            insert(glyph, client); return
+            Dbg.log("    emitBase: no pending → open '\(glyph)'")
+            openCluster(glyph, client); return
         }
         let marks = pending
         pending = []
         // tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
         if marks.count == 1, marks[0] == "\u{0334}",
            let t = Self.tilded[glyph] {
-            Dbg.log("    emitBase: commit \(t)")
-            insert(t, client); return
+            Dbg.log("    emitBase: open \(t)")
+            openCluster(t, client); return
         }
         // stroke overlay: the orthographic letters are precomposed (⌥y l → ł,
         // ⌥y d → đ) — NFC cannot fuse an overlay. Set mirrors js/src/index.ts.
         if marks.count == 1, marks[0] == "\u{0335}",
            let s = Self.stroked[glyph] {
-            Dbg.log("    emitBase: commit \(s)")
-            insert(s, client); return
+            Dbg.log("    emitBase: open \(s)")
+            openCluster(s, client); return
         }
         let out = recompose(glyph, marks)
-        Dbg.log("    emitBase: commit '\(Dbg.str(out))'")
-        insert(out, client)   // replaces the marked range
+        Dbg.log("    emitBase: open '\(Dbg.str(out))'")
+        openCluster(out, client)
     }
 
-    /// Spacing mark, one specific form: insert it in place (postfix).
+    /// Spacing mark, one specific form: insert it in place (postfix). The open
+    /// cluster commits first — a spacing mark is not a transform base, so it
+    /// has no business staying open.
     private func applySpacing(_ scalarStr: String, _ client: IMKTextInput) {
+        flush(client)
         insert(scalarStr, client)
     }
 
     /// ⌥z: superscriptize the previous glyph (`t` `h` ⌥z → tʰ). No
     /// superscriptable base → the literal letter z (never a dead keystroke).
     private func superscriptize(_ client: IMKTextInput) -> Bool {
-        if let (p, r) = lastCluster(client) {
+        if let (p, site) = prevCluster(client) {
             let (base, marks) = decompose(p)
             if let sup = Tables.shared.sups[base] {
-                replace(r, with: recompose(sup, marks), client); return true
+                rewrite(site, with: recompose(sup, marks), client); return true
             }
         }
-        insert("z", client); return true
+        openCluster("z", client); return true
     }
 
     /// ⌥⇧z: subscriptize the previous glyph (`x` `2` ⌥⇧z → x₂). The lowered
     /// twin of superscriptize. No subscriptable base → the literal letter z.
     private func subscriptize(_ client: IMKTextInput) -> Bool {
-        if let (p, r) = lastCluster(client) {
+        if let (p, site) = prevCluster(client) {
             let (base, marks) = decompose(p)
             if let sub = Tables.shared.subs[base] {
-                replace(r, with: recompose(sub, marks), client); return true
+                rewrite(site, with: recompose(sub, marks), client); return true
             }
         }
-        insert("z", client); return true
+        openCluster("z", client); return true
     }
 
     // MARK: - backspace
@@ -847,14 +1001,22 @@ class InputController: IMKInputController {
     /// ⌃⌫: replace the transform before the cursor with its keystroke spelling.
     /// Stateless via the reverse map; bare clusters only (marks peel with ⌫).
     private func unconvert(_ client: IMKTextInput) -> Bool {
-        guard let (p, r) = lastCluster(client) else { return false }
+        guard let (p, site) = prevCluster(client) else { return false }
         let (base, marks) = decompose(p)
         guard marks.isEmpty, !base.isEmpty else { return false }
         let low = base.lowercased()
         guard let key = Tables.shared.unconvertKey[low] else { return false }
         let text = base == low ? key : key.uppercased()
         Dbg.log("  → unconvert \(Dbg.str(base)) ⇒ '\(text)'")
-        replace(r, with: text, client)
+        switch site {
+        case .open:
+            // The spelling is plain keystrokes, not a transform base worth
+            // keeping open — commit it outright.
+            composed = ""
+            insert(text, client)
+        case .doc(let r):
+            replace(r, with: text, client)
+        }
         return true
     }
 
@@ -928,39 +1090,8 @@ class InputController: IMKInputController {
         client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
     }
 
-    /// Rewrite the previous cluster — the transform edit, the only edit that
-    /// was ever fragile. It travels as a FLASH COMPOSITION: the committed
-    /// cluster becomes marked text carrying the result (the reconversion
-    /// shape), then commits in the same event cycle. Bare typing never
-    /// composes; nothing persists long enough to paint (pixel-verified in
-    /// tools/hilite-probe.swift); composition-aware hosts see
-    /// compositionstart/end around the mutation and defer per the standard
-    /// mechanism. A host that ignores replacementRange fails the same way
-    /// the plain insertText path fails — flash is never worse.
     private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
-        let none = NSRange(location: NSNotFound, length: 0)
-        // 1. Open the composition over the committed cluster (reconversion
-        //    shape). Sync hosts (AppKit, WebKit) apply it now; Chromium queues
-        //    setMarkedText during a keydown and only the LAST call survives.
-        client.setMarkedText(NSAttributedString(string: new, attributes: [
-                                 .underlineStyle: NSUnderlineStyle.single.rawValue,
-                                 .underlineColor: NSColor.clear,
-                             ]),
-                             selectionRange: NSRange(location: (new as NSString).length, length: 0),
-                             replacementRange: range)
-        // 2. The authoritative replacement, carrying the range itself: every
-        //    engine executes a range-carrying insertText immediately
-        //    (Chromium: ImeCommitText → ReplaceTextAndKeepSelection), whether
-        //    or not step 1 ran.
         client.insertText(new, replacementRange: range)
-        // 3. A trailing empty mark: in Chromium it is the sole survivor of the
-        //    keydown coalescing (a no-op clear instead of a stray
-        //    composition); where calls run synchronously the composition is
-        //    already closed and clearing is a no-op — and clearing is always
-        //    setMarkedText(""), never insertText("") (the transport drops
-        //    empty inserts).
-        client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0),
-                             replacementRange: none)
     }
 
     /// A cluster's canonical decomposition, split into the base glyph and its
