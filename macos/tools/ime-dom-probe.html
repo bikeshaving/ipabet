@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>IME DOM probe</title>
+<style>
+  body { font: 14px -apple-system, sans-serif; margin: 2rem; max-width: 60rem; }
+  input, textarea { font: 18px ui-monospace, Menlo, monospace; width: 100%;
+    padding: .5rem; box-sizing: border-box; margin: .25rem 0 1rem; }
+  #log { font: 12px ui-monospace, Menlo, monospace; white-space: pre-wrap;
+    background: #f4f4f4; padding: 1rem; min-height: 12rem; }
+  button { font: inherit; }
+  b.ev { color: #06c; }
+</style>
+</head>
+<body>
+<h3>IME DOM probe</h3>
+<p>Type <code>s ⇧H</code> in each field. Every event Chrome delivers is logged
+in order with its payload and the field value after it settles.</p>
+<label>&lt;input&gt;</label>
+<input id="i" autocomplete="off" autocorrect="off" spellcheck="false">
+<label>&lt;textarea&gt;</label>
+<textarea id="t" rows="2" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+<p><button id="copy">Copy log</button> <button id="clear">Clear</button></p>
+<div id="log"></div>
+<script>
+const log = document.getElementById("log");
+function line(s) { log.textContent += s + "\n"; }
+function val(el) { return JSON.stringify(el.value); }
+function ranges(e) {
+  try {
+    const rs = e.getTargetRanges();
+    if (!rs.length) return "targetRanges=[]";
+    return "targetRanges=" + rs.map(r => `[${r.startOffset},${r.endOffset}]`).join(",");
+  } catch { return "targetRanges=n/a"; }
+}
+for (const el of [document.getElementById("i"), document.getElementById("t")]) {
+  const tag = el.tagName.toLowerCase();
+  el.addEventListener("keydown", e => {
+    line(`${tag} keydown key=${JSON.stringify(e.key)} keyCode=${e.keyCode} isComposing=${e.isComposing}`);
+  });
+  el.addEventListener("keypress", e => {
+    line(`${tag} keypress key=${JSON.stringify(e.key)} keyCode=${e.keyCode}`);
+  });
+  for (const type of ["compositionstart", "compositionupdate", "compositionend"]) {
+    el.addEventListener(type, e => {
+      line(`${tag} ${type} data=${JSON.stringify(e.data)}`);
+    });
+  }
+  el.addEventListener("beforeinput", e => {
+    line(`${tag} beforeinput inputType=${e.inputType} data=${JSON.stringify(e.data)} ${ranges(e)}`);
+  });
+  el.addEventListener("input", e => {
+    line(`${tag} input inputType=${e.inputType} data=${JSON.stringify(e.data)}`);
+    queueMicrotask(() => line(`${tag}   → value=${val(el)} selStart=${el.selectionStart}`));
+  });
+  el.addEventListener("keyup", e => {
+    line(`${tag} keyup key=${JSON.stringify(e.key)}`);
+  });
+}
+document.getElementById("copy").addEventListener("click", () =>
+  navigator.clipboard.writeText(log.textContent));
+document.getElementById("clear").addEventListener("click", () =>
+  { log.textContent = ""; });
+</script>
+</body>
+</html>
