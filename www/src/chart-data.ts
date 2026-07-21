@@ -19,8 +19,8 @@ export interface ChartEntry {
 
 /** The 31 diacritics of the official chart, in its order. */
 export const DIACRITICS: ChartEntry[] = [
-	{glyph: "◌̊", keys: "~k", name: "Voiceless", on: "n"},
-	{glyph: "◌̬", keys: "~+v", name: "Voiced", on: "d"},
+	{glyph: "◌̥", keys: "~+k", name: "Voiceless", on: "n"},
+	{glyph: "◌̬", keys: "~+v", name: "Voiced", on: "s"},
 	{glyph: "ʰ", keys: "~z h", name: "Aspirated", on: "t"},
 	{glyph: "◌̹", keys: "~+w", name: "More rounded", on: "ɔ", onKeys: "o +H"},
 	{glyph: "◌̜", keys: "~w", name: "Less rounded", on: "ɔ", onKeys: "o +H"},
@@ -32,7 +32,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̯", keys: "~o", name: "Non-syllabic", on: "e"},
 // ⌥r emits the spacing hook and the font joins it (Unicode has no combining
 // rhotic hook). ə and ɜ fuse to precomposed ɚ/ɝ; every other vowel takes the bare hook.
-	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "a"},
+	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "ə", onKeys: "5 +Y", fuses: "ɚ"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
 	{glyph: "◌̼", keys: "~+p", name: "Linguolabial", on: "t"},
@@ -40,7 +40,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "ʲ", keys: "~z j", name: "Palatalized", on: "t"},
 	{glyph: "ˠ", keys: "~z g +H", name: "Velarized", on: "t"},
 	{glyph: "ˤ", keys: "~z 3 +H", name: "Pharyngealized", on: "t"},
-	{glyph: "◌̴", keys: "~+y", name: "Velarized or pharyngealized", on: "t", fuses: "ᵵ"},
+	{glyph: "◌̴", keys: "~+y", name: "Velarized or pharyngealized", on: "l", fuses: "ɫ"},
 	{glyph: "◌̝", keys: "~+g", name: "Raised", on: "e"},
 	{glyph: "◌̞", keys: "~g", name: "Lowered", on: "e"},
 	{glyph: "◌̘", keys: "~+h", name: "Advanced tongue root", on: "e"},

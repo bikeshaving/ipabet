@@ -49,7 +49,8 @@ function trial(e: ChartEntry): {keys: string[]; expected: string} {
 		// An overlay whose demo base has a precomposed atom fuses to it (ᵵ).
 		return {keys: [...keys, ...baseKeys(e)], expected: e.fuses ?? e.on! + e.glyph.slice(1)};
 	}
-	if (e.on) return {keys: [...baseKeys(e), ...keys], expected: e.on + e.glyph};
+	// A spacing glyph can fuse too: ə ⌥r is the precomposed ɚ, not ə˞.
+	if (e.on) return {keys: [...baseKeys(e), ...keys], expected: e.fuses ?? e.on + e.glyph};
 	return {keys, expected: e.glyph};
 }
 
