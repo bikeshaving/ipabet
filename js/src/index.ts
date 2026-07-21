@@ -1,13 +1,5 @@
-// @b9g/ipabet — the IPAbet engine in TypeScript.
-//
-// A faithful port of the macOS IME's stateless engine
-// (macos/Sources/InputController.swift): every keystroke reads the text before
-// the cursor and returns an edit — insert, replace-the-previous-cluster, or
-// pass (defer to the host's native behavior). There is no composition state.
-// All previous-glyph rules operate on the decomposed (NFD) view of the last
-// grapheme cluster and recompose to NFC on write, so precomposed é and
-// unfused n̥ behave identically. Tables come from spec/ipabet.json — the
-// same single source of truth the IME loads.
+// @b9g/ipabet — the IPAbet engine in TypeScript, ported from the macOS IME
+// (macos/Sources/InputController.swift). Tables come from spec/ipabet.json.
 
 import spec from "../../spec/ipabet.json";
 
@@ -16,18 +8,11 @@ export interface Keystroke {
 	key: string;
 	shift?: boolean;
 	option?: boolean;
-	/** Shift was physically RELEASED between the previous keystroke and this one.
-	 *  The IME reads this from flagsChanged; it's what tells a held IPA chain
-	 *  (ʃ⇧I⇧H → ʃɪ, shift never lifted) apart from a glyph followed by a fresh
-	 *  capital (ʃ, release, ⇧I⇧H → ʃIH). A release breaks the chain. */
+	/** Shift was physically RELEASED since the previous keystroke. */
 	shiftBroke?: boolean;
-	/** Caps Lock is engaged. It is a LOCK, not a modifier: a letter types its
-	 *  CAPITAL literally (the bare layer is native US) and never acts as the ⇧
-	 *  modifier. Shift still wins — ⇧ is always the modifier, Caps Lock never is. */
+	/** Caps Lock is engaged. A lock, not a modifier. */
 	capsLock?: boolean;
-	/** Control is held. Only ⌃⇧<letter> means anything here — the literal-capital
-	 *  escape. Every other ⌃ chord is a leader key (tmux ^b, emacs ^x) and the host
-	 *  keeps it, so callers pass those straight through and never reach the engine. */
+	/** Control is held. Only ⌃⇧<letter> is claimed. */
 	control?: boolean;
 }
 
@@ -38,23 +23,15 @@ export type Edit =
 	| {type: "replace"; length: number; text: string}
 	/** Defer to the host: native character, native delete, native shortcut. */
 	| {type: "pass"}
-	/** Only the pending composition changed; the document is untouched. The host
-	 *  renders `pending` however it likes (marked text in the IME, a decoration
-	 *  on the web). Nothing is ever written to the document to represent it. */
+	/** Only the pending composition changed; the document is untouched. */
 	| {type: "noop"};
 
-/**
- * Diacritics awaiting a base — the dead-key composition, held by the HOST, never
- * smuggled into the document. (A sentinel character can't work: NBSP, and even
- * NBSP+combining, occur in real pasted text and would be mistaken for ours.)
- * The macOS IME renders this as marked text; the web editor draws it itself.
- */
+/** Diacritics awaiting a base, held by the HOST. Never a sentinel character in
+ *  the document: NBSP+combining occurs in real pasted text. */
 export type Pending = readonly string[];
 
-/** What `handleKey`/`handleBackspace` return: an edit, the next pending, and
- *  whether an IPA chain was broken by a shift release. The engine owns the chain
- *  RULE but not its FLAG — only the caller can see a release, so the caller
- *  threads `chainBroken` back in (the IME from flagsChanged, the web from keyup). */
+/** An edit, the next pending, and whether a shift release broke an IPA chain.
+ *  Only the caller can see a release, so it threads `chainBroken` back in. */
 export interface Step {
 	edit: Edit;
 	pending: Pending;
@@ -65,15 +42,11 @@ interface Mark {
 	mark: string;
 	spacing: boolean;
 	double?: string;
-	/** The ⌥⇧ form is spacing even though the ⌥ form is combining. A key can carry
-	 *  one of each: ⌥9 is the linguolabial seagull (combining, prefix), and ⌥⇧9 is
-	 *  extIPA's pre-voicing bracket ₍ (a standalone character, postfix). Spacing is
-	 *  a property of the FORM, not of the key. */
+	/** The ⌥⇧ form is spacing while the ⌥ form is combining. */
 	doubleSpacing?: boolean;
 	cycle: string[];
 	doubleCycle: string[];
-	/** Spacing clone (´, ^): the mark's standalone form. No clone → the
-	 * combining mark rides a no-break space. */
+	/** The mark's standalone form. No clone → it rides a no-break space. */
 	clone?: string;
 }
 
@@ -85,14 +58,10 @@ for (const e of spec.letters as {key: string; glyph: string}[]) {
 }
 
 const optMarks = new Map<string, Mark>();
-/** Exclusive duals: a mark and its ⌥⇧ twin are the two values of ONE feature
- *  (advanced/retracted, apical/laminal, syllabic/non-syllabic…). They are
- *  mutually exclusive, so the twin *replaces* rather than stacks — no segment
- *  is both advanced and retracted. Shape-twins that are independent features
- *  (tilde/creaky, diaeresis/breathy) stack, and are absent from this map. */
+/** A mark and its ⌥⇧ twin are two values of ONE feature, so the twin *replaces*
+ *  rather than stacks. Shape-twins that stack are absent from this map. */
 const exclusiveTwin = new Map<string, string>();
-/** combining scalar → its spacing form, for the dead-key preview and for the
- *  flush that commits an unconsumed accent (⌥e then space → ´). */
+/** combining scalar → its spacing form. */
 const cloneOf = new Map<string, string>();
 for (const e of spec.marks as {
 	opt: string;
@@ -137,25 +106,19 @@ for (const e of (spec.subscripts as {table: {base: string; sub: string}[]})
 	subs.set(e.base, e.sub);
 }
 
-/** Raise and lower are PREFIX operators, like the ⌥ diacritics: ⌥z arms the
- *  raise and the next glyph arrives raised (⌥z h → ʰ). They pend as sentinels
- *  rather than combining scalars, because nothing is stacked onto the base —
- *  the base is SUBSTITUTED for a different codepoint. */
+/** ⌥z / ⌥⇧z pend as sentinels, not combining scalars: nothing is stacked onto
+ *  the base, the base is SUBSTITUTED. */
 const RAISE = "\u{0001}sup";
 const LOWER = "\u{0001}sub";
-// The PREVIEW is ⁻ / ₋ — superscript and subscript minus, the bar sitting where
-// the glyph is about to land. Every small typographic mark (^ + − ↑) is already
-// a diacritic's spacing clone or, worse, IPA's own raised/lowered pair on ⌥g, so
-// position is the only signal left that nothing else has claimed.
+// Preview ⁻ / ₋: the bar sits where the glyph will land. Every other small mark
+// (^ + − ↑) is already a diacritic's clone, or is IPA's own raised/lowered pair.
 cloneOf.set(RAISE, "\u{207B}");
 cloneOf.set(LOWER, "\u{208B}");
-/** The operators are instructions, not characters. Unconsumed — no raised form
- *  in Unicode, or a terminator arrives — they commit NOTHING and simply lift.
- *  There is no invented fallback sign to leave behind. */
+/** An operator is an instruction, not a character: unconsumed, it commits
+ *  nothing and lifts. */
 const OPERATORS = new Set([RAISE, LOWER]);
 
-/** Raised/lowered glyph → its plain base. A modifier still transforms a glyph
- *  that has already moved (⌥z s ⇧H → ᶴ): unraise, transform, re-raise. */
+/** Raised/lowered glyph → its plain base, for unraise-transform-re-raise. */
 const unsup = new Map<string, string>();
 for (const [base, sup] of sups) if (!unsup.has(sup)) unsup.set(sup, base);
 const unsub = new Map<string, string>();
@@ -168,31 +131,26 @@ const unconvertKey = new Map<string, string>();
 const transforms = new Map<string, string>();
 for (const [key, glyph] of letters) {
 	if (key.length === 2) {
-		// A leading digit is a LITERAL base a modifier transforms — 5H → ɜ, 2Q → ʡ —
-		// and the roots are ordinary two-key digraphs too (5Y → ə, 2H → ʔ). ⇧2–7
-		// fall through to native @ # $ % ^ &; the tie bar lives on ⌥j (join).
+			// A leading digit is a literal base a modifier transforms (5H → ɜ).
 		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
 		if (!unconvertKey.has(glyph)) unconvertKey.set(glyph, key);
 	}
 }
 
-// US layout, shift plane, for the ⌥⇧ raw escape (digits only need the map;
-// letters are just uppercased).
+// US shift plane; letters are just uppercased.
 const SHIFTED_DIGITS: Record<string, string> = {
 	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%",
 	"6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
 };
-// …and the punctuation shift plane, for nativeChar: the web binding consumes
-// every typing key and re-inserts, so a pass edit must know that ⇧` is ~.
-// (The IME never needs this — a declined key is typed by the host itself.)
+// Punctuation shift plane: the web binding re-inserts, so a pass edit must know
+// ⇧` is ~. The IME never needs it — a declined key is typed by the host.
 const SHIFTED_PUNCT: Record<string, string> = {
 	"`": "~", "-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
 	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
 };
 
-// Locale-semantic quotes on the bracket keys. The locale is CONFIGURATION,
-// not composition state — the engine stays stateless per keystroke.
+// The quote locale is CONFIGURATION, not composition state.
 const QUOTE_LOCALES = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
 let quoteLocale = QUOTE_LOCALES.default;
 /** Set the active quote locale (en, de, fr, ch, pl, ru, sv). Unknown → default. */
@@ -207,11 +165,8 @@ function quoteQuad(): string[] {
 const optShiftDigits: Record<string, string> =
 	(spec as {optShift?: Record<string, string>}).optShift ?? {};
 
-// A capital digraph capitalizes the digraph's result. Every real uppercase
-// forms — Latin (Æ Ŋ Ʃ) and Greek (Θ Β Χ) alike; the only exclusion is a
-// plain-ASCII result (tJ→c→C, so ⇧T⇧J stays "TJ"), which is nonsense as a
-// digraph. ʔ is caseless in Unicode, but Dene orthographies write its capital
-// as Ɂ (U+0241) — the one hand-mapped capital.
+// A capital digraph capitalizes its result; a plain-ASCII result is excluded
+// (⇧T⇧J stays "TJ"). ʔ is caseless in Unicode — Ɂ is the one hand map.
 const HAND_CAPS: Record<string, string> = {"\u{0294}": "\u{0241}"}; // ʔ → Ɂ
 function capitalOf(low: string): string | undefined {
 	const hand = HAND_CAPS[low];
@@ -224,18 +179,14 @@ function capitalOf(low: string): string | undefined {
 }
 
 
-// The tie bar (⌥j) and its below-form (⌥⇧j) — a placement pair, above/below,
-// like the ring key. Two rules ride the emitted joiner (lookback, like the ɚ
-// fusion): the OTHER chord flips placement in place, and the SAME chord again
-// toggles to ͢ — extIPA's sliding articulation, the third joiner — and back.
-// Two tie bars stacked was never a transcription.
+// The tie bar (⌥j) and its below-form (⌥⇧j). The other chord flips placement,
+// the same chord again toggles sliding ͢ and back.
 const TIE = "͡";
 const TIE_BELOW = "͜";
 const SLIDE = "͢";
 const TIES = [TIE, TIE_BELOW];
 
-/** ⌥j / ⌥⇧j: emit a joiner onto the previous segment — or rewrite the one just
- *  emitted: same chord again ⇄ sliding, other chord = placement flip. */
+/** ⌥j / ⌥⇧j: emit a joiner, or rewrite the one just emitted. */
 function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
 	const p = lastCluster(textBefore);
 	if (p !== undefined && pending.length === 0) {
@@ -251,16 +202,8 @@ function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
 	return emitBase(start, pending);
 }
 
-// Mark PLACEMENT is the transcriber's, never the engine's.
-//
-// Three marks have an above/below form — the tie bar, the voiceless ring, and the
-// syllabic line — and each placement is its own keystroke: ⌥k / ⌥⇧k for the ring,
-// ⌥s / ⌥⇧s for the syllabic line, ⌥j / ⌥⇧j for the tie. Choosing placement from a
-// descender list would be a TYPOGRAPHY model living inside a NOTATION engine — it
-// makes explicit requests unreachable (å needs an above-ring on a "descender"
-// base) and the list drifts silently, because the codepoint stays right and only
-// the rendering collides. The engine emits exactly the mark you asked for, on the
-// base you asked for.
+// Each above/below placement is its own keystroke (⌥k/⌥⇧k, ⌥s/⌥⇧s, ⌥j/⌥⇧j).
+// The engine emits the mark asked for, on the base asked for.
 
 // ---------------------------------------------------------------- unicode
 
@@ -285,21 +228,16 @@ function decompose(cluster: string): {base: string; marks: string[]} {
 	let base = "";
 	const marks: string[] = [];
 	for (const cp of cluster.normalize("NFD")) {
-		// base takes leading non-combining scalars; once any mark appears,
-		// everything after goes to marks (matches the Swift engine).
+		// Once any mark appears, everything after goes to marks (matches Swift).
 		if (marks.length === 0 && !isCombining(cp)) base += cp;
 		else marks.push(cp);
 	}
 	return {base, marks};
 }
 
-// NFC folds cross-class mark order by itself, but marks of the SAME combining
-// class never reorder — a tone typed before its shape mark would freeze as
-// é+̂, a permanent homoglyph of ế that no normalization can repair. So
-// composition is order-insensitive: try every arrangement of the pending
-// marks (≤3 in practice) and keep the shortest NFC — precomposition wins
-// whichever order was typed. Ties keep typed order, so deliberate IPA
-// stacking (t̪̻ dental+laminal) is untouched.
+// Marks of the SAME combining class never reorder under NFC, so a tone typed
+// before its shape mark freezes as a permanent homoglyph of ế. So try every
+// arrangement (≤3 in practice) and keep the shortest NFC.
 function recompose(base: string, marks: readonly string[]): string {
 	if (marks.length <= 1) return (base + marks.join("")).normalize("NFC");
 	let best: string | undefined;
@@ -326,26 +264,15 @@ function replaceCluster(cluster: string, text: string): Edit {
 
 // ---------------------------------------------------------------- marks
 
-/**
- * Combining ⌥ diacritics are PREFIX (dead-key style, like é/ñ on the US
- * keyboard): the mark comes first and the next base absorbs it. Statelessly,
- * the pending marks live in the HOST's composition state (marked text in the
- * IME), and `emitBase` folds the accumulated stack onto the base that follows.
- * A form's primary is ⌥, its secondary is ⌥⇧ (the mark's `double`); pressing
- * the same form again on the pending placeholder lifts it off (toggle). Marks
- * are independent and can co-occur (ã̯). Spacing marks (length,
- * tone, stress) are standalone glyphs, not decorations, so they stay postfix.
- */
-/** The dead-key preview: each pending mark as its spacing glyph where one
- *  exists (⌥e → ´, matching the US layout's terminator), else the bare
- *  combining glyph. Never a dotted circle — U+25CC renders enormous in some
- *  hosts, and Apple's dead keys always show a real spacing character. */
+/** Combining ⌥ diacritics are PREFIX (dead-key style): the mark comes first and
+ *  the next base absorbs it. Spacing marks (length, tone, stress) are postfix. */
+/** The dead-key preview: each pending mark as its spacing glyph. Never a dotted
+ *  circle — U+25CC renders enormous in some hosts. */
 export function previewString(pending: Pending): string {
 	return pending.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
-/** Commit an unconsumed accent as its spacing form (dead-key convention:
- *  ⌥e then space → ´), clearing the composition. */
+/** Commit an unconsumed accent as its spacing form (⌥e then space → ´). */
 function flush(pending: Pending): Step {
 	if (pending.length === 0) return {edit: {type: "noop"}, pending: []};
 	const text = commitString(pending);
@@ -354,21 +281,15 @@ function flush(pending: Pending): Step {
 	return {edit: {type: "insert", text}, pending: []};
 }
 
-/** What a pending composition writes when it commits unconsumed. A mark commits
- *  as its spacing clone — a mark's spacing form *is* the mark. An operator
- *  commits as nothing at all. */
+/** What a pending composition writes when it commits: a mark as its spacing
+ *  clone, an operator as nothing. */
 function commitString(pending: Pending): string {
 	return pending.filter((sc) => !OPERATORS.has(sc))
 		.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
-/** Combining diacritic (⌥/⌥⇧): stack it into the pending composition. The same
- *  form again peels it off — unless the key declares a CYCLE, in which case a
- *  repeat press advances the visible pending through the family and wraps
- *  (⌥n: ◌̃ → ◌͊ → ◌͋ → ◌͌ → ◌̃ — one dimension, deepest members behind repeat
- *  presses; the composition preview shows every step, and ⌫ still cancels).
- *  An exclusive dual replaces its twin — nothing is both advanced and
- *  retracted; independent shape-twins (tilde/creaky) stack. */
+/** Stack a diacritic into the pending composition. The same form again peels it
+ *  off, unless the key declares a CYCLE, which advances and wraps. */
 function pendingDiacritic(scalar: string, pending: Pending, cycle: string[] = []): Step {
 	let next: string[];
 	const top = pending[pending.length - 1];
@@ -389,8 +310,7 @@ function pendingDiacritic(scalar: string, pending: Pending, cycle: string[] = []
 /** Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form. */
 function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	const scalar = secondary && m.double !== undefined ? m.double : m.mark;
-	// Spacing belongs to the FORM, not the key: ⌥9 is a combining seagull (prefix),
-	// while ⌥⇧9 is the ₍ voicing bracket, a standalone character that goes postfix.
+	// Spacing belongs to the FORM, not the key.
 	const spacing = secondary && m.double !== undefined ? m.doubleSpacing === true : m.spacing;
 	if (!spacing) return pendingDiacritic(scalar, pending, secondary ? m.doubleCycle : m.cycle);
 	const f = flush(pending);                       // a pending accent commits first
@@ -398,14 +318,9 @@ function applyMark(m: Mark, pending: Pending, secondary = false): Step {
 	return {edit: {type: "insert", text}, pending: []};
 }
 
-// The stroke overlay's precomposed families: NFC cannot fuse an overlay, so
-// every combination Unicode encodes atomically must be emitted atomic — the
-// raw combining render would be a permanent homoglyph (i̵ beside ɨ fails
-// search forever). The orthographic set (ł đ ŧ ǥ ħ) plus every HORIZONTAL-bar
-// atom, IPA's barred letters included. Diagonal-slash atoms (ø ⱥ ɇ) are a
-// different graphical gesture and stay out; ł keeps its pragmatic exception
-// (technically a slash, but it is what every Pole means). An unlisted base
-// takes the raw combining overlay.
+// NFC cannot fuse an overlay, so every combination Unicode encodes atomically
+// must be emitted atomic — a raw combining render is a permanent homoglyph
+// (i̵ beside ɨ fails search forever). Diagonal-slash atoms stay out, ł excepted.
 const STROKED = new Map(Object.entries({
 	l: "ł", L: "Ł", d: "đ", D: "Đ", t: "ŧ", T: "Ŧ", g: "ǥ", G: "Ǥ",
 	h: "ħ", H: "Ħ", b: "ƀ", B: "Ƀ", z: "ƶ", Z: "Ƶ",
@@ -414,8 +329,7 @@ const STROKED = new Map(Object.entries({
 	k: "ꝁ", K: "Ꝁ", "2": "ƻ",
 }));
 
-// The tilde overlay's family — Unicode's "middle tilde" letters, the extIPA
-// velarized-or-pharyngealized set, plus the dark ls.
+// Unicode's middle-tilde letters, plus the dark ls.
 const TILDED = new Map(Object.entries({
 	l: "ɫ", L: "Ɫ", b: "ᵬ", d: "ᵭ", f: "ᵮ", m: "ᵯ", n: "ᵰ",
 	p: "ᵱ", r: "ᵲ", s: "ᵴ", t: "ᵵ", z: "ᵶ",
@@ -429,8 +343,6 @@ function emitBase(glyph: string, pending: Pending): Step {
 	if (op !== undefined) {
 		const rest = pending.filter((x) => x !== op);
 		const moved = (op === RAISE ? sups : subs).get(glyph);
-		// Unicode has no raised form for this glyph → the dead-key convention:
-		// the sign commits as its own character and the glyph follows (⌥e q → ´q).
 		// No such form in Unicode → the operator lifts and the glyph lands plain.
 		const text = recompose(moved ?? glyph, rest);
 		return {edit: {type: "insert", text}, pending: []};
@@ -449,9 +361,8 @@ function emitBase(glyph: string, pending: Pending): Step {
 	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};
 }
 
-/** ⌥z / ⌥⇧z: arm the raise or the lower. The same chord again lifts it off, the
- *  way a repeated diacritic does, and the twin replaces — nothing is raised and
- *  lowered at once. */
+/** ⌥z / ⌥⇧z: arm the raise or the lower. Same chord again lifts it; the twin
+ *  replaces. */
 function pendingOperator(op: string, pending: Pending): Step {
 	if (pending.includes(op)) {
 		return {edit: {type: "noop"}, pending: pending.filter((x) => x !== op)};
@@ -463,21 +374,11 @@ function pendingOperator(op: string, pending: Pending): Step {
 // ---------------------------------------------------------------- engine
 
 /**
- * The IPAbet keystroke handler. Mirrors the IME's handle():
- * bare keys are plain US, ⇧number → IPA glyph, ⇧letter → transform of the
- * previous glyph, ⌥ → prefix (dead-key) diacritics, ⌥⇧ → a mark's second form
- * (plus the raw-US escape on the number row), ⌃⇧letter → the literal capital.
- * Command chords, other control chords, and anything unmapped pass.
- */
-/**
- * Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ). The gate
- * is a *broken* flag, threaded by the caller: a shift RELEASE breaks the chain,
- * so a capital typed after releasing-and-repressing shift stays literal (ʃ,
- * release, ⇧I⇧H → ʃIH) — that is how you escape a chain to type a real capital.
- * Producing a fresh IPA segment (a transform, or a non-ASCII base/diacritic —
- * including the ⌥8 tie, which is unshifted) re-arms it. Note: a release DISARMS,
- * an unshifted key does NOT — the tie and the Option diacritics are IPA too.
- * This owns the flag; `handleKeyCore` only reads whether the chain is live.
+ * The IPAbet keystroke handler, mirroring the IME's handle().
+ *
+ * Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ), gated on
+ * a *broken* flag the caller threads in. This owns the flag; handleKeyCore only
+ * reads it.
  */
 export function handleKey(
 	textBefore: string,
@@ -487,9 +388,7 @@ export function handleKey(
 ): Step {
 	const brokenIn = chainBroken || (k.shiftBroke ?? false);
 	const step = handleKeyCore(textBefore, k, pending, !brokenIn);
-	// A fresh IPA glyph clears the break and starts a new live chain: a transform
-	// (`replace`) or an inserted non-ASCII glyph (5 ⇧Y → ə, the ⌥j tie). A literal
-	// capital or ASCII base is neither, so it carries the flag unchanged.
+	// A transform or a non-ASCII insert is a fresh IPA glyph and re-arms the chain.
 	const e = step.edit;
 	const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
 	return {...step, chainBroken: seg ? false : brokenIn};
@@ -499,10 +398,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	const key = k.key;
 	const shift = k.shift ?? false;
 	const option = k.option ?? false;
-	/** Any key that neither stacks a diacritic nor absorbs one commits the pending
-	 *  accent first (dead-key convention: ⌥e then space → ´), then does its own
-	 *  thing. A `pass` becomes an insert of accent + the native character, since a
-	 *  single Edit can't both commit and defer. */
+	/** Any key that neither stacks nor absorbs a diacritic commits the pending
+	 *  accent first. A `pass` becomes an insert, since one Edit can't do both. */
 	const withFlush = (edit: Edit): Step => {
 		if (pending.length === 0) return {edit, pending: []};
 		const pre = commitString(pending);
@@ -511,25 +408,16 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
 		return {edit, pending: []};
 	};
-	// ESCAPE terminates a pending composition by COMMITTING the spacing clones —
-	// the US layout's own dead-key behavior (⌥e Esc → ´, probe-verified against
-	// the uchr state machine), extended to the whole mark layer. Consumed only
-	// while marks pend; otherwise it passes untouched — Esc stays vim's key.
+	// Esc commits the spacing clones, and is consumed only while marks pend —
+	// otherwise it stays vim's key.
 	if (key === "Escape" && k.control !== true && !option) {
 		return pending.length > 0 ? flush(pending) : {edit: {type: "pass"}, pending};
 	}
-	// Non-typing keys (arrows, Enter): defer entirely, and leave the composition
-	// alone — swallowing them to commit an accent would eat navigation.
+	// Non-typing keys (arrows, Enter) defer and leave the composition alone.
 	if (key.length !== 1) return {edit: {type: "pass"}, pending};
 
-	// ⌃⇧<letter> — the literal-capital escape. ⇧<letter> transforms the glyph before
-	// it, so a capital that forms a digraph is otherwise untypeable ("GitHub" comes
-	// out "Giθub"). This commits the raw capital and bypasses everything downstream:
-	// the ⇧-modifier transforms, the shift-chain, the capital-digraph rule. So
-	// ⌃⇧G ⌃⇧H is a literal "GH" and ⌃⇧A ⌃⇧E a literal "AE".
-	//
-	// It lives on Control because Control is inert here — ⌃ chords are leader keys
-	// and the host keeps them, so nothing else competes. Letters only.
+	// ⌃⇧<letter> — the literal-capital escape, bypassing everything downstream.
+	// On Control because ⌃ chords are leader keys the host keeps.
 	if (k.control === true) {
 		if (shift && /^[a-z]$/.test(key)) {
 			return withFlush({type: "insert", text: key.toUpperCase()});
@@ -537,25 +425,18 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		return {edit: {type: "pass"}, pending}; // leader keys: the host owns them
 	}
 
-	// SPACE terminates a pending composition the same way — the clone commits
-	// and the space is CONSUMED (US ⌥e space → ´ alone, probe-verified). A
-	// space with nothing pending stays a native space.
+	// Space commits the clone and is CONSUMED; with nothing pending it stays a space.
 	if (key === " " && !option && pending.length > 0) {
 		const f = flush(pending);
-		// Nothing to commit (an operator alone) → the arm lifts and the space
-		// stays a space; swallowing it would eat a real keystroke.
+		// An operator alone lifts; swallowing the space would eat a real keystroke.
 		if (f.edit.type === "noop") return {edit: {type: "pass"}, pending: []};
 		return f;
 	}
 
-	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
-	// ⌥⇧' → secondary stress). NOT the literal-capital escape — that is
-	// ⌃⇧<letter>. A ⌥⇧<letter> with no second form DECLINES, so the host's
-	// own Option typography passes.
+	// Option-Shift: a mark's second form. With no second form it DECLINES, so the
+	// host's own Option typography passes.
 		if (option && shift) {
-			// The tie bar's BELOW form (⌥⇧j → U+035C, for colliding descenders: t͜ɕ,
-			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
-			// segment. Explicit — no toggle, no placement guessing.
+			// The tie's BELOW form, for colliding descenders (t͜ɕ d͜ʒ).
 			if (key === "j") return emitJoiner(textBefore, TIE_BELOW, pending);
 			// ⌥⇧z arms the lower — the shifted twin of ⌥z's raise.
 			if (key === "z") return pendingOperator(LOWER, pending);
@@ -565,10 +446,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			const m2 = optMarks.get(key);
 			if (m2 !== undefined && m2.double !== undefined) return applyMark(m2, pending, true);
 			if (/[0-9]/.test(key)) {
-				// A deliberately spent slot (⌥⇧1 → ¡, ⌥⇧2 ʾ, ⌥⇧3 ʿ, ⌥⇧5 ˭). The other
-				// digits never reach here — their marks' second forms claim the chord
-				// above — so the native fallthrough is a safety net for any future
-				// unclaimed slot, not a live route.
+				// A deliberately spent slot. Other digits never reach here.
 				const over = optShiftDigits[key];
 				if (over !== undefined) return withFlush({type: "insert", text: over});
 				if (letters.has(key)) return withFlush({type: "insert", text: SHIFTED_DIGITS[key] ?? key});
@@ -576,21 +454,15 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			return withFlush({type: "pass"});
 		}
 
-		// Option: the prefix (dead-key) diacritic layer, keyed by the unshifted US char.
-		// An unassigned key passes — digits included, so the host's ⌥6 §, ⌥7 ¶, ⌥8 •
-		// survive.
+		// Option: the prefix diacritic layer. Unassigned keys pass, so ⌥6 § survives.
 		if (option) {
-			// The tie bar is a postfix combining JOINER (t ⌥j s → t͡s): it attaches to
-			// the PREVIOUS segment, unlike the prefix dead-key diacritics, so it emits
-			// immediately. ⌥j — j for JOIN. (Below-form ⌥⇧j is in the block above.)
+			// The tie bar is a postfix JOINER: it attaches to the PREVIOUS segment.
 			if (key === "j") return emitJoiner(textBefore, TIE, pending);
 			// Locale quotes: ⌥[ opens primary, ⌥] opens secondary.
 			if (key === "[") return withFlush({type: "insert", text: quoteQuad()[0]});
 			if (key === "]") return withFlush({type: "insert", text: quoteQuad()[2]});
-			// Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
-			// so ˞ is a spacing character and the visual join onto the vowel is the
-			// font's job, not the engine's. The one real join the engine owes is
-			// ə/ɜ → the precomposed ɚ/ɝ, fused here the way ⌥l + l fuses to ɫ.
+			// Unicode has no combining rhotic hook, so ˞ is spacing and the join is the
+			// font's job. The one join owed is ə/ɜ → the precomposed ɚ/ɝ.
 			if (key === "r" && pending.length === 0) {
 				const p = lastCluster(textBefore);
 				if (p !== undefined) {
@@ -599,9 +471,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 					if (base === "ɜ") return withFlush(replaceCluster(p, recompose("ɝ", marks)));
 				}
 			}
-			// ⌥. on its own pending dot commits the INTERPUNCT — the dot key's
-			// free-floating form (the Catalan punt volat: l ⌥. ⌥. l → l·l). One
-			// hardcoded double-press, like the joiner walk; ⌫ still cancels.
+			// ⌥. on its own pending dot commits the INTERPUNCT (l ⌥. ⌥. l → l·l).
 			if (key === "." && pending.length === 1 && pending[0] === "\u{0307}") {
 				return {edit: {type: "insert", text: "\u{00B7}"}, pending: []};
 			}
@@ -612,58 +482,31 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			return withFlush({type: "pass"});
 		}
 
-	// Number row: every digit is native. Bare digit → native digit (a BASE — a
-	// following modifier transforms it, 5H → ɜ, in the modifier path below). Shift →
-	// native symbol (⇧2 @ … ⇧6 ^ ⇧7 &): the roots are two-key digraphs and the tie
-	// bar left for ⌥j, so no shifted digit is claimed. A pending prefix diacritic
-	// absorbs onto the (bare) digit base (⌥g then 5 ⇧A → ɐ̞); otherwise pass so the
-	// digit stays a real keystroke (counts, prefixes, shortcuts).
+	// Number row: every digit is native, and a bare digit is a base a modifier
+	// transforms (5H → ɜ). A pending diacritic absorbs onto it.
 	if (/[0-9]/.test(key)) {
 		if (!shift && pending.length > 0) return emitBase(key, pending);
 		return withFlush({type: "pass"});
 	}
 
-	// Caps Lock is a LOCK, not a modifier. With it engaged (and shift not held) a
-	// letter types its CAPITAL, literally — the bare layer is native US, and every
-	// other app types capitals here. It must NOT act as the ⇧ modifier: ⇧ is the
-	// modifier, always, and Caps Lock never is (so Caps-Lock T then H is "TH", not
-	// θ). A pending accent still absorbs onto the capital (⌥u then Caps-Lock a → Ä).
-	//
-	// Without this we read only the shift flag, so the key emitted its lowercase
-	// base and Caps Lock did nothing at all — you could not type a capital.
+	// Caps Lock types the literal capital and never acts as the ⇧ modifier, so
+	// Caps-Lock T then H is "TH", not θ. A pending accent still absorbs.
 	if (k.capsLock && !shift && /^[a-z]$/.test(key)) {
 		return emitBase(key.toUpperCase(), pending);
 	}
 
 	const s = shift ? key.toUpperCase() : key;
 
-	// Shift-letter modifiers transform the previous glyph in place; any
-	// combining marks already on it survive the swap (decomposed view).
+	// Shift-letter modifiers transform the previous glyph in place; its combining
+	// marks survive the swap.
 	const p = pending.length === 0 ? lastCluster(textBefore) : undefined;
 	if (p !== undefined) {
 		let {base, marks} = decompose(p);
-		// Shift-chaining: a capital right after an IPA segment, with shift still
-		// held, is a *pending base* — lower it so this modifier transforms it
-		// (ʃ⇧T⇧R → ʃʈ). Two gates, both required:
-		//   chainLive — the chain has not been broken by a shift release since the
-		//              last segment. Releasing shift after ʃ makes ⇧I⇧H literal: ʃIH.
-		//   p2       — the char before the capital is a real IPA segment, not the
-		//              previous LITERAL capital. $PATH never *chains*: the final T
-		//              is preceded by A, so the run breaks there (the TH pair still
-		//              forms its fresh-capital digraph, Θ).
-		// A capital that never gets a modifier stays as typed (ʃ⇧T → ʃT).
-		// A shifted (capital) modifier-base has exactly one question: are we in a
-		// LIVE chain — shift held continuously since an IPA segment? If so, this
-		// capital CONTINUES the chain and is lowered so the modifier transforms it
-		// (hold shift to keep transcribing: ʃ⇧I⇧H → ʃɪ, and Ɣ⇧G⇧H → Ɣɣ). Otherwise
-		// — a fresh word, or the chain was ended by a shift release — it is a fresh
-		// capital DIGRAPH: ⇧A⇧E → Æ, ⇧N⇧G → Ŋ. Release doesn't escape to literal
-		// (that is Ctrl+Shift); it just ends the chain, so the next capital is
-		// capital again. Under Caps Lock the digraph DECLINES — a locked capital is
-		// inert text, and the lock is the promised all-caps mode (SHIP stays SHIP).
-		// The segment test is a non-ASCII letter or combining mark, NOT merely
-		// non-ASCII: a terminal reports the empty start-of-line cell as U+00A0
-		// NBSP (160 > 127), and a bare `> 127` test would rebase it into θ.
+		// A capital right after an IPA segment with shift still held is a pending
+		// base — lower it so this modifier transforms it (ʃ⇧T⇧R → ʃʈ). Otherwise it
+		// is a fresh capital digraph (⇧A⇧E → Æ). The segment test is a non-ASCII
+		// LETTER or mark, not merely non-ASCII: terminals report the empty
+		// start-of-line cell as NBSP, and a bare `> 127` test rebases it into θ.
 		if (shift && k.capsLock !== true && /^[A-Z]$/.test(base)) {
 			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
 			const p2Segment =
@@ -673,8 +516,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			} else {
 				const low = transforms.get(base.toLowerCase() + s);
 				if (low !== undefined) {
-					// A real capital — orthographic (Ŋ Ɛ), phantom (Ʃ Ʈ), or Greek
-					// (Θ Β Χ). See capitalOf.
+					// See capitalOf.
 					const up = capitalOf(low);
 					if (up !== undefined) {
 						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
@@ -682,11 +524,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 				}
 			}
 		}
-		// The shifted digit is the digit's capital plane: a held chain ⇧5⇧Y → Ə
-		// (Azerbaijani's capital schwa), exactly as ⇧S⇧H → Ʃ. Gated on the live
-		// chain, so a shift release escapes to the literal (%Y) — the same law
-		// as every capital digraph. Same guard: &⇧H → Ħ, and ⇧2⇧H → Ɂ, the
-		// Dene capital glottal. Declines under Caps Lock, like every digraph.
+		// The shifted digit is the digit's capital plane (⇧5⇧Y → Ə).
 		if (shift && chainLive && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			if (digit !== undefined) {
@@ -703,9 +541,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		if (combo !== undefined) {
 			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};
 		}
-		// A glyph that has already been raised or lowered still transforms:
-		// unraise, transform, re-raise (⌥z s ⇧H → ᶴ). This is what lets the
-		// operator be prefix — armed, it could never know when a digraph ends.
+		// A raised or lowered glyph still transforms: unraise, transform, re-raise.
+		// This is what lets the operator be prefix — armed, it could never know
+		// when a digraph ends.
 		const plainSup = unsup.get(base);
 		const plain = plainSup ?? unsub.get(base);
 		if (plain !== undefined) {
@@ -722,27 +560,18 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	const glyph = letters.get(s);
 	if (glyph !== undefined) return emitBase(glyph, pending);
 
-	// A pending accent absorbs onto a CAPITAL base: ⌥u ⇧A → Ä. The letters table
-	// is lowercase-keyed, so without this the capital misses and the accent
-	// commits as a spacing clone ("¨A"). That broke every accented capital in
-	// every language — Ä Ö Ü É Á Ñ Ç — i.e. every sentence-initial word.
-	// Only fires while an accent pends, so acronyms and shift-chaining are
-	// untouched (the transform path is already skipped when pending).
+	// A pending accent absorbs onto a CAPITAL base (⌥u ⇧A → Ä); the letters table
+	// is lowercase-keyed, so without this it would commit as a spacing clone.
 	if (pending.length > 0 && /^[A-Z]$/.test(s)) return emitBase(s, pending);
 
-	// capitals with no transform, punctuation: native. Under shift-chaining this
-	// is also how a chained base is emitted — a capital, pending a modifier that
-	// may lower+transform it (handled above via two-glyph lookback).
+	// capitals with no transform, punctuation: native.
 	return withFlush({type: "pass"});
 }
 
-/**
- * Backspace: peel the last combining mark off the previous cluster (é → e,
- * n̥ → n); a bare glyph passes so the host deletes it natively.
- */
+/** Backspace: peel the last combining mark off the previous cluster; a bare
+ *  glyph passes so the host deletes it natively. */
 export function handleBackspace(textBefore: string, pending: Pending = []): Step {
-	// Backspace peels the pending accent first — the dead key is undone before
-	// the document is touched at all.
+	// The pending accent is peeled first, before the document is touched.
 	if (pending.length > 0) return {edit: {type: "noop"}, pending: pending.slice(0, -1)};
 	const p = lastCluster(textBefore);
 	if (p === undefined) return {edit: {type: "pass"}, pending: []};
@@ -753,14 +582,8 @@ export function handleBackspace(textBefore: string, pending: Pending = []): Step
 	return {edit: replaceCluster(p, recompose(base, marks.slice(0, -1))), pending: []};
 }
 
-/**
- * ⌃⌫ — unconvert. The committed transform before the cursor becomes its
- * literal keystroke spelling: θ → "tH" (so "Giθub" repairs to "GitHub"),
- * ʃ → "sH", Æ → "AE". The Japanese IMEs' Ctrl+Backspace (kakutei-undo),
- * stateless via the reverse map. While marks pend it peels, like plain ⌫;
- * a cluster still carrying combining marks, or an unconvertible glyph,
- * passes to the host untouched.
- */
+/** ⌃⌫ — unconvert: the committed transform before the cursor becomes its literal
+ *  keystroke spelling (θ → "tH"), stateless via the reverse map. */
 export function handleUnconvert(textBefore: string, pending: Pending = []): Step {
 	if (pending.length > 0) return handleBackspace(textBefore, pending);
 	const p = lastCluster(textBefore);
@@ -777,10 +600,8 @@ export function handleUnconvert(textBefore: string, pending: Pending = []): Step
 	return {edit: {type: "pass"}, pending: []};
 }
 
-/**
- * Apply an edit to a buffer. `pass` inserts the keystroke's native character
- * when one is given (what the host would have typed), else nothing.
- */
+/** Apply an edit to a buffer. `pass` inserts the keystroke's native character
+ *  when one is given, else nothing. */
 export function applyEdit(text: string, edit: Edit, native = ""): string {
 	switch (edit.type) {
 		case "insert":
@@ -804,10 +625,7 @@ export function nativeChar(k: Keystroke): string {
 	return k.key;
 }
 
-/**
- * Convenience: run a sequence of keystrokes against a buffer, applying pass
- * edits with their native character. Backspace is the keystroke {key: "⌫"}.
- */
+/** Run a sequence of keystrokes against a buffer. Backspace is {key: "⌫"}. */
 export function typeKeys(keys: Keystroke[], initial = ""): string {
 	let text = initial;
 	let pending: Pending = [];
@@ -822,8 +640,7 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
 		pending = step.pending;
 		chainBroken = step.chainBroken ?? false;
 		if (k.key === "⌫" && step.edit.type === "pass") {
-			// Plain ⌫: the host's native delete drops the last grapheme cluster.
-			// ⌃⌫ that found nothing to unconvert stays the host's chord — no edit.
+			// ⌃⌫ that found nothing to unconvert stays the host's chord.
 			if (k.control !== true) {
 				const p = lastCluster(text);
 				text = p === undefined ? text : text.slice(0, text.length - p.length);
@@ -832,8 +649,7 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
 			text = applyEdit(text, step.edit, nativeChar(k));
 		}
 	}
-	// An accent still pending at the end commits as its spacing form — what the
-	// IME does on commitComposition when focus leaves.
+	// A still-pending accent commits as its spacing form.
 	if (pending.length > 0) text += commitString(pending);
 	return text;
 }
