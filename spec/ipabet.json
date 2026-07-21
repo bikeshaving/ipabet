@@ -380,7 +380,7 @@
    "key": "gG",
    "glyph": "ɡ",
    "cp": "U+0261",
-   "name": "LATIN SMALL LETTER SCRIPT G (the chart's single-story ɡ, exact codepoint — the doubled-letter law: X⇧X is X's orthographic cousin, and ɡ is g's own other form. Plain g types the same phoneme)"
+   "name": "LATIN SMALL LETTER SCRIPT G (the chart's single-story ɡ, exact codepoint)"
   },
   {
    "key": "hH",
@@ -686,31 +686,31 @@
    "key": "tT",
    "glyph": "þ",
    "cp": "U+00FE",
-   "name": "LATIN SMALL LETTER THORN (Icelandic — the doubled-letter law: X⇧X is X's orthographic cousin)"
+   "name": "LATIN SMALL LETTER THORN (Icelandic)"
   },
   {
    "key": "iI",
    "glyph": "ı",
    "cp": "U+0131",
-   "name": "LATIN SMALL LETTER DOTLESS I (Turkish, Azeri, Kazakh — the doubled-letter law)"
+   "name": "LATIN SMALL LETTER DOTLESS I (Turkish, Azeri, Kazakh)"
   },
   {
    "key": "kK",
    "glyph": "ƙ",
    "cp": "U+0199",
-   "name": "LATIN SMALL LETTER K WITH HOOK (Hausa — the doubled-letter law)"
+   "name": "LATIN SMALL LETTER K WITH HOOK (Hausa)"
   },
   {
    "key": "yY",
    "glyph": "ƴ",
    "cp": "U+01B4",
-   "name": "LATIN SMALL LETTER Y WITH HOOK (Fula — the doubled-letter law)"
+   "name": "LATIN SMALL LETTER Y WITH HOOK (Fula)"
   },
   {
    "key": "fF",
    "glyph": "ƒ",
    "cp": "U+0192",
-   "name": "LATIN SMALL LETTER F WITH HOOK (Ewe — the doubled-letter law)"
+   "name": "LATIN SMALL LETTER F WITH HOOK (Ewe)"
   }
  ],
  "marks": [
@@ -2253,7 +2253,7 @@
     "sup": "𐞀"
    }
   ],
-  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a character whose compatibility decomposition is <super> of it — any script, any plane, one table entry per base (the first Unicode form wins). Unicode also encodes raised letters with NO decomposition; those are swept in by hand so the table is the complete set of raised characters, not merely the decomposable ones: ʔ→ˀ, ʕ→ˤ, Ƀ→ᴯ, ᴎ→ᴻ, ᴉ→ᵎ, and ꜳ→𐞀 (whose base, a small-capital AA, Unicode never encoded — the AA ligature stands in as the only reachable base)."
+  "rule": "Generated from Unicode: a glyph raises iff a character exists whose compatibility decomposition is <super> of it. Raised letters Unicode gives no decomposition are added by hand — ʔ→ˀ, ʕ→ˤ, Ƀ→ᴯ, ᴎ→ᴻ, ᴉ→ᵎ, ꜳ→𐞀 — so the table is the complete set."
  },
  "subscripts": {
   "operator": "opt+shift+z",
@@ -2515,38 +2515,38 @@
     "sub": "𞁪"
    }
   ],
-  "rule": "Generated, not curated: a glyph subscripts iff Unicode defines a character whose compatibility decomposition is <sub> of it — any script, any plane, one table entry per base."
+  "rule": "Generated from Unicode: a glyph lowers iff a character exists whose compatibility decomposition is <sub> of it. Nothing lacks one."
  },
  "classes": {
-  "about": "Definitions for the flags carried by entries in `marks`. Membership lives on each mark, never in this prose — a key can be reassigned without editing a word here.",
-  "ipa": "Absent or true: the mark is on the official IPA chart, and appears on /chart and /chart.json. `false`: it is not, and `beyond` names the tradition it answers to. Non-IPA marks are fully typeable and are listed on /keys.",
+  "about": "Vocabulary for the flags on each mark. Membership lives on the mark, not here.",
+  "ipa": "Absent or true: on the official IPA chart. false: not, and `beyond` names the tradition.",
   "beyond": {
-   "tenant": "Not IPA and never was. Carried so the layout can also write real Latin orthographies and romanizations — Romanian, Vietnamese, Polish, German, Semitic transliteration. Tenants cohabit with IPA marks on the Option layer; they are not their neighbours' pairs.",
-   "tradition": "Standard within a phonological tradition but absent from the IPA chart — e.g. the Korean fortis mark. Real notation, wrong chart.",
-   "extIPA": "Extensions to the IPA, for disordered speech (the 2015 chart). Not IPA proper, but the same transcribers need it — cleft palate, lisps, denasality. Flagged ipa:false like any other tenant."
+   "tenant": "Not IPA. Carried so the layout can write real orthographies and romanizations.",
+   "tradition": "Standard within a phonological tradition but absent from the IPA chart.",
+   "extIPA": "Extensions to the IPA, for disordered speech (the 2015 chart)."
   },
-  "arbitraryKey": "The key claims the mark by neither phonetics, shape, nor convention. Assigned to a mediocre reach and labelled arbitrary rather than given a fake mnemonic.",
+  "arbitraryKey": "The key claims the mark by neither phonetics, shape, nor convention.",
   "shiftSense": {
-   "about": "What ⌥⇧ means for a mark that has a `double`. The sense is a property of the pair, not a single rule: six exist. Orthogonal to `exclusive`, which says whether the two forms replace each other.",
+   "about": "What ⌥⇧ means for a mark that has a `double`. Six senses; orthogonal to `exclusive`.",
    "greater": "⌥⇧ is the greater pole of one dimension: advanced, raised, more rounded, ATR, upstep.",
    "extreme": "⌥⇧ is the more extreme value on a scale: extra-high, extra-low.",
-   "lesser": "⌥⇧ is the diminished value: secondary stress, half-long. The mirror of `greater`, and the reason ⌥⇧ cannot be read as 'more' alone.",
-   "below": "⌥⇧ is a DIFFERENT diacritic that shares this glyph's shape, sitting below the base: tilde/creaky, diaeresis/breathy, caron/voiced, dot/dot, breve/non-syllabic. The shape is a memory hook, not a meaning — ⌥⇧n is not 'a lower tilde', it is creaky voice.",
-   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack. (The cedilla and the palatal hook; the okina and the ejective; the voicing brackets, one system on the ( key; the tone bar and the alveolar mark sharing the tap digit.)",
-   "arbitrary": "An unpolarized dual: the two forms are values of one dimension but neither is greater. Which one takes ⌥⇧ is a coin flip, and is labelled as such. (apical/laminal.)",
-   "placement": "⌥⇧ is the SAME mark on the other side of the base. The meaning is identical; placement is typography and the transcriber owns it (laws.placement). The direction differs per mark because each follows its own frequency: the ring defaults ABOVE (ŋ̊ j̊ ɡ̊, and ABC Extended's ring key), the syllabic line BELOW (n̩ l̩ m̩ r̩)."
+   "lesser": "⌥⇧ is the diminished value: secondary stress, half-long.",
+   "below": "⌥⇧ is a different diacritic sharing this shape, sitting below the base.",
+   "twin": "The two forms are independent — a shape or kin relation, no polarity. They stack.",
+   "arbitrary": "An unpolarized dual: one dimension, neither value greater.",
+   "placement": "⌥⇧ is the same mark on the other side of the base."
   },
-  "exclusive": "The two forms are values of the SAME dimension, so ⌥⇧ replaces rather than stacks — nothing is both advanced and retracted. Marks on INDEPENDENT dimensions stack (nasalized + creaky). Tone level is a five-way scale, so an exclusive pair need not be binary or exhaustive."
+  "exclusive": "The two forms are values of one dimension, so ⌥⇧ replaces rather than stacks."
  },
  "optShift": {
-  "about": "Deliberate ⌥⇧<digit> spends. No shifted digit is an IPA glyph (the number-row roots are unshifted-digit digraphs, and the tie bar lives on ⌥j), so every ⇧<digit> types its native symbol directly and no raw-US digit escape exists. The slots listed here are spent on a character; every other ⌥⇧<digit> is claimed by its mark's second form. A digit claimed by neither would pass to the host.",
+  "about": "Deliberate ⌥⇧<digit> spends. There is no raw-US digit escape; an unlisted ⌥⇧<digit> passes to the host.",
   "1": "¡",
   "3": "ʿ",
   "2": "ʾ",
   "5": "˭"
  },
  "quotes": {
-  "about": "Locale-semantic quotes on the bracket keys: ⌥[ opens primary, ⌥⇧[ closes primary, ⌥] opens secondary, ⌥⇧] closes secondary. Which characters those semantics emit is the quote locale — a configuration (IME: the `quoteLocale` user default; web: a picker), not composition state. Each locale is [openPrimary, closePrimary, openSecondary, closeSecondary]. The default `en` is byte-identical to the native macOS bracket keys.",
+  "about": "⌥[ opens primary, ⌥⇧[ closes it; ⌥] / ⌥⇧] are the secondary pair. `default` names a key of `locales`.",
   "default": "en",
   "locales": {
    "en": [

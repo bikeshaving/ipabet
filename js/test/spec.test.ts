@@ -78,10 +78,10 @@ describe("spec · prose does not hardcode membership", () => {
 					? Object.values(obj).flatMap(prose)
 					: [];
 
-	// Every ⌥-key named in the classes prose must be a key that exists — the
-	// check a stale "⌥<key> <mark>" claim fails.
-	test("every ⌥key named in classes is assigned", () => {
-		const text = [...prose(classes)].join(" ");
+	// Every ⌥-key named anywhere in the spec's prose must be a key that exists —
+	// the check a stale "⌥<key> <mark>" claim fails.
+	test("every ⌥key named in the spec's prose is assigned", () => {
+		const text = [...prose(spec)].join(" ");
 		const named = [...text.matchAll(/⌥⇧?([a-z0-9=.,`';-])/g)].map((m) => m[1]);
 		expect(named.length).toBeGreaterThan(0);
 		for (const k of named) {

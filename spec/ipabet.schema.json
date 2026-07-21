@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "https://ipabet.org/ipabet.schema.json",
  "title": "IPAbet notation spec",
- "description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json. Read by the macOS IME (Swift), the TypeScript engine, and every page on ipabet.org. Keystroke notation: a `key` string is a sequence of US-layout characters; an uppercase letter or digit means that key with Shift. Marks live on the Option layer, keyed by their unshifted US character.",
+ "description": "The canonical keystroke → glyph mapping for IPAbet, served verbatim at https://ipabet.org/ipabet.json and read by the macOS IME, the TypeScript engine, and the site.",
  "type": "object",
  "required": [
   "modifiers",
@@ -65,7 +65,7 @@
    }
   },
   "superscripts": {
-   "description": "`operator` is a PREFIX, like the \u2325 diacritics: it arms the raise and the next glyph arrives raised (\u2325z h \u2192 \u02b0). The table is derived from Unicode <super> decompositions, not hand-listed.",
+   "description": "`operator` (⌥z) is a PREFIX: it arms the raise and the next glyph arrives raised.",
    "type": "object",
    "required": [
     "operator",
@@ -104,7 +104,7 @@
    }
   },
   "optShift": {
-   "description": "Deliberate ⌥⇧<digit> spends. There is no raw-US digit escape; an unlisted ⌥⇧<digit> passes to the host. `about` documents the rule; every other key is a single digit mapped to its glyph.",
+   "description": "Deliberate ⌥⇧<digit> spends. An unlisted ⌥⇧<digit> passes to the host.",
    "type": "object",
    "required": [
     "about"
@@ -117,7 +117,7 @@
    }
   },
   "subscripts": {
-   "description": "Tier 2. The lowered twin of `superscripts`: `operator` (⌥⇧z) typed after a glyph lowers it. The table is derived from Unicode <sub> decompositions, not hand-listed.",
+   "description": "The lowered twin of `superscripts`, on ⌥⇧z. Also prefix.",
    "type": "object",
    "required": [
     "operator",
@@ -212,7 +212,7 @@
    }
   },
   "quotes": {
-   "description": "Locale-semantic quotes on the bracket keys. `default` names a key of `locales`; each locale is the quad [openPrimary, closePrimary, openSecondary, closeSecondary].",
+   "description": "Locale-semantic quotes on the bracket keys. `default` names a key of `locales`.",
    "type": "object",
    "required": [
     "about",
@@ -281,7 +281,7 @@
      "$ref": "#/$defs/codepoints"
     },
     "doubleSpacing": {
-     "description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining — spacing is a property of the form, not the key. (⌥9 is the combining seagull; ⌥⇧9 is the ₍ voicing bracket, a standalone character.) Requires `double`.",
+     "description": "The ⌥⇧ form is a SPACING character even though the ⌥ form is combining.",
      "type": "boolean"
     },
     "type": {
@@ -336,7 +336,7 @@
      ]
     },
     "ipa": {
-     "description": "Present only as false, meaning: not on the IPA chart. Implies `beyond`. Such marks are excluded from /chart and /chart.json and listed on /keys.",
+     "description": "Present only as false: not on the IPA chart. Implies `beyond`.",
      "const": false
     },
     "beyond": {
@@ -352,7 +352,7 @@
      "const": true
     },
     "cycle": {
-     "description": "Repeat-press family: pressing the same ⌥ key on its own pending mark advances through these forms and wraps (⌥n: ̃ → ͊ → ͋ → ͌). One dimension only — cycle members are mutually exclusive; cross-dimension marks keep separate keys so they can stack. Combining marks only: the composition preview makes every step visible.",
+     "description": "Repeat-press family: the same ⌥ key on its own pending mark advances through these and wraps. One dimension only.",
      "type": "array",
      "minItems": 1,
      "items": {
@@ -371,7 +371,7 @@
      }
     },
     "doubleCycle": {
-     "description": "Repeat-press family for the ⌥⇧ form, exactly as `cycle` is for ⌥: pressing ⌥⇧key again on its own pending double advances and wraps. One dimension only; combining forms only. Requires `double`.",
+     "description": "Repeat-press family for the ⌥⇧ form, exactly as `cycle` is for ⌥.",
      "type": "array",
      "minItems": 1,
      "items": {
