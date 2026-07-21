@@ -117,7 +117,6 @@ function NonPulmonic() {
 			<div>
 				<h4>Ejectives</h4>
 				${EJECTIVES.map(([g, name, keys]) => Li(g, name, keys))}
-				<div class="fine">…any base + ⌥⇧q</div>
 			</div>
 		</div>`;
 }
@@ -283,13 +282,9 @@ function DiaTable(entries: ChartEntry[]) {
 	return jsx`<table class="dia">${rows}</table>`;
 }
 
-// The count and the tail of this list come from the spec's `ipa: false` flag.
-const beyondCount = String((spec.marks as {ipa?: boolean}[]).filter((m) => m.ipa === false).length);
-
 function Diacritics() {
 	return jsx`
-		${DiaTable(DIACRITICS)}
-		<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧n</i> → creaky); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts are prefix too: <i>⌥z</i> then the glyph (⌥⇧z lowers, for subscripts). Rhoticity <b class="ipa">˞</b>: vowel then <i>⌥r</i> (ə ⌥r → ɚ). The ${beyondCount} diacritics beyond the IPA — cedilla, ogonek, horn, ß and the rest — are on <a href="/keys">/keys</a>.</p>`;
+		${DiaTable(DIACRITICS)}`;
 }
 
 // --------------------------------------------------------------- sheet
