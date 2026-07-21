@@ -27,13 +27,9 @@ Among encodings that satisfy the rest, prefer the one users already know: pinyin
 </Constraint>
 </Constraints>
 
-## How the constraints resolve
+## The rough edges
 
-The five are ranked. The first three are hard — inviolable — and the last two settle the assignment within them, transformation before convention. Two things fall out of that order.
-
-The rough edges are _predicted_, not hidden. A sound more than one articulatory step from any Latin anchor cannot be reached in two keys, so the voiced palatal fricative <Glyph>ʝ</Glyph> gets an approximate <Combo keys="g ⇧J"/> rather than a clean derivation — the length bound binding against a sparse corner of the alphabet. The constraints account for the compromises, not just the wins.
-
-And the notation's cleverness and the engine's cleverness turn out to be the same fact seen twice. A system built from local, phonetically meaningful operators is exactly a system you can interpret one segment at a time — which is what makes the whole thing typeable at full speed with no composition buffer behind it.
+They are _predicted_, not hidden. A sound more than one articulatory step from any Latin anchor cannot be reached in two keys, so the voiced palatal fricative <Glyph>ʝ</Glyph> gets an approximate <Combo keys="g ⇧J"/> rather than a clean derivation — the length bound binding against a sparse corner of the alphabet. The constraints account for the compromises, not just the wins.
 
 ## The algebra, animated
 

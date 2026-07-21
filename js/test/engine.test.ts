@@ -130,7 +130,7 @@ describe("clicks (C modifier)", () => {
 		expect(typed("~z", "g", "q", "+c")).toBe("ᶢǃ"));
 });
 
-describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥⇧q mark", () => {
+describe("airstream: implosives are ⇧P; ejectives are the ⌥⇧q mark", () => {
 	test("implosives — voiced stops via ⇧P", () => {
 		expect(typed("b", "+p")).toBe("ɓ");
 		expect(typed("d", "+p")).toBe("ɗ");
@@ -795,7 +795,7 @@ describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 		expect(typed("~+z", "g")).toBe("g"));
 	test("a raised glyph still transforms: ⌥z s ⇧H → ᶴ", () =>
 		expect(typed("~z", "s", "+h")).toBe("ᶴ"));
-	test("⌥p is the no-release dead key, not a raise operator", () =>
+	test("⌥p is the no-release dead key", () =>
 		expect(typed("~p", "b")).toBe(nfc("b\u{031A}")));
 });
 

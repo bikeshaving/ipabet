@@ -32,10 +32,6 @@ Unshifted keys are 100% native US — Caps Lock included, so capitals stay capit
 
 <LayersTable/>
 
-## Typing IPA has a history
-
-Generations of transcribers have gotten by on click-palettes, web pickers, hand-built keyboard layouts, and escape codes like X-SAMPA and TIPA — each an ingenious workaround for keyboards that stop at 26 letters, and each a system IPAbet learned something from. The bet here is simpler: transcription should just be _typing_.
-
 ## The full reference
 
 Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes](/chart) — one printable page, with audio. And [/learn](/learn) teaches it to your fingers in an afternoon.
