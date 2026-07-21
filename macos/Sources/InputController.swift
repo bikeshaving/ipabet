@@ -165,33 +165,23 @@ struct Tables {
     }()
 }
 
-// The ACTIVE CLUSTER composes. The most recently typed cluster stays open in
-// the client's marked-text range — styled as plain text, so nothing looks
-// composed — and every previous-glyph rule (⇧-transforms, joiners, ⌥z, the
-// fusions) rewrites it there via setMarkedText: the IME path every host
-// tests hardest, because CJK typing depends on it. A boundary — any declined
-// key, space, Esc, a click, focus loss — commits the cluster as ordinary
-// text. Hosts also SEE the composition (compositionstart/isComposing in
-// browsers), so IME-aware pages defer to this engine instead of racing it.
+// NOTHING COMPOSES. Every glyph commits to the document the moment it is
+// typed, and every previous-glyph rule (⇧-transforms, joiners, ⌥z, the
+// fusions) rewrites it in place via insertText(_:replacementRange:) — the
+// pattern Apple's 2-Set Korean uses, captured with tools/probe.swift, and the
+// call every Mac app must support or Hangul typing would break. There is no
+// active cluster, no composition session, and no host-drawn composition mark
+// to be invisible in one app and visible in the next.
 //
-// Edits to already-committed text (click after an old glyph, then transform
-// it) use insertText(_:replacementRange:) — the pattern Apple's 2-Set Korean
-// uses, captured with tools/probe.swift.
-//
-// In DIRECT hosts (terminals and modal editors, where a keystroke is a
-// command and latency is the interface) nothing ever composes: every
-// keystroke commits immediately and rewrites use replacementRange, so `dd`
-// in vim and a tmux prefix stay single-keystroke.
-//
-// The *pending prefix diacritic* is a preview, not document content: it
-// trails the active cluster in the marked range, highlighted exactly as the
-// US layout's ⌥e dead key is — the representation that works even in hosts
-// like Terminal.app where a committed NBSP+combining renders as "<032a>".
-// The next base absorbs it.
+// The *pending prefix diacritic* is the sole exception, and it is a preview
+// rather than document content: it lives in the marked range, highlighted
+// exactly as the US layout's ⌥e dead key is — the representation that works
+// even in hosts like Terminal.app where a committed NBSP+combining renders as
+// "<032a>". The next base absorbs it, and nothing is written until then.
 //
 // Backspace: stacked combining marks peel off one scalar at a time; a bare
-// open cluster clears; a bare committed glyph is declined so the host
-// performs its native delete — Korean's jamo-peel-then-native pattern.
+// glyph is declined so the host performs its native delete — Korean's
+// jamo-peel-then-native pattern.
 //
 // Hard-won macOS 15 rules (probe- and crash-verified; see README):
 //  - never call updateComposition()/composedString() — segfaults in the bridge
@@ -305,34 +295,8 @@ class InputController: IMKInputController {
     }
 
 
-    // Hosts where a keystroke is a command, not text: composing would hold
-    // each key in the marked range until the next one arrives, lagging
-    // vim/tmux/readline by a full keystroke. These hosts get the direct
-    // path — immediate commits, replacementRange rewrites — which they
-    // already handle (Hangul depends on it).
-    private static let directHosts: Set<String> = [
-        "com.apple.Terminal",
-        "com.googlecode.iterm2",
-        "net.kovidgoyal.kitty",
-        "io.alacritty",
-        "com.github.wez.wezterm",
-        "com.mitchellh.ghostty",
-        "org.vim.MacVim",
-        "org.gnu.Emacs",
-    ]
-    // Stateless by default; a stale read-back flips this to composition for the
-    // session (Apple's Korean/Vietnamese trick). Terminals are LOCKED direct —
-    // never composed, never probed — because composing lags a pty by a keystroke.
-    private var direct = true
-    private var directLocked = false
-    private var probed = false
-
     override func activateServer(_ sender: Any!) {
-        composed = ""
         pending = []
-        directLocked = Self.directHosts.contains(clientBundleID())
-        direct = true
-        probed = directLocked
         // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
         // reference IMEs only pass full system TIS layout IDs here, and the
         // bare in-bundle name was a misrouting suspect on macOS 15.
@@ -444,17 +408,6 @@ class InputController: IMKInputController {
                 updateMarked(client)
                 return true
             }
-            if !composed.isEmpty {
-                let (base, marks) = decompose(composed.last!)
-                if !marks.isEmpty, !base.isEmpty {
-                    composed = recompose(base, marks.dropLast())
-                } else {
-                    composed = ""            // bare open glyph: gone entirely
-                }
-                Dbg.log("  → backspace peels open cluster → '\(Dbg.str(composed))'")
-                updateMarked(client)
-                return true
-            }
             return handleBackspace(client)
         }
 
@@ -465,13 +418,12 @@ class InputController: IMKInputController {
         // vim's key, space stays a space.
         if event.keyCode == 53, !flags.contains(.option) {
             if !pending.isEmpty { flush(client); return true }
-            flush(client)          // commit the open cluster; Esc stays the app's
-            return false
+            return false           // nothing pending: Esc stays the app's
         }
         if event.keyCode == 49, !flags.contains(.option), !pending.isEmpty {
             // Nothing to commit (an operator alone) → the arm lifts and the
             // space stays a space; swallowing it would eat a real keystroke.
-            let writes = !composed.isEmpty || !commitString().isEmpty
+            let writes = !commitString().isEmpty
             flush(client)
             return writes
         }
@@ -609,17 +561,9 @@ class InputController: IMKInputController {
             // capitalOf for the exclusions.
             if shift, !flags.contains(.capsLock),
                base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
-                // Chain capitals always decline first (committing the open
-                // cluster), so a capital in the OPEN cluster can only be
-                // Caps-Lock text — freshest, with nothing chained behind it.
-                let p2Segment: Bool
-                switch site {
-                case .open: p2Segment = false
-                case .doc(let r):
-                    p2Segment = clusterBefore(r, client).map {
-                        String($0).unicodeScalars.contains(where: isSegmentScalar)
-                    } ?? false
-                }
+                let p2Segment = clusterBefore(site, client).map {
+                    String($0).unicodeScalars.contains(where: isSegmentScalar)
+                } ?? false
                 if p2Segment, chainLive {
                     base = base.lowercased()
                 } else if let low = t.transforms[base.lowercased() + s],
@@ -740,65 +684,20 @@ class InputController: IMKInputController {
     private static let raiseOp: Unicode.Scalar = "\u{F8F0}"
     private static let lowerOp: Unicode.Scalar = "\u{F8F1}"
     private static let opPreview: [Unicode.Scalar: String] = [raiseOp: "\u{207B}", lowerOp: "\u{208B}"]
-    /// The ACTIVE CLUSTER: the most recently typed glyph, held open in the
-    /// marked range (dressed as plain text) so every previous-glyph rule
-    /// rewrites it on the composition path. At most one grapheme cluster;
-    /// always empty in direct hosts.
-    private var composed = ""
-
-    /// Where the previous cluster lives: the open composition, or the document.
-    private enum PrevSite { case open, doc(NSRange) }
-
-    /// The grapheme cluster before the cursor — the open cluster when one
-    /// exists (no document read needed), else read from the document.
-    private func prevCluster(_ client: IMKTextInput) -> (Character, PrevSite)? {
-        if let last = composed.last { return (last, .open) }
-        return lastCluster(client).map { ($0.0, .doc($0.1)) }
+    /// The grapheme cluster before the cursor, read from the document.
+    private func prevCluster(_ client: IMKTextInput) -> (Character, NSRange)? {
+        return lastCluster(client)
     }
 
-    /// Rewrite the previous cluster: the open one via marked text (the
-    /// well-paved path), a committed one via replacementRange (the fallback).
-    private func rewrite(_ site: PrevSite, with new: String, _ client: IMKTextInput) {
-        switch site {
-        case .open:
-            composed = new
-            updateMarked(client)
-        case .doc(let r):
-            replace(r, with: new, client)
-        }
+    /// Rewrite the previous cluster in place, over its committed range.
+    private func rewrite(_ r: NSRange, with new: String, _ client: IMKTextInput) {
+        replace(r, with: new, client)
     }
 
-    /// Apple's Korean read-back: after a direct commit the cursor must reflect
-    /// the write. A host that answers stale (an async, multi-process client —
-    /// Chromium, Electron) will silently drop our stateless replacementRange
-    /// rewrites, so switch this session to composition. Probed once, on the
-    /// first commit that should have moved the cursor.
-    private func probeWriteModel(expected loc: Int, _ client: IMKTextInput) {
-        guard !probed else { return }
-        probed = true
-        let got = client.selectedRange().location
-        if got != loc {
-            Dbg.log("  read-back stale (want \(loc) got \(got)) → composition for the session")
-            direct = false
-        } else {
-            Dbg.log("  read-back fresh (\(got)) → staying stateless")
-        }
-    }
-
-    /// Emit `s` as the new active cluster: the previous one commits, `s`
-    /// opens in the marked range. Direct hosts commit immediately instead.
+    /// Emit `s`. Every glyph commits to the document immediately — there is
+    /// no active cluster and no composition to hold one.
     private func openCluster(_ s: String, _ client: IMKTextInput) {
-        if direct {
-            let before = client.selectedRange().location
-            insert(s, client)
-            if !directLocked, before != NSNotFound {
-                probeWriteModel(expected: before + (s as NSString).length, client)
-            }
-            return
-        }
-        if !composed.isEmpty { insert(composed, client) }  // commits the old cluster
-        composed = s
-        updateMarked(client)
+        insert(s, client)
     }
 
     /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
@@ -844,11 +743,10 @@ class InputController: IMKInputController {
         return s
     }
 
-    /// Push the composition — the open cluster, then the pending preview —
-    /// into the client's marked-text range (or clear it).
+    /// Push the pending dead-key preview into the client's marked-text range
+    /// (or clear it). The document holds everything else.
     private func updateMarked(_ client: IMKTextInput) {
-        let pv = previewString()
-        let s = composed + pv
+        let s = previewString()
         let none = NSRange(location: NSNotFound, length: 0)
         guard !s.isEmpty else {
             Dbg.log("    marked: clear")
@@ -868,27 +766,11 @@ class InputController: IMKInputController {
         // ourselves and suppress the underline. (This is the same lever xkey
         // uses in reverse — it omits backgroundColor "to prevent highlighting".)
         let len = (s as NSString).length
-        let a = NSMutableAttributedString()
-        // The open cluster is dressed as PLAIN text — composition is plumbing
-        // here, not chrome; only the dead-key preview earns the highlight.
-        // Browsers repaint the composition from extracted spans and treat
-        // "no underline attribute" as "draw my default one" — so declare an
-        // underline and paint it TRANSPARENT: engines that honor the span
-        // draw an invisible line, and AppKit hosts stay invisible too.
-        if !composed.isEmpty {
-            a.append(NSAttributedString(string: composed, attributes: [
-                .foregroundColor: NSColor.textColor,
-                .underlineStyle: NSUnderlineStyle.single.rawValue,
-                .underlineColor: NSColor.clear,
-            ]))
-        }
-        if !pv.isEmpty {
-            a.append(NSAttributedString(string: pv, attributes: [
-                .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
-                .foregroundColor: NSColor.textColor,
-                .underlineStyle: 0,
-            ]))
-        }
+        let a = NSMutableAttributedString(string: s, attributes: [
+            .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
+            .foregroundColor: NSColor.textColor,
+            .underlineStyle: 0,
+        ])
         Dbg.log("    marked: '\(Dbg.str(s))' sel=(\(len),0)")
         client.setMarkedText(a,
                              selectionRange: NSRange(location: len, length: 0),
@@ -911,13 +793,12 @@ class InputController: IMKInputController {
     }
 
     private func flush(_ client: IMKTextInput) {
-        let s = composed + commitString()
+        let s = commitString()
         guard !s.isEmpty else {
             // An operator alone leaves nothing behind: the arm just lifts.
             if !pending.isEmpty { pending = []; updateMarked(client) }
             return
         }
-        composed = ""
         pending = []
         Dbg.log("    flush → '\(Dbg.str(s))'")
         insert(s, client)   // insertText over marked text commits & clears it
@@ -971,15 +852,9 @@ class InputController: IMKInputController {
                 rewrite(site, with: String(String.UnicodeScalarView(scalars)), client)
                 return
             }
-            // No walk: the joiner APPENDS to the previous segment — into the
-            // open cluster when one exists, else straight after the committed
-            // text (same cluster either way; a lone combining mark must never
-            // open a composition of its own).
-            if case .open = site {
-                composed += String(start)
-                updateMarked(client)
-                return
-            }
+            // No walk: the joiner APPENDS to the previous segment, straight
+            // after the committed text (a lone combining mark must never open
+            // a composition of its own).
             insert(String(start), client)
             return
         }
@@ -1064,15 +939,7 @@ class InputController: IMKInputController {
         guard let key = Tables.shared.unconvertKey[low] else { return false }
         let text = base == low ? key : key.uppercased()
         Dbg.log("  → unconvert \(Dbg.str(base)) ⇒ '\(text)'")
-        switch site {
-        case .open:
-            // The spelling is plain keystrokes, not a transform base worth
-            // keeping open — commit it outright.
-            composed = ""
-            insert(text, client)
-        case .doc(let r):
-            replace(r, with: text, client)
-        }
+        replace(site, with: text, client)
         return true
     }
 

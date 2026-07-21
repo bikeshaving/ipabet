@@ -19,23 +19,22 @@ one.
 
 ## Architecture
 
-The engine is **stateless by default**, mimicking Apple's Korean (2-Set) input
-method, whose client protocol we captured with `tools/probe.swift`: each
-keystroke inserts text at the cursor or rewrites the previous grapheme cluster
-in place via `insertText(_:replacementRange:)` — the call pattern every Mac app
-must support or Hangul typing would break. No composition session, no
-underline, nothing for a host to desync. The only marked text is the dead-key
-*preview* of a pending prefix diacritic (`⌥e` → ´), committed by the next base.
+The engine is **stateless**, mimicking Apple's Korean (2-Set) input method,
+whose client protocol we captured with `tools/probe.swift`: each keystroke
+inserts text at the cursor or rewrites the previous grapheme cluster in place
+via `insertText(_:replacementRange:)` — the call pattern every Mac app must
+support or Hangul typing would break. No composition session, no underline,
+nothing for a host to desync, and no per-host mode to get wrong. The only
+marked text is the dead-key *preview* of a pending prefix diacritic
+(`⌥e` → ´), committed by the next base.
 
-A **read-back guard** handles the one thing stateless can't see: a host that
-silently drops the rewrite. After the first cursor-advancing commit of a
-session the engine reads `selectedRange` back (Apple's Korean trick); if the
-cursor didn't advance — an async, multi-process client — it switches that
-session to marked-text composition instead of corrupting text. In practice it
-stays off: Chrome, the async host we most feared, reads back **fresh** and the
-stateless rewrite lands correctly, so it never triggers there. It's a cheap
-safety net (one read per session), not the common path. Terminals are locked
-stateless — composing would lag a pty by a keystroke.
+There is no composition fallback. An earlier build carried Apple's read-back
+guard — poll `selectedRange` after the first commit, and switch the session to
+marked-text composition if the cursor came back stale — on the theory that an
+async client would silently drop the rewrite. No host was ever observed
+dropping one, and the probe fired as a false positive, putting composition
+marks on screen for no reason. A guard that only ever misfires is worse than
+no guard.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
 `⇧R`, ejective `⇧X`, spacing marks, backspace) operate on
