@@ -120,8 +120,9 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
   digit, ⇧2–7 are all their native symbols now (@ # $ % ^ &).
 - **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
   style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
-  tone, stress — stay postfix (`a` `⌥;` → aː). `⌥p` superscriptizes the previous
-  glyph (`h` `⌥p` → ʰ). Chao tone letters on `⌥1`–`⌥5`. The tie bar is a postfix
+  tone, stress — stay postfix (`a` `⌥;` → aː). `⌥z` / `⌥⇧z` raise and lower, and
+  are prefix too (`⌥z` `h` → ʰ), previewing as `^` / `_`; a raised glyph still
+  transforms, so `⌥z` `s` `⇧H` → ᶴ. Chao tone letters on `⌥1`–`⌥5`. The tie bar is a postfix
   **joiner** on `⌥j` (`t ⌥j s` → t͡s; `⌥⇧j` for the below-form t͜ɕ).
 - **Option-Shift** — a mark's second form (`⌥⇧n` → creaky, `⌥⇧j` → the tie's
   below-form). The number-row raw-US escape is fully retired now that no shifted

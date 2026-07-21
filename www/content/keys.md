@@ -53,15 +53,15 @@ Marks the IPA chart has no cell for, kept because the layout should be able to w
 
 <BeyondTables/>
 
-## Tier 2 · superscripts (base + ⌥z)
+## Superscripts (⌥z + base)
 
-Type a glyph, then ⌥z to raise it — one press per glyph (`t` `h` ⌥z → tʰ). The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form.
+⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `^` until the glyph lands. A glyph that is already raised still transforms, so a digraph works too: ⌥z `s` ⇧H → ᶴ. The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form; where it doesn't, the `^` commits and the glyph follows.
 
 <SupTable/>
 
-## Tier 2 · subscripts (base + ⌥⇧z)
+## Subscripts (⌥⇧z + base)
 
-The lowered twin, on the shifted operator: a glyph, then ⌥⇧z (`x` `2` ⌥⇧z → x₂). Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
+The lowered twin, on the shifted operator, and prefix the same way: ⌥⇧z then the glyph (`x` ⌥⇧z `2` → x₂), previewing as `_`. Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
 
 <SubTable/>
 

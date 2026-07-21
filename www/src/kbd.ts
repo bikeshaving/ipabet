@@ -84,7 +84,7 @@ function shown(glyph: string, type: string) {
 
 const SPECIALS: Record<string, {main: unknown; second: unknown; title: string}> = {
 	j: {main: "◌͡◌", second: "◌͜◌", title: "⌥j tie bar (joins the two segments around it) · ⌥⇧j tie below, for colliding descenders · again ⇄ ͢ sliding"},
-	z: {main: "◌ᶻ", second: "◌₂", title: "⌥z superscript the previous glyph (t h ⌥z → tʰ) · ⌥⇧z subscript it"},
+	z: {main: "◌ᶻ", second: "◌₂", title: "⌥z raise the next glyph (t ⌥z h → tʰ) · ⌥⇧z lower it"},
 	"[": {main: quad[0], second: quad[1], title: `⌥[ opening primary quote · ⌥⇧[ closing (locale ${quotes.default}; set in the input menu)`},
 	"]": {main: quad[2], second: quad[3], title: `⌥] opening secondary quote · ⌥⇧] closing`},
 };

@@ -64,6 +64,8 @@ struct Tables {
     let optMarks: [String: Mark]
     let sups: [String: String]
     let subs: [String: String]
+    let unsup: [String: String]
+    let unsub: [String: String]
     // transformation index: (previous output glyph + keystroke) → combined glyph
     let transforms: [String: String]
     /// glyph → its two-key spelling, for ⌃⌫ unconvert (θ → "tH"). First key wins.
@@ -137,6 +139,12 @@ struct Tables {
                 if let b = r["base"] as? String, let sp = r["sub"] as? String { subs[b] = sp }
             }
         }
+        // Raised/lowered glyph → its plain base, so a modifier still transforms
+        // a glyph that has already moved (⌥z s ⇧H → ᶴ). Mirrors js/src/index.ts.
+        var unsup: [String: String] = [:]
+        for (b, sp) in sups where unsup[sp] == nil { unsup[sp] = b }
+        var unsub: [String: String] = [:]
+        for (b, sb) in subs where unsub[sb] == nil { unsub[sb] = b }
         var transforms: [String: String] = [:]
         var unconvertKey: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
@@ -150,6 +158,7 @@ struct Tables {
             if let prev = prev { transforms[prev + mod] = glyph }
         }
         return Tables(letters: letters, optMarks: optMarks, sups: sups, subs: subs,
+                      unsup: unsup, unsub: unsub,
                       transforms: transforms, unconvertKey: unconvertKey, clones: clones, exclusiveTwin: exclusiveTwin,
                       optShiftDigits: optShiftDigits,
                       quoteLocales: quoteLocales, quoteDefault: quoteDefault)
@@ -477,7 +486,7 @@ class InputController: IMKInputController {
             if oc == "[" { flush(client); insert(quoteQuad()[1], client); return true }
             if oc == "]" { flush(client); insert(quoteQuad()[3], client); return true }
             // ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
-            if oc == "z" { if !pending.isEmpty { flush(client) }; return subscriptize(client) }
+            if oc == "z" { return armOperator(Self.lowerOp, client) }
             // secondary form of a two-form mark (⌥⇧n → creaky, ⌥⇧' → secondary
             // stress).
             if oc.count == 1, let m = t.optMarks[oc], m.double != nil {
@@ -510,7 +519,7 @@ class InputController: IMKInputController {
             if oc == "[" { flush(client); insert(quoteQuad()[0], client); return true }
             if oc == "]" { flush(client); insert(quoteQuad()[2], client); return true }
             // ⌥z raises the previous glyph — the operators live on the prime chord.
-            if oc == "z" { if !pending.isEmpty { flush(client) }; return superscriptize(client) }
+            if oc == "z" { return armOperator(Self.raiseOp, client) }
             // Rhoticity ⌥r emits immediately — Unicode has no combining rhotic hook,
             // so ˞ is a spacing character and the visual join onto the vowel is the
             // font's job. The one join the engine owes is ə/ɜ → precomposed ɚ/ɝ,
@@ -636,6 +645,17 @@ class InputController: IMKInputController {
                 rewrite(site, with: recompose(combo, marks), client)
                 chainBroken = false; return true
             }
+            // A glyph that has already been raised or lowered still transforms:
+            // unraise, transform, re-raise (⌥z s ⇧H → ᶴ). This is what lets the
+            // operator be prefix — armed, it could never know when a digraph ends.
+            let raised = t.unsup[base]
+            if let plain = raised ?? t.unsub[base],
+               let mid = t.transforms[plain + s],
+               let back = (raised != nil ? t.sups : t.subs)[mid] {
+                Dbg.log("  → transform through raise \(Dbg.str(base))+\(s) ⇒ \(Dbg.str(back))")
+                rewrite(site, with: recompose(back, marks), client)
+                chainBroken = false; return true
+            }
         }
         // letter base glyph — absorbing any pending prefix diacritics
         if let glyph = t.letters[s] {
@@ -702,6 +722,14 @@ class InputController: IMKInputController {
 
     /// The accumulated prefix diacritics awaiting a base. Empty = no composition.
     private var pending: [Unicode.Scalar] = []
+
+    /// Raise and lower (⌥z / ⌥⇧z) are PREFIX operators like the diacritics: the
+    /// chord arms, and the next glyph arrives raised. They pend as private-use
+    /// sentinels rather than combining scalars, because nothing is stacked onto
+    /// the base — the base is SUBSTITUTED for a different codepoint. They
+    /// preview as ^ and _, the plain-text signs for raised and lowered.
+    private static let raiseOp: Unicode.Scalar = "\u{F8F0}"
+    private static let lowerOp: Unicode.Scalar = "\u{F8F1}"
     /// The ACTIVE CLUSTER: the most recently typed glyph, held open in the
     /// marked range (dressed as plain text) so every previous-glyph rule
     /// rewrites it on the composition path. At most one grapheme cluster;
@@ -800,7 +828,9 @@ class InputController: IMKInputController {
         let clones = Tables.shared.clones
         var s = ""
         for sc in pending {
-            if let c = clones[sc] { s += c } else { s.unicodeScalars.append(sc) }
+            if sc == Self.raiseOp { s += "^" }
+            else if sc == Self.lowerOp { s += "_" }
+            else if let c = clones[sc] { s += c } else { s.unicodeScalars.append(sc) }
         }
         return s
     }
@@ -941,6 +971,17 @@ class InputController: IMKInputController {
         }
         let marks = pending
         pending = []
+        // Raise/lower substitutes the glyph itself; any marks ride the result.
+        // No such form in Unicode → the dead-key convention: the sign commits
+        // as its own character and the glyph follows (⌥e q → ´q).
+        if let op = marks.first(where: { $0 == Self.raiseOp || $0 == Self.lowerOp }) {
+            let rest = marks.filter { $0 != op }
+            let table = op == Self.raiseOp ? Tables.shared.sups : Tables.shared.subs
+            let sign = op == Self.raiseOp ? "^" : "_"
+            let out = table[glyph].map { recompose($0, rest) } ?? (sign + recompose(glyph, rest))
+            Dbg.log("    emitBase: \(sign) → open '\(Dbg.str(out))'")
+            openCluster(out, client); return
+        }
         // tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
         if marks.count == 1, marks[0] == "\u{0334}",
            let t = Self.tilded[glyph] {
@@ -967,28 +1008,19 @@ class InputController: IMKInputController {
         insert(scalarStr, client)
     }
 
-    /// ⌥z: superscriptize the previous glyph (`t` `h` ⌥z → tʰ). No
-    /// superscriptable base → the literal letter z (never a dead keystroke).
-    private func superscriptize(_ client: IMKTextInput) -> Bool {
-        if let (p, site) = prevCluster(client) {
-            let (base, marks) = decompose(p)
-            if let sup = Tables.shared.sups[base] {
-                rewrite(site, with: recompose(sup, marks), client); return true
-            }
+    /// ⌥z / ⌥⇧z: arm the raise or the lower. The same chord again lifts it off,
+    /// the way a repeated diacritic does, and the twin replaces — nothing is
+    /// raised and lowered at once.
+    private func armOperator(_ op: Unicode.Scalar, _ client: IMKTextInput) -> Bool {
+        if pending.contains(op) {
+            pending.removeAll { $0 == op }
+        } else {
+            let twin = op == Self.raiseOp ? Self.lowerOp : Self.raiseOp
+            pending.removeAll { $0 == twin }
+            pending.append(op)
         }
-        openCluster("z", client); return true
-    }
-
-    /// ⌥⇧z: subscriptize the previous glyph (`x` `2` ⌥⇧z → x₂). The lowered
-    /// twin of superscriptize. No subscriptable base → the literal letter z.
-    private func subscriptize(_ client: IMKTextInput) -> Bool {
-        if let (p, site) = prevCluster(client) {
-            let (base, marks) = decompose(p)
-            if let sub = Tables.shared.subs[base] {
-                rewrite(site, with: recompose(sub, marks), client); return true
-            }
-        }
-        openCluster("z", client); return true
+        updateMarked(client)
+        return true
     }
 
     // MARK: - backspace

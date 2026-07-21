@@ -124,10 +124,10 @@ describe("clicks (C modifier)", () => {
 	test("pC → ʘ", () => expect(typed("p", "+c")).toBe("ʘ"));
 	test("cC → ǂ", () => expect(typed("c", "+c")).toBe("ǂ"));
 	test("lC → ǁ", () => expect(typed("l", "+c")).toBe("ǁ"));
-	test("nasal click: n ⇧G ⌥z q ⇧C → ᵑǃ", () =>
-		expect(typed("n", "+g", "~z", "q", "+c")).toBe("ᵑǃ"));
-	test("voiced click: g ⌥z q ⇧C → ᶢǃ", () =>
-		expect(typed("g", "~z", "q", "+c")).toBe("ᶢǃ"));
+	test("nasal click: ⌥z n ⇧G q ⇧C → ᵑǃ", () =>
+		expect(typed("~z", "n", "+g", "q", "+c")).toBe("ᵑǃ"));
+	test("voiced click: ⌥z g q ⇧C → ᶢǃ", () =>
+		expect(typed("~z", "g", "q", "+c")).toBe("ᶢǃ"));
 });
 
 describe("airstream: implosives (⇧P) are Tier 1; ejectives are the ⌥⇧q mark", () => {
@@ -526,13 +526,13 @@ describe("East Asian coverage", () => {
 		expect(typed("m", "a", "~3", "~5")).toBe("ma˧˥");           // rising 35
 	});
 	test("tone numerals via the superscript operator: ma²¹⁴", () =>
-		expect(typed("m", "a", "2", "~z", "1", "~z", "4", "~z")).toBe("ma²¹⁴"));
+		expect(typed("m", "a", "~z", "2", "~z", "1", "~z", "4")).toBe("ma²¹⁴"));
 
 	test("Chinese affricates: t ⌥j s⇧J → t͡ɕ, t ⌥j s⇧R → t͡ʂ", () => {
 		expect(typed("t", "~j", "s", "+j")).toBe("t\u{0361}ɕ");
 		expect(typed("t", "~j", "s", "+r")).toBe("t\u{0361}ʂ");
 	});
-	test("aspiration via ⌥z: k h ⌥z → kʰ", () => expect(typed("k", "h", "~z")).toBe("kʰ"));
+	test("aspiration via ⌥z: k ⌥z h → kʰ", () => expect(typed("k", "~z", "h")).toBe("kʰ"));
 
 	// All six Vietnamese tones (ngang is unmarked).
 	test("Vietnamese tones on a: ngang sắc huyền hỏi ngã nặng", () => {
@@ -785,9 +785,16 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		expect(typed("+a", "+e", "^+n", "+g")).toBe("ÆŊ"));
 });
 
-describe("superscript operator ⌥z", () => {
-	test("aspiration: t h ⌥z → tʰ", () => expect(typed("t", "h", "~z")).toBe("tʰ"));
-	test("no superscriptable base → literal z", () => expect(typed("~z")).toBe("z"));
+describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
+	test("aspiration: t ⌥z h → tʰ", () => expect(typed("t", "~z", "h")).toBe("tʰ"));
+	test("armed alone previews as ^, the plain-text sign for raised", () =>
+		expect(typed("~z")).toBe("^"));
+	test("space commits the sign, dead-key style: ⌥z space → ^", () =>
+		expect(typed("~z", " ")).toBe("^"));
+	test("no raised form in Unicode → the sign commits and the glyph follows", () =>
+		expect(typed("~+z", "g")).toBe("_g"));
+	test("a raised glyph still transforms: ⌥z s ⇧H → ᶴ", () =>
+		expect(typed("~z", "s", "+h")).toBe("ᶴ"));
 	test("⌥p is the no-release dead key, not a raise operator", () =>
 		expect(typed("~p", "b")).toBe(nfc("b\u{031A}")));
 });
@@ -804,11 +811,14 @@ describe("rhoticity ⌥r — postfix like length", () => {
 		expect(typed("a", "+r")).toBe("aR"));
 });
 
-describe("subscript operator ⌥⇧z", () => {
-	test("digit lowers: x 2 ⌥⇧z → x₂", () => expect(typed("x", "2", "~+z")).toBe("x₂"));
-	test("math run: l o g 2 ⌥⇧z → log₂", () => expect(typed("l", "o", "g", "2", "~+z")).toBe("log₂"));
-	test("schwa lowers: 5 ⇧Y ⌥⇧z → ₔ", () => expect(typed("5", "+y", "~+z")).toBe("ₔ"));
-	test("no subscriptable base → literal z", () => expect(typed("~+z")).toBe("z"));
+describe("lower operator ⌥⇧z — the raise's shifted twin, also prefix", () => {
+	test("digit lowers: x ⌥⇧z 2 → x₂", () => expect(typed("x", "~+z", "2")).toBe("x₂"));
+	test("math run: l o g ⌥⇧z 2 → log₂", () => expect(typed("l", "o", "g", "~+z", "2")).toBe("log₂"));
+	test("schwa lowers: ⌥⇧z 5 ⇧Y → ₔ", () => expect(typed("~+z", "5", "+y")).toBe("ₔ"));
+	test("the twin replaces — nothing is raised and lowered at once", () =>
+		expect(typed("~z", "~+z", "h")).toBe("ₕ"));
+	test("the same chord again lifts it off", () =>
+		expect(typed("~z", "~z", "h")).toBe("h"));
 });
 
 describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
@@ -867,7 +877,7 @@ describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
 	test("g⇧G → ɡ — the exact U+0261, g's own other form; capital Ɡ via held chain", () => {
 		expect(typed("g", "+g")).toBe("\u{0261}");
 		expect(typed("+g", "+g")).toBe("\u{A7AC}"); // Ɡ
-		expect(typed("g", "+g", "~z")).toBe("ᶢ");    // the sup table already keyed ɡ
+		expect(typed("~z", "g", "+g")).toBe("ᶢ");    // the sup table already keyed ɡ
 	});
 	test("t⇧T → þ (Icelandic), capitals via held chain: ⇧T⇧T → Þ", () => {
 		expect(typed("t", "+t")).toBe("þ");

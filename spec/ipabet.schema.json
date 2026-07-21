@@ -65,7 +65,7 @@
    }
   },
   "superscripts": {
-   "description": "Tier 2. `operator` typed after a glyph raises it. The table is derived from Unicode <super> decompositions, not hand-listed.",
+   "description": "`operator` is a PREFIX, like the \u2325 diacritics: it arms the raise and the next glyph arrives raised (\u2325z h \u2192 \u02b0). The table is derived from Unicode <super> decompositions, not hand-listed.",
    "type": "object",
    "required": [
     "operator",

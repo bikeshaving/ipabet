@@ -137,6 +137,23 @@ for (const e of (spec.subscripts as {table: {base: string; sub: string}[]})
 	subs.set(e.base, e.sub);
 }
 
+/** Raise and lower are PREFIX operators, like the ⌥ diacritics: ⌥z arms the
+ *  raise and the next glyph arrives raised (⌥z h → ʰ). They pend as sentinels
+ *  rather than combining scalars, because nothing is stacked onto the base —
+ *  the base is SUBSTITUTED for a different codepoint. Their previews are ^ and
+ *  _, the plain-text signs already read everywhere as raised and lowered. */
+const RAISE = "\u{0001}sup";
+const LOWER = "\u{0001}sub";
+cloneOf.set(RAISE, "^");
+cloneOf.set(LOWER, "_");
+
+/** Raised/lowered glyph → its plain base. A modifier still transforms a glyph
+ *  that has already moved (⌥z s ⇧H → ᶴ): unraise, transform, re-raise. */
+const unsup = new Map<string, string>();
+for (const [base, sup] of sups) if (!unsup.has(sup)) unsup.set(sup, base);
+const unsub = new Map<string, string>();
+for (const [base, sub] of subs) if (!unsub.has(sub)) unsub.set(sub, base);
+
 // glyph → its two-key spelling, for ⌃⌫ unconvert (θ → "tH"). First key wins.
 const unconvertKey = new Map<string, string>();
 
@@ -389,6 +406,18 @@ const TILDED = new Map(Object.entries({
 /** Emit a base glyph, committing any pending prefix diacritics onto it. */
 function emitBase(glyph: string, pending: Pending): Step {
 	if (pending.length === 0) return {edit: {type: "insert", text: glyph}, pending: []};
+	// Raise/lower substitutes the glyph itself; any marks then ride the result.
+	const op = pending.find((x) => x === RAISE || x === LOWER);
+	if (op !== undefined) {
+		const rest = pending.filter((x) => x !== op);
+		const moved = (op === RAISE ? sups : subs).get(glyph);
+		// Unicode has no raised form for this glyph → the dead-key convention:
+		// the sign commits as its own character and the glyph follows (⌥e q → ´q).
+		const text = moved !== undefined
+			? recompose(moved, rest)
+			: cloneOf.get(op)! + recompose(glyph, rest);
+		return {edit: {type: "insert", text}, pending: []};
+	}
 	// tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
 	if (pending.length === 1 && pending[0] === "\u{0334}") {
 		const t = TILDED.get(glyph);
@@ -403,26 +432,15 @@ function emitBase(glyph: string, pending: Pending): Step {
 	return {edit: {type: "insert", text: recompose(glyph, marks)}, pending: []};
 }
 
-/** ⌥z: superscriptize the previous glyph (`t` `h` ⌥z → tʰ). */
-function superscriptize(textBefore: string): Edit {
-	const p = lastCluster(textBefore);
-	if (p !== undefined) {
-		const {base, marks} = decompose(p);
-		const sup = sups.get(base);
-		if (sup !== undefined) return replaceCluster(p, recompose(sup, marks));
+/** ⌥z / ⌥⇧z: arm the raise or the lower. The same chord again lifts it off, the
+ *  way a repeated diacritic does, and the twin replaces — nothing is raised and
+ *  lowered at once. */
+function pendingOperator(op: string, pending: Pending): Step {
+	if (pending.includes(op)) {
+		return {edit: {type: "noop"}, pending: pending.filter((x) => x !== op)};
 	}
-	return {type: "insert", text: "z"};
-}
-
-/** ⌥⇧z: subscriptize the previous glyph (`x` `2` ⌥⇧z → x₂). */
-function subscriptize(textBefore: string): Edit {
-	const p = lastCluster(textBefore);
-	if (p !== undefined) {
-		const {base, marks} = decompose(p);
-		const sub = subs.get(base);
-		if (sub !== undefined) return replaceCluster(p, recompose(sub, marks));
-	}
-	return {type: "insert", text: "z"};
+	const twin = op === RAISE ? LOWER : RAISE;
+	return {edit: {type: "noop"}, pending: [...pending.filter((x) => x !== twin), op]};
 }
 
 // ---------------------------------------------------------------- engine
@@ -517,8 +535,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			// d͜ʒ). Above is ⌥j; both emit immediately, appending onto the previous
 			// segment. Explicit — no toggle, no placement guessing.
 			if (key === "j") return emitJoiner(textBefore, TIE_BELOW, pending);
-			// ⌥⇧z lowers the previous glyph — the shifted twin of ⌥z's raise.
-			if (key === "z") return withFlush(subscriptize(textBefore));
+			// ⌥⇧z arms the lower — the shifted twin of ⌥z's raise.
+			if (key === "z") return pendingOperator(LOWER, pending);
 			// Locale quotes: ⌥⇧[ closes primary, ⌥⇧] closes secondary.
 			if (key === "[") return withFlush({type: "insert", text: quoteQuad()[1]});
 			if (key === "]") return withFlush({type: "insert", text: quoteQuad()[3]});
@@ -567,8 +585,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			}
 			const m = optMarks.get(key);
 			if (m !== undefined) return applyMark(m, pending);
-			// ⌥z raises the previous glyph — the operators live on the prime chord.
-			if (key === "z") return withFlush(superscriptize(textBefore));
+			// ⌥z arms the raise — the operators live on the prime chord.
+			if (key === "z") return pendingOperator(RAISE, pending);
 			return withFlush({type: "pass"});
 		}
 
@@ -662,6 +680,19 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		const combo = transforms.get(base + s);
 		if (combo !== undefined) {
 			return {edit: replaceCluster(p, recompose(combo, marks)), pending: []};
+		}
+		// A glyph that has already been raised or lowered still transforms:
+		// unraise, transform, re-raise (⌥z s ⇧H → ᶴ). This is what lets the
+		// operator be prefix — armed, it could never know when a digraph ends.
+		const plainSup = unsup.get(base);
+		const plain = plainSup ?? unsub.get(base);
+		if (plain !== undefined) {
+			const t = transforms.get(plain + s);
+			const back = t === undefined ? undefined
+				: (plainSup !== undefined ? sups : subs).get(t);
+			if (back !== undefined) {
+				return {edit: replaceCluster(p, recompose(back, marks)), pending: []};
+			}
 		}
 	}
 
