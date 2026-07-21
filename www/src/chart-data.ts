@@ -1,16 +1,6 @@
-// The IPA chart's non-grid sections, as data.
-//
-// /chart is the official IPA chart (2015, CC BY-SA) with IPAbet keystrokes
-// printed beside every symbol. It therefore contains IPA symbols and nothing
-// else: no Latin tenants (cedilla, ogonek, dot-above, horn, hỏi hook) and no
-// extra-IPA tradition marks (Korean fortis). Those are real and typeable —
-// they're on /keys and in ipabet.json with `"ipa": false` — but not on the
-// chart the chart is of. (ß is the s⇧S ligature digraph, a segment not a mark.)
-//
-// These live in data, not markup, for two reasons: `/chart.json` serves them
-// verbatim to machines, and js/test/chart.test.ts types every `keys` string
-// through the engine to prove the label produces the glyph — hardcoded labels
-// drift silently otherwise.
+// The IPA chart's non-grid sections, as data. /chart is the official IPA chart
+// (2015, CC BY-SA) with IPAbet keystrokes beside every symbol, so it contains
+// IPA symbols and nothing else.
 
 export interface ChartEntry {
 	/** the IPA symbol, with ◌ where it's a combining mark */
@@ -40,9 +30,8 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̽", keys: "~x", name: "Mid-centralized", on: "e"},
 	{glyph: "◌̩", keys: "~s", name: "Syllabic", on: "n"},
 	{glyph: "◌̯", keys: "~o", name: "Non-syllabic", on: "e"},
-	// ⌥r emits the spacing hook and the font joins it to the vowel (Unicode has
-	// no combining rhotic hook). ə ⌥r and ɜ ⌥r fuse to the precomposed ɚ/ɝ;
-	// every other vowel takes the bare hook, so `a` is the honest demo base.
+// ⌥r emits the spacing hook and the font joins it (Unicode has no combining
+// rhotic hook). ə and ɜ fuse to precomposed ɚ/ɝ; every other vowel takes the bare hook.
 	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "a"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},

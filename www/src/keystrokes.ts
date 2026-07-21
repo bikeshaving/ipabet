@@ -1,14 +1,5 @@
-// The compact keystroke notation — one definition, used everywhere keystrokes
-// are authored as data (the curriculum, the lessons, the wordbank, the hero
-// demo) and everywhere they're read back (the /learn drill).
-//
-//   "s"    bare s
-//   "+h"   ⇧h
-//   "~n"   ⌥n
-//   "~+2"  ⌥⇧2
-//
-// One definition on purpose: parallel per-module reimplementations are how
-// notations quietly drift apart.
+// The compact keystroke notation — one definition, used everywhere keystrokes are
+// authored as data and everywhere they are read back.
 
 import {type Keystroke} from "../../js/src/index.ts";
 
@@ -44,22 +35,17 @@ export function keystrokeFromLabel(lab: string): Keystroke {
 	return {key, shift, option};
 }
 
-// ---------------------------------------------------------------------------
 // Rendering the SPEC's key strings ("sH", "5") — a different notation from the
-// compact one above. Two formats, deliberately, for two surfaces; both live here
-// so the notation can't fork again.
+// compact one above, deliberately, for two surfaces.
 
-/** The chart's compact form: "sH" → "sH", "2H" → "2H". A digit is a bare base
- *  (2H → 2 then ⇧H; no lone-digit spec key exists); a trailing capital is the
- *  shift-modifier, shown bare. */
+/** The chart's compact form: "sH" → "sH". A digit is a bare base; a trailing
+ *  capital is the shift-modifier. */
 export function keyText(key: string): string {
 	const digitBare = key.length > 1;
 	return [...key].map((c) => (/[0-9]/.test(c) && !digitBare ? "⇧" + c : c)).join("");
 }
 
-/** The /keys reference form: "sH" → "s ⇧H", "5Y" → "5 ⇧Y". Explicit — every shift
- *  is spelled out, space-separated. A digit leading a key is a bare base; uppercase
- *  letters are ⇧. (No lone-digit spec key exists.) */
+/** The /keys reference form: "sH" → "s ⇧H". Every shift spelled out. */
 export function keySpelled(key: string): string {
 	const digitBare = key.length > 1;
 	return [...key]

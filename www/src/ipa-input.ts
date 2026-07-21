@@ -1,10 +1,6 @@
-// The ONE place the browser↔engine plumbing lives.
-//
-// Every input surface (the /type scratchpad, the homepage hero) binds through
-// bindIPAInput. Surfaces without a text field (/learn, which reads the whole
-// window and has its own on-screen keyboard) import keyFromEvent/keyFromChar so
-// the keystroke derivation is still shared. Nothing here gets reimplemented per
-// surface — per-surface copies drift.
+// The ONE place the browser↔engine plumbing lives. Every input surface binds
+// through bindIPAInput; surfaces without a text field bind the keystroke
+// derivation only.
 
 import {
 	handleKey,
@@ -27,15 +23,8 @@ const CODE_KEYS: Record<string, string> = {
 	Space: " ",
 };
 
-/** Desktop: the physical key, from e.code. Gives us ⇧ and ⌥ exactly — and Caps
- *  Lock, which is a lock rather than a modifier (the engine types the capital
- *  literally and never treats it as ⇧). getModifierState is the only way to see
- *  it: e.shiftKey stays false under Caps Lock.
- *
- *  Windows/Linux: AltGr is the ⌥ layer, 1:1 — but the OS reports AltGr as
- *  Ctrl+Alt held together, so AltGraph must be resolved BEFORE the control
- *  check or every AltGr press reads as a ⌃ chord. Plain Alt also maps to ⌥
- *  (best-effort; the page's preventDefault suppresses most menu behavior). */
+/** Desktop: the physical key, from e.code. Gives ⇧ and ⌥ exactly, and Caps Lock,
+ *  which is a lock rather than a modifier. */
 export function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 	let key: string | undefined;
 	if (/^Key[A-Z]$/.test(e.code)) key = e.code[3].toLowerCase();
@@ -60,8 +49,7 @@ const SHIFTED_DIGIT: Record<string, string> = {
 };
 
 /** Soft keyboards report no usable e.code, so derive the keystroke from the
- *  character: uppercase means shift was used; a shifted-digit symbol means
- *  ⇧+digit. (⌥ has no soft-keyboard equivalent — desktop only.) */
+ *  character. ⌥ has no soft-keyboard equivalent. */
 export function keyFromChar(c: string): Keystroke | null {
 	if (/^[a-z]$/.test(c)) return {key: c, shift: false};
 	if (/^[A-Z]$/.test(c)) return {key: c.toLowerCase(), shift: true};
@@ -73,11 +61,10 @@ export function keyFromChar(c: string): Keystroke | null {
 
 /** Cede a keystroke only to a REAL input method, which commits via keyCode 229.
  *
- *  Do NOT test e.isComposing here. The plain macOS US layout sets it, because
- *  ⌥n ⌥e ⌥i ⌥u ⌥` are *its own* dead keys — no IME involved. Bailing on it let
- *  macOS insert its own ñ while our accent stayed armed and landed on the next
- *  vowel ("señõr"), which silently broke the whole ⌥ layer. Those keystrokes are
- *  ours: take them and preventDefault, and macOS never composes at all. */
+ *  Do NOT test e.isComposing here: the plain macOS US layout sets it for its own
+ *  dead keys (⌥n ⌥e ⌥i ⌥u ⌥`), no IME involved. Bailing on it let macOS insert
+ *  its own ñ while our accent stayed armed and landed on the next vowel
+ *  ("señõr"). Those keystrokes are ours. */
 export function mediatedByIME(e: KeyboardEvent): boolean {
 	// eslint-disable-next-line deprecation/deprecation -- the only signal that
 	// distinguishes a real IME from a layout dead key.
@@ -96,21 +83,17 @@ export interface IPAInput {
 	reset(): void;
 }
 
-/** Wire a real text field to the engine. The field holds the text, so the caret,
- *  selection, editing and the mobile keyboard come from the browser. `onChange`
- *  fires after every engine edit, carrying the pending accent to display. */
+/** Wire a real text field to the engine. The field holds the text, so caret,
+ *  selection, editing and the mobile keyboard come from the browser. */
 export function bindIPAInput(
 	el: Field,
 	onChange: (pendingText: string) => void = () => {},
 	onStanddown: () => void = () => {},
 ): IPAInput {
 	let pending: Pending = [];
-	// NATIVE-IME STANDDOWN — two engines over one field is a race the user
-	// always loses. At the first signature of a system IME acting here (a
-	// composition, a replacement insertion, or unconsumed non-ASCII text
-	// arriving), this binding stands down for good: keys stop being consumed
-	// and the native input method owns the field. The page engine is for
-	// visitors who don't have the real IME.
+	// NATIVE-IME STANDDOWN — two engines over one field is a race the user always
+	// loses. At the first signature of a system IME here, stop consuming keys for
+	// good and let it have the field.
 	let stood = false;
 	const standDown = () => {
 		if (stood) return;
@@ -121,16 +104,11 @@ export function bindIPAInput(
 	};
 	el.addEventListener("compositionstart", standDown);
 	// The shift-chain: hold ⇧ across a run and each capital is a base for the next
-	// modifier (s⇧H⇧I⇧H → ʃɪ); RELEASE ⇧ and the chain breaks, so the next capitals
-	// are literal or a fresh digraph (⇧A⇧E → Æ). The engine owns the rule but not
-	// the flag — the caller threads it, because only the caller can see the release.
-	// The IME reads it from flagsChanged; in a browser that is keyup on Shift.
-	// Without this the chain here was permanently live: a release did nothing, and
-	// no capital digraph could ever fire after a special glyph.
+	// modifier; release ⇧ and the chain breaks. The engine owns the rule, not the
+	// flag — only the caller sees a release.
 	let chainBroken = false;
-	// True when keydown already owned the event, so the beforeinput that follows
-	// must not handle it twice. Left false for keys keydown couldn't resolve — a
-	// native key (space, enter) or a soft keyboard.
+	// True when keydown already owned the event, so the beforeinput that follows must
+	// not handle it twice. False for keys keydown couldn't resolve.
 	let consumed = false;
 
 	const caret = () => el.selectionStart ?? el.value.length;
@@ -185,10 +163,7 @@ export function bindIPAInput(
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
 		if (stood) return;
-		// ⌘ chords are the host's (copy, paste, undo). ⌃ chords are too — EXCEPT
-		// ⌃⇧<letter>, the literal-capital escape, which is the only way to type a
-		// capital that would otherwise be eaten by the ⇧-modifier ("GitHub" → Giθub).
-		// The engine owns that rule; we just have to stop swallowing the keystroke.
+	// ⌘ and ⌃ chords are the host's — EXCEPT ⌃⇧<letter>, the literal-capital escape.
 		if (e.metaKey) return;
 		// ⌃⌫ is the unconvert chord (the Japanese IMEs' Ctrl+Backspace) — the one
 		// ⌃ chord besides ⌃⇧<letter> the engine claims.

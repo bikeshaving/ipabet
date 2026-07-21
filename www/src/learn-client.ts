@@ -1,11 +1,5 @@
-// /learn client — walks the fixed, hand-designed course (curriculum.ts) lesson
-// by lesson: each lesson introduces one new sound (keys shown, its phoneme
-// plays) and drills a set of real words in order, mixing the new sound with
-// ones learned earlier. Keystrokes run the real IPAbet engine (@b9g/ipabet).
-//
-// The view is Crank: the drill and the on-screen keyboard are components that
-// re-render from module state. No innerHTML, no createElement — the server
-// renders empty #drill / #kbd mounts and Crank owns everything inside them.
+// /learn client — walks the fixed course (curriculum.ts) lesson by lesson: each
+// introduces one new sound and drills real words in order.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
@@ -75,9 +69,8 @@ const playSound = () => play(lesson().audio); // the lesson's isolated phoneme (
 const playWord = () => play(word().audio);    // the current word, baked from its IPA (Polly)
 
 // ------------------------------------------------------------ keyboard IO
-// keyFromEvent is the shared derivation (ipa-input.ts) — /learn has no text
-// field of its own (it reads the window and has an on-screen keyboard), but the
-// keystroke rules must not be a second, drifting copy.
+// keyFromEvent is the shared derivation (ipa-input.ts); /learn has no text field
+// of its own.
 const segmenter = new Intl.Segmenter();
 function dropLastCluster(text: string): string {
 	let last = "";
@@ -226,9 +219,8 @@ function Keyboard() {
 			</div>`)}`;
 }
 
-/** The lesson index: every lesson in the course, visible at once. The one you're
- *  on is marked; anything you've already reached is shown as visited, so a
- *  31-lesson course is browsable instead of a linear tunnel. */
+/** The lesson index: every lesson at once, the current one marked and everything
+ *  already reached shown as visited. */
 function LessonIndex() {
 	if (!indexOpen) return null;
 	const owned = LESSONS.slice(0, Math.max(reached, li) + 1).filter((l) => l.sound);
@@ -317,9 +309,8 @@ function check() {
 		return;
 	}
 	// Fire wrongness only on genuine *deviation* — when the buffer no longer sits
-	// anywhere along the taught keystroke path. Intermediate states that still lead
-	// to the target are fine: e.g. "dʌn" on the way to "dʌŋ" (before ⇧G rewrites
-	// n→ŋ) reaches full length but is on-path, so it must NOT flash red.
+	// anywhere along the taught keystroke path. "dʌn" on the way to "dʌŋ" reaches
+	// full length but is on-path, so it must NOT flash red.
 	const labels = word().labels;
 	for (let p = 0; p < labels.length; p++)
 		if (simulate(labels, p).normalize("NFC") === b) return; // on-path, still typing
@@ -342,10 +333,8 @@ function doBackspace() {
 function sendKey(k: Keystroke) {
 	if (partIntro) { partIntro = null; goWord(true); return; } // any key begins
 	if (finished) return; // the finish line ignores typing
-	// Thread the shift-chain, exactly as bindIPAInput and the IME do: hold ⇧ across
-	// a run and each capital rebases for the next modifier; release ⇧ and the chain
-	// breaks. The engine owns the rule but not the flag — only the caller sees the
-	// release, so a caller that drops it leaves the chain permanently live.
+	// Thread the shift-chain as bindIPAInput and the IME do: the engine owns the rule
+	// but not the flag — only the caller sees a shift release.
 	const step = handleKey(buffer, k, pending, chainBroken);
 	chainBroken = step.chainBroken ?? false;
 	pending = step.pending;

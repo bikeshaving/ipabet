@@ -9,10 +9,8 @@ import {docs} from "./content.gen.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keysCss from "./styles/keys.css" with {assetBase: "/assets/"};
 
-// /keys — the complete keystroke → glyph mapping as machine-readable tables,
-// generated from spec/ipabet.json so it can never drift. Prose lives as a
-// document (content/keys.md); the spec-generated tables are embedded in it as
-// components (never markdown-ified — they are data, not prose).
+// /keys — the complete mapping as machine-readable tables, generated from
+// spec/ipabet.json. Prose is content/keys.md.
 
 interface Letter { key: string; glyph: string; cp?: string; name?: string }
 interface MarkE {

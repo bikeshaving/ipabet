@@ -18,23 +18,13 @@ import landingClient from "./landing-client.ts" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 
-// / — the landing page. Prose lives as a document (content/index.md); this page
-// is the chrome (header, the animated hero demo) plus the landing-only content
-// components embedded in the Markdown: the layers table and feature cards.
+// / — the landing page. Prose is content/index.md; this page is the chrome plus
+// the landing-only components embedded in that Markdown.
 
 const doc = docs.index;
 
-// The hero demo. Authored as KEYSTROKES; the cumulative output after each one is
-// computed by the real engine, exactly like curriculum.ts and the chart — so the
-// demo cannot drift from the notation (hand-written steps would, silently).
-// Combining marks are prefix dead-keys — ⌥n comes BEFORE its base.
-//
-// Compact keystroke notation (as curriculum.ts): "s" bare · "+h" ⇧ · "~n" ⌥.
-/** Run the keystrokes through the engine, capturing the output AND the pending
- *  dead-key after each one. A dead key yields a `noop` — the buffer doesn't move
- *  — so the pending accent is the only evidence the keystroke landed. Carrying it
- *  lets the hero both SHOW the armed accent and light that keystroke's bar
- *  (buffer-matching alone can't see a step that changed no text). */
+// The hero demo, authored as KEYSTROKES; the engine computes the output after each
+// one, so the demo cannot drift from the notation.
 function demo(word: string, ...keys: string[]) {
 	let buffer = "";
 	let pending: Pending = [];

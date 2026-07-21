@@ -1,12 +1,6 @@
-// /type client — a freeform IPA scratchpad. Every keystroke runs through the
-// real IPAbet engine (@b9g/ipabet) relative to the caret, so mid-text editing,
-// selection-replace, and diacritic peeling all work like the macOS IME. This is
-// the "use it without installing" surface.
-//
-// The engine↔input plumbing is NOT reimplemented here — it's the shared
-// bindIPAInput, the same one the homepage hero uses. This file only owns what is
-// actually specific to the scratchpad: persistence, the character count, copy,
-// clear, and the dead-key preview chip.
+// /type client — a freeform IPA scratchpad. Every keystroke runs through the real
+// engine relative to the caret, so mid-text editing, selection-replace and
+// diacritic peeling behave as they do in the macOS IME.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {bindIPAInput} from "./ipa-input.ts";
@@ -20,9 +14,9 @@ const chipMount = document.getElementById("pending-mount");
 
 const KEY = "ipabet-editor-v1";
 
-// The dead-key accent is host state — never written into the textarea, so a
-// user's own NBSP (common in pasted text) can never be mistaken for it. A
-// <textarea> can't style a sub-range, so the preview is a chip, not marked text.
+// The dead-key accent is host state, never written into the textarea, so a user's
+// own NBSP can't be mistaken for it. A <textarea> can't style a sub-range, so the
+// preview is a chip.
 function PendingChip({text}: {text: string}) {
 	return text === "" ? null : jsx`<span id="pending-chip">pending <span class="g">${"◌" + text}</span></span>`;
 }
@@ -95,17 +89,13 @@ if (optRadio !== null && shiftRadio !== null) {
 	window.addEventListener("keyup", sync);
 }
 
-// The board is clickable: a mark key sends its chord for the visible layer
-// through the engine; ⌫ deletes; the ⇧/⌥ caps switch layers. mousedown is
-// prevented so the pad keeps focus and the caret never blinks away.
+// The board is clickable. mousedown is prevented so the pad keeps focus and the
+// caret never blinks away.
 const board = document.getElementById("kbdref");
 const pad = document.getElementById("ed") as HTMLTextAreaElement | null;
 
-// The ⇧ view is LIVE: for the glyph currently before the caret, each capital
-// shows the transform it would perform right now (s before the caret → the H
-// cap shows ʃ), or its plain uppercase where it would just emit. The real
-// engine answers per capital; the island repaints on every edit and caret
-// move.
+// The ⇧ view is LIVE: each capital shows the transform it would perform on the
+// glyph before the caret, or its plain uppercase where it would just emit.
 function paintShiftPreview() {
 	if (board === null || pad === null) return;
 	const before = pad.value.slice(0, pad.selectionStart ?? pad.value.length);
@@ -138,9 +128,7 @@ if (board !== null && pad !== null) {
 		const chrome = cap.dataset.chrome;
 		const radioOf = (id: string) => document.getElementById(id) as HTMLInputElement;
 		if (cap.dataset.key !== undefined) {
-			// A click types the visible layer: base char, the ⇧ plane
-			// (transforms when a glyph precedes, else the literal), or the
-			// mark chords.
+// A click types the visible layer.
 			const k = cap.dataset.key;
 			ipa.sendKey(
 				radioOf("klayer-base").checked ? {key: k} :
@@ -149,9 +137,7 @@ if (board !== null && pad !== null) {
 			return;
 		}
 		if (chrome === "backspace") { ipa.backspace(); return; }
-		// The chord caps toggle their layer lock: ⌥ ⇄ marks, ⇧ ⇄ the shift
-		// plane, the second of the pair combines (⌥ view + ⇧ click = ⌥⇧);
-		// clicking a lit chord returns to base.
+// The chord caps toggle their layer lock; clicking a lit chord returns to base.
 		if (chrome === "option") {
 			radioOf(
 				radioOf("klayer-opt").checked || radioOf("klayer-optshift").checked ? "klayer-base" :

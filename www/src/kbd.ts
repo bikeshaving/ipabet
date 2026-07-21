@@ -5,10 +5,7 @@ import spec from "../../spec/ipabet.json";
 // Unit widths are the ANSI standard (quarter-key grid, 15u per row):
 //   `1234567890-=  ⌫2u · tab1.5u qwertyuiop[]\\1.5u · caps1.75u …' ⏎2.25u ·
 //   ⇧2.25u zxcvbnm,./ ⇧2.75u · seven 1.25u modifiers around a 6.25u spacebar
-// Surfaces: /type renders it as reference (.kbd--ref: ⌥/⌥⇧ layer toggle,
-// tooltips, chrome inert); /learn renders the same board as the drill
-// (.kbd--drill: bare chars, hot/armed states, functional ⇧ ⌥ ⌫ ␣; when ⌥ is
-// armed the caps show the ⌥ layer — Keyboard Viewer's own convention).
+// /type renders it as reference (.kbd--ref), /learn as the drill (.kbd--drill).
 
 interface MarkE {
 	opt: string; mark: string; type: string; double?: string; name?: string;
@@ -63,12 +60,8 @@ export const KB_ROWS: PhysKey[][] = [
 	],
 ];
 
-/** Render a mark: combining forms (and the anchorless rhotic hook) as two
- *  stacked layers — a faint carrier ring behind, the mark itself in full ink
- *  riding an invisible base in front — so the MARK is the figure and the
- *  carrier a whisper. Other spacing glyphs stand alone. */
-// The ⇧ plane's literal characters — what a shifted key EMITS when it isn't
-// transforming: uppercase letters, the digit symbols, shifted punctuation.
+/** Render a mark: combining forms as two stacked layers — a faint carrier ring
+ *  behind, the mark in full ink on an invisible base in front. */
 const SHIFT_PLANE: Record<string, string> = {
 	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&",
 	"8": "*", "9": "(", "0": ")", "`": "~", "-": "_", "=": "+",
@@ -106,10 +99,8 @@ export function capBody(ch: string) {
 	const m = marks.get(ch);
 	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
 	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
-	// The ⇧ view is LIVE on /type: the island repaints each capital with the
-	// transform it would perform on the glyph before the caret (or its plain
-	// uppercase where it would just emit). Server-rendered state is the
-	// empty-pad truth: plain emissions everywhere.
+	// The ⇧ view is LIVE on /type; the island repaints each capital. Server-rendered
+	// state is the empty-pad truth.
 	const shifted = /[a-z]/.test(ch) ? ch.toUpperCase() : SHIFT_PLANE[ch];
 	const wide = sp !== undefined ? " wide" : "";
 	return jsx`<span class="b">${ch}</span>${
@@ -123,10 +114,8 @@ export function capBody(ch: string) {
 
 const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
 
-/** The reference board on /type: the full physical rectangle, with the
- *  chrome GHOSTED — blank faint outlines that give the true silhouette while
- *  spending no ink — except ⌥ and ⇧, the keys the chords actually hold,
- *  which keep a quiet label. ⌥ layer by default, ⌥⇧ on the toggle. */
+/** The reference board on /type: the full physical rectangle with the chrome
+ *  GHOSTED, except ⌥ and ⇧, the keys the chords actually hold. */
 export function KeyboardRef() {
 	// Chrome with MEANING renders as real caps (with the meaning in the
 	// tooltip); the rest is bare plate.
@@ -144,10 +133,8 @@ export function KeyboardRef() {
 		const chorded = k.chrome === "option" || k.chrome === "shift";
 		return jsx`<div class=${"cap ck" + (chorded ? " chord" : "")} style=${capStyle(k)} title=${title} data-chrome=${k.chrome}>${k.label}</div>`;
 	};
-	// The reference gives ⌥ no row of its own (Brian's call): each ⌥ tucks
-	// beside its ⇧ inside the shift's own slot — ⇧1.25+⌥1 on the left,
-	// ⌥1.25+⇧1.5 on the right — so the chord pair reads as one unit and the
-	// board is four rows. The drill keeps the physical board; its keys work.
+	// ⌥ has no row of its own: each ⌥ tucks beside its ⇧ inside the shift's slot —
+	// ⇧1.25+⌥1 left, ⌥1.25+⇧1.5 right.
 	const shiftRow = KB_ROWS[3].filter((k) => k.ch !== undefined);
 	const rows = [
 		...KB_ROWS.slice(0, 3),

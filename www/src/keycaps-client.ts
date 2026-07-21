@@ -1,12 +1,6 @@
 // Platform-aware keystroke labels — the DOM half, included by <Layout> on every
-// page. Detects the visitor's platform (localStorage override wins), rewrites
-// keystroke text in the server-rendered HTML, and offers a fixed corner pill to
-// flip between Mac (⌥ ⇧ ⌃) and PC (AltGr+ Shift+ Ctrl+) spellings.
-//
-// Scope is deliberate: only elements that hold keystrokes — <kbd>, <code>, and
-// the .k/.chip/.fine key chips — never prose. Crank-owned islands (#drill,
-// #kbd, #demo) are skipped here; they translate at render time via keycaps.ts
-// and re-render on KEYMODE_EVENT, so the two mechanisms never fight over a node.
+// page. Detects the platform (localStorage override wins) and rewrites keystroke
+// text in the server-rendered HTML.
 
 import {KEYMODE_EVENT, keyMode, pcKeys, setKeyMode, type KeyMode} from "./keycaps.ts";
 

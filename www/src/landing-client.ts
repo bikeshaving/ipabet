@@ -1,11 +1,6 @@
-// The hero: a real <input> bound to the engine via the shared ipa-input binding,
-// with the target's keystrokes drawn as bars above it.
-//
-// The input holds the text — caret, selection, editing and the mobile keyboard
-// come from the browser. We draw only what genuinely isn't in the text: the
-// keystroke bars, the word label, and the armed dead-key accent.
-//
-// Attract mode types the target words out on a loop; click in and you take over.
+// The hero: a real <input> bound to the engine, with the target's keystrokes drawn
+// as bars above it. The input holds the text, so caret, selection and the mobile
+// keyboard come from the browser.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {bindIPAInput} from "./ipa-input.ts";
@@ -44,9 +39,8 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 		renderer.render(pend ? jsx`<span class="pend ipa">${pend}</span>` : null, pendEl!);
 		renderer.render(done ? jsx`<span>${"“" + target().word + "”"}</span>` : null, wordEl!);
 	}
-	/** How far along the target's keystrokes we are. Matches the text AND the
-	 *  pending accent — after ⌥n the text hasn't moved, so text alone can't tell
-	 *  that keystroke apart from the one before it. */
+/** How far along the target's keystrokes we are. Matches the text AND the pending
+ *  accent — after ⌥n the text hasn't moved. */
 	function walked(pend: string): number {
 		const steps = target().steps;
 		for (let i = steps.length - 1; i >= 0; i--) {
@@ -111,10 +105,8 @@ if (demoEl && input && keysEl && pendEl && wordEl && DEMO.length) {
 	document.getElementById("demoprev")?.addEventListener("click", () => setTarget(ti - 1));
 	document.getElementById("demonext")?.addEventListener("click", () => setTarget(ti + 1));
 
-	// Keyboard carousel — only while the hero is on screen, so arrows still
-	// scroll the rest of the page. ←/→ browse; Enter advances (the input is
-	// single-line, so Enter is free even mid-typing). Arrows defer to the caret
-	// once the visitor has typed text. Space stays the page-scroll key.
+	// Keyboard carousel, only while the hero is on screen so arrows still scroll the
+	// rest of the page. Arrows defer to the caret when the input has text.
 	const heroVisible = () => {
 		const r = demoEl!.getBoundingClientRect();
 		return r.bottom > 0 && r.top < window.innerHeight;

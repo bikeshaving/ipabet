@@ -11,11 +11,10 @@ import {page} from "./layout.ts";
 import {assets} from "@b9g/assets/middleware";
 import {isHTTPError} from "@b9g/http-errors";
 
-// Secure-by-default. @b9g/router decides whether to render a full stack-trace
-// debug page from `import.meta.env.MODE !== "production"` — so an *unset* MODE
-// counts as dev. @b9g/platform-cloudflare does not define MODE at build time,
-// so on Workers every 4xx/5xx would leak a stack trace. Force production unless
-// a real mode is already set (local `shovel dev` keeps its stacks).
+// Secure-by-default. @b9g/router renders a stack-trace debug page whenever
+// `import.meta.env.MODE !== "production"`, and @b9g/platform-cloudflare does not
+// define MODE at build time — so on Workers every 4xx/5xx would leak a stack
+// trace. Force production unless a real mode is already set.
 try {
 	const meta = import.meta as unknown as {env?: Record<string, string>};
 	meta.env ??= {};
@@ -24,9 +23,8 @@ try {
 	// import.meta.env not writable on this platform — the boundary below covers it.
 }
 
-// Outermost error boundary: catch anything a handler (or the router's own
-// no-match NotFound) throws, log the real error server-side for `wrangler
-// tail`, and return a sanitized response. Never the framework debug page.
+// Outermost error boundary: log the real error server-side for `wrangler tail`
+// and return a sanitized response. Never the framework debug page.
 async function* errorBoundary(request: Request): AsyncGenerator<Request, Response | void, Response> {
 	try {
 		return yield request;

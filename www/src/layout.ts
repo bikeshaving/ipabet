@@ -4,11 +4,8 @@ import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keycapsClient from "./keycaps-client.ts" with {assetBase: "/assets/"};
 
-// The shared server shell — the one place doctype/head/meta/title/<style> live,
-// instead of being re-typed at the top of every page. A page is a component that
-// renders <${Layout}> around its own <main> and trailing island <script>s; the
-// head stops being copy-paste. Server-only: the html renderer produces a string,
-// so nothing here reaches the client (no page-weight cost — the whole point).
+// The shared server shell — the one place doctype/head/meta/title/styles live. A
+// page renders <${Layout}> around its own <main> and trailing islands.
 
 export interface LayoutProps {
 	title: string;

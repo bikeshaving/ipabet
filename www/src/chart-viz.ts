@@ -1,13 +1,6 @@
 // @ts-nocheck
 // Interactive IPA charts (vowel + pulmonic consonant), embedded on /design and
-// the landing page. Ported from the Claude-authored Crank artifacts, with two
-// changes: the procedural Web Audio synth is dropped in favour of the real
-// Commons phoneme recordings (glyph -> hashed URL, injected as
-// window.__CHART_AUDIO by the page), and the standalone <header> is removed so
-// each chart slots under the host page's own headings.
-//
-// Every symbol -> keystroke pairing here is verified against spec/ipabet.json
-// (see scratchpad diff-viz.ts: zero mismatches).
+// the landing page. Procedural Web Audio synth, recordings where they exist.
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 

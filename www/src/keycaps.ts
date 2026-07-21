@@ -1,12 +1,6 @@
-// Platform-aware keystroke labels — the pure half (no DOM side effects, safe to
-// import from any island). One vocabulary, two spellings: the site's canonical
-// notation is Mac symbols (⌥ ⇧ ⌃, straight from the spec), and on Windows/Linux
-// the same keystrokes read AltGr+ / Shift+ / Ctrl+ — the web engine already
-// maps AltGr to the ⌥ layer 1:1, so only the *labels* differ per platform.
-//
-// Data never translates: labels stored in curricula, specs, and datasets stay
-// symbolic (keystrokeFromLabel keeps parsing them); translation happens at the
-// last display moment, here.
+// Platform-aware keystroke labels — the pure half, safe to import from any island.
+// One vocabulary, two spellings: Mac symbols are canonical, Windows/Linux names
+// are the alternate.
 
 export type KeyMode = "mac" | "pc";
 

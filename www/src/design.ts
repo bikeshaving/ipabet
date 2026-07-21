@@ -14,9 +14,8 @@ import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartViz from "./chart-viz.ts" with {assetBase: "/assets/"};
 
-// /design — the reference explanation of the notation. The prose lives as a
-// portable Markdown document (content/design.md); this page is only chrome: the
-// shared shell, the header, the interactive-chart islands, and their bootstrap.
+// /design — the reference explanation. Prose is content/design.md; this page is
+// chrome plus the interactive-chart islands.
 
 const doc = docs.design;
 

@@ -11,11 +11,8 @@ import chartAudio from "./chart-audio-client.ts" with {assetBase: "/assets/"};
 import {AUDIO} from "./audio-map.ts";
 import {DIACRITICS, SUPRASEGMENTALS, TONES, type ChartEntry} from "./chart-data.ts";
 
-// The IPAbet chart: the IPA chart (layout derived from the official 2015
-// sheet, CC BY-SA) with the IPAbet keystrokes printed beside every symbol —
-// a single printable page that is both the notation's manual and its proof
-// of coverage. Keystroke annotations are reverse-looked-up from
-// spec/ipabet.json so they can never drift from the notation.
+// The IPAbet chart: the IPA chart (2015 layout, CC BY-SA) with IPAbet keystrokes
+// printed beside every symbol — one printable page.
 
 const reverse = new Map<string, string>();
 for (const e of spec.letters as {key: string; glyph: string}[]) {

@@ -1,16 +1,9 @@
 import {typeKeys, type Keystroke} from "../../js/src/index.ts";
 import {seq, formatKey as label} from "./keystrokes.ts";
 
-// The graded IPAbet course — a fixed, hand-designed touch-typing syllabus.
-// Words are authored as KEYSTROKE sequences so the pronunciation is controlled
-// exactly; the engine computes the broad transcription (guaranteeing every word
-// is typeable and showing the real output for review). Order is deliberate: the
-// plain keyboard, then the English vowels, the digraphs you already spell,
-// diphthongs, and only then outward to the sounds English lacks. Each new sound
-// is introduced by a word that contains it and uses only sounds taught earlier;
-// review words COMBINE the new sound with recent ones rather than re-drilling an
-// old one alone. Every word is tagged with its language. No generation, no
-// random — that's a later practice mode.
+// The graded IPAbet course — a fixed, hand-designed touch-typing syllabus. Words
+// are authored as KEYSTROKE sequences and the engine computes the transcription,
+// so no entry can drift from the notation.
 
 // compact keys: "s" bare · "+h" ⇧ · "~n" ⌥ · digit is a base: "5" "+y" → ə
 // w(display, language, gloss/note, ...keys) — gloss "" for none
@@ -177,12 +170,8 @@ export const CURRICULUM: Lesson[] = [
 	]},
 ];
 
-// False friends — real words where the spelling can't be trusted but the sound
-// is one already taught. Appended to the END of each lesson as the payoff: the
-// course's whole thesis in miniature ("busy" is /bɪzi/, not "bussy"). Keyed by
-// 1-based lesson number. Only lessons whose sound + taught inventory afford a
-// genuine false friend get any — the foreign/exotic sounds (θ ð, trill, ñ, Arabic)
-// mostly don't, because English spelling doesn't lie about *them*.
+// False friends — real words whose spelling can't be trusted but whose sounds are
+// already taught. Appended to the END of each lesson.
 const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
 	1: [en("sew", "s", "o")],
 	2: [en("busy", "b", "i", "+h", "z", "i"), en("women", "w", "i", "+h", "m", "i", "+h", "n"), en("build", "b", "i", "+h", "l", "d")],
@@ -206,9 +195,8 @@ const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
 for (let i = 0; i < CURRICULUM.length; i++)
 	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push(friend); // unlabelled — the jolt is the lesson
 
-// Review lessons — no new sound: the previous stretch MIXED, the way real
-// text arrives. Words repeat earlier drills on purpose. Spliced in AFTER the
-// false-friend/singleton passes, whose 1-based lesson numbering must not shift.
+// Review lessons — no new sound, the previous stretch MIXED. Spliced in AFTER the
+// false-friend and singleton passes, whose 1-based numbering must not shift.
 const DIPHTHONG_REVIEW: Lesson = {
 	title: "Review — the diphthongs", review: true,
 	intro: "Nothing new — all five diphthongs shuffled together: aɪ aʊ oʊ eɪ ɔɪ.",
@@ -234,10 +222,8 @@ const A_LESSON: Lesson = {
 };
 CURRICULUM.splice(CURRICULUM.findIndex((l) => l.title.startsWith("Nasal vowels")), 0, A_LESSON);
 
-// Introduce each new sound ON ITS OWN first — the singleton glyph before any
-// word, so the phoneme you hear (and the keys you press) match exactly what's
-// on screen. Runs after every splice, so late-added lessons get theirs too.
-// Skipped for diacritics/length, which can't stand alone.
+// Each new sound gets a singleton lesson first, so the phoneme heard and the keys
+// pressed match exactly what is on screen. Runs after every splice.
 function kFromLabel(lab: string): Keystroke {
 	const option = lab.includes("⌥"), shift = lab.includes("⇧");
 	let key = lab.replace(/[⌥⇧]/g, "");

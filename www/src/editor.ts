@@ -13,10 +13,8 @@ import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
 
-// /type — a freeform IPA scratchpad. Prose lives as a document (content/type.md);
-// the interactive editor DOM is an inline <Pad/> component embedded in that
-// document. editor-client.ts (vanilla island) attaches to #ed/#pad as before, so
-// no framework ships to the client.
+// /type — prose is content/type.md; the editor DOM is an inline <Pad/> embedded in
+// it, and editor-client.ts attaches to #ed/#pad.
 
 const doc = docs.type;
 

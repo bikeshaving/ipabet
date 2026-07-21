@@ -1,11 +1,9 @@
 import {typeKeys} from "../../js/src/index.ts";
 import {seq, formatKey as label} from "./keystrokes.ts";
 
-// The /learn word bank. Words are authored as KEYSTROKE sequences; the engine
-// computes the IPA (so every entry is guaranteed typeable and correct), and a
-// word's STAGE is *derived* — it's the latest stage among the glyphs it needs,
-// so a word unlocks exactly when its last glyph does. Progressive disclosure
-// falls out of the data instead of being hand-tagged.
+// The /learn word bank. Words are authored as KEYSTROKE sequences and the engine
+// computes the IPA, so every entry is typeable and correct. A word's STAGE is
+// derived from its glyphs.
 
 // Compact keystroke notation: "s" bare · "+h" ⇧ · "~n" ⌥ · "~+2" ⌥⇧.
 

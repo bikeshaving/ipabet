@@ -8,14 +8,8 @@ import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import blogCss from "./styles/blog.css" with {assetBase: "/assets/"};
 
-// /blog — dated writing about the project, in first person, where narrative is
-// allowed (the reference pages state the design; the archaeology and the
-// arguments live here). Each post is a full page of the site, so it can embed
-// the live vocabulary — <Combo>, keystroke chips — like any other page.
-//
-// Posts are the site's half of the planet contract: bikeshaving.org aggregates
-// project blogs by consuming nothing but /feed.xml, and a post's canonical URL
-// stays here.
+// /blog — dated writing about the project, in first person. Each post is a full
+// page of the site, so it can embed the same live components as any other page.
 
 const SITE = "https://ipabet.org";
 

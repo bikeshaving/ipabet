@@ -16,10 +16,8 @@ import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
 
-// /learn — the graded IPAbet course. Prose (tagline, notice, footer) lives as a
-// document (content/learn.md); the drill scaffolding is an inline <Scaffold/>
-// component embedded in it, and curriculum.ts stays engine-verified data
-// serialized to the vanilla island (learn-client.ts) via __CURRICULUM.
+// /learn — the graded course. Prose is content/learn.md; the drill scaffolding is
+// an inline <Scaffold/> embedded in it.
 
 const AUDIO_OF = AUDIO as Record<string, string>;
 const AUDIO_ALIAS: Record<string, string> = {g: "ɡ"}; // bare g emits U+0067; recording keyed on ɡ U+0261
@@ -34,9 +32,8 @@ const LESSONS = CURRICULUM.map((l) => ({
 
 const doc = docs.learn;
 
-// The drill scaffolding — empty containers the island fills, plus the play
-// button SVG. Kept inline (jsx, not markdown); the island binds to these ids
-// and builds #kbd itself, so it must NOT be pre-populated here.
+// The drill scaffolding — empty containers the island fills. The island builds
+// #kbd itself, so it must NOT be pre-populated here.
 const Scaffold = () => jsx`
 	<div id="controls">
 		<div id="lessonnav">

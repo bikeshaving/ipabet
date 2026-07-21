@@ -2,8 +2,7 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {Combo, Glyph} from "./components/ui.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
-// in a document against this map, passing the tag's attributes as `token` and
-// its (markdown-processed) contents as `children`.
+// against this map, passing attributes as `token` and contents as `children`.
 export const components: Record<string, unknown> = {
 	Combo: ({token}: any) =>
 		jsx`<${Combo} keys=${token.keys} out=${token.out} plain=${!!token.plain} />`,
