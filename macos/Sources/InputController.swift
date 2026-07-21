@@ -679,11 +679,41 @@ class InputController: IMKInputController {
         insert(s, client)   // insertText over marked text commits & clears it
     }
 
+    /// A contour tone is its LEVEL tones typed in order — the keystroke is the
+    /// tone number. Where Unicode encodes that sequence as one character it is
+    /// emitted instead of stacking or replacing, the same law the stroke and
+    /// tilde overlays follow, and what lets ⌥e ⌥⇧e spell a contour rather than
+    /// the twin replacing its partner. Mirrors js/src/index.ts.
+    private static let contours: [String: Unicode.Scalar] = [
+        "\u{030F}\u{030B}": "\u{030C}",           // ˩˥  extra low → extra high   rising
+        "\u{030B}\u{030F}": "\u{0302}",           // ˥˩  extra high → extra low   falling
+        "\u{0301}\u{030B}": "\u{1DC4}",           // ˦˥  high → extra high        high rising
+        "\u{030F}\u{0300}": "\u{1DC5}",           // ˩˨  extra low → low          low rising
+        "\u{0304}\u{0301}\u{0304}": "\u{1DC8}",  // ˧˦˧ mid → high → mid        rising-falling
+    ]
+
+    /// Fold the pending levels into the contour this mark completes, if any.
+    private func applyContour(_ scalar: Unicode.Scalar, _ client: IMKTextInput) -> Bool {
+        for len in [3, 2] {
+            let keep = pending.count - (len - 1)
+            guard keep >= 0 else { continue }
+            var key = String(String.UnicodeScalarView(pending[keep...]))
+            key.unicodeScalars.append(scalar)
+            if let atom = Self.contours[key] {
+                pending = Array(pending[0..<keep]) + [atom]
+                updateMarked(client)
+                return true
+            }
+        }
+        return false
+    }
+
     /// Combining ⌥ diacritic, PREFIX: stack the mark into the marked-text preview.
     /// The same form again peels it off, unless the key declares a CYCLE, which
     /// advances through the family and wraps.
     private func applyCombining(_ scalarStr: String, _ client: IMKTextInput, cycle: [String] = []) {
         let scalar = scalarStr.unicodeScalars.first!
+        if applyContour(scalar, client) { return }
         let family = [scalar] + cycle.compactMap { $0.unicodeScalars.first }
         if !cycle.isEmpty, let top = pending.last, let at = family.firstIndex(of: top) {
             pending[pending.count - 1] = family[(at + 1) % family.count]

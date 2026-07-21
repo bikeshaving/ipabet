@@ -62,6 +62,9 @@ Planned, each driven by the same spec and pinned to the `js/` parity suite:
 all 28 vowels, ɧ, both tie bars, every diacritic and suprasegmental, and the
 Chao tone letters.
 
+A contour tone is its level tones typed in order, so the keystroke is the tone
+number: `⌥e`+`⌥⇧e` is ˦˥ high rising, `⌥⇧``+`⌥`` is ˩˨ low rising.
+
 Two gaps: extIPA (the extensions for disordered speech) has every diacritic of
 the 2015 set but none of its symbol letters (ʬ ʭ ʪ ʫ ʩ ꞎ ʞ); and bare `g` is
 U+0067 rather than U+0261 script ɡ, the price of the bare layer being plain US

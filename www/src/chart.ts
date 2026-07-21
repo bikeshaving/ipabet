@@ -239,25 +239,18 @@ const LEVEL: [string, string, string][] = [
 const CONTOUR: [string, string, string][] = [
 	["Rising", "Rising", ""],
 	["Falling", "Falling", ""],
-	["High rising", "", ""],
-	["Low rising", "", ""],
-	["Rising-falling", "", ""],
+	["High rising", "High rising", ""],
+	["Low rising", "Low rising", ""],
+	["Rising-falling", "Rising-falling", ""],
 	["Global rise", "Global rise", ""],
 	["Global fall", "Global fall", ""],
 ];
-// The official symbols for the three contour tones no keystroke reaches yet.
-const UNMAPPED: Record<string, string> = {
-	"High rising": "◌᷄", "Low rising": "◌᷅", "Rising-falling": "◌᷈",
-};
 
 function ToneCell(label: string, mark: string, letter: string) {
 	const m = byName.get(mark);
 	const l = byName.get(letter);
-	const glyph = m === undefined ? UNMAPPED[label] : undefined;
 	return jsx`<td>
-		${m === undefined
-			? jsx`<div class="li"><b class="ipa">${(glyph ?? "").replace("◌", "e")}</b><span class="nm">${label}</span></div>`
-			: DiaCell({...m, name: label})}
+		${m === undefined ? null : DiaCell({...m, name: label})}
 		${l === undefined ? null : DiaCell(l)}
 	</td>`;
 }

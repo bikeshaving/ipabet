@@ -288,9 +288,37 @@ function commitString(pending: Pending): string {
 		.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
+// A contour tone is its LEVEL tones typed in order — the keystroke is the tone
+// number. Where Unicode encodes that sequence as one character it is emitted
+// instead of stacking or replacing, the same law the stroke and tilde overlays
+// follow, and what lets ⌥e ⌥⇧e spell a contour rather than the twin replacing
+// its partner.
+const CONTOURS = new Map(Object.entries({
+	"\u{030F}\u{030B}": "\u{030C}",           // ˩˥  extra low → extra high   rising
+	"\u{030B}\u{030F}": "\u{0302}",           // ˥˩  extra high → extra low   falling
+	"\u{0301}\u{030B}": "\u{1DC4}",           // ˦˥  high → extra high        high rising
+	"\u{030F}\u{0300}": "\u{1DC5}",           // ˩˨  extra low → low          low rising
+	"\u{0304}\u{0301}\u{0304}": "\u{1DC8}",  // ˧˦˧ mid → high → mid        rising-falling
+}));
+
+/** The contour this mark completes, consuming the levels before it. */
+function contourOf(pending: Pending, scalar: string): Step | undefined {
+	for (const len of [3, 2]) {
+		const keep = pending.length - (len - 1);
+		if (keep < 0) continue;
+		const atom = CONTOURS.get([...pending.slice(keep), scalar].join(""));
+		if (atom !== undefined) {
+			return {edit: {type: "noop"}, pending: [...pending.slice(0, keep), atom]};
+		}
+	}
+	return undefined;
+}
+
 /** Stack a diacritic into the pending composition. The same form again peels it
  *  off, unless the key declares a CYCLE, which advances and wraps. */
 function pendingDiacritic(scalar: string, pending: Pending, cycle: string[] = []): Step {
+	const contour = contourOf(pending, scalar);
+	if (contour !== undefined) return contour;
 	let next: string[];
 	const top = pending[pending.length - 1];
 	const family = [scalar, ...cycle];

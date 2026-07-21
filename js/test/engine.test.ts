@@ -1020,3 +1020,23 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 		expect(typed("~f", "~+f", "k")).toBe(nfc("k\u{0348}"));  // one dimension: replaces
 	});
 });
+
+describe("contour tones: a contour is its level tones typed in order", () => {
+	const nf = (s: string) => s.normalize("NFC");
+	test("high rising ˦˥: ⌥e ⌥⇧e e → e᷄", () =>
+		expect(nf(typed("~e", "~+e", "e"))).toBe(nf("e\u{1DC4}")));
+	test("low rising ˩˨: ⌥⇧` ⌥` e → e᷅", () =>
+		expect(nf(typed("~+`", "~`", "e"))).toBe(nf("e\u{1DC5}")));
+	test("rising-falling ˧˦˧: ⌥a ⌥e ⌥a e → e᷈", () =>
+		expect(nf(typed("~a", "~e", "~a", "e"))).toBe(nf("e\u{1DC8}")));
+	test("rising ˩˥ composes to the caron: ⌥⇧` ⌥⇧e e → ě", () =>
+		expect(nf(typed("~+`", "~+e", "e"))).toBe(nf("ě")));
+	test("falling ˥˩ composes to the circumflex: ⌥⇧e ⌥⇧` e → ê", () =>
+		expect(nf(typed("~+e", "~+`", "e"))).toBe(nf("ê")));
+	test("an exclusive twin with no contour still replaces: ⌥= ⌥⇧= e → e̟", () =>
+		expect(nf(typed("~=", "~+=", "e"))).toBe(nf("e\u{031F}")));
+	test("a contour rides other marks: ⌥n ⌥e ⌥⇧e e → ẽ᷄", () =>
+		expect(nf(typed("~n", "~e", "~+e", "e"))).toBe(nf("e\u{0303}\u{1DC4}")));
+	test("the level marks alone are unchanged: ⌥e e → é", () =>
+		expect(nf(typed("~e", "e"))).toBe(nf("é")));
+});
