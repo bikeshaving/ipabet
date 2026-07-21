@@ -469,8 +469,11 @@ class InputController: IMKInputController {
             return false
         }
         if event.keyCode == 49, !flags.contains(.option), !pending.isEmpty {
+            // Nothing to commit (an operator alone) → the arm lifts and the
+            // space stays a space; swallowing it would eat a real keystroke.
+            let writes = !composed.isEmpty || !commitString().isEmpty
             flush(client)
-            return true
+            return writes
         }
 
         // Option-Shift: the secondary form of a two-form mark. NOT an escape —
@@ -726,10 +729,17 @@ class InputController: IMKInputController {
     /// Raise and lower (⌥z / ⌥⇧z) are PREFIX operators like the diacritics: the
     /// chord arms, and the next glyph arrives raised. They pend as private-use
     /// sentinels rather than combining scalars, because nothing is stacked onto
-    /// the base — the base is SUBSTITUTED for a different codepoint. They
-    /// preview as ^ and _, the plain-text signs for raised and lowered.
+    /// the base — the base is SUBSTITUTED for a different codepoint.
+    ///
+    /// They PREVIEW as ⁻ / ₋ — superscript and subscript minus, the bar sitting
+    /// where the glyph is about to land. Every small typographic mark (^ + − ↑)
+    /// is already a diacritic's spacing clone, or worse is IPA's own
+    /// raised/lowered pair on ⌥g, so position is the only signal left unclaimed.
+    /// They COMMIT as nothing: an operator is an instruction, not a character,
+    /// so an unconsumed one simply lifts rather than leaving an invented sign.
     private static let raiseOp: Unicode.Scalar = "\u{F8F0}"
     private static let lowerOp: Unicode.Scalar = "\u{F8F1}"
+    private static let opPreview: [Unicode.Scalar: String] = [raiseOp: "\u{207B}", lowerOp: "\u{208B}"]
     /// The ACTIVE CLUSTER: the most recently typed glyph, held open in the
     /// marked range (dressed as plain text) so every previous-glyph rule
     /// rewrites it on the composition path. At most one grapheme cluster;
@@ -828,8 +838,7 @@ class InputController: IMKInputController {
         let clones = Tables.shared.clones
         var s = ""
         for sc in pending {
-            if sc == Self.raiseOp { s += "^" }
-            else if sc == Self.lowerOp { s += "_" }
+            if let p = Self.opPreview[sc] { s += p }
             else if let c = clones[sc] { s += c } else { s.unicodeScalars.append(sc) }
         }
         return s
@@ -889,9 +898,25 @@ class InputController: IMKInputController {
     /// Commit everything open — the active cluster, then any pending accent
     /// as its spacing clone (dead key + non-base = the spacing accent) —
     /// closing the composition. No-op when nothing is open.
+    /// What a pending composition WRITES when it commits unconsumed. A mark
+    /// commits as its spacing clone — a mark's spacing form *is* the mark. An
+    /// operator commits as nothing at all.
+    private func commitString() -> String {
+        let clones = Tables.shared.clones
+        var s = ""
+        for sc in pending where Self.opPreview[sc] == nil {
+            if let c = clones[sc] { s += c } else { s.unicodeScalars.append(sc) }
+        }
+        return s
+    }
+
     private func flush(_ client: IMKTextInput) {
-        let s = composed + previewString()
-        guard !s.isEmpty else { return }
+        let s = composed + commitString()
+        guard !s.isEmpty else {
+            // An operator alone leaves nothing behind: the arm just lifts.
+            if !pending.isEmpty { pending = []; updateMarked(client) }
+            return
+        }
         composed = ""
         pending = []
         Dbg.log("    flush → '\(Dbg.str(s))'")
@@ -977,9 +1002,8 @@ class InputController: IMKInputController {
         if let op = marks.first(where: { $0 == Self.raiseOp || $0 == Self.lowerOp }) {
             let rest = marks.filter { $0 != op }
             let table = op == Self.raiseOp ? Tables.shared.sups : Tables.shared.subs
-            let sign = op == Self.raiseOp ? "^" : "_"
-            let out = table[glyph].map { recompose($0, rest) } ?? (sign + recompose(glyph, rest))
-            Dbg.log("    emitBase: \(sign) → open '\(Dbg.str(out))'")
+            let out = recompose(table[glyph] ?? glyph, rest)
+            Dbg.log("    emitBase: operator → open '\(Dbg.str(out))'")
             openCluster(out, client); return
         }
         // tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q

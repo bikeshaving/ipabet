@@ -38,7 +38,7 @@ safety net (one read per session), not the common path. Terminals are locked
 stateless — composing would lag a pty by a keystroke.
 
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
-`⇧R`, ejective `⇧X`, superscript `⌥p`, spacing marks, backspace) operate on
+`⇧R`, ejective `⇧X`, spacing marks, backspace) operate on
 the **decomposed view** of the cluster — base glyph + combining marks split
 via NFD — and
 recompose to NFC on write. NFC fusion (é is one codepoint, n̥ is two) therefore
@@ -121,7 +121,7 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
 - **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
   style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
   tone, stress — stay postfix (`a` `⌥;` → aː). `⌥z` / `⌥⇧z` raise and lower, and
-  are prefix too (`⌥z` `h` → ʰ), previewing as `^` / `_`; a raised glyph still
+  are prefix too (`⌥z` `h` → ʰ), previewing as `⁻` / `₋`; a raised glyph still
   transforms, so `⌥z` `s` `⇧H` → ᶴ. Chao tone letters on `⌥1`–`⌥5`. The tie bar is a postfix
   **joiner** on `⌥j` (`t ⌥j s` → t͡s; `⌥⇧j` for the below-form t͜ɕ).
 - **Option-Shift** — a mark's second form (`⌥⇧n` → creaky, `⌥⇧j` → the tie's

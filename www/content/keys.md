@@ -55,13 +55,13 @@ Marks the IPA chart has no cell for, kept because the layout should be able to w
 
 ## Superscripts (⌥z + base)
 
-⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `^` until the glyph lands. A glyph that is already raised still transforms, so a digraph works too: ⌥z `s` ⇧H → ᶴ. The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form; where it doesn't, the `^` commits and the glyph follows.
+⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `⁻` until the glyph lands. A glyph that is already raised still transforms, so a digraph works too: ⌥z `s` ⇧H → ᶴ. The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form; where it doesn't, the arm lifts and the glyph lands plain — an operator is an instruction, not a character, so it never leaves a sign behind.
 
 <SupTable/>
 
 ## Subscripts (⌥⇧z + base)
 
-The lowered twin, on the shifted operator, and prefix the same way: ⌥⇧z then the glyph (`x` ⌥⇧z `2` → x₂), previewing as `_`. Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
+The lowered twin, on the shifted operator, and prefix the same way: ⌥⇧z then the glyph (`x` ⌥⇧z `2` → x₂), previewing as `₋`. Generated the same way from `<sub>` decompositions — digits and the handful of letters Unicode lowers.
 
 <SubTable/>
 

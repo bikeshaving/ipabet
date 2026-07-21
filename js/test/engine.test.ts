@@ -787,12 +787,12 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 
 describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 	test("aspiration: t ⌥z h → tʰ", () => expect(typed("t", "~z", "h")).toBe("tʰ"));
-	test("armed alone previews as ^, the plain-text sign for raised", () =>
-		expect(typed("~z")).toBe("^"));
-	test("space commits the sign, dead-key style: ⌥z space → ^", () =>
-		expect(typed("~z", " ")).toBe("^"));
-	test("no raised form in Unicode → the sign commits and the glyph follows", () =>
-		expect(typed("~+z", "g")).toBe("_g"));
+	test("the operator is an instruction, not a character — it leaves nothing", () =>
+		expect(typed("~z")).toBe(""));
+	test("space lifts the arm and stays a space: ⌥z space → ' '", () =>
+		expect(typed("~z", " ")).toBe(" "));
+	test("no raised form in Unicode → the arm lifts, the glyph lands plain", () =>
+		expect(typed("~+z", "g")).toBe("g"));
 	test("a raised glyph still transforms: ⌥z s ⇧H → ᶴ", () =>
 		expect(typed("~z", "s", "+h")).toBe("ᶴ"));
 	test("⌥p is the no-release dead key, not a raise operator", () =>

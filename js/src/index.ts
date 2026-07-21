@@ -140,12 +140,19 @@ for (const e of (spec.subscripts as {table: {base: string; sub: string}[]})
 /** Raise and lower are PREFIX operators, like the ⌥ diacritics: ⌥z arms the
  *  raise and the next glyph arrives raised (⌥z h → ʰ). They pend as sentinels
  *  rather than combining scalars, because nothing is stacked onto the base —
- *  the base is SUBSTITUTED for a different codepoint. Their previews are ^ and
- *  _, the plain-text signs already read everywhere as raised and lowered. */
+ *  the base is SUBSTITUTED for a different codepoint. */
 const RAISE = "\u{0001}sup";
 const LOWER = "\u{0001}sub";
-cloneOf.set(RAISE, "^");
-cloneOf.set(LOWER, "_");
+// The PREVIEW is ⁻ / ₋ — superscript and subscript minus, the bar sitting where
+// the glyph is about to land. Every small typographic mark (^ + − ↑) is already
+// a diacritic's spacing clone or, worse, IPA's own raised/lowered pair on ⌥g, so
+// position is the only signal left that nothing else has claimed.
+cloneOf.set(RAISE, "\u{207B}");
+cloneOf.set(LOWER, "\u{208B}");
+/** The operators are instructions, not characters. Unconsumed — no raised form
+ *  in Unicode, or a terminator arrives — they commit NOTHING and simply lift.
+ *  There is no invented fallback sign to leave behind. */
+const OPERATORS = new Set([RAISE, LOWER]);
 
 /** Raised/lowered glyph → its plain base. A modifier still transforms a glyph
  *  that has already moved (⌥z s ⇧H → ᶴ): unraise, transform, re-raise. */
@@ -341,7 +348,18 @@ export function previewString(pending: Pending): string {
  *  ⌥e then space → ´), clearing the composition. */
 function flush(pending: Pending): Step {
 	if (pending.length === 0) return {edit: {type: "noop"}, pending: []};
-	return {edit: {type: "insert", text: previewString(pending)}, pending: []};
+	const text = commitString(pending);
+	// An operator alone leaves nothing behind: the arm just lifts.
+	if (text === "") return {edit: {type: "noop"}, pending: []};
+	return {edit: {type: "insert", text}, pending: []};
+}
+
+/** What a pending composition writes when it commits unconsumed. A mark commits
+ *  as its spacing clone — a mark's spacing form *is* the mark. An operator
+ *  commits as nothing at all. */
+function commitString(pending: Pending): string {
+	return pending.filter((sc) => !OPERATORS.has(sc))
+		.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
 /** Combining diacritic (⌥/⌥⇧): stack it into the pending composition. The same
@@ -413,9 +431,8 @@ function emitBase(glyph: string, pending: Pending): Step {
 		const moved = (op === RAISE ? sups : subs).get(glyph);
 		// Unicode has no raised form for this glyph → the dead-key convention:
 		// the sign commits as its own character and the glyph follows (⌥e q → ´q).
-		const text = moved !== undefined
-			? recompose(moved, rest)
-			: cloneOf.get(op)! + recompose(glyph, rest);
+		// No such form in Unicode → the operator lifts and the glyph lands plain.
+		const text = recompose(moved ?? glyph, rest);
 		return {edit: {type: "insert", text}, pending: []};
 	}
 	// tilde overlay: middle-tilde atoms (ɫ Ɫ ᵯ …) — ɫ is also a digraph, l⇧Q
@@ -488,7 +505,8 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	 *  single Edit can't both commit and defer. */
 	const withFlush = (edit: Edit): Step => {
 		if (pending.length === 0) return {edit, pending: []};
-		const pre = previewString(pending);
+		const pre = commitString(pending);
+		if (pre === "") return {edit, pending: []};
 		if (edit.type === "insert") return {edit: {type: "insert", text: pre + edit.text}, pending: []};
 		if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
 		return {edit, pending: []};
@@ -523,7 +541,11 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// and the space is CONSUMED (US ⌥e space → ´ alone, probe-verified). A
 	// space with nothing pending stays a native space.
 	if (key === " " && !option && pending.length > 0) {
-		return flush(pending);
+		const f = flush(pending);
+		// Nothing to commit (an operator alone) → the arm lifts and the space
+		// stays a space; swallowing it would eat a real keystroke.
+		if (f.edit.type === "noop") return {edit: {type: "pass"}, pending: []};
+		return f;
 	}
 
 	// Option-Shift: the secondary form of a two-form mark (⌥⇧n → creaky,
@@ -812,6 +834,6 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
 	}
 	// An accent still pending at the end commits as its spacing form — what the
 	// IME does on commitComposition when focus leaves.
-	if (pending.length > 0) text += previewString(pending);
+	if (pending.length > 0) text += commitString(pending);
 	return text;
 }
