@@ -24,15 +24,16 @@ IPAbet is US-first; the IPA is purely additive:
   `7H`→ħ (H on the throat digits, Y — *central* — on the schwa), and the families
   extend the same base (`5H`→ɜ, `2Q`→ʡ, `4L`→ɺ), grounded in Arabizi + X-SAMPA.
   Because the glyphs sit on the *unshifted* digit, `⇧2`–`⇧7` are all their native
-  symbols now (`@ # $ % ^ &`); the tie bar — the one joiner — left for `⌥j` (below).
+  symbols (`@ # $ % ^ &`); the tie bar — the one joiner — is `⌥j` (below).
 - **Option** — diacritics and suprasegmentals. Combining marks are **prefix**,
   dead-key style like the US layout's own é/ñ: press the mark, then the base
   absorbs it (`⌥e`+`a`→á, `⌥n`+`n`→ñ). Spacing marks — length, tone, stress —
   stay postfix (`a`+`⌥;`→aː). Chao tone letters live on `⌥1`–`⌥5`. The tie bar is a
   postfix **joiner** on `⌥j` (join): `t ⌥j s`→t͡s, `⌥⇧j` for the below-form (t͜ɕ).
+  `⌥z` and `⌥⇧z` raise and lower, prefix like the marks: `⌥z`+`h`→ʰ.
 - **Option + Shift** — a mark's second form (`⌥⇧n`→creaky, `⌥⇧e`→extra-high,
-  `⌥⇧j`→the tie below). The number row's raw-US escape is fully retired now that no
-  shifted digit is claimed; `⌥⇧1`→¡ is the one deliberate spend.
+  `⌥⇧j`→the tie below). No shifted digit is claimed, so there is no number-row
+  raw-US escape; `⌥⇧1`→¡ is the one deliberate spend.
 
 Escapes, for when the IPA layer claims something you meant literally:
 
@@ -81,14 +82,16 @@ through untouched — transparent to English, shell, and shortcuts.
 
 **The standard IPA chart is complete.** Every symbol is typeable — pulmonic and
 non-pulmonic consonants (clicks, implosives, ejectives), all 28 vowels, ɧ, both
-tie bars, every diacritic and suprasegmental, and the Chao tone letters. Tier 1
-(segments) lives on the shifted layers; Tier 2 (diacritics) on the Option layer,
-grounded in ABC Extended and X-SAMPA/TIPA convention.
+tie bars, every diacritic and suprasegmental, and the Chao tone letters.
+Segments live on the shifted layers, diacritics on the Option layer, grounded in
+ABC Extended and X-SAMPA/TIPA convention.
 
-Two known gaps, both deliberate: **extIPA** (the extensions for disordered
-speech) is not covered — see `docs/extipa-proposal.md`; and `g` is U+0067, not
-U+0261 script g, which the bare-layer law buys and corpus work must normalize
-(`laws.scriptG`).
+Bare `g` is U+0067, not U+0261 script ɡ — the price of the bare layer being
+plain US. `g`+`⇧G` types the exact U+0261.
+
+extIPA (the extensions for disordered speech) is covered for **diacritics** —
+every one of the 2015 set. Its **symbol letters** are not: ʬ ʭ ʪ ʫ ʩ ꞎ ʞ have no
+keystroke.
 
 The layout is **provisional** until the first release — keystrokes may still
 change between versions.

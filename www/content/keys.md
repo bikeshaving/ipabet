@@ -5,29 +5,29 @@ description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables:
 
 The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **AltGr** — the right Alt key — mapped 1:1, and `⌥⇧` is AltGr+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
 
-## Tier 1 · base letters (identity)
+## Base letters (identity)
 
 Bare Latin keys that are their own IPA value.
 
 <SegTable kind="identity"/>
 
-## Tier 1 · number-row bases
+## Number-row bases
 
 IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols (@ # $ % ^ &). The tie bar — the one combining joiner — lives on <kbd>⌥J</kbd> (join); see the Option layer below.
 
 <SegTable kind="shiftNum"/>
 
-## Tier 1 · digraphs (base + ⇧modifier)
+## Digraphs (base + ⇧modifier)
 
 A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanings/>.
 
 <SegTable kind="digraphs"/>
 
-## Tier 1 · rules (not table-driven)
+## Rules (not table-driven)
 
 <RulesTable/>
 
-## Tier 1 · escapes (getting a literal character back)
+## Escapes (getting a literal character back)
 
 `⇧`+letter transforms the glyph before it, so "GitHub" would otherwise come out "Giθub". The ways out, none of which need the IPA layer turned off:
 
@@ -39,15 +39,15 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 | `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly; there is no raw-US digit escape. |
 | `⌃Space` | Not IPAbet's key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
 
-## Tier 2 · diacritics & suprasegmentals (Option layer)
+## Diacritics & suprasegmentals (Option layer)
 
-Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_ — type the base, then the mark. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky, `⌥⇧'` → secondary stress). Backspace peels a pending mark; Space or Esc commits it as its spacing form (`⌥e` Esc → ´), exactly like the US layout's dead keys. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal, syllabic/non-syllabic — the second _replaces_ the first rather than stacking (nothing is both advanced and retracted). Forms on independent dimensions (tilde/creaky, diaeresis/breathy) stack.
+Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky). Backspace peels a pending mark; Space or Esc commits it as its spacing form. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal — the second _replaces_ the first rather than stacking; forms on independent dimensions stack.
 
 <MarkTable kind="ipa"/>
 
 Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in [`ipabet.json`](/ipabet.json).
 
-## Tier 2 · beyond the IPA
+## Beyond the IPA
 
 Marks the IPA chart has no cell for, kept because the layout should be able to write real orthographies and not only transcribe them. They are fully typeable and stack like any other mark; they are simply absent from [the chart](/chart). Each carries `"ipa": false` and a `beyond` value in the spec.
 
@@ -55,7 +55,7 @@ Marks the IPA chart has no cell for, kept because the layout should be able to w
 
 ## Superscripts (⌥z + base)
 
-⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `⁻` until the glyph lands. A glyph that is already raised still transforms, so a digraph works too: ⌥z `s` ⇧H → ᶴ. The table is generated from Unicode's `<super>` decompositions, so a glyph raises only where Unicode defines the form; where it doesn't, the arm lifts and the glyph lands plain — an operator is an instruction, not a character, so it never leaves a sign behind.
+⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `⁻`. A glyph that is already raised still transforms, so a digraph works: ⌥z `s` ⇧H → ᶴ. Generated from Unicode's `<super>` decompositions, plus the raised letters Unicode gives no decomposition. Where no raised form exists the arm lifts and the glyph lands plain.
 
 <SupTable/>
 
@@ -65,7 +65,7 @@ The lowered twin, on the shifted operator, and prefix the same way: ⌥⇧z then
 
 <SubTable/>
 
-## Tier 2 · cycles (press again)
+## Cycles (press again)
 
 A combining key may carry a **cycle**: pressing it again on its own pending mark advances through a family and wraps, every step visible in the composition preview — ⌫ cancels. Cycles hold one dimension only; marks from different dimensions keep separate keys so they can stack (dental + laminal = t̪̻).
 

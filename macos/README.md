@@ -11,11 +11,17 @@ against the [`js/`](../js) parity suite.
 ./build.sh install  # builds + installs to ~/Library/Input Methods/
 ```
 
-First install needs a logout (TIS registration). After that:
-`./build.sh install` kills nothing by itself — follow with `pkill IPAbet`, then
-**quit and relaunch the app you're testing in** (or toggle the input source):
-apps hold a session to the old process and behave erratically against a stale
-one.
+First install needs a logout (TIS registration). After that: `build.sh install`
+kills nothing by itself — follow with `pkill IPAbet`, then **quit and relaunch
+the app you're testing in** (or toggle the input source), since apps hold a
+session to the old process.
+
+**The dev loop and the pkg install to different prefixes.** `build.sh install`
+writes `~/Library/Input Methods/`; `package.sh` writes `/Library/Input Methods/`.
+macOS scans both, so once the pkg has been installed the system copy is the one
+that runs and every `build.sh install` lands somewhere the OS has stopped
+reading — silently, with a success message. Check `pgrep -lf IPAbet` for which
+one is live.
 
 ## Architecture
 
@@ -28,20 +34,11 @@ nothing for a host to desync, and no per-host mode to get wrong. The only
 marked text is the dead-key *preview* of a pending prefix diacritic
 (`⌥e` → ´), committed by the next base.
 
-There is no composition fallback. An earlier build carried Apple's read-back
-guard — poll `selectedRange` after the first commit, and switch the session to
-marked-text composition if the cursor came back stale — on the theory that an
-async client would silently drop the rewrite. No host was ever observed
-dropping one, and the probe fired as a false positive, putting composition
-marks on screen for no reason. A guard that only ever misfires is worse than
-no guard.
-
 All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
-`⇧R`, ejective `⇧X`, spacing marks, backspace) operate on
-the **decomposed view** of the cluster — base glyph + combining marks split
-via NFD — and
-recompose to NFC on write. NFC fusion (é is one codepoint, n̥ is two) therefore
-never changes rule behavior. On any rule miss the keystroke falls through until
+`⇧R`, ejective `⇧X`, spacing marks, backspace) operate on the **decomposed
+view** of the cluster — base glyph + combining marks split via NFD — and
+recompose to NFC on write, so NFC fusion (é is one codepoint, n̥ is two) never
+changes rule behavior. On any rule miss the keystroke falls through until
 something emits; no key ever dead-ends.
 
 Backspace peels the last combining mark off the previous cluster (é → e,
@@ -88,8 +85,7 @@ matched client/IME transcripts:
    `NSApplication.shared.setActivationPolicy(.accessory)` before `run()`.
    Misconfigured, the client *discards key events the IME declines* (backspace
    returned `false` never reaches the app) once any marked text has been shown
-   in that window — the bug that originally motivated the marked-text-free
-   architecture above.
+   in that window.
 4. The `IMKCFRunLoopWakeUpReliable` mach-port error in host apps is ubiquitous
    Sequoia log noise (Electron, Python, JDK all emit it); Apple DTS calls it
    non-actionable. Don't chase it.
@@ -116,7 +112,7 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
   glyph → an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ). The **digit keys
   are bases** too — a bare digit + a modifier gives an IPA glyph with no Latin home
   (`5` `⇧Y` → ə, `2` `⇧H` → ʔ, `5` `⇧H` → ɜ). Because those sit on the *unshifted*
-  digit, ⇧2–7 are all their native symbols now (@ # $ % ^ &).
+  digit, ⇧2–7 are all their native symbols (@ # $ % ^ &).
 - **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
   style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
   tone, stress — stay postfix (`a` `⌥;` → aː). `⌥z` / `⌥⇧z` raise and lower, and
@@ -124,8 +120,8 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
   transforms, so `⌥z` `s` `⇧H` → ᶴ. Chao tone letters on `⌥1`–`⌥5`. The tie bar is a postfix
   **joiner** on `⌥j` (`t ⌥j s` → t͡s; `⌥⇧j` for the below-form t͜ɕ).
 - **Option-Shift** — a mark's second form (`⌥⇧n` → creaky, `⌥⇧j` → the tie's
-  below-form). The number-row raw-US escape is fully retired now that no shifted
-  digit is claimed; `⌥⇧1` → ¡ is the one deliberate spend.
+  below-form). No shifted digit is claimed, so there is no number-row raw-US
+  escape; `⌥⇧1` → ¡ is the one deliberate spend.
 - **Ctrl-Shift-letter** — the literal capital. `⇧<letter>` transforms the glyph
   before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H` and
   bypasses every transform. Plain `⌃` chords stay leader keys (tmux `^b`).
