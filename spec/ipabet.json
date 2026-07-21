@@ -2235,9 +2235,25 @@
    {
     "base": "ұ",
     "sup": "𞁭"
+   },
+   {
+    "base": "Ƀ",
+    "sup": "ᴯ"
+   },
+   {
+    "base": "ᴎ",
+    "sup": "ᴻ"
+   },
+   {
+    "base": "ᴉ",
+    "sup": "ᵎ"
+   },
+   {
+    "base": "ꜳ",
+    "sup": "𐞀"
    }
   ],
-  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a character whose compatibility decomposition is <super> of it — any script, any plane, one table entry per base (the first Unicode form wins). Exceptions ʔ→ˀ and ʕ→ˤ have no decomposition and are kept by hand."
+  "rule": "Generated, not curated: a glyph superscripts iff Unicode defines a character whose compatibility decomposition is <super> of it — any script, any plane, one table entry per base (the first Unicode form wins). Unicode also encodes raised letters with NO decomposition; those are swept in by hand so the table is the complete set of raised characters, not merely the decomposable ones: ʔ→ˀ, ʕ→ˤ, Ƀ→ᴯ, ᴎ→ᴻ, ᴉ→ᵎ, and ꜳ→𐞀 (whose base, a small-capital AA, Unicode never encoded — the AA ligature stands in as the only reachable base)."
  },
  "subscripts": {
   "operator": "opt+shift+z",
