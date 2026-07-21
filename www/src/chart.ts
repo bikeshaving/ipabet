@@ -212,7 +212,9 @@ function cp(glyph: string): string {
 
 /** One diacritic entry, carrying its own data on the element for scrapers. */
 function DiaCell(e: ChartEntry) {
-	const shown = e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph;
+	// The sheet prints the fused atom where one exists — ɚ for the rhotic hook on
+	// schwa, ɫ for the tilde overlay on l — not base + mark.
+	const shown = e.fuses ?? (e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph);
 	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
 	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><b class="ipa">${shown}</b><i>${display(e.keys)}</i><span class="nm">${e.name}</span></div>`;
 }
@@ -221,12 +223,72 @@ function list(entries: ChartEntry[]) {
 	return entries.map((e) => DiaCell(e));
 }
 
+/** The sheet's TONES AND WORD ACCENTS box: two columns, LEVEL and CONTOUR, each
+ *  row pairing the diacritic with its tone-letter equivalent, as the official
+ *  chart sets it. A row the notation cannot type yet shows the official symbol
+ *  with no keystroke rather than being dropped — the chart is not ours to edit. */
+const byName = new Map(TONES.map((e) => [e.name, e]));
+const LEVEL: [string, string, string][] = [
+	["Extra high", "Extra high", "Extra high (tone letter)"],
+	["High", "High", "High (tone letter)"],
+	["Mid", "Mid", "Mid (tone letter)"],
+	["Low", "Low", "Low (tone letter)"],
+	["Extra low", "Extra low", "Extra low (tone letter)"],
+	["Downstep", "Downstep", ""],
+	["Upstep", "Upstep", ""],
+];
+const CONTOUR: [string, string, string][] = [
+	["Rising", "Rising", ""],
+	["Falling", "Falling", ""],
+	["High rising", "", ""],
+	["Low rising", "", ""],
+	["Rising-falling", "", ""],
+	["Global rise", "Global rise", ""],
+	["Global fall", "Global fall", ""],
+];
+// The official symbols for the three contour tones no keystroke reaches yet.
+const UNMAPPED: Record<string, string> = {
+	"High rising": "◌᷄", "Low rising": "◌᷅", "Rising-falling": "◌᷈",
+};
+
+function ToneCell(label: string, mark: string, letter: string) {
+	const m = byName.get(mark);
+	const l = byName.get(letter);
+	const glyph = m === undefined ? UNMAPPED[label] : undefined;
+	return jsx`<td>
+		${m === undefined
+			? jsx`<div class="li"><b class="ipa">${(glyph ?? "").replace("◌", "e")}</b><span class="nm">${label}</span></div>`
+			: DiaCell({...m, name: label})}
+		${l === undefined ? null : DiaCell(l)}
+	</td>`;
+}
+
+function ToneTable() {
+	const rows = Array.from({length: 7}, (_, r) => jsx`<tr>
+		${ToneCell(...LEVEL[r])}
+		${ToneCell(...CONTOUR[r])}
+	</tr>`);
+	return jsx`<table class="dia tone">
+		<tr><th>LEVEL</th><th>CONTOUR</th></tr>
+		${rows}
+	</table>`;
+}
+
+/** The sheet's DIACRITICS box: a bordered 3-column table read COLUMN-major,
+ *  12/12/7, exactly as the official chart sets it. */
+function DiaTable(entries: ChartEntry[]) {
+	const cols = [entries.slice(0, 12), entries.slice(12, 24), entries.slice(24)];
+	const rows = Array.from({length: 12}, (_, r) =>
+		jsx`<tr>${cols.map((c) => jsx`<td>${c[r] === undefined ? null : DiaCell(c[r])}</td>`)}</tr>`);
+	return jsx`<table class="dia">${rows}</table>`;
+}
+
 // The count and the tail of this list come from the spec's `ipa: false` flag.
 const beyondCount = String((spec.marks as {ipa?: boolean}[]).filter((m) => m.ipa === false).length);
 
 function Diacritics() {
 	return jsx`
-		<div class="cols2">${list(DIACRITICS)}</div>
+		${DiaTable(DIACRITICS)}
 		<p class="fine">Combining diacritics are prefix, dead-key style like é/ñ: type the ⌥ mark, then the base (<i>⌥e</i> <i>a</i> → <b class="ipa">á</b>); they stack. ⌥⇧ gives a mark's second form (<i>⌥⇧n</i> → creaky); where the two are values of one feature — advanced/retracted, apical/laminal — the second <em>replaces</em> the first rather than stacking. Spacing marks — length, tone, stress — are postfix: base then mark. <b class="ipa">ʰ</b> and all superscripts are prefix too: <i>⌥z</i> then the glyph (⌥⇧z lowers, for subscripts). Rhoticity <b class="ipa">˞</b>: vowel then <i>⌥r</i> (ə ⌥r → ɚ). The ${beyondCount} diacritics beyond the IPA — cedilla, ogonek, horn, ß and the rest — are on <a href="/keys">/keys</a>.</p>`;
 }
 
@@ -253,13 +315,13 @@ export function Chart() {
 						<h3>OTHER SYMBOLS</h3>
 						<div class="cols2">${otherSymbols()}</div>
 						<h3>SUPRASEGMENTALS</h3>
-						<div class="cols2">${list(SUPRASEGMENTALS)}</div>
+						<div>${list(SUPRASEGMENTALS)}</div>
 					</div>
 					<div>
 						<h3>VOWELS</h3>
 						<${VowelChart} />
 						<h3>TONES AND WORD ACCENTS</h3>
-						<div class="cols2">${list(TONES)}</div>
+						<${ToneTable} />
 					</div>
 				</div>
 
