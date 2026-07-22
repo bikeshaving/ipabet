@@ -66,6 +66,10 @@ export function keyFromChar(c: string): Keystroke | null {
  *  its own ñ while our accent stayed armed and landed on the next vowel
  *  ("señõr"). Those keystrokes are ours. */
 export function mediatedByIME(e: KeyboardEvent): boolean {
+	// Option chords are OURS. macOS reports 229 for its own layout dead keys
+	// (⌥e ⌥u ⌥i ⌥n ⌥`) exactly as a real IME does, and no IME composes through
+	// an Option chord — which is the whole range IPAbet claims.
+	if (e.altKey) return false;
 	// eslint-disable-next-line deprecation/deprecation -- the only signal that
 	// distinguishes a real IME from a layout dead key.
 	return e.keyCode === 229;
@@ -95,6 +99,8 @@ export function bindIPAInput(
 	// loses. At the first signature of a system IME here, stop consuming keys for
 	// good and let it have the field.
 	let stood = false;
+	/** Option was held for the keystroke behind the current beforeinput. */
+	let optionHeld = false;
 	const standDown = () => {
 		if (stood) return;
 		stood = true;
@@ -102,7 +108,9 @@ export function bindIPAInput(
 		onChange("");
 		onStanddown();
 	};
-	el.addEventListener("compositionstart", standDown);
+	// NOT compositionstart: the plain macOS US layout starts a composition for its
+	// own dead keys, no IME involved — the same conflation mediatedByIME warns
+	// about. A real IME reaches us through insertCompositionText below.
 	// The shift-chain: hold ⇧ across a run and each capital is a base for the next
 	// modifier; release ⇧ and the chain breaks. The engine owns the rule, not the
 	// flag — only the caller sees a release.
@@ -162,6 +170,7 @@ export function bindIPAInput(
 	el.addEventListener("keydown", (ev) => {
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
+		optionHeld = e.altKey;
 		if (stood) return;
 	// ⌘ and ⌃ chords are the host's — EXCEPT ⌃⇧<letter>, the literal-capital escape.
 		if (e.metaKey) return;
@@ -198,10 +207,14 @@ export function bindIPAInput(
 		if (ie.inputType.startsWith("insert") && ie.data) {
 			// Unconsumed non-ASCII arriving means something else is composing
 			// text into the field — an IME. Stand down and let it through.
-			if (ie.inputType === "insertText" && [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
+			if (ie.inputType === "insertText" && !optionHeld
+				&& [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
 				standDown();
 				return;
 			}
+			// An Option chord the engine did not claim: the layout's own character
+			// (⌥6 §, ⌥8 •). Native, and NOT evidence of an IME.
+			if (optionHeld) return;
 			const keys = [...ie.data].map(keyFromChar);
 			if (keys.some((k) => k === null)) return; // space, emoji, pasted text — leave it native
 			e.preventDefault();

@@ -291,15 +291,35 @@ test("a plain ⌃ chord is still the host's (leader keys, shortcuts)", () => {
 });
 
 // The native-IME standdown: at the first signature of a system input method
-// acting on the field, the page engine stops consuming keys entirely.
-test("a composition stands the engine down — keys cede to the native path", () => {
+// acting on the field, the page engine stops consuming keys entirely. The
+// signature is a REPLACEMENT insertion, not a composition — the plain macOS US
+// layout opens a composition for its own dead keys (⌥e ⌥u ⌥i ⌥n ⌥`) with no
+// input method anywhere, and treating that as the signal disabled the engine
+// for the rest of the session on the first Option key pressed.
+test("a composition does NOT stand the engine down — layout dead keys start one", () => {
 	const {f, press} = setup();
 	f.dispatch("compositionstart", ev({}));
-	// After standdown the binding neither consumes keydowns nor edits the
-	// field — in a browser, the native input method inserts instead.
-	expect(press("s").defaultPrevented).toBe(false);
-	expect(press("h", {shift: true}).defaultPrevented).toBe(false);
-	expect(f.value).toBe("");
+	expect(press("s").defaultPrevented).toBe(true);
+	expect(press("h", {shift: true}).defaultPrevented).toBe(true);
+	expect(f.value).toBe("ʃ");
+});
+
+test("an Option chord is ours even when macOS reports keyCode 229", () => {
+	const {f, press} = setup();
+	// ⌥e is a US-layout dead key: macOS reports 229 exactly as a real IME does.
+	expect(press("e", {option: true, keyCode: 229}).defaultPrevented).toBe(true);
+	press("a");
+	expect(f.value).toBe("á");
+});
+
+test("the layout's own Option character does not stand the engine down", () => {
+	const {f, press} = setup();
+	// An Option chord the engine declines: macOS inserts œ natively (⌥q on a
+	// layout we do not claim). Native output, not evidence of an input method.
+	press("q", {option: true});
+	f.dispatch("beforeinput", ev({inputType: "insertText", data: "œ"}));
+	expect(press("s").defaultPrevented).toBe(true);
+	expect(press("h", {shift: true}).defaultPrevented).toBe(true);
 });
 
 test("a replacement insertion (macOS IME signature) stands the engine down", () => {
