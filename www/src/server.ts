@@ -69,6 +69,14 @@ router.route("/feed.xml").get(() => new Response(atomFeed(), {
 	headers: {"Content-Type": "application/atom+xml; charset=utf-8"},
 }));
 
+// The download is one branded URL that outlives whatever hosts the binary.
+// GitHub's /releases/latest/download/<name> always resolves to the newest
+// published release, so this never needs touching either — but published prose
+// points HERE, so the host can change without editing a dated blog post.
+const RELEASE_PKG =
+	"https://github.com/bikeshaving/ipabet/releases/latest/download/IPAbet.pkg";
+router.route("/download").get(() => Response.redirect(RELEASE_PKG, 302));
+
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
 		headers: {
