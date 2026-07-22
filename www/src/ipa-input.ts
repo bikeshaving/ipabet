@@ -108,9 +108,30 @@ export function bindIPAInput(
 		onChange("");
 		onStanddown();
 	};
-	// NOT compositionstart: the plain macOS US layout starts a composition for its
-	// own dead keys, no IME involved — the same conflation mediatedByIME warns
-	// about. A real IME reaches us through insertCompositionText below.
+	// The US layout composes its OWN dead keys (⌥e ⌥u ⌥i ⌥n ⌥`), and it finishes
+	// before the letter's keydown is dispatched — probe-verified in Chrome:
+	//
+	//   keydown Alt · compositionstart · insertCompositionText "´" · keydown Dead
+	//
+	// so nothing done at keydown can stop it, and insertCompositionText is not
+	// cancelable. The composition is therefore allowed to land and the field is
+	// taken back afterwards. Only under Option: a real input method composes
+	// without it, and that text is its own.
+	let composedAway: {value: string; start: number} | null = null;
+	const takeFieldBack = () => {
+		if (composedAway === null) return;
+		el.value = composedAway.value;
+		el.selectionStart = el.selectionEnd = composedAway.start;
+	};
+	el.addEventListener("compositionstart", () => {
+		if (!stood && optionHeld) {
+			composedAway = {value: el.value, start: el.selectionStart ?? el.value.length};
+		}
+	});
+	el.addEventListener("compositionend", () => {
+		takeFieldBack();
+		composedAway = null;
+	});
 	// The shift-chain: hold ⇧ across a run and each capital is a base for the next
 	// modifier; release ⇧ and the chain breaks. The engine owns the rule, not the
 	// flag — only the caller sees a release.
@@ -193,11 +214,20 @@ export function bindIPAInput(
 		sendKeystroke(k);
 	});
 
+	el.addEventListener("input", (e) => {
+		// Undo each step of a layout dead key's composition as it lands, so the
+		// engine's own pending accent is the only preview on screen.
+		if (composedAway !== null && (e as InputEvent).inputType.includes("omposition")) {
+			takeFieldBack();
+		}
+	});
+
 	el.addEventListener("beforeinput", (e) => {
 		const ie = e as InputEvent;
 		// A replacement insertion is the macOS replace-style IME's signature —
-		// the native IPAbet transforming the field. Stand down.
-		if (ie.inputType === "insertReplacementText" || ie.inputType === "insertCompositionText") {
+		// the native IPAbet transforming the field. Stand down. NOT
+		// insertCompositionText: the US layout emits that for its own dead keys.
+		if (ie.inputType === "insertReplacementText") {
 			standDown();
 			return;
 		}

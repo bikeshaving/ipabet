@@ -51,6 +51,7 @@ const KEY: Record<string, {code: string; key: string}> = {
 	p: {code: "KeyP", key: "p"}, h: {code: "KeyH", key: "h"}, t: {code: "KeyT", key: "t"},
 	g: {code: "KeyG", key: "g"}, a: {code: "KeyA", key: "a"}, u: {code: "KeyU", key: "u"},
 	"5": {code: "Digit5", key: "5"}, y: {code: "KeyY", key: "y"},
+	q: {code: "KeyQ", key: "q"},
 };
 
 function setup() {
@@ -332,3 +333,35 @@ test("a replacement insertion (macOS IME signature) stands the engine down", () 
 	expect(f.value).toBe("s");
 });
 
+
+// The macOS US layout composes its OWN dead keys, and — probe-verified in
+// Chrome — finishes before the letter's keydown is dispatched. This replays
+// that exact event order for ⌥e followed by ⌥q, which used to leave "´œ".
+test("a layout dead key leaves nothing behind: ⌥e ⌥q → ʻ, not ´œ", () => {
+	const {f, press} = setup();
+	const field = f as any;
+	// ⌥e — TSM composes ´ into the field before our keydown arrives.
+	field.dispatch("keydown", ev({key: "Alt", keyCode: 18, altKey: true}));
+	field.dispatch("compositionstart", ev({}));
+	f.value = "´"; f.selectionStart = f.selectionEnd = 1;
+	field.dispatch("input", ev({inputType: "insertCompositionText", data: "´"}));
+	expect(f.value).toBe("");                       // taken back immediately
+	press("e", {option: true, keyCode: 229});       // our accent arms
+	field.dispatch("input", ev({inputType: "insertFromComposition", data: "´"}));
+	field.dispatch("compositionend", ev({data: "´"}));
+	expect(f.value).toBe("");
+	// ⌥q — the ʻokina. A spacing mark, so the armed accent commits before it.
+	press("q", {option: true});
+	expect(f.value).toBe("´ʻ");
+});
+
+test("a real input method still composes freely — no Option, no interference", () => {
+	const {f} = setup();
+	const field = f as any;
+	field.dispatch("keydown", ev({key: "a", code: "KeyA", keyCode: 229}));
+	field.dispatch("compositionstart", ev({}));
+	f.value = "あ";
+	field.dispatch("input", ev({inputType: "insertCompositionText", data: "あ"}));
+	field.dispatch("compositionend", ev({data: "あ"}));
+	expect(f.value).toBe("あ");   // untouched: we only take the field back under Option
+});
