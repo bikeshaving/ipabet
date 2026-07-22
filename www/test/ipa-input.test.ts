@@ -10,6 +10,11 @@
 import {test, expect} from "bun:test";
 import {bindIPAInput} from "../src/ipa-input.ts";
 
+// Capital digraphs are an opt-in setting (they are keystroke-identical to
+// holding shift and yelling), so the suites that exercise them turn them on.
+import {setCapitalDigraphs} from "../../js/src/index.ts";
+setCapitalDigraphs(true);
+
 // --------------------------------------------------------------- test double
 
 class FakeField {

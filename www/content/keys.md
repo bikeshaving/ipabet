@@ -36,6 +36,7 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 | `⌃⇧`+letter | The literal capital. `⌃⇧G ⌃⇧H` is "GH", never ɣ. |
 | `⌃⌫` | **Unconvert** — after the fact: the transform before the cursor becomes its literal keystrokes (θ → tH, so "Giθub" repairs to "GitHub" in place). The Japanese IMEs' Ctrl+Backspace. |
 | Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). `⇧` still means the modifier while locked. |
+| Holding `⇧` | Types capitals. SHIP stays SHIP: **capital digraphs** (`⇧A⇧E` → Æ, `⇧S⇧H` → Ʃ) are an input-menu option, off by default, because they are keystroke-identical to yelling. |
 | `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly; there is no raw-US digit escape. |
 | `⌃Space` | Not IPAbet's key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
 

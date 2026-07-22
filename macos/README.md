@@ -125,6 +125,11 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
 - **Ctrl-Shift-letter** — the literal capital. `⇧<letter>` transforms the glyph
   before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H` and
   bypasses every transform. Plain `⌃` chords stay leader keys (tmux `^b`).
+- **Capital digraphs** (`⇧A⇧E` → Æ, `⇧S⇧H` → Ʃ, `⇧5⇧Y` → Ə) are an input-menu
+  option, **off by default**. They are keystroke-identical to holding shift and
+  yelling — SHIP, THE and THINK all open with a capital pair whose second letter
+  is a modifier — and nothing local tells the two apart. Off, held shift types
+  capitals.
 - **Caps Lock** — a lock, not a modifier: letters type literal capitals and never
   transform (a locked `T` then `H` is "TH", not θ). Shift is still the modifier.
 - **⌥⇧Space** — the raw-US lock: toggles the whole IME transparent (for code,

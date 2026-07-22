@@ -2,8 +2,13 @@
 // behavioral contract shared with the macOS IME — if the Swift engine and
 // this port disagree with a row, one of them is wrong.
 
-import {describe, expect, test} from "bun:test";
+import {afterAll, beforeAll, describe, expect, test} from "bun:test";
 import {typeKeys, handleKey, handleBackspace, setQuoteLocale, type Keystroke} from "../src/index.ts";
+
+// Capital digraphs are an opt-in setting (they are keystroke-identical to
+// holding shift and yelling), so the suites that exercise them turn them on.
+import {setCapitalDigraphs} from "../src/index.ts";
+setCapitalDigraphs(true);
 
 // Compact keystroke notation: "s" bare, "+H" shift, "~n" option, "~+2"
 // option-shift, "^" prefix = shift was RELEASED before this key (breaks a
@@ -1039,4 +1044,32 @@ describe("contour tones: a contour is its level tones typed in order", () => {
 		expect(nf(typed("~n", "~e", "~+e", "e"))).toBe(nf("e\u{0303}\u{1DC4}")));
 	test("the level marks alone are unchanged: ⌥e e → é", () =>
 		expect(nf(typed("~e", "e"))).toBe(nf("é")));
+});
+
+describe("capital digraphs are OFF by default — holding shift yells", () => {
+	beforeAll(() => setCapitalDigraphs(false));
+	afterAll(() => setCapitalDigraphs(true));
+	/** Shift HELD across a whole word, the way a person yells. */
+	const yell = (w: string) => typed(...[...w].map((c) => "+" + c.toLowerCase()));
+	test("the words a capital digraph used to eat", () => {
+		expect(yell("SHIP")).toBe("SHIP");
+		expect(yell("THE")).toBe("THE");
+		expect(yell("THINK")).toBe("THINK");
+		expect(yell("CHAT")).toBe("CHAT");
+		expect(yell("GHOST")).toBe("GHOST");
+		expect(yell("NOTHING")).toBe("NOTHING");
+		expect(yell("RIGHT")).toBe("RIGHT");
+		expect(yell("THANKS")).toBe("THANKS");
+	});
+	test("the shifted-digit capital plane is off too: ⇧5⇧Y stays %Y", () =>
+		expect(typed("+5", "+y")).toBe("%Y"));
+	test("lowercase transforms are untouched: s ⇧H → ʃ", () =>
+		expect(typed("s", "+h")).toBe("ʃ"));
+	test("the held chain still continues a real glyph: ʃ⇧I⇧H → ʃɪ", () =>
+		expect(typed("s", "+h", "+i", "+h")).toBe("ʃɪ"));
+	test("switched on, the digraph forms again: ⇧S⇧H → Ʃ", () => {
+		setCapitalDigraphs(true);
+		expect(typed("+s", "+h")).toBe("Ʃ");
+		setCapitalDigraphs(false);
+	});
 });

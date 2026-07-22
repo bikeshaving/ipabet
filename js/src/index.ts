@@ -154,6 +154,18 @@ const SHIFTED_PUNCT: Record<string, string> = {
 const QUOTE_LOCALES = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
 let quoteLocale = QUOTE_LOCALES.default;
 /** Set the active quote locale (en, de, fr, ch, pl, ru, sv). Unknown → default. */
+/** Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧Y → Ə) are OFF by default, because
+ *  they are keystroke-identical to holding shift and yelling: SHIP, THE and
+ *  THINK all begin with a capital pair whose second letter is a modifier, and no
+ *  lookback can tell the two intentions apart. Yelling is everyday English;
+ *  word-initial capital IPA belongs to a handful of orthographies, so those
+ *  users opt in. */
+let capitalDigraphs = false;
+/** Enable or disable capital digraphs (the input menu's setting). */
+export function setCapitalDigraphs(on: boolean): void {
+	capitalDigraphs = on;
+}
+
 export function setQuoteLocale(locale: string): void {
 	quoteLocale = locale in QUOTE_LOCALES.locales ? locale : QUOTE_LOCALES.default;
 }
@@ -541,7 +553,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 				p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c));
 			if (p2Segment && chainLive) {
 				base = base.toLowerCase(); // live chain → lowercase continuation
-			} else {
+			} else if (capitalDigraphs) {
 				const low = transforms.get(base.toLowerCase() + s);
 				if (low !== undefined) {
 					// See capitalOf.
@@ -553,7 +565,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 			}
 		}
 		// The shifted digit is the digit's capital plane (⇧5⇧Y → Ə).
-		if (shift && chainLive && k.capsLock !== true) {
+		if (capitalDigraphs && shift && chainLive && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			if (digit !== undefined) {
 				const low = transforms.get(digit + s);

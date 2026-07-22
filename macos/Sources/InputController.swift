@@ -238,6 +238,13 @@ class InputController: IMKInputController {
         quotes.submenu = sub
         menu.addItem(quotes)
 
+        let caps = NSMenuItem(title: "Capital Digraphs (⇧S⇧H → Ʃ)",
+                              action: #selector(toggleCapitalDigraphs(_:)), keyEquivalent: "")
+        caps.target = self
+        caps.state = capitalDigraphs ? .on : .off
+        caps.toolTip = "Off: holding shift types capitals, so SHIP stays SHIP."
+        menu.addItem(caps)
+
         menu.addItem(.separator())
         let chart = NSMenuItem(title: "IPA Cheat Sheet",
                                action: #selector(openCheatSheet(_:)), keyEquivalent: "")
@@ -248,6 +255,10 @@ class InputController: IMKInputController {
         site.target = self
         menu.addItem(site)
         return menu
+    }
+
+    @objc func toggleCapitalDigraphs(_ sender: NSMenuItem) {
+        UserDefaults.standard.set(!capitalDigraphs, forKey: "capitalDigraphs")
     }
 
     @objc func setQuoteLocaleItem(_ sender: NSMenuItem) {
@@ -480,7 +491,8 @@ class InputController: IMKInputController {
                 } ?? false
                 if p2Segment, chainLive {
                     base = base.lowercased()
-                } else if let low = t.transforms[base.lowercased() + s],
+                } else if capitalDigraphs,
+                          let low = t.transforms[base.lowercased() + s],
                           let up = Self.capitalOf(low) {
                     Dbg.log("  → capital digraph \(base)+\(s) ⇒ \(Dbg.str(up))")
                     rewrite(site, with: recompose(up, marks), client)
@@ -489,7 +501,7 @@ class InputController: IMKInputController {
             }
             // The shifted digit is the digit's capital plane (⇧5⇧Y → Ə), gated on the
             // live chain.
-            if chainLive, !flags.contains(.capsLock),
+            if capitalDigraphs, chainLive, !flags.contains(.capsLock),
                let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
                             "^": "6", "&": "7", "*": "8", "(": "9", ")": "0"][base],
                let low = t.transforms[digit + s],
@@ -727,6 +739,14 @@ class InputController: IMKInputController {
             pending.append(scalar)
         }
         updateMarked(client)
+    }
+
+    /// Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧Y → Ə) are OFF by default: they
+    /// are keystroke-identical to holding shift and yelling, and no lookback can
+    /// tell SHIP from Ʃ. Yelling is everyday English; word-initial capital IPA
+    /// belongs to a handful of orthographies, so those users opt in.
+    private var capitalDigraphs: Bool {
+        UserDefaults.standard.bool(forKey: "capitalDigraphs")
     }
 
     /// The active quote quad, from the `quoteLocale` user default.
