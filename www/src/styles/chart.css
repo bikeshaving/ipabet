@@ -31,7 +31,8 @@ table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(-
 .cols3 > div { flex: 1; }
 .cols2 { columns: 2; column-gap: 0.2in; }
 table.dia { border-collapse: collapse; width: 100%; table-layout: fixed; }
-table.dia td { border: 0.75pt solid var(--line); padding: 1pt 3pt; vertical-align: middle; }
+table.dia td { border: 0.75pt solid var(--line); padding: 0 3pt; vertical-align: middle; }
+table.dia .li { padding: 0; }
 table.dia td:empty { border: none; }
 table.dia th { border: 0.75pt solid var(--line); padding: 1pt 3pt; font-size: 7pt; font-weight: 400; }
 table.tone td .li + .li { margin-top: 1pt; }
