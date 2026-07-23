@@ -6,7 +6,7 @@
      static layout can express, and the IME intercepts it before the layout.
      The id is a content hash so a changed layout always reloads (macOS caches
      by id and ignores same-id updates). -->
-<keyboard group="126" id="-14177" name="IPAbet" maxout="4">
+<keyboard group="126" id="-3207" name="IPAbet" maxout="4">
   <layouts>
     <layout first="0" last="17" mapSet="ANSI" modifiers="Mods"/>
   </layouts>
@@ -383,7 +383,7 @@
       <key code="34" output="&#x02C6;"/>
       <key code="35" output="&#x02FA;"/>
       <key code="36" output="&#x000D;"/>
-      <key code="37" output="&#x203F;"/>
+      <key code="37" output="&#x033C;"/>
       <key code="38" output="&#x0361;"/>
       <key code="39" output="&#x02C8;"/>
       <key code="40" output="&#x02DA;"/>
@@ -490,7 +490,7 @@
       <key code="32" output="&#x0324;"/>
       <key code="33" output="&#x201D;"/>
       <key code="34" output="&#x031B;"/>
-      <key code="35" output="&#x033C;"/>
+      <key code="35" output="&#x0362;"/>
       <key code="36" output="&#x000D;"/>
       <key code="37" output="&#x2016;"/>
       <key code="38" output="&#x035C;"/>

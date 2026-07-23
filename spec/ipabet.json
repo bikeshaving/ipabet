@@ -1004,14 +1004,15 @@
   },
   {
    "opt": "l",
-   "mark": "‿",
-   "type": "spacing",
+   "mark": "̼",
+   "type": "combining",
    "group": "Prosody",
-   "cp": "U+203F",
-   "name": "UNDERTIE (linking — L for liaison, the mark's most famous work; ⇧ → ‖ the major-group double bar: l is a bar, shift doubles it, and its partner | is the literal ⇧\\ key)",
+   "cp": "U+033C",
+   "name": "COMBINING SEAGULL BELOW (linguolabial — tongue to lips; ⇧ → ‖ the major intonation-group double bar, its single-bar partner | the native ⇧\\ key)",
    "double": "‖",
    "doubleCp": "U+2016",
-   "shiftSense": "twin"
+   "shiftSense": "twin",
+   "doubleSpacing": true
   },
   {
    "opt": "j",
@@ -1165,12 +1166,13 @@
    "mark": "̚",
    "clone": "˺",
    "type": "combining",
-   "double": "̼",
-   "doubleCp": "U+033C",
+   "double": "͢",
+   "doubleCp": "U+0362",
    "group": "Articulation",
    "cp": "U+031A",
-   "name": "COMBINING LEFT ANGLE ABOVE (no audible release, on the plosive letter; ⇧ → ̼ linguolabial, the lips)",
-   "shiftSense": "twin"
+   "name": "COMBINING LEFT ANGLE ABOVE (no audible release; ⇧ → ͢ the sliding-articulation tie, extIPA)",
+   "shiftSense": "twin",
+   "doubleSpacing": true
   },
   {
    "opt": "h",

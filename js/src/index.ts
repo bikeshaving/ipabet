@@ -191,26 +191,38 @@ function capitalOf(low: string): string | undefined {
 }
 
 
-// The tie bar (⌥j) and its below-form (⌥⇧j). The other chord flips placement,
-// the same chord again toggles sliding ͢ and back.
+// The tie on ⌥j (above ͡) and ⌥⇧j (below ͜). Each chord is a two-state:
+// with a real segment before it, it attaches the combining AFFRICATE joiner
+// (t͡s); pressed again on the joiner it just made — or pressed with nothing to
+// attach to — it emits the look-alike SPACING tie, the overtie ⁀ above and the
+// undertie ‿ below (the undertie is also IPA's linking mark). Both spacing ties
+// render cleanly on their own, so the joiner never strands on a dotted circle.
 const TIE = "͡";
 const TIE_BELOW = "͜";
 const SLIDE = "͢";
-const TIES = [TIE, TIE_BELOW];
+const COMBINING_TIES = [TIE, TIE_BELOW, SLIDE];
+const OVERTIE = "\u{2040}";
+const UNDERTIE = "\u{203F}";
+const SPACING_TIE: Record<string, string> = {[TIE]: OVERTIE, [TIE_BELOW]: UNDERTIE};
+const SPACING_TIES = [OVERTIE, UNDERTIE];
 
-/** ⌥j / ⌥⇧j: emit a joiner, or rewrite the one just emitted. */
+/** ⌥j / ⌥⇧j: attach the affricate joiner, or emit the standalone spacing tie. */
 function emitJoiner(textBefore: string, start: string, pending: Pending): Step {
-	const p = lastCluster(textBefore);
-	if (p !== undefined && pending.length === 0) {
-		const last = [...p].pop()!;
-		const next =
-			last === start ? SLIDE :                         // same again → sliding
-			last === SLIDE ? start :                         // …and back
-			TIES.includes(last) ? start : undefined;         // other tie → placement flip
-		if (next !== undefined) {
-			return {edit: {type: "replace", length: last.length, text: next}, pending: []};
+	const spacing = SPACING_TIE[start];
+	if (pending.length === 0) {
+		const p = lastCluster(textBefore);
+		const last = p === undefined ? undefined : [...p].pop()!;
+		// A tie already sits here (the joiner just made, or a spacing tie) → give
+		// the standalone spacing tie for this chord instead of stacking.
+		if (last !== undefined && (COMBINING_TIES.includes(last) || SPACING_TIES.includes(last))) {
+			return {edit: {type: "replace", length: last.length, text: spacing}, pending: []};
+		}
+		// Nothing to attach to (start of line or after a space) → the spacing tie.
+		if (last === undefined || /\s/.test(last)) {
+			return {edit: {type: "insert", text: spacing}, pending: []};
 		}
 	}
+	// A real segment precedes → the combining affricate joiner attaches to it.
 	return emitBase(start, pending);
 }
 

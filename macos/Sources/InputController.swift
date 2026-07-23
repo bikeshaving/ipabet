@@ -612,12 +612,20 @@ class InputController: IMKInputController {
         insert(s, client)
     }
 
-    /// The tie bar (⌥j) and its below-form (⌥⇧j). See `laws.tieBar`.
+    /// ⌥j (above ͡) / ⌥⇧j (below ͜): each chord attaches the combining AFFRICATE
+    /// joiner to the segment before it, or — pressed again on the joiner it made,
+    /// or with nothing to attach to — emits the look-alike SPACING tie: overtie ⁀
+    /// above, undertie ‿ below, each of which renders cleanly on its own.
     private static let tieAbove: Unicode.Scalar = "\u{0361}"
     private static let tieBelow: Unicode.Scalar = "\u{035C}"
-    /// ⌥j/⌥⇧j is a placement pair; the other chord flips placement, the same
-    /// chord again toggles sliding ͢ and back.
     private static let slide: Unicode.Scalar = "\u{0362}"
+    private static let overtie: Unicode.Scalar = "\u{2040}"
+    private static let undertie: Unicode.Scalar = "\u{203F}"
+    private static let combiningTies: [Unicode.Scalar] = [tieAbove, tieBelow, slide]
+    private static let spacingTies: [Unicode.Scalar] = [overtie, undertie]
+    private static func spacingTie(_ start: Unicode.Scalar) -> Unicode.Scalar {
+        start == tieBelow ? undertie : overtie
+    }
     /// NFC cannot fuse an overlay, so every combination Unicode encodes atomically
     /// must be emitted atomic — a raw combining render is a permanent homoglyph
     /// (i̵ beside ɨ fails search forever). Horizontal-bar atoms only.
@@ -773,25 +781,29 @@ class InputController: IMKInputController {
 
     /// ⌥j / ⌥⇧j: emit a joiner, or rewrite the one just emitted.
     private func emitJoiner(_ start: Unicode.Scalar, _ client: IMKTextInput) {
-        if pending.isEmpty, let (p, site) = prevCluster(client), let last = p.unicodeScalars.last {
-            let ties: [Unicode.Scalar] = [Self.tieAbove, Self.tieBelow]
-            let next: Unicode.Scalar? =
-                last == start ? Self.slide :
-                last == Self.slide ? start :
-                ties.contains(last) ? start : nil
-            if let next = next {
+        let spacing = Self.spacingTie(start)
+        if pending.isEmpty {
+            let prev = prevCluster(client)
+            let last = prev?.0.unicodeScalars.last
+            // A tie already sits here (the joiner just made, or a spacing tie) →
+            // swap it for the standalone spacing tie rather than stacking.
+            if let last = last, let (p, site) = prev,
+               Self.combiningTies.contains(last) || Self.spacingTies.contains(last) {
                 var scalars = Array(p.unicodeScalars.dropLast())
-                scalars.append(next)
+                scalars.append(spacing)
                 rewrite(site, with: String(String.UnicodeScalarView(scalars)), client)
                 return
             }
-                // No walk: the joiner APPENDS to the previous segment, after the
-                // committed text — a lone combining mark never opens a composition.
+            // Nothing to attach to (start of line, or after whitespace) → the spacing tie.
+            if last == nil || CharacterSet.whitespaces.contains(last!) {
+                insert(String(spacing), client)
+                return
+            }
+            // A real segment precedes → the combining joiner appends to it.
             insert(String(start), client)
             return
         }
-        if !pending.isEmpty { emitBase(String(start), client); return }
-        insert(String(start), client)
+        emitBase(String(start), client)
     }
 
     /// Emit a base glyph, absorbing any pending prefix diacritics.

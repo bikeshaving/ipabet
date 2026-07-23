@@ -295,7 +295,6 @@ describe("dental family — spread across keys, no cycle", () => {
 		expect(typed("~t", "d")).toBe(nfc("d\u{032A}"));   // dental
 		expect(typed("~d", "d")).toBe(nfc("d\u{033A}"));   // apical (tip)
 		expect(typed("~+d", "d")).toBe(nfc("d\u{033B}"));  // laminal (blade)
-		expect(typed("~+p", "d")).toBe(nfc("d\u{033C}"));  // linguolabial (shifted)
 	});
 });
 
@@ -359,8 +358,8 @@ describe("toggle-off (press the same form again on the pending mark)", () => {
 	});
 	test("stroke on an unlisted base stays a raw overlay: ⌥y s → s̵", () =>
 		expect(typed("~y", "s")).toBe("s\u{0335}"));
-	test("the linking pair on l: ⌥l → ‿, ⌥⇧l → ‖", () => {
-		expect(typed("a", "~l")).toBe("a‿");
+	test("the L key: ⌥l → linguolabial, ⌥⇧l → ‖ major group", () => {
+		expect(typed("t", "~l")).toBe(nfc("t\u{033C}"));  // linguolabial (prefix)
 		expect(typed("a", "~+l")).toBe("a‖");
 	});
 	test("backspace peels the pending accent before touching the document", () => {
@@ -518,9 +517,9 @@ describe("Latin tenants: orthography the layout must not silently corrupt", () =
 		expect(typed("+s", "t", "r", "a", "s", "+s", "e")).toBe("Straße");
 		expect(typed("s", "s")).toBe("ss"); // lowercase ss is untouched
 	});
-	test("prosodic boundaries: ‿ linking on L (liaison), ‖ major group", () => {
-		expect(typed("~l")).toBe("‿");
+	test("prosodic boundaries: ‖ major group on ⌥⇧l; ‿ linking via the tie", () => {
 		expect(typed("~+l")).toBe("‖");
+		expect(typed("l", "e", "s", "~+j", "~+j")).toBe("les‿");
 	});
 });
 
@@ -910,17 +909,19 @@ describe("the doubled-letter law: X⇧X is X's orthographic cousin", () => {
 	});
 });
 
-describe("the joiners: a placement pair, with sliding on the double-press", () => {
-	test("⌥j above, ⌥⇧j below — the placement pair, and the other chord flips in place", () => {
+describe("the joiners: affricate tie, or the standalone spacing tie", () => {
+	test("⌥j above, ⌥⇧j below — the affricate joiner attaches to the segment", () => {
 		expect(typed("t", "~j", "s")).toBe(nfc("t\u{0361}s"));
 		expect(typed("t", "~+j", "s")).toBe(nfc("t\u{035C}s"));
-		expect(typed("t", "~j", "~+j", "s")).toBe(nfc("t\u{035C}s"));  // flip above → below
-		expect(typed("t", "~+j", "~j", "s")).toBe(nfc("t\u{0361}s"));  // flip below → above
 	});
-	test("the same chord again toggles sliding ◌͢ (extIPA), from either side", () => {
-		expect(typed("t", "~j", "~j", "s")).toBe(nfc("t\u{0362}s"));
-		expect(typed("t", "~+j", "~+j", "s")).toBe(nfc("t\u{0362}s"));
-		expect(typed("t", "~j", "~j", "~j", "s")).toBe(nfc("t\u{0361}s"));  // …and back
+	test("pressed again on the joiner it made → the standalone spacing tie", () => {
+		expect(typed("t", "~j", "~j")).toBe(nfc("t\u{2040}"));   // overtie
+		expect(typed("t", "~+j", "~+j")).toBe(nfc("t\u{203F}")); // undertie
+	});
+	test("nothing to attach to (start of line, or after a space) → the spacing tie", () => {
+		expect(typed("~j")).toBe(nfc("\u{2040}"));
+		expect(typed("~+j")).toBe(nfc("\u{203F}"));
+		expect(typed("a", " ", "~j")).toBe(nfc("a \u{2040}"));
 	});
 });
 
@@ -1014,9 +1015,9 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 		expect(typed("~9", "z")).toBe("₍z");   // spacing: it just lands
 	});
 
-	test("the p key: no-release unshifted by frequency, the seagull on the shift", () => {
+	test("the p key: no-release on ⌥p; the sliding tie ͢ on ⌥⇧p", () => {
 		expect(typed("~p", "k")).toBe(nfc("k̚"));
-		expect(typed("~+p", "t")).toBe(nfc("t̼"));
+		expect(typed("t", "~+p", "s")).toBe(nfc("t\u{0362}s"));  // sliding, postfix
 	});
 
 	test("the force pair on F: ⌥f weak, ⌥⇧f strong (fortis), shift the greater pole", () => {

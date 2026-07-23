@@ -35,7 +35,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "ə", onKeys: "5 +Y", fuses: "ɚ"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
-	{glyph: "◌̼", keys: "~+p", name: "Linguolabial", on: "t"},
+	{glyph: "◌̼", keys: "~l", name: "Linguolabial", on: "t"},
 	{glyph: "ʷ", keys: "~z w", name: "Labialized", on: "t"},
 	{glyph: "ʲ", keys: "~z j", name: "Palatalized", on: "t"},
 	{glyph: "ˠ", keys: "~z g +H", name: "Velarized", on: "t"},
@@ -63,7 +63,7 @@ export const SUPRASEGMENTALS: ChartEntry[] = [
 	{glyph: "|", keys: "|", name: "Minor (foot) group"},
 	{glyph: "‖", keys: "~+l", name: "Major (intonation) group"},
 	{glyph: ".", keys: ".", name: "Syllable break"},
-	{glyph: "‿", keys: "~l", name: "Linking (absence of a break)"},
+	{glyph: "‿", keys: "~+j ~+j", name: "Linking (absence of a break)"},
 ];
 
 export const TONES: ChartEntry[] = [
