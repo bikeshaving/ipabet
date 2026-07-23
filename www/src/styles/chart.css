@@ -64,9 +64,6 @@ table.dia td { border: 0.75pt solid var(--line); padding: 0 3pt; vertical-align:
 table.dia td .li { padding: 0; }
 table.dia .li .ipa { font-size: 10pt; }
 table.dia th { border: 0.75pt solid var(--line); padding: 1pt 3pt; font-size: 7pt; font-weight: 400; }
-/* the tones table keeps inline keys — its cells already stack a mark over a tone
-   letter, and a second stacked row would run the sheet onto a second page. */
-table.dia.tone .li { display: flex; align-items: baseline; gap: 4pt; }
 table.dia.tone td .li + .li { margin-top: 1pt; }
 .fine { font-size: 7pt; color: var(--dim); margin-top: 3pt; }
 

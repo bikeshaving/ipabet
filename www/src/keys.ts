@@ -78,7 +78,7 @@ const keysComponents = {
 	RulesTable: () => jsx`
 		<${Table}>
 			<tr><td class="k">vowel ⌥r</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhoticity — emits the spacing hook, the font joins it (5 ⇧Y ⌥r → ɚ, 5 ⇧H ⌥r → ɝ precomposed)</td></tr>
-			<tr><td class="k">X ⇧X</td><td class="g">ɡ þ ı ƙ ƴ ƒ ß</td><td class="cp"></td><td>the doubled-letter law: a letter doubled with its own shift is its orthographic cousin (g⇧G ɡ — the chart's exact script g, t⇧T þ, i⇧I ı, k⇧K ƙ, y⇧Y ƴ, f⇧F ƒ, s⇧S ß). Held capitals: ⇧T⇧T → Þ, ⇧G⇧G → Ɡ</td></tr>
+			<tr><td class="k">X ⇧X</td><td class="g">ɡ þ ı ƙ ƴ ƒ ß</td><td class="cp"></td><td>the doubled-letter law: a letter doubled with its own shift is its orthographic cousin (g⇧G ɡ — the single-story script g, t⇧T þ, i⇧I ı, k⇧K ƙ, y⇧Y ƴ, f⇧F ƒ, s⇧S ß). Held capitals: ⇧T⇧T → Þ, ⇧G⇧G → Ɡ</td></tr>
 			<tr><td class="k">⌥. ⌥.</td><td class="g">·</td><td class="cp">U+00B7</td><td>the interpunct — the dot key's free-floating form, committed by a double-press (Catalan punt volat: l ⌥. ⌥. l → l·l)</td></tr>
 			<tr><td class="k">⌥j ⌥j</td><td class="g">◌͢</td><td class="cp">U+0362</td><td>sliding articulation (extIPA): the same joiner chord again toggles the emitted tie ⇄ sliding; the other chord flips placement in place</td></tr>
 			<tr><td class="k">⇧X ⇧Y</td><td class="g">Æ Ŋ Ʃ Θ</td><td class="cp"></td><td>capital digraphs: capitalize the base, capitalize the result (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧T⇧H → Θ, ⇧B⇧H → Β) — every real capital forms, Greek included; only plain-ASCII results stay literal. All-caps words are Caps Lock's job</td></tr>

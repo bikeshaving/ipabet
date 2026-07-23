@@ -18,8 +18,6 @@ const reverse = new Map<string, string>();
 for (const e of spec.letters as {key: string; glyph: string}[]) {
 	if (!reverse.has(e.glyph)) reverse.set(e.glyph, e.key);
 }
-// The chart's script ɡ resolves through the spec like any glyph: gG (exact
-// U+0261); plain g types the same phoneme on the bare key.
 
 
 /** A glyph with its keystrokes beneath. `fallback` annotates glyphs typed
@@ -52,7 +50,7 @@ const PLACES = [
 ];
 
 const PULMONIC: [string, Cell[]][] = [
-	["Plosive", [{vl: "p", vd: "b"}, {}, {vl: "t", vd: "d", span: 3}, {vl: "ʈ", vd: "ɖ"}, {vl: "c", vd: "ɟ"}, {vl: "k", vd: "ɡ"}, {vl: "q", vd: "ɢ"}, {shr: true}, {vl: "ʔ", shr: true}]],
+	["Plosive", [{vl: "p", vd: "b"}, {}, {vl: "t", vd: "d", span: 3}, {vl: "ʈ", vd: "ɖ"}, {vl: "c", vd: "ɟ"}, {vl: "k", vd: "g"}, {vl: "q", vd: "ɢ"}, {shr: true}, {vl: "ʔ", shr: true}]],
 	["Nasal", [{vd: "m"}, {vd: "ɱ"}, {vd: "n", span: 3}, {vd: "ɳ"}, {vd: "ɲ"}, {vd: "ŋ"}, {vd: "ɴ"}, {sh: true}, {sh: true}]],
 	["Trill", [{vd: "ʙ"}, {}, {vd: "r", span: 3}, {}, {}, {sh: true}, {vd: "ʀ"}, {}, {sh: true}]],
 	["Tap or Flap", [{}, {vd: "ⱱ"}, {vd: "ɾ", span: 3}, {vd: "ɽ"}, {}, {sh: true}, {}, {}, {sh: true}]],
@@ -322,7 +320,7 @@ export function Chart() {
 						<h3>VOWELS</h3>
 						<${VowelChart} />
 						<h3>SUPRASEGMENTALS</h3>
-						<div>${list(SUPRASEGMENTALS)}</div>
+						<div class="cols2">${list(SUPRASEGMENTALS)}</div>
 						<h3>TONES AND WORD ACCENTS</h3>
 						<${ToneTable} />
 					</div>
@@ -369,10 +367,9 @@ export const CHART_JSON = JSON.stringify(
 			"The IPA chart (2015, CC BY-SA) with IPAbet keystrokes. " +
 			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes typed in " +
 			"sequence. Combining diacritics are typed before their base (dead-key " +
-			"style); spacing marks after. The chart shows the IPA's script ɡ " +
-			"(U+0261), typed exactly as gG (the doubled-letter law); the bare " +
-			"g key emits plain g (U+0067) — the layout's plain-US constraint — " +
-			"and both stand for the voiced velar plosive, superscripting to ᶢ. " +
+			"style); spacing marks after. The voiced velar plosive shows as plain " +
+			"g (U+0067), the bare key; the single-story script ɡ (U+0261) is typed " +
+			"as gG (the doubled-letter law), and both stand for that plosive. " +
 			"Canonical spec: /ipabet.json.",
 		pulmonic: {
 			places: PLACES,
