@@ -37,7 +37,7 @@ table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(-
 .row > div { flex: 1; }
 .row > .lower-left { flex: 1.32; display: flex; flex-direction: column; }
 .row > .lower-right { flex: 1; }
-.lower-left > table.dia { flex: 1 1 auto; height: 100%; }
+.lower-left > table.dia { flex: 1 1 auto; }
 .cols3 { display: flex; gap: 0.18in; }
 .cols3 > div { flex: 1; }
 .cols2 { columns: 2; column-gap: 0.2in; }
