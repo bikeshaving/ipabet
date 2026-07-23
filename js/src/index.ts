@@ -312,11 +312,9 @@ function commitString(pending: Pending): string {
 		.map((sc) => cloneOf.get(sc) ?? sc).join("");
 }
 
-// A contour tone is its LEVEL tones typed in order — the keystroke is the tone
-// number. Where Unicode encodes that sequence as one character it is emitted
-// instead of stacking or replacing, the same law the stroke and tilde overlays
-// follow, and what lets ⌥e ⌥⇧e spell a contour rather than the twin replacing
-// its partner.
+// A contour tone is its level tones typed in order. Where Unicode encodes that
+// sequence as one character, it is emitted rather than stacking the marks, so
+// ⌥e ⌥⇧e spells a contour instead of the twin replacing its partner.
 const CONTOURS = new Map(Object.entries({
 	"\u{030F}\u{030B}": "\u{030C}",           // ˩˥  extra low → extra high   rising
 	"\u{030B}\u{030F}": "\u{0302}",           // ˥˩  extra high → extra low   falling
@@ -468,13 +466,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// Non-typing keys (arrows, Enter) defer and leave the composition alone.
 	if (key.length !== 1) return {edit: {type: "pass"}, pending};
 
-	// ⌃⇧<letter> — the literal-capital escape, bypassing everything downstream.
-	// On Control because ⌃ chords are leader keys the host keeps.
+	// ⌃⇧<letter> is the literal-capital escape. Every other Control chord passes
+	// through untouched.
 	if (k.control === true) {
 		if (shift && /^[a-z]$/.test(key)) {
 			return withFlush({type: "insert", text: key.toUpperCase()});
 		}
-		return {edit: {type: "pass"}, pending}; // leader keys: the host owns them
+		return {edit: {type: "pass"}, pending};
 	}
 
 	// Space commits the clone and is CONSUMED; with nothing pending it stays a space.

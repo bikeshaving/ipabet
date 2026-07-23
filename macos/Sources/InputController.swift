@@ -714,11 +714,10 @@ class InputController: IMKInputController {
         insert(s, client)   // insertText over marked text commits & clears it
     }
 
-    /// A contour tone is its LEVEL tones typed in order — the keystroke is the
-    /// tone number. Where Unicode encodes that sequence as one character it is
-    /// emitted instead of stacking or replacing, the same law the stroke and
-    /// tilde overlays follow, and what lets ⌥e ⌥⇧e spell a contour rather than
-    /// the twin replacing its partner. Mirrors js/src/index.ts.
+    /// A contour tone is its level tones typed in order. Where Unicode encodes
+    /// that sequence as one character, it is emitted rather than stacking the
+    /// marks, so ⌥e ⌥⇧e spells a contour instead of the twin replacing its
+    /// partner. Mirrors js/src/index.ts.
     private static let contours: [String: Unicode.Scalar] = [
         "\u{030F}\u{030B}": "\u{030C}",           // ˩˥  extra low → extra high   rising
         "\u{030B}\u{030F}": "\u{0302}",           // ˥˩  extra high → extra low   falling

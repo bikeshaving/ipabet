@@ -229,9 +229,8 @@ function list(entries: ChartEntry[]) {
 }
 
 /** The sheet's TONES AND WORD ACCENTS box: two columns, LEVEL and CONTOUR, each
- *  row pairing the diacritic with its tone-letter equivalent, as the official
- *  chart sets it. A row the notation cannot type yet shows the official symbol
- *  with no keystroke rather than being dropped — the chart is not ours to edit. */
+ *  row pairing the diacritic with its tone-letter equivalent. A row the notation
+ *  cannot type yet shows the symbol with no keystroke rather than being dropped. */
 const byName = new Map(TONES.map((e) => [e.name, e]));
 const LEVEL: [string, string, string][] = [
 	["Extra high", "Extra high", "Extra high (tone letter)"],
