@@ -1035,6 +1035,12 @@ describe("contour tones: a contour is its level tones typed in order", () => {
 		expect(nf(typed("~+`", "~`", "e"))).toBe(nf("e\u{1DC5}")));
 	test("rising-falling ˧˦˧: ⌥a ⌥e ⌥a e → e᷈", () =>
 		expect(nf(typed("~a", "~e", "~a", "e"))).toBe(nf("e\u{1DC8}")));
+	test("mid falling ˧˩: ⌥a ⌥` e → e᷆", () =>
+		expect(nf(typed("~a", "~`", "e"))).toBe(nf("e\u{1DC6}")));
+	test("high falling ˥˧: ⌥e ⌥a e → e᷇", () =>
+		expect(nf(typed("~e", "~a", "e"))).toBe(nf("e\u{1DC7}")));
+	test("dipping ˥˩˥: ⌥e ⌥` ⌥e e → e᷉", () =>
+		expect(nf(typed("~e", "~`", "~e", "e"))).toBe(nf("e\u{1DC9}")));
 	test("rising ˩˥ composes to the caron: ⌥⇧` ⌥⇧e e → ě", () =>
 		expect(nf(typed("~+`", "~+e", "e"))).toBe(nf("ě")));
 	test("falling ˥˩ composes to the circumflex: ⌥⇧e ⌥⇧` e → ê", () =>

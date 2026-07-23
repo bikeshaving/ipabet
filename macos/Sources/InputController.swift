@@ -724,6 +724,9 @@ class InputController: IMKInputController {
         "\u{0301}\u{030B}": "\u{1DC4}",           // ˦˥  high → extra high        high rising
         "\u{030F}\u{0300}": "\u{1DC5}",           // ˩˨  extra low → low          low rising
         "\u{0304}\u{0301}\u{0304}": "\u{1DC8}",  // ˧˦˧ mid → high → mid        rising-falling
+        "\u{0304}\u{0300}": "\u{1DC6}",           // ˧˩  mid → low               mid falling
+        "\u{0301}\u{0304}": "\u{1DC7}",           // ˥˧  high → mid              high falling
+        "\u{0301}\u{0300}\u{0301}": "\u{1DC9}",  // ˥˩˥ high → low → high       dipping
     ]
 
     /// Fold the pending levels into the contour this mark completes, if any.
