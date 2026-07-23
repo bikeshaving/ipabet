@@ -68,8 +68,12 @@ const SHIFT_PLANE: Record<string, string> = {
 	"[": "{", "]": "}", "\\": "|", ";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
 };
 
-function shown(glyph: string, type: string) {
-	if (type === "combining" || glyph === "˞") {
+// A combining mark rides a faint dotted-circle carrier; a spacing mark or symbol
+// stands on its own. Judged from the glyph itself (Unicode Mark), so a mark's ⌥⇧
+// form is decided on its own nature — not the ⌥ form's, whose class can differ
+// (⌥⇧4 ͇ is combining though ⌥4 ˦ is spacing; ⌥⇧l ‖ is a symbol though ⌥l ̼ is not).
+function shown(glyph: string) {
+	if (/\p{M}/u.test(glyph) || glyph === "˞") {
 		return jsx`<span class="ring">◌</span><span class="ink">${"\u00A0" + glyph}</span>`;
 	}
 	return glyph;
@@ -97,8 +101,8 @@ export function capTitle(ch: string): string {
 export function capBody(ch: string) {
 	const sp = SPECIALS[ch];
 	const m = marks.get(ch);
-	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark, m.type));
-	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double, m.type));
+	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark));
+	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double));
 	// The ⇧ view is LIVE on /type; the island repaints each capital. Server-rendered
 	// state is the empty-pad truth.
 	const shifted = /[a-z]/.test(ch) ? ch.toUpperCase() : SHIFT_PLANE[ch];
