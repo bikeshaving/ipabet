@@ -13,7 +13,7 @@ Bare Latin keys that are their own IPA value.
 
 ## Number-row bases
 
-IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols (@ # $ % ^ &). The tie bar — the one combining joiner — lives on <kbd>⌥J</kbd> (join); see the Option layer below.
+IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols (@ # $ % ^ &). Held, a shift-chain uppercases the whole digraph — `⇧5⇧Y` → Ə, `⇧7⇧H` → Ħ — the digit's capital plane. The tie bar lives on <kbd>⌥J</kbd> (join); see the Option layer below.
 
 <SegTable kind="shiftNum"/>
 
@@ -23,9 +23,11 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 <SegTable kind="digraphs"/>
 
-## Rules (not table-driven)
+## Extra letters
 
-<RulesTable/>
+Latin letters beyond the IPA, for writing real orthographies — each typed by doubling a base with its own shift (`s⇧S` → ß, `t⇧T` → þ).
+
+<SegTable kind="extra"/>
 
 ## Escapes (getting a literal character back)
 
@@ -43,6 +45,8 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 ## Diacritics & suprasegmentals (Option layer)
 
 Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard: press `⌥`+key, then the base absorbs the mark (`⌥n` then n → ñ). They stack. Spacing marks (length, tone, stress) are _postfix_. Where a mark has a second form, `⌥⇧`+key gives it (`⌥⇧n` → creaky). Backspace peels a pending mark; Space or Esc commits it as its spacing form. Where the two forms are values of the _same dimension_ — advanced/retracted, apical/laminal — the second _replaces_ the first rather than stacking; forms on independent dimensions stack.
+
+A few keys carry their own behavior: the rhotic hook (`⌥r`) is postfix and fuses `ə`/`ɜ` to precomposed `ɚ`/`ɝ`; the tie joiner (`⌥j` above, `⌥⇧j` below) attaches to the previous segment, or emits the spacing linker (`⁀`/`‿`) when pressed again on the tie it made; a doubled `⌥.` commits the interpunct `·` (Catalan `l·l`).
 
 <MarkTable kind="ipa"/>
 

@@ -12,7 +12,7 @@ import keysCss from "./styles/keys.css" with {assetBase: "/assets/"};
 // /keys — the complete mapping as machine-readable tables, generated from
 // spec/ipabet.json. Prose is content/keys.md.
 
-interface Letter { key: string; glyph: string; cp?: string; name?: string }
+interface Letter { key: string; glyph: string; cp?: string; name?: string; ipa?: boolean }
 interface MarkE {
 	opt: string; mark: string; type: string;
 	double?: string; cycle?: string[]; doubleCycle?: string[]; name?: string;
@@ -68,7 +68,8 @@ function Table({children}: {children?: unknown}) {
 const SEGS: Record<string, Letter[]> = {
 	identity: letters.filter((l) => l.key.length === 1 && /[a-z]/.test(l.key)),
 	shiftNum: letters.filter((l) => /^[0-9]/.test(l.key)),
-	digraphs: letters.filter((l) => l.key.length === 2 && /^[a-z]/.test(l.key)),
+	digraphs: letters.filter((l) => l.key.length === 2 && /^[a-z]/.test(l.key) && l.ipa !== false),
+	extra: letters.filter((l) => l.ipa === false),
 };
 const ipaMarks = marks.filter((m) => m.ipa !== false);
 const beyondMarks = marks.filter((m) => m.ipa === false);
@@ -80,15 +81,6 @@ const keysComponents = {
 	MarkTable: ({token}: any) => jsx`<${Table}>${markRows(token.kind === "ipa" ? ipaMarks : marks)}<//>`,
 	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">⌥z ${s.base}</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
 	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">⌥⇧z ${s.base}</td><td class="g">${s.sub}</td><td class="cp">${cp(s.sub)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
-	RulesTable: () => jsx`
-		<${Table}>
-			<tr><td class="k">vowel ⌥r</td><td class="g">V˞</td><td class="cp">U+02DE</td><td>rhotic hook; ə/ɜ fuse to ɚ/ɝ</td></tr>
-			<tr><td class="k">◌ ⇧◌</td><td class="g">ɡ þ ı ƙ ƴ ƒ ß</td><td class="cp"></td><td>a letter doubled with its own shift → its orthographic cousin (g⇧G ɡ, t⇧T þ, s⇧S ß)</td></tr>
-			<tr><td class="k">⌥. ⌥.</td><td class="g">·</td><td class="cp">U+00B7</td><td>interpunct (Catalan l ⌥.⌥. l → l·l)</td></tr>
-			<tr><td class="k">⌥j ⌥j</td><td class="g">⁀ ‿</td><td class="cp">U+2040 U+203F</td><td>the joiner again → the spacing linker (⁀ over, ‿ under)</td></tr>
-			<tr><td class="k">⇧◌ ⇧◌</td><td class="g">Æ Ŋ Ʃ Θ</td><td class="cp"></td><td>capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ); input-menu option, off by default</td></tr>
-			<tr><td class="k">held ⇧5⇧Y</td><td class="g">Ə</td><td class="cp">U+018F</td><td>the digit's capital plane (⇧5⇧Y → Ə, ⇧7⇧H → Ħ)</td></tr>
-		<//>`,
 	BeyondTables: () =>
 		Object.entries(classes.beyond).map(([k, desc]) => jsx`
 			<h3><code>${k}</code></h3><p>${desc}</p>
