@@ -243,11 +243,11 @@ const LEVEL: [string, string, string][] = [
 	["Upstep", "Upstep", ""],
 ];
 const CONTOUR: [string, string, string][] = [
-	["Rising", "Rising", ""],
-	["Falling", "Falling", ""],
-	["High rising", "High rising", ""],
-	["Low rising", "Low rising", ""],
-	["Rising-falling", "Rising-falling", ""],
+	["Rising", "Rising", "Rising (tone letter)"],
+	["Falling", "Falling", "Falling (tone letter)"],
+	["High rising", "High rising", "High rising (tone letter)"],
+	["Low rising", "Low rising", "Low rising (tone letter)"],
+	["Rising-falling", "Rising-falling", "Rising-falling (tone letter)"],
 	["Global rise", "Global rise", ""],
 	["Global fall", "Global fall", ""],
 ];

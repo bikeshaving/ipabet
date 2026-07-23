@@ -82,6 +82,13 @@ export const TONES: ChartEntry[] = [
 	{glyph: "˧", keys: "~3", name: "Mid (tone letter)"},
 	{glyph: "˨", keys: "~2", name: "Low (tone letter)"},
 	{glyph: "˩", keys: "~1", name: "Extra low (tone letter)"},
+	// Contour tone letters are the level bars typed in order (⌥1–⌥5); a tone-contour
+	// font joins the run into one rising/falling trace.
+	{glyph: "˩˥", keys: "~1 ~5", name: "Rising (tone letter)"},
+	{glyph: "˥˩", keys: "~5 ~1", name: "Falling (tone letter)"},
+	{glyph: "˦˥", keys: "~4 ~5", name: "High rising (tone letter)"},
+	{glyph: "˩˨", keys: "~1 ~2", name: "Low rising (tone letter)"},
+	{glyph: "˧˦˧", keys: "~3 ~4 ~3", name: "Rising-falling (tone letter)"},
 	// The tone row in increasing scope: ⌥1–5 the level bars, ⌥6 relative step,
 	// ⌥7 global contour. Shift is the upward member of both arrow pairs.
 	{glyph: "ꜜ", keys: "~6", name: "Downstep"},
