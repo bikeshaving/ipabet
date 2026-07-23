@@ -13,6 +13,9 @@ h3 { font-size: 9.5pt; font-weight: 700; letter-spacing: 0.04em; margin: 0.16in 
 h4 { font-size: 8.5pt; font-weight: 700; margin-bottom: 0.04in; }
 .ipa { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-weight: 400; }
 i { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; font-size: 6.4pt; color: var(--key); }
+/* keycap tint: a hairline pill behind each keystroke so it reads as keys, sized
+   to add almost no width (keeps the diacritics names on one line). */
+.li i { background: #eef0f8; border: 0.3pt solid #c4c9e0; border-radius: 2pt; padding: 0.2pt 1.6pt; white-space: nowrap; }
 
 table.grid { border-collapse: collapse; width: 100%; table-layout: fixed; }
 table.grid th, table.grid td { border: 0.75pt solid var(--line); padding: 1.5pt 2pt; text-align: center; }
