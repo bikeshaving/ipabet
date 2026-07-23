@@ -232,12 +232,17 @@ export function bindIPAInput(
 			return;
 		}
 		if (stood) return;
-		// keydown already produced this key's output, and the field owns its input:
-		// any insertion now riding the same event is a foreign duplicate — the macOS
+		// keydown already produced this key's output, and the field owns its input.
+		// A duplicate INSERT riding the same event is a foreign copy — the macOS
 		// IPAbet IME re-inserting the same ː / ˩ it also transformed (a fresh insert,
-		// so it never tripped the insertReplacementText standdown above). Suppress it
-		// so two engines can't both land. This is THE recurring double-input bug.
-		if (consumed) { consumed = false; e.preventDefault(); return; }
+		// so it never tripped the insertReplacementText standdown above) — so cancel
+		// it; two engines must not both land. But a DELETE here is the native
+		// backspace the engine deliberately delegated for a bare glyph — let it land.
+		if (consumed) {
+			consumed = false;
+			if (ie.inputType.startsWith("insert")) e.preventDefault();
+			return;
+		}
 		if (ie.inputType === "deleteContentBackward") { engineBackspace(e); return; }
 		if (ie.inputType.startsWith("insert") && ie.data) {
 			// Unconsumed non-ASCII arriving means something else is composing
