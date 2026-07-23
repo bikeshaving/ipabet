@@ -26,33 +26,29 @@ table.grid td .u .ipa { font-size: 12pt; }
 table.grid td.sh { background: var(--shade); }
 table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(--shade) 50%); }
 
-.row { display: flex; gap: 0.3in; align-items: flex-start; }
+/* The lower half mirrors the official sheet: non-pulmonic + other symbols +
+   the wide diacritics grid on the left, vowels + suprasegmentals + tones on the
+   right. align-items: stretch makes the two columns end on the same line, and
+   the diacritics grid grows (flex: 1) to fill the left column so both meet. */
+.row { display: flex; gap: 0.3in; align-items: stretch; }
 .row > div { flex: 1; }
-/* the lower half mirrors the official sheet: non-pulmonic + other symbols +
-   the wide diacritics table on the left, vowels + suprasegmentals + tones on
-   the right, the left column wider to hold the diacritics grid. */
-.row > .lower-left { flex: 1.32; }
+.row > .lower-left { flex: 1.32; display: flex; flex-direction: column; }
 .row > .lower-right { flex: 1; }
+.lower-left > table.dia { flex: 1 1 auto; height: 100%; }
 .cols3 { display: flex; gap: 0.18in; }
 .cols3 > div { flex: 1; }
 .cols2 { columns: 2; column-gap: 0.2in; }
 table.dia { border-collapse: collapse; width: 100%; table-layout: fixed; }
 table.dia td { border: 0.75pt solid var(--line); padding: 0 3pt; vertical-align: middle; }
 table.dia .li { padding: 0; }
-table.dia td:empty { border: none; }
+/* keep the diacritics' natural height just under the right column so flex: 1
+   stretches its rows to land exactly on the tones' bottom line */
+table.dia .li .ipa { font-size: 10pt; }
 table.dia th { border: 0.75pt solid var(--line); padding: 1pt 3pt; font-size: 7pt; font-weight: 400; }
 table.tone td .li + .li { margin-top: 1pt; }
-/* Each entry is a ruby: the glyph with its keystroke stacked underneath (like
-   the consonant grid), and the name beside it — so the name owns the full
-   horizontal run and stays on one line, keeping rows even. */
-.li { display: flex; align-items: center; gap: 5pt; break-inside: avoid; padding: 0.2pt 0; }
-.li .ruby { display: inline-flex; flex-direction: column; align-items: center; min-width: 15pt; flex: none; line-height: 1; }
-.li .ruby .ipa { font-size: 10pt; line-height: 1; }
-.li .ruby i { font-size: 5.8pt; line-height: 1; white-space: nowrap; }
+.li { display: flex; align-items: baseline; gap: 4pt; break-inside: avoid; padding: 1pt 0; }
+.li .ipa { font-size: 11pt; min-width: 14pt; text-align: center; }
 .li .nm { font-size: 7.5pt; }
-/* the diacritics grid grows its rows to fill the left column and balance the
-   vowels+suprasegmentals+tones on the right */
-table.dia .li { padding: 1pt 0; }
 .fine { font-size: 7pt; color: var(--dim); margin-top: 3pt; }
 
 svg { width: 100%; height: auto; }

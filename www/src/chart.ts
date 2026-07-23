@@ -215,7 +215,7 @@ function DiaCell(e: ChartEntry) {
 	// schwa, ɫ for the tilde overlay on l — not base + mark.
 	const shown = e.fuses ?? (e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph);
 	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
-	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><span class="ruby"><b class="ipa">${shown}</b><i>${display(e.keys)}</i></span><span class="nm">${e.name}</span></div>`;
+	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><b class="ipa">${shown}</b><i>${display(e.keys)}</i><span class="nm">${e.name}</span></div>`;
 }
 
 function list(entries: ChartEntry[]) {
@@ -270,8 +270,16 @@ function ToneTable() {
  *  12/12/7, exactly as the official chart sets it. */
 function DiaTable(entries: ChartEntry[]) {
 	const cols = [entries.slice(0, 12), entries.slice(12, 24), entries.slice(24)];
-	const rows = Array.from({length: 12}, (_, r) =>
-		jsx`<tr>${cols.map((c) => jsx`<td>${c[r] === undefined ? null : DiaCell(c[r])}</td>`)}</tr>`);
+	// Column 3 runs out after 7 rows; for the rest, column 2 spans 2 & 3 so the
+	// grid stays a full rectangle (as the official sheet does), no empty cells.
+	const rows = Array.from({length: 12}, (_, r) => {
+		const c3 = cols[2][r];
+		return jsx`<tr>
+			<td>${cols[0][r] === undefined ? null : DiaCell(cols[0][r])}</td>
+			<td colspan=${c3 === undefined ? 2 : 1}>${cols[1][r] === undefined ? null : DiaCell(cols[1][r])}</td>
+			${c3 === undefined ? null : jsx`<td>${DiaCell(c3)}</td>`}
+		</tr>`;
+	});
 	return jsx`<table class="dia">${rows}</table>`;
 }
 
@@ -315,11 +323,7 @@ export function Chart() {
 					</div>
 				</div>
 
-				<p class="attrib"><span class="screen-only">Click any symbol to hear it. </span>Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; combining ⌥ marks are typed before their base (dead-key style), spacing marks after.${" "}
-				This chart as data: <a href="/chart.json">chart.json</a> · every keystroke: <a href="/keys">keys</a>.${" "}
-				Audio: Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses, re-hosted with attribution.${" "}
-				Layout derived from <a href="https://www.internationalphoneticassociation.org/content/ipa-chart">The International Phonetic Alphabet (revised to 2015)</a>,${" "}
-				© 2015 International Phonetic Association, CC BY-SA 3.0. This sheet is likewise CC BY-SA · <a href="https://ipabet.org">ipabet.org</a></p>
+				<p class="attrib"><span class="screen-only">Click any symbol to hear it — as data: <a href="/chart.json">chart.json</a> · <a href="/keys">keys</a>; audio from Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses. </span>IPA chart © 2015 International Phonetic Association, CC BY-SA 3.0; this sheet likewise · ipabet.org</p>
 			</div>
 			<script type="module" src=${chartAudio}></script>
 		<//>`;
