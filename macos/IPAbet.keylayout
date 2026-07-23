@@ -6,7 +6,7 @@
      static layout can express, and the IME intercepts it before the layout.
      The id is a content hash so a changed layout always reloads (macOS caches
      by id and ignores same-id updates). -->
-<keyboard group="126" id="-3207" name="IPAbet" maxout="4">
+<keyboard group="126" id="-6044" name="IPAbet" maxout="4">
   <layouts>
     <layout first="0" last="17" mapSet="ANSI" modifiers="Mods"/>
   </layouts>
@@ -346,73 +346,73 @@
       <key code="126" output="&#x001E;"/>
     </keyMap>
     <keyMap index="3">
-      <key code="0" output="&#x00AF;"/>
-      <key code="1" output="&#x02CC;"/>
-      <key code="2" output="&#x033A;"/>
-      <key code="3" output="&#x0349;"/>
-      <key code="4" output="&#x02F2;"/>
-      <key code="5" output="&#x02D5;"/>
+      <key code="0" action="a3_0"/>
+      <key code="1" action="a3_1"/>
+      <key code="2" action="a3_2"/>
+      <key code="3" action="a3_3"/>
+      <key code="4" action="a3_4"/>
+      <key code="5" action="a3_5"/>
       <key code="6" output="&#x207B;"/>
-      <key code="7" output="&#x02DF;"/>
-      <key code="8" output="&#x00B8;"/>
-      <key code="9" output="&#x02C7;"/>
+      <key code="7" action="a3_7"/>
+      <key code="8" action="a3_8"/>
+      <key code="9" action="a3_9"/>
       <key code="10" output="&#x00A7;"/>
-      <key code="11" output="&#x02D8;"/>
+      <key code="11" action="a3_11"/>
       <key code="12" output="&#x02BB;"/>
-      <key code="13" output="&#x02D3;"/>
-      <key code="14" output="&#x00B4;"/>
+      <key code="13" action="a3_13"/>
+      <key code="14" action="a3_14"/>
       <key code="15" output="&#x02DE;"/>
-      <key code="16" output="-"/>
-      <key code="17" output="&#x032A;"/>
+      <key code="16" action="a3_16"/>
+      <key code="17" action="a3_17"/>
       <key code="18" output="&#x02E9;"/>
       <key code="19" output="&#x02E8;"/>
       <key code="20" output="&#x02E7;"/>
       <key code="21" output="&#x02E6;"/>
       <key code="22" output="&#xA71C;"/>
       <key code="23" output="&#x02E5;"/>
-      <key code="24" output="&#x02D7;"/>
+      <key code="24" action="a3_24"/>
       <key code="25" output="&#x208D;"/>
       <key code="26" output="&#x2198;"/>
       <key code="27" output="&#x2013;"/>
       <key code="28" output="&#x2193;"/>
-      <key code="29" output="&#x02B9;"/>
+      <key code="29" action="a3_29"/>
       <key code="30" output="&#x2018;"/>
-      <key code="31" output="&#x02EF;"/>
-      <key code="32" output="&#x00A8;"/>
+      <key code="31" action="a3_31"/>
+      <key code="32" action="a3_32"/>
       <key code="33" output="&#x201C;"/>
-      <key code="34" output="&#x02C6;"/>
-      <key code="35" output="&#x02FA;"/>
+      <key code="34" action="a3_34"/>
+      <key code="35" output="&#x02B9;"/>
       <key code="36" output="&#x000D;"/>
-      <key code="37" output="&#x033C;"/>
-      <key code="38" output="&#x0361;"/>
+      <key code="37" action="a3_37"/>
+      <key code="38" action="a3_38"/>
       <key code="39" output="&#x02C8;"/>
-      <key code="40" output="&#x02DA;"/>
+      <key code="40" action="a3_40"/>
       <key code="41" output="&#x02D0;"/>
       <key code="42" output="&#x27E8;"/>
-      <key code="43" output="&#x02BB;"/>
-      <key code="44" output="&#x0309;"/>
-      <key code="45" output="&#x02DC;"/>
-      <key code="46" output="&#x02DB;"/>
-      <key code="47" output="&#x02D9;"/>
+      <key code="43" action="a3_43"/>
+      <key code="44" action="a3_44"/>
+      <key code="45" action="a3_45"/>
+      <key code="46" action="a3_46"/>
+      <key code="47" action="a3_47"/>
       <key code="48" output="&#x0009;"/>
       <key code="49" output="&#x00A0;"/>
-      <key code="50" output="`"/>
+      <key code="50" action="a3_50"/>
       <key code="51" output="&#x0008;"/>
       <key code="52" output="&#x0003;"/>
       <key code="53" output="&#x001B;"/>
-      <key code="65" output="&#x02D9;"/>
+      <key code="65" action="a3_65"/>
       <key code="66" output="&#x001D;"/>
       <key code="67" output="*"/>
       <key code="69" output="+"/>
       <key code="70" output="&#x001C;"/>
       <key code="71" output="&#x001B;"/>
       <key code="72" output="&#x001F;"/>
-      <key code="75" output="&#x0309;"/>
+      <key code="75" action="a3_75"/>
       <key code="76" output="&#x0003;"/>
       <key code="77" output="&#x001E;"/>
       <key code="78" output="-"/>
-      <key code="81" output="&#x02D7;"/>
-      <key code="82" output="&#x02B9;"/>
+      <key code="81" action="a3_81"/>
+      <key code="82" action="a3_82"/>
       <key code="83" output="&#x02E9;"/>
       <key code="84" output="&#x02E8;"/>
       <key code="85" output="&#x02E7;"/>
@@ -455,61 +455,61 @@
       <key code="126" output="&#x001E;"/>
     </keyMap>
     <keyMap index="4">
-      <key code="0" output="&#x02CD;"/>
-      <key code="1" output="&#x02C8;"/>
-      <key code="2" output="&#x033B;"/>
-      <key code="3" output="&#x0348;"/>
-      <key code="4" output="&#x02F1;"/>
-      <key code="5" output="&#x02D4;"/>
+      <key code="0" action="a4_0"/>
+      <key code="1" action="a4_1"/>
+      <key code="2" action="a4_2"/>
+      <key code="3" action="a4_3"/>
+      <key code="4" action="a4_4"/>
+      <key code="5" action="a4_5"/>
       <key code="6" output="&#x208B;"/>
-      <key code="7" output="&#x0353;"/>
-      <key code="8" output="&#x0321;"/>
-      <key code="9" output="&#x02EC;"/>
+      <key code="7" action="a4_7"/>
+      <key code="8" action="a4_8"/>
+      <key code="9" action="a4_9"/>
       <key code="10" output="&#x00B1;"/>
-      <key code="11" output="&#x032E;"/>
+      <key code="11" action="a4_11"/>
       <key code="12" output="&#x02BC;"/>
-      <key code="13" output="&#x02D2;"/>
-      <key code="14" output="&#x02DD;"/>
-      <key code="15" output="&#x0322;"/>
-      <key code="16" output="&#x02DC;"/>
-      <key code="17" output="&#x0346;"/>
+      <key code="13" action="a4_13"/>
+      <key code="14" action="a4_14"/>
+      <key code="15" action="a4_15"/>
+      <key code="16" action="a4_16"/>
+      <key code="17" action="a4_17"/>
       <key code="18" output="&#x00A1;"/>
       <key code="19" output="&#x02BE;"/>
       <key code="20" output="&#x02BF;"/>
-      <key code="21" output="&#x0347;"/>
+      <key code="21" action="a4_21"/>
       <key code="22" output="&#xA71B;"/>
       <key code="23" output="&#x02ED;"/>
-      <key code="24" output="&#x02D6;"/>
+      <key code="24" action="a4_24"/>
       <key code="25" output="&#x208E;"/>
       <key code="26" output="&#x2197;"/>
       <key code="27" output="&#x2014;"/>
       <key code="28" output="&#x2191;"/>
-      <key code="29" output="&#x02BA;"/>
+      <key code="29" action="a4_29"/>
       <key code="30" output="&#x2019;"/>
-      <key code="31" output="&#x0311;"/>
-      <key code="32" output="&#x0324;"/>
+      <key code="31" action="a4_31"/>
+      <key code="32" action="a4_32"/>
       <key code="33" output="&#x201D;"/>
-      <key code="34" output="&#x031B;"/>
-      <key code="35" output="&#x0362;"/>
+      <key code="34" action="a4_34"/>
+      <key code="35" output="&#x02BA;"/>
       <key code="36" output="&#x000D;"/>
       <key code="37" output="&#x2016;"/>
-      <key code="38" output="&#x035C;"/>
+      <key code="38" action="a4_38"/>
       <key code="39" output="&#x02CC;"/>
-      <key code="40" output="&#x02F3;"/>
+      <key code="40" action="a4_40"/>
       <key code="41" output="&#x02D1;"/>
       <key code="42" output="&#x27E9;"/>
-      <key code="43" output="&#x0313;"/>
+      <key code="43" action="a4_43"/>
       <key code="44" output="&#x00BF;"/>
-      <key code="45" output="&#x02F7;"/>
-      <key code="46" output="&#x0310;"/>
-      <key code="47" output="&#x0323;"/>
+      <key code="45" action="a4_45"/>
+      <key code="46" action="a4_46"/>
+      <key code="47" action="a4_47"/>
       <key code="48" output="&#x0009;"/>
       <key code="49" output="&#x00A0;"/>
-      <key code="50" output="&#x02F5;"/>
+      <key code="50" action="a4_50"/>
       <key code="51" output="&#x0008;"/>
       <key code="52" output="&#x0003;"/>
       <key code="53" output="&#x001B;"/>
-      <key code="65" output="&#x0323;"/>
+      <key code="65" action="a4_65"/>
       <key code="66" output="*"/>
       <key code="67" output="*"/>
       <key code="69" output="+"/>
@@ -520,12 +520,12 @@
       <key code="76" output="&#x0003;"/>
       <key code="77" output="/"/>
       <key code="78" output="-"/>
-      <key code="81" output="&#x02D6;"/>
-      <key code="82" output="&#x02BA;"/>
+      <key code="81" action="a4_81"/>
+      <key code="82" action="a4_82"/>
       <key code="83" output="&#x00A1;"/>
       <key code="84" output="&#x02BE;"/>
       <key code="85" output="&#x02BF;"/>
-      <key code="86" output="&#x0347;"/>
+      <key code="86" action="a4_86"/>
       <key code="87" output="&#x02ED;"/>
       <key code="88" output="&#xA71B;"/>
       <key code="89" output="&#x2197;"/>
@@ -564,4 +564,136 @@
       <key code="126" output="&#x001E;"/>
     </keyMap>
   </keyMapSet>
+  <actions>
+    <action id="a3_0"><when state="none" next="s3_0"/></action>
+    <action id="a3_1"><when state="none" next="s3_1"/></action>
+    <action id="a3_2"><when state="none" next="s3_2"/></action>
+    <action id="a3_3"><when state="none" next="s3_3"/></action>
+    <action id="a3_4"><when state="none" next="s3_4"/></action>
+    <action id="a3_5"><when state="none" next="s3_5"/></action>
+    <action id="a3_7"><when state="none" next="s3_7"/></action>
+    <action id="a3_8"><when state="none" next="s3_8"/></action>
+    <action id="a3_9"><when state="none" next="s3_9"/></action>
+    <action id="a3_11"><when state="none" next="s3_11"/></action>
+    <action id="a3_13"><when state="none" next="s3_13"/></action>
+    <action id="a3_14"><when state="none" next="s3_14"/></action>
+    <action id="a3_16"><when state="none" next="s3_16"/></action>
+    <action id="a3_17"><when state="none" next="s3_17"/></action>
+    <action id="a3_24"><when state="none" next="s3_24"/></action>
+    <action id="a3_29"><when state="none" next="s3_29"/></action>
+    <action id="a3_31"><when state="none" next="s3_31"/></action>
+    <action id="a3_32"><when state="none" next="s3_32"/></action>
+    <action id="a3_34"><when state="none" next="s3_34"/></action>
+    <action id="a3_37"><when state="none" next="s3_37"/></action>
+    <action id="a3_38"><when state="none" next="s3_38"/></action>
+    <action id="a3_40"><when state="none" next="s3_40"/></action>
+    <action id="a3_43"><when state="none" next="s3_43"/></action>
+    <action id="a3_44"><when state="none" next="s3_44"/></action>
+    <action id="a3_45"><when state="none" next="s3_45"/></action>
+    <action id="a3_46"><when state="none" next="s3_46"/></action>
+    <action id="a3_47"><when state="none" next="s3_47"/></action>
+    <action id="a3_50"><when state="none" next="s3_50"/></action>
+    <action id="a3_65"><when state="none" next="s3_65"/></action>
+    <action id="a3_75"><when state="none" next="s3_75"/></action>
+    <action id="a3_81"><when state="none" next="s3_81"/></action>
+    <action id="a3_82"><when state="none" next="s3_82"/></action>
+    <action id="a4_0"><when state="none" next="s4_0"/></action>
+    <action id="a4_1"><when state="none" next="s4_1"/></action>
+    <action id="a4_2"><when state="none" next="s4_2"/></action>
+    <action id="a4_3"><when state="none" next="s4_3"/></action>
+    <action id="a4_4"><when state="none" next="s4_4"/></action>
+    <action id="a4_5"><when state="none" next="s4_5"/></action>
+    <action id="a4_7"><when state="none" next="s4_7"/></action>
+    <action id="a4_8"><when state="none" next="s4_8"/></action>
+    <action id="a4_9"><when state="none" next="s4_9"/></action>
+    <action id="a4_11"><when state="none" next="s4_11"/></action>
+    <action id="a4_13"><when state="none" next="s4_13"/></action>
+    <action id="a4_14"><when state="none" next="s4_14"/></action>
+    <action id="a4_15"><when state="none" next="s4_15"/></action>
+    <action id="a4_16"><when state="none" next="s4_16"/></action>
+    <action id="a4_17"><when state="none" next="s4_17"/></action>
+    <action id="a4_21"><when state="none" next="s4_21"/></action>
+    <action id="a4_24"><when state="none" next="s4_24"/></action>
+    <action id="a4_29"><when state="none" next="s4_29"/></action>
+    <action id="a4_31"><when state="none" next="s4_31"/></action>
+    <action id="a4_32"><when state="none" next="s4_32"/></action>
+    <action id="a4_34"><when state="none" next="s4_34"/></action>
+    <action id="a4_38"><when state="none" next="s4_38"/></action>
+    <action id="a4_40"><when state="none" next="s4_40"/></action>
+    <action id="a4_43"><when state="none" next="s4_43"/></action>
+    <action id="a4_45"><when state="none" next="s4_45"/></action>
+    <action id="a4_46"><when state="none" next="s4_46"/></action>
+    <action id="a4_47"><when state="none" next="s4_47"/></action>
+    <action id="a4_50"><when state="none" next="s4_50"/></action>
+    <action id="a4_65"><when state="none" next="s4_65"/></action>
+    <action id="a4_81"><when state="none" next="s4_81"/></action>
+    <action id="a4_82"><when state="none" next="s4_82"/></action>
+    <action id="a4_86"><when state="none" next="s4_86"/></action>
+  </actions>
+  <terminators>
+    <when state="s3_0" output="&#x25CC;&#x0304;"/>
+    <when state="s3_1" output="&#x25CC;&#x0329;"/>
+    <when state="s3_2" output="&#x25CC;&#x033A;"/>
+    <when state="s3_3" output="&#x25CC;&#x0349;"/>
+    <when state="s3_4" output="&#x25CC;&#x0319;"/>
+    <when state="s3_5" output="&#x25CC;&#x031E;"/>
+    <when state="s3_7" output="&#x25CC;&#x033D;"/>
+    <when state="s3_8" output="&#x25CC;&#x0327;"/>
+    <when state="s3_9" output="&#x25CC;&#x030C;"/>
+    <when state="s3_11" output="&#x25CC;&#x0306;"/>
+    <when state="s3_13" output="&#x25CC;&#x031C;"/>
+    <when state="s3_14" output="&#x25CC;&#x0301;"/>
+    <when state="s3_16" output="&#x25CC;&#x0335;"/>
+    <when state="s3_17" output="&#x25CC;&#x032A;"/>
+    <when state="s3_24" output="&#x25CC;&#x0320;"/>
+    <when state="s3_29" output="&#x25CC;&#x031A;"/>
+    <when state="s3_31" output="&#x25CC;&#x032F;"/>
+    <when state="s3_32" output="&#x25CC;&#x0308;"/>
+    <when state="s3_34" output="&#x25CC;&#x0302;"/>
+    <when state="s3_37" output="&#x25CC;&#x033C;"/>
+    <when state="s3_38" output="&#x25CC;&#x0361;"/>
+    <when state="s3_40" output="&#x25CC;&#x030A;"/>
+    <when state="s3_43" output="&#x25CC;&#x0326;"/>
+    <when state="s3_44" output="&#x25CC;&#x0309;"/>
+    <when state="s3_45" output="&#x25CC;&#x0303;"/>
+    <when state="s3_46" output="&#x25CC;&#x0328;"/>
+    <when state="s3_47" output="&#x25CC;&#x0307;"/>
+    <when state="s3_50" output="&#x25CC;&#x0300;"/>
+    <when state="s3_65" output="&#x25CC;&#x0307;"/>
+    <when state="s3_75" output="&#x25CC;&#x0309;"/>
+    <when state="s3_81" output="&#x25CC;&#x0320;"/>
+    <when state="s3_82" output="&#x25CC;&#x031A;"/>
+    <when state="s4_0" output="&#x25CC;&#x0331;"/>
+    <when state="s4_1" output="&#x25CC;&#x030D;"/>
+    <when state="s4_2" output="&#x25CC;&#x033B;"/>
+    <when state="s4_3" output="&#x25CC;&#x0348;"/>
+    <when state="s4_4" output="&#x25CC;&#x0318;"/>
+    <when state="s4_5" output="&#x25CC;&#x031D;"/>
+    <when state="s4_7" output="&#x25CC;&#x0353;"/>
+    <when state="s4_8" output="&#x25CC;&#x0321;"/>
+    <when state="s4_9" output="&#x25CC;&#x032C;"/>
+    <when state="s4_11" output="&#x25CC;&#x032E;"/>
+    <when state="s4_13" output="&#x25CC;&#x0339;"/>
+    <when state="s4_14" output="&#x25CC;&#x030B;"/>
+    <when state="s4_15" output="&#x25CC;&#x0322;"/>
+    <when state="s4_16" output="&#x25CC;&#x0334;"/>
+    <when state="s4_17" output="&#x25CC;&#x0346;"/>
+    <when state="s4_21" output="&#x25CC;&#x0347;"/>
+    <when state="s4_24" output="&#x25CC;&#x031F;"/>
+    <when state="s4_29" output="&#x25CC;&#x0362;"/>
+    <when state="s4_31" output="&#x25CC;&#x0311;"/>
+    <when state="s4_32" output="&#x25CC;&#x0324;"/>
+    <when state="s4_34" output="&#x25CC;&#x031B;"/>
+    <when state="s4_38" output="&#x25CC;&#x035C;"/>
+    <when state="s4_40" output="&#x25CC;&#x0325;"/>
+    <when state="s4_43" output="&#x25CC;&#x0313;"/>
+    <when state="s4_45" output="&#x25CC;&#x0330;"/>
+    <when state="s4_46" output="&#x25CC;&#x0310;"/>
+    <when state="s4_47" output="&#x25CC;&#x0323;"/>
+    <when state="s4_50" output="&#x25CC;&#x030F;"/>
+    <when state="s4_65" output="&#x25CC;&#x0323;"/>
+    <when state="s4_81" output="&#x25CC;&#x031F;"/>
+    <when state="s4_82" output="&#x25CC;&#x0362;"/>
+    <when state="s4_86" output="&#x25CC;&#x0347;"/>
+  </terminators>
 </keyboard>

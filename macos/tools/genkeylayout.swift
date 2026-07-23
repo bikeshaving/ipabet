@@ -61,20 +61,34 @@ enum JSON: Decodable { case s(String), other
 let spec = try! JSONDecoder().decode(Spec.self,
     from: Data(contentsOf: URL(fileURLWithPath: "../spec/ipabet.json")))
 
-var optByChar: [String: String] = [:]        // US bare char → ⌥ glyph to show
-var optShiftByChar: [String: String] = [:]    // US bare char → ⌥⇧ glyph to show
+// A combining mark becomes a DEAD KEY: Keyboard Viewer outlines it (orange) and
+// draws the state's terminator, which we set to a dotted-circle carrier (◌́). A
+// spacing mark or symbol is a plain key. Combining-ness is read from the glyph,
+// so a ⌥⇧ form is judged on its own class (⌥⇧4 ͇ is combining though ⌥4 ˦ is not).
+enum Cap { case out(String); case dead(String) }   // .dead carries the ◌+mark terminator
+func combining(_ s: String) -> Bool {
+    guard let f = s.unicodeScalars.first else { return false }
+    switch f.properties.generalCategory {
+    case .nonspacingMark, .spacingMark, .enclosingMark: return true
+    default: return false
+    }
+}
+func cap(_ glyph: String) -> Cap { combining(glyph) ? .dead("\u{25CC}" + glyph) : .out(glyph) }
+
+var optCap: [String: Cap] = [:]        // US bare char → ⌥ cap
+var optShiftCap: [String: Cap] = [:]    // US bare char → ⌥⇧ cap
 for m in spec.marks {
-    optByChar[m.opt] = m.clone ?? m.mark
-    if let d = m.double { optShiftByChar[m.opt] = m.doubleClone ?? d }
+    optCap[m.opt] = cap(m.mark)
+    if let d = m.double { optShiftCap[m.opt] = cap(d) }
 }
 for (k, v) in spec.optShift ?? [:] where k != "about" {
-    if case let .s(ch) = v { optShiftByChar[k] = ch }
+    if case let .s(ch) = v { optShiftCap[k] = cap(ch) }
 }
 // The raise/lower operators are not marks in the spec (they pend as sentinels,
 // not combining scalars), so add their keycaps by hand — the same ⁻ / ₋ the
 // engine previews, so the keycap and the pending preview read identically.
-optByChar["z"] = "\u{207B}"        // ⌥z raise → ⁻
-optShiftByChar["z"] = "\u{208B}"   // ⌥⇧z lower → ₋
+optCap["z"] = .out("\u{207B}")        // ⌥z raise → ⁻
+optShiftCap["z"] = .out("\u{208B}")   // ⌥⇧z lower → ₋
 
 // ---- emit ----
 
@@ -102,18 +116,30 @@ func esc(_ s: String) -> String {
     }.joined()
 }
 
-/// One keyMap. `override` remaps a key's output by its US BARE character — how
-/// the ⌥ planes swap in IPAbet's marks while keeping US for unclaimed keys.
-func keyMap(index: Int, carbonMods: UInt32, override: [String: String] = [:]) -> String {
+// Dead-key actions and their terminators, collected as the ⌥ planes are built.
+var actionDefs: [String] = []
+var termDefs: [String] = []
+
+/// One keyMap. `override` maps a US BARE character to a cap — a plain output, or a
+/// dead key (⌥ combining marks) that enters a throwaway state whose terminator the
+/// Viewer draws. Unclaimed keys keep their US output.
+func keyMap(index: Int, carbonMods: UInt32, override: [String: Cap] = [:]) -> String {
     var rows: [String] = []
     for code in 0...127 {
-        var out = usOutput(code, carbonMods: carbonMods)
-        if !override.isEmpty {
-            let bare = usOutput(code, carbonMods: 0)
-            if let sub = override[bare] { out = sub }
+        if !override.isEmpty, let c = override[usOutput(code, carbonMods: 0)] {
+            switch c {
+            case .out(let s):
+                if !s.isEmpty { rows.append("      <key code=\"\(code)\" output=\"\(esc(s))\"/>") }
+            case .dead(let term):
+                let st = "s\(index)_\(code)", act = "a\(index)_\(code)"
+                actionDefs.append("    <action id=\"\(act)\"><when state=\"none\" next=\"\(st)\"/></action>")
+                termDefs.append("    <when state=\"\(st)\" output=\"\(esc(term))\"/>")
+                rows.append("      <key code=\"\(code)\" action=\"\(act)\"/>")
+            }
+            continue
         }
-        if out.isEmpty { continue }
-        rows.append("      <key code=\"\(code)\" output=\"\(esc(out))\"/>")
+        let out = usOutput(code, carbonMods: carbonMods)
+        if !out.isEmpty { rows.append("      <key code=\"\(code)\" output=\"\(esc(out))\"/>") }
     }
     return "    <keyMap index=\"\(index)\">\n" + rows.joined(separator: "\n") + "\n    </keyMap>"
 }
@@ -124,9 +150,14 @@ let bodies = [
     keyMap(index: 0, carbonMods: 0),
     keyMap(index: 1, carbonMods: shiftMod),
     keyMap(index: 2, carbonMods: capsMod),
-    keyMap(index: 3, carbonMods: optMod, override: optByChar),
-    keyMap(index: 4, carbonMods: optMod | shiftMod, override: optShiftByChar),
+    keyMap(index: 3, carbonMods: optMod, override: optCap),
+    keyMap(index: 4, carbonMods: optMod | shiftMod, override: optShiftCap),
 ].joined(separator: "\n")
+
+// The dead-key actions/terminators (empty if no combining marks are claimed).
+let deadXML = actionDefs.isEmpty ? "" :
+    "\n  <actions>\n" + actionDefs.joined(separator: "\n") + "\n  </actions>\n" +
+    "  <terminators>\n" + termDefs.joined(separator: "\n") + "\n  </terminators>"
 
 // The system CACHES a layout by its id and does not reliably reload a same-id
 // update — the root of the "still broken after reinstall" churn. So derive the
@@ -134,7 +165,7 @@ let bodies = [
 // any change mints a new one and forces a clean reload. Third-party layout ids
 // are negative; keep it well inside the range.
 var h: UInt64 = 1469598103934665603
-for b in bodies.utf8 { h = (h ^ UInt64(b)) &* 1099511628211 }
+for b in (bodies + deadXML).utf8 { h = (h ^ UInt64(b)) &* 1099511628211 }
 let layoutID = -(Int(h % 30000) + 2000)   // -2000 … -31999
 
 let xml = """
@@ -159,7 +190,7 @@ let xml = """
   </modifierMap>
   <keyMapSet id="ANSI">
 \(bodies)
-  </keyMapSet>
+  </keyMapSet>\(deadXML)
 </keyboard>
 """
 
@@ -182,6 +213,7 @@ for (code, output) in mustHave {
         fatalError("IPAbet.keylayout missing key \(code) → \(output)")
     }
 }
-let planes = [("⌥", optByChar.count), ("⌥⇧", optShiftByChar.count)]
+let planes = [("⌥", optCap.count), ("⌥⇧", optShiftCap.count)]
 print("wrote IPAbet.keylayout — id=\(layoutID) (content-hashed) overrides:",
-      planes.map { "\($0.0):\($0.1)" }.joined(separator: " "))
+      planes.map { "\($0.0):\($0.1)" }.joined(separator: " "),
+      "· dead keys:", actionDefs.count)
