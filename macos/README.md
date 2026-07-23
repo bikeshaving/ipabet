@@ -34,8 +34,8 @@ nothing for a host to desync, and no per-host mode to get wrong. The only
 marked text is the dead-key *preview* of a pending prefix diacritic
 (`⌥e` → ´), committed by the next base.
 
-All previous-glyph rules (digraph transforms, doubled-mark upgrades, rhotic
-`⇧R`, ejective `⇧X`, spacing marks, backspace) operate on the **decomposed
+All previous-glyph rules (digraph transforms, doubled-mark upgrades, retroflex
+`⇧R`, spacing marks, backspace) operate on the **decomposed
 view** of the cluster — base glyph + combining marks split via NFD — and
 recompose to NFC on write, so NFC fusion (é is one codepoint, n̥ is two) never
 changes rule behavior. On any rule miss the keystroke falls through until

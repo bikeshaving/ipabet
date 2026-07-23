@@ -75,7 +75,7 @@ A combining key may carry a **cycle**: pressing it again on its own pending mark
 | `⌥n ⌥n`… | ◌̃ nasalized → ◌͊ denasal → ◌͋ nasal escape → ◌͌ velopharyngeal |
 | `⌥w ⌥w`… | ◌̜ less rounded → ◌͍ labial spreading |
 | `⌥⇧w ⌥⇧w`… | ◌̹ more rounded → ◌͎ whistled |
-| `⌥j ⌥j` | the same joiner chord again toggles the emitted tie ⇄ ◌͢ sliding; the other chord flips placement |
+| `⌥j ⌥j` | press the joiner again on the tie it made and it swaps for the standalone spacing linker — overtie ⁀ above (`⌥j`), undertie ‿ below (`⌥⇧j`, IPA's linking mark) |
 | `⌥. ⌥.` | the double-press commits · — the interpunct, the dot key's free-floating form (Catalan punt volat: `l ⌥. ⌥. l` → l·l) |
 
 ## Quotes by locale
