@@ -9,12 +9,13 @@ against the [`js/`](../js) parity suite.
 ```sh
 ./build.sh          # builds build/IPAbet.app
 ./build.sh install  # builds + installs to ~/Library/Input Methods/
+./build.sh reload   # install, then pkill so macOS respawns the new binary
 ```
 
-First install needs a logout (TIS registration). After that: `build.sh install`
-kills nothing by itself — follow with `pkill IPAbet`, then **quit and relaunch
-the app you're testing in** (or toggle the input source), since apps hold a
-session to the old process.
+First install needs a logout (TIS registration). After that, `build.sh reload`
+is the dev loop: it reinstalls and kills the running server so macOS respawns it
+with the new code. Host apps hold a session to the old process, so **quit and
+relaunch the app you're testing in** (or toggle the input source) to reconnect.
 
 **The dev loop and the pkg install to different prefixes.** `build.sh install`
 writes `~/Library/Input Methods/`; `package.sh` writes `/Library/Input Methods/`.

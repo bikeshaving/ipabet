@@ -42,10 +42,22 @@ codesign --force --entitlements IPAbet.entitlements --sign - "$APP"
 
 echo "built $APP"
 
-if [[ "${1:-}" == "install" ]]; then
+if [[ "${1:-}" == "install" || "${1:-}" == "reload" ]]; then
   rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
     && echo "installed; registration attempted — if IPA is not in the input menu, log out/in." \
     || echo "installed; registration failed — log out/in and add it in System Settings."
+fi
+
+if [[ "${1:-}" == "reload" ]]; then
+  # Kill the running server so macOS respawns it with the new binary. Host apps
+  # keep a session to the old process, so switch the input source away and back
+  # (or relaunch the app) to reconnect. No effect if the .pkg copy in
+  # /Library/Input Methods/ is the live one — check `pgrep -lf IPAbet`.
+  if pkill IPAbet; then
+    echo "killed IPAbet — toggle the input source to reconnect."
+  else
+    echo "IPAbet was not running; it starts on the next input-source switch."
+  fi
 fi
