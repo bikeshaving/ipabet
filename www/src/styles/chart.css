@@ -43,9 +43,17 @@ table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(-
 .cols2 { columns: 2; column-gap: 0.2in; }
 table.dia { border-collapse: collapse; width: 100%; table-layout: fixed; }
 table.dia td { border: 0.75pt solid var(--line); padding: 0 3pt; vertical-align: middle; }
-table.dia .li { padding: 0; }
-/* keep the diacritics' natural height just under the right column so flex: 1
-   stretches its rows to land exactly on the tones' bottom line */
+/* in the diacritics grid the keystroke stacks BELOW the glyph (not inline), so a
+   long name like "Pharyngealized" plus a three-key combo never overruns its
+   fixed column; the name sits beside, spanning both rows. (The tones table keeps
+   inline keys — its cells are already two stacked rows and would run too tall.) */
+table.dia:not(.tone) .li {
+	display: grid; grid-template-columns: auto 1fr; column-gap: 5pt;
+	align-items: center; padding: 0;
+}
+table.dia:not(.tone) .li .ipa { grid-column: 1; grid-row: 1; }
+table.dia:not(.tone) .li i { grid-column: 1; grid-row: 2; justify-self: center; }
+table.dia:not(.tone) .li .nm { grid-column: 2; grid-row: 1 / 3; }
 table.dia .li .ipa { font-size: 10pt; }
 table.dia th { border: 0.75pt solid var(--line); padding: 1pt 3pt; font-size: 7pt; font-weight: 400; }
 table.tone td .li + .li { margin-top: 1pt; }
