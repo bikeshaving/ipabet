@@ -51,7 +51,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̃", keys: "~n", name: "Nasalized", on: "e"},
 	{glyph: "ⁿ", keys: "~z n", name: "Nasal release", on: "d"},
 	{glyph: "ˡ", keys: "~z l", name: "Lateral release", on: "d"},
-	{glyph: "◌̚", keys: "~p", name: "No audible release", on: "d"},
+	{glyph: "◌̚", keys: "~0", name: "No audible release", on: "d"},
 ];
 
 export const SUPRASEGMENTALS: ChartEntry[] = [

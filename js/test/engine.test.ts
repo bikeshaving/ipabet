@@ -550,12 +550,12 @@ describe("East Asian coverage", () => {
 	test("Vietnamese implosive: b ⇧P → ɓ", () => expect(typed("b", "+p")).toBe("ɓ"));
 
 	// Korean/Cantonese/Thai coda stops are unreleased; Korean has a fortis series.
-	test("unreleased coda stops on ⌥f", () => {
-		expect(typed("~p", "p")).toBe(nfc("p\u{031A}"));
-		expect(typed("~p", "k")).toBe(nfc("k\u{031A}"));
+	test("unreleased coda stops on ⌥0", () => {
+		expect(typed("~0", "p")).toBe(nfc("p\u{031A}"));
+		expect(typed("~0", "k")).toBe(nfc("k\u{031A}"));
 	});
-	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~p", "p")).toBe(nfc("sɐp\u{031A}")));
-	// The strength dimension lives on F (⌥f weak, ⌥⇧f fortis); ⌥0 carries
+	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~0", "p")).toBe(nfc("sɐp\u{031A}")));
+	// The strength dimension lives on F (⌥f weak, ⌥⇧f fortis); ⌥p carries
 	// the Cyrillic primes.
 	test("fortis is ⌥⇧f: ⌥⇧f k → k͈", () =>
 		expect(typed("~+f", "k")).toBe(nfc("k\u{0348}")));
@@ -799,8 +799,8 @@ describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 		expect(typed("~+z", "g")).toBe("g"));
 	test("a raised glyph still transforms: ⌥z s ⇧H → ᶴ", () =>
 		expect(typed("~z", "s", "+h")).toBe("ᶴ"));
-	test("⌥p is the no-release dead key", () =>
-		expect(typed("~p", "b")).toBe(nfc("b\u{031A}")));
+	test("⌥0 is the no-release dead key", () =>
+		expect(typed("~0", "b")).toBe(nfc("b\u{031A}")));
 });
 
 describe("rhoticity ⌥r — postfix like length", () => {
@@ -847,9 +847,9 @@ describe("the tone row: levels ⌥1–⌥5, step ⌥6, contour ⌥7", () => {
 		expect(typed("~7")).toBe("↘");
 		expect(typed("~+7")).toBe("↗");
 	});
-	test("the Cyrillic primes take the last pair: ⌥0 → ʹ, ⌥⇧0 → ʺ (Gorʹkij, obʺekt)", () => {
-		expect(typed("s", "~0")).toBe("s\u{02B9}");
-		expect(typed("~+0")).toBe("\u{02BA}");
+	test("the Cyrillic primes: ⌥p → ʹ, ⌥⇧p → ʺ (Gorʹkij, obʺekt)", () => {
+		expect(typed("s", "~p")).toBe("s\u{02B9}");
+		expect(typed("~+p")).toBe("\u{02BA}");
 	});
 	test("comma above completes the comma key: ⌥⇧, k → k̓ (PNW glottalization)", () =>
 		expect(typed("~+,", "k")).toBe(nfc("k\u{0313}")));
@@ -1015,9 +1015,9 @@ describe("extIPA marks land on the keys their SHAPE claims", () => {
 		expect(typed("~9", "z")).toBe("₍z");   // spacing: it just lands
 	});
 
-	test("the p key: no-release on ⌥p; the sliding tie ͢ on ⌥⇧p", () => {
-		expect(typed("~p", "k")).toBe(nfc("k̚"));
-		expect(typed("t", "~+p", "s")).toBe(nfc("t\u{0362}s"));  // sliding, postfix
+	test("the 0 key: no-release on ⌥0; the sliding tie ͢ on ⌥⇧0", () => {
+		expect(typed("~0", "k")).toBe(nfc("k̚"));
+		expect(typed("t", "~+0", "s")).toBe(nfc("t\u{0362}s"));  // sliding, postfix
 	});
 
 	test("the force pair on F: ⌥f weak, ⌥⇧f strong (fortis), shift the greater pole", () => {

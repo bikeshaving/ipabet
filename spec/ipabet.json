@@ -1162,7 +1162,7 @@
    "name": "MODIFIER LETTER EXTRA-HIGH TONE BAR"
   },
   {
-   "opt": "p",
+   "opt": "0",
    "mark": "̚",
    "clone": "˺",
    "type": "combining",
@@ -1227,7 +1227,7 @@
    "shiftSense": "twin"
   },
   {
-   "opt": "0",
+   "opt": "p",
    "mark": "ʹ",
    "type": "spacing",
    "double": "ʺ",
