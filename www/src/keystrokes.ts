@@ -35,17 +35,10 @@ export function keystrokeFromLabel(lab: string): Keystroke {
 	return {key, shift, option};
 }
 
-// Rendering the SPEC's key strings ("sH", "5") — a different notation from the
-// compact one above, deliberately, for two surfaces.
+// Rendering the SPEC's key strings ("sH", "5") — a space-separated form with
+// every modifier spelled out, used by both the /keys reference and the chart.
 
-/** The chart's compact form: "sH" → "sH". A digit is a bare base; a trailing
- *  capital is the shift-modifier. */
-export function keyText(key: string): string {
-	const digitBare = key.length > 1;
-	return [...key].map((c) => (/[0-9]/.test(c) && !digitBare ? "⇧" + c : c)).join("");
-}
-
-/** The /keys reference form: "sH" → "s ⇧H". Every shift spelled out. */
+/** "sH" → "s ⇧H". Every shift spelled out; a bare digit is a base. */
 export function keySpelled(key: string): string {
 	const digitBare = key.length > 1;
 	return [...key]

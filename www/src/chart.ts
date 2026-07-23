@@ -1,7 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../spec/ipabet.json";
 import {Layout} from "./layout.ts";
-import {keyText, formatCompact as display} from "./keystrokes.ts";
+import {keySpelled, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.
 import chartPdf from "./chart.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -24,7 +24,7 @@ for (const e of spec.letters as {key: string; glyph: string}[]) {
  * outside the letters table (native keys, mark sequences). */
 function G(glyph: string, fallback?: string) {
 	const key = reverse.get(glyph);
-	const label = key !== undefined ? keyText(key) : fallback;
+	const label = key !== undefined ? keySpelled(key) : fallback;
 	return jsx`<b class="ipa">${glyph}</b>${label === undefined ? null : jsx`<i>${label}</i>`}`;
 }
 
@@ -191,7 +191,7 @@ function VowelChart() {
 				const [x, y] = vowelXY(v.row, v.col);
 				const gx = v.dot ? (v.round ? x + 13 : x - 13) : x;
 				const key = reverse.get(v.g);
-				const kt = key === undefined ? undefined : keyText(key);
+				const kt = key === undefined ? undefined : keySpelled(key);
 				const kw = kt === undefined ? 0 : kt.length * 4.6 + 5;
 				const url = AUDIO[v.g];
 				return jsx`
@@ -347,7 +347,7 @@ interface JsonSymbol {
 
 function sym(glyph: string, name?: string, fallback?: string): JsonSymbol {
 	const key = reverse.get(glyph);
-	const keys = key !== undefined ? keyText(key) : (fallback ?? null);
+	const keys = key !== undefined ? keySpelled(key) : (fallback ?? null);
 	return name === undefined ? {glyph, cp: cp(glyph), keys} : {glyph, cp: cp(glyph), keys, name};
 }
 
