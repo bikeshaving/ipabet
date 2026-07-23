@@ -35,18 +35,24 @@ export function keystrokeFromLabel(lab: string): Keystroke {
 	return {key, shift, option};
 }
 
-// Rendering the SPEC's key strings ("sH", "5") — a space-separated form with
-// every modifier spelled out, used by both the /keys reference and the chart.
+// Rendering key strings with every modifier spelled out, used by the chart and
+// the /keys reference.
 
-/** "sH" → "s ⇧H". Every shift spelled out; a bare digit is a base. */
-export function keySpelled(key: string): string {
-	const digitBare = key.length > 1;
-	return [...key]
-		.map((c) => (/[0-9]/.test(c) ? (digitBare ? c : "⇧" + c) : /[A-Z]/.test(c) ? "⇧" + c : c))
-		.join(" ");
+/** Join formatted keystroke tokens. A shift-capital binds to the base it
+ *  transforms (s⇧H — the digraph unit); every other keystroke keeps its space,
+ *  so a bare key or a repeated ⌥ press stays legible (⌥⇧j ⌥⇧j). */
+function joinKeys(tokens: string[]): string {
+	return tokens.reduce((out, t, i) => (i === 0 ? t : out + (/^⇧[A-Za-z0-9]$/.test(t) ? "" : " ") + t), "");
 }
 
-/** chart-data's compact marks → display: "~+w" → "⌥⇧w", "g +H ~q" → "g ⇧H ⌥q". */
+/** The SPEC's key strings: "sH" → "s⇧H", "5Y" → "5⇧Y". A bare digit is a base. */
+export function keySpelled(key: string): string {
+	const digitBare = key.length > 1;
+	const tokens = [...key].map((c) => (/[0-9]/.test(c) ? (digitBare ? c : "⇧" + c) : /[A-Z]/.test(c) ? "⇧" + c : c));
+	return joinKeys(tokens);
+}
+
+/** chart-data's compact marks → display: "~+w" → "⌥⇧w", "g +H ~q" → "g⇧H ⌥q". */
 export function formatCompact(keys: string): string {
-	return keys.split(" ").map((k) => k.replace(/~/g, "⌥").replace(/\+/g, "⇧")).join(" ");
+	return joinKeys(keys.split(" ").map((k) => k.replace(/~/g, "⌥").replace(/\+/g, "⇧")));
 }

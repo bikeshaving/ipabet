@@ -366,11 +366,12 @@ export const CHART_JSON = JSON.stringify(
 	{
 		about:
 			"The IPA chart (2015, CC BY-SA) with IPAbet keystrokes. " +
-			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes typed in " +
-			"sequence. Combining diacritics are typed before their base (dead-key " +
-			"style); spacing marks after. The voiced velar plosive shows as plain " +
-			"g (U+0067), the bare key; the single-story script ɡ (U+0261) is typed " +
-			"as gG (the doubled-letter law), and both stand for that plosive. " +
+			"Notation: ⇧ Shift, ⌥ Option; a space separates keystrokes, but a " +
+			"shift-modifier binds to the base it transforms (s⇧H). Combining " +
+			"diacritics are typed before their base (dead-key style); spacing marks " +
+			"after. The voiced velar plosive shows as plain g (U+0067), the bare " +
+			"key; the single-story script ɡ (U+0261) is typed as g⇧G (the " +
+			"doubled-letter law), and both stand for that plosive. " +
 			"Canonical spec: /ipabet.json.",
 		pulmonic: {
 			places: PLACES,
