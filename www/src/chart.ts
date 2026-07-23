@@ -215,7 +215,7 @@ function DiaCell(e: ChartEntry) {
 	// schwa, ɫ for the tilde overlay on l — not base + mark.
 	const shown = e.fuses ?? (e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph);
 	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
-	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><b class="ipa">${shown}</b><i>${display(e.keys)}</i><span class="nm">${e.name}</span></div>`;
+	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><span class="ruby"><b class="ipa">${shown}</b><i>${display(e.keys)}</i></span><span class="nm">${e.name}</span></div>`;
 }
 
 function list(entries: ChartEntry[]) {
