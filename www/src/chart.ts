@@ -84,7 +84,8 @@ function PulmonicTable() {
 
 const CLICKS: [string, string][] = [["ʘ", "Bilabial"], ["ǀ", "Dental"], ["ǃ", "(Post)alveolar"], ["ǂ", "Palatoalveolar"], ["ǁ", "Alveolar lateral"]];
 const IMPLOSIVES: [string, string][] = [["ɓ", "Bilabial"], ["ɗ", "Dental/alveolar"], ["ʄ", "Palatal"], ["ɠ", "Velar"], ["ʛ", "Uvular"]];
-const EJECTIVES: [string, string, string][] = [["pʼ", "Bilabial", "p ⌥⇧q"], ["tʼ", "Dental/alveolar", "t ⌥⇧q"], ["kʼ", "Velar", "k ⌥⇧q"], ["sʼ", "Alveolar fricative", "s ⌥⇧q"]];
+// The bare ejective mark heads the column ("ʼ Examples:") as on the official sheet.
+const EJECTIVES: [string, string, string][] = [["ʼ", "Examples:", "⌥⇧q"], ["pʼ", "Bilabial", "p ⌥⇧q"], ["tʼ", "Dental/alveolar", "t ⌥⇧q"], ["kʼ", "Velar", "k ⌥⇧q"], ["sʼ", "Alveolar fricative", "s ⌥⇧q"]];
 
 const OTHER: [string, string, string?][] = [
 	["ʍ", "Voiceless labial-velar fricative"],
@@ -96,8 +97,8 @@ const OTHER: [string, string, string?][] = [
 	["ɕ", "Voiceless alveolo-palatal fricative"],
 	["ʑ", "Voiced alveolo-palatal fricative"],
 	["ɺ", "Voiced alveolar lateral flap"],
-	["t͡s", "Affricate (tie bar)", "t ⌥j s"],
 	["ɧ", "Simultaneous ʃ and x"],
+	["t͡s", "Affricate (tie bar)", "t ⌥j s"],
 ];
 
 /** A labelled glyph row (.li): glyph + keystrokes + name. */
