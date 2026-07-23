@@ -28,6 +28,11 @@ table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(-
 
 .row { display: flex; gap: 0.3in; align-items: flex-start; }
 .row > div { flex: 1; }
+/* the lower half mirrors the official sheet: non-pulmonic + other symbols +
+   the wide diacritics table on the left, vowels + suprasegmentals + tones on
+   the right, the left column wider to hold the diacritics grid. */
+.row > .lower-left { flex: 1.32; }
+.row > .lower-right { flex: 1; }
 .cols3 { display: flex; gap: 0.18in; }
 .cols3 > div { flex: 1; }
 .cols2 { columns: 2; column-gap: 0.2in; }

@@ -297,24 +297,23 @@ export function Chart() {
 				<${PulmonicTable} />
 
 				<div class="row">
-					<div>
+					<div class="lower-left">
 						<h3>CONSONANTS (NON-PULMONIC)</h3>
 						<${NonPulmonic} />
 						<h3>OTHER SYMBOLS</h3>
 						<div class="cols2">${otherSymbols()}</div>
-						<h3>SUPRASEGMENTALS</h3>
-						<div>${list(SUPRASEGMENTALS)}</div>
+						<h3>DIACRITICS</h3>
+						<${Diacritics} />
 					</div>
-					<div>
+					<div class="lower-right">
 						<h3>VOWELS</h3>
 						<${VowelChart} />
+						<h3>SUPRASEGMENTALS</h3>
+						<div>${list(SUPRASEGMENTALS)}</div>
 						<h3>TONES AND WORD ACCENTS</h3>
 						<${ToneTable} />
 					</div>
 				</div>
-
-				<h3>DIACRITICS</h3>
-				<${Diacritics} />
 
 				<p class="attrib"><span class="screen-only">Click any symbol to hear it. </span>Keystrokes: blue monospace beside each symbol; ⇧-digits and trailing capitals are shifted; combining ⌥ marks are typed before their base (dead-key style), spacing marks after.${" "}
 				This chart as data: <a href="/chart.json">chart.json</a> · every keystroke: <a href="/keys">keys</a>.${" "}
