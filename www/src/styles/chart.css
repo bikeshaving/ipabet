@@ -12,10 +12,10 @@ h1 i { font-style: normal; color: var(--key); }
 h3 { font-size: 9.5pt; font-weight: 700; letter-spacing: 0.04em; margin: 0.16in 0 0.06in; }
 h4 { font-size: 8.5pt; font-weight: 700; margin-bottom: 0.04in; }
 .ipa { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-weight: 400; }
-i { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; font-size: 6.4pt; color: var(--key); }
-/* keycap tint: a hairline pill behind each keystroke so it reads as keys, sized
-   to add almost no width (keeps the diacritics names on one line). */
-.li i { background: #eef0f8; border: 0.3pt solid #c4c9e0; border-radius: 2pt; padding: 0.2pt 1.6pt; white-space: nowrap; }
+/* every keystroke — under a consonant, a vowel, a diacritic, or in a list — sits
+   in the same hairline keycap pill so the notation reads consistently as keys. */
+i { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; font-size: 6.4pt; color: var(--key);
+	background: #eef0f8; border: 0.3pt solid #c4c9e0; border-radius: 2pt; padding: 0.2pt 1.6pt; white-space: nowrap; }
 
 table.grid { border-collapse: collapse; width: 100%; table-layout: fixed; }
 table.grid th, table.grid td { border: 0.75pt solid var(--line); padding: 1.5pt 2pt; text-align: center; }
@@ -23,8 +23,12 @@ table.grid tr:first-child th { font-size: 7pt; font-weight: 400; }
 table.grid tr th:first-child { text-align: left; font-size: 7pt; font-weight: 400; width: 0.72in; border: none; padding-right: 3pt; }
 table.grid tr:first-child th:first-child { border: none; }
 table.grid td { height: 0.34in; }
-table.grid td .u { display: inline-flex; flex-direction: column; align-items: center; padding: 0 2.5pt; }
-table.grid td .u:empty { padding: 0; }
+/* Each half-cell takes half the width; the voiceless (first) hugs the centre
+   line from the left, the voiced (second) from the right, so a pair sits close
+   together and a lone symbol lands on its voicing's side (ʔ left, m right). */
+table.grid td .u { display: inline-flex; flex-direction: column; width: 50%; padding: 0 3pt; vertical-align: middle; }
+table.grid td .u:first-child { align-items: flex-end; }
+table.grid td .u:last-child { align-items: flex-start; }
 table.grid td .u .ipa { font-size: 12pt; }
 table.grid td.sh { background: var(--shade); }
 table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(--shade) 50%); }
@@ -47,19 +51,23 @@ table.dia td { border: 0.75pt solid var(--line); padding: 0 3pt; vertical-align:
    with the name above its keystroke beside it, so a long name plus a three-key
    combo never overruns the fixed column. (The tones table keeps inline keys —
    its cells are already two stacked rows and would run too tall.) */
-table.dia:not(.tone) .li {
+/* every labelled glyph (.li) — non-pulmonic, other symbols, diacritics,
+   suprasegmentals — lays out as a grid: the glyph in its own column spanning
+   both rows, the name above its keystroke beside it. */
+.li {
 	display: grid; grid-template-columns: auto 1fr; column-gap: 5pt;
-	align-items: center; padding: 0;
+	align-items: center; break-inside: avoid; padding: 1pt 0;
 }
-table.dia:not(.tone) .li .ipa { grid-column: 1; grid-row: 1 / 3; }
-table.dia:not(.tone) .li .nm { grid-column: 2; grid-row: 1; }
-table.dia:not(.tone) .li i { grid-column: 2; grid-row: 2; justify-self: start; }
+.li .ipa { grid-column: 1; grid-row: 1 / 3; font-size: 11pt; min-width: 14pt; text-align: center; }
+.li .nm { grid-column: 2; grid-row: 1; font-size: 7.5pt; }
+.li i { grid-column: 2; grid-row: 2; justify-self: start; }
+table.dia td .li { padding: 0; }
 table.dia .li .ipa { font-size: 10pt; }
 table.dia th { border: 0.75pt solid var(--line); padding: 1pt 3pt; font-size: 7pt; font-weight: 400; }
-table.tone td .li + .li { margin-top: 1pt; }
-.li { display: flex; align-items: baseline; gap: 4pt; break-inside: avoid; padding: 1pt 0; }
-.li .ipa { font-size: 11pt; min-width: 14pt; text-align: center; }
-.li .nm { font-size: 7.5pt; }
+/* the tones table keeps inline keys — its cells already stack a mark over a tone
+   letter, and a second stacked row would run the sheet onto a second page. */
+table.dia.tone .li { display: flex; align-items: baseline; gap: 4pt; }
+table.dia.tone td .li + .li { margin-top: 1pt; }
 .fine { font-size: 7pt; color: var(--dim); margin-top: 3pt; }
 
 svg { width: 100%; height: auto; }
@@ -68,7 +76,8 @@ svg circle { fill: var(--fg); }
 /* White halo lifts the glyph/keystroke off the trapezoid lines so the rules
    don't read as strike-throughs. paint-order draws the stroke behind the fill. */
 svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
-svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); paint-order: stroke; stroke: #fff; stroke-width: 2.5px; stroke-linejoin: round; }
+svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); }
+svg .kk rect { fill: #eef0f8; stroke: #c4c9e0; stroke-width: 0.4; }
 svg text.axis { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
 svg text.axis { font-size: 9px; fill: var(--dim); }
 

@@ -192,11 +192,13 @@ function VowelChart() {
 				const [x, y] = vowelXY(v.row, v.col);
 				const gx = v.dot ? (v.round ? x + 13 : x - 13) : x;
 				const key = reverse.get(v.g);
+				const kt = key === undefined ? undefined : keyText(key);
+				const kw = kt === undefined ? 0 : kt.length * 4.6 + 5;
 				const url = AUDIO[v.g];
 				return jsx`
 					${v.dot ? jsx`<circle cx=${x} cy=${y} r="2.2" />` : null}
 					<text class="v" data-audio=${url} role=${url === undefined ? undefined : "button"} tabindex=${url === undefined ? undefined : "0"} x=${gx} y=${y + 5} text-anchor="middle">${v.g}</text>
-					${key === undefined ? null : jsx`<text class="k" x=${gx} y=${y + 18} text-anchor="middle">${keyText(key)}</text>`}`;
+					${kt === undefined ? null : jsx`<g class="kk"><rect x=${gx - kw / 2} y=${y + 11.5} width=${kw} height="10" rx="2" /><text class="k" x=${gx} y=${y + 19} text-anchor="middle">${kt}</text></g>`}`;
 			})}
 		</svg>
 		<p class="fine">Where symbols appear in pairs, the one to the right represents a rounded vowel.</p>`;
@@ -210,11 +212,14 @@ function cp(glyph: string): string {
 }
 
 /** One diacritic entry, carrying its own data on the element for scrapers. */
-function DiaCell(e: ChartEntry) {
-	// Every diacritic reads against a dotted-circle placeholder (U+25CC): combining
-	// marks sit on it (◌̥, ◌̬), spacing modifiers trail it (◌ʰ, ◌ʷ, ◌˞) to show they
-	// attach after a base.
-	const shown = e.glyph.startsWith("◌") ? e.glyph : "◌" + e.glyph;
+function DiaCell(e: ChartEntry, placeholder = false) {
+	// Diacritics read against a dotted-circle placeholder (U+25CC): combining marks
+	// sit on it (◌̥), spacing modifiers trail it (◌ʰ). Suprasegmentals and tone marks
+	// instead show on a sample letter where the data carries one (e̋, ĕ) or bare
+	// (ˈ, ˥) — the standalone marks the official sheet prints as-is.
+	const shown = placeholder
+		? (e.glyph.startsWith("◌") ? e.glyph : "◌" + e.glyph)
+		: e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph;
 	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
 	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><b class="ipa">${shown}</b><i>${display(e.keys)}</i><span class="nm">${e.name}</span></div>`;
 }
@@ -276,9 +281,9 @@ function DiaTable(entries: ChartEntry[]) {
 	const rows = Array.from({length: 12}, (_, r) => {
 		const c3 = cols[2][r];
 		return jsx`<tr>
-			<td>${cols[0][r] === undefined ? null : DiaCell(cols[0][r])}</td>
-			<td colspan=${c3 === undefined ? 2 : 1}>${cols[1][r] === undefined ? null : DiaCell(cols[1][r])}</td>
-			${c3 === undefined ? null : jsx`<td>${DiaCell(c3)}</td>`}
+			<td>${cols[0][r] === undefined ? null : DiaCell(cols[0][r], true)}</td>
+			<td colspan=${c3 === undefined ? 2 : 1}>${cols[1][r] === undefined ? null : DiaCell(cols[1][r], true)}</td>
+			${c3 === undefined ? null : jsx`<td>${DiaCell(c3, true)}</td>`}
 		</tr>`;
 	});
 	return jsx`<table class="dia">${rows}</table>`;
