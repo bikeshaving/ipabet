@@ -8,6 +8,18 @@
 	<string>IPAbet</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.bikeshaving.inputmethod.IPAbet</string>
+	<!-- Registers the bundled cosmetic layout (Resources/IPAbet.keylayout, whose
+	     <keyboard name="…"> matches this key's suffix) so Keyboard Viewer can draw
+	     it: activateServer calls overrideKeyboardWithKeyboardNamed("IPAbet"), and
+	     the name only resolves once declared here. The Option planes are the real
+	     marks; bare/Shift stay plain US since ⇧H's output is contextual. -->
+	<key>KLInfo_IPAbet</key>
+	<dict>
+		<key>TISInputSourceID</key>
+		<string>org.bikeshaving.inputmethod.IPAbet.keylayout.IPAbet</string>
+		<key>TISIntendedLanguage</key>
+		<string>en</string>
+	</dict>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

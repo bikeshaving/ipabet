@@ -24,6 +24,12 @@ cp Info.plist "$APP/Contents/"
 cp ../spec/ipabet.json "$APP/Contents/Resources/ipabet.json"
 cp ipabet.pdf "$APP/Contents/Resources/"
 cp ../www/src/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
+# Regenerate the cosmetic layout from the live US layout + the spec, then bundle
+# it. Complete US so passed keys (Return, Tab, …) keep their output; ⌥/⌥⇧ show
+# the marks. See tools/genkeylayout.swift.
+swiftc tools/genkeylayout.swift -o /tmp/ipabet-genkl -framework Carbon -framework Cocoa
+( cd "$(dirname "$0")" && /tmp/ipabet-genkl )
+cp IPAbet.keylayout "$APP/Contents/Resources/IPAbet.keylayout"  # what Keyboard Viewer draws
 mkdir -p "$APP/Contents/Resources/en.lproj"
 cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 

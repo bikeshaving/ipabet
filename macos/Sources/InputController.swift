@@ -281,11 +281,26 @@ class InputController: IMKInputController {
 
     override func activateServer(_ sender: Any!) {
         pending = []
-        // overrideKeyboard (Keyboard Viewer preview) intentionally not called:
-        // reference IMEs only pass full system TIS layout IDs here, and the
-        // bare in-bundle name was a misrouting suspect on macOS 15.
-        Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall
+        Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall — FIRST, so the lines below log
         Dbg.log("── activate app=\(clientBundleID()) ──")
+        overrideViewerKeyboard(sender)
+    }
+
+    /// Keyboard Viewer draws whatever layout override points it at. We point it
+    /// at the bundled cosmetic IPAbet.keylayout so the ⌥ and ⌥⇧ planes show the
+    /// real marks; bare/Shift stay plain US, since ⇧H's output is contextual and
+    /// no static layout can express it.
+    ///
+    /// The message goes to the CLIENT, not to self: overrideKeyboardWithKeyboardNamed:
+    /// is a method on the IMKTextInput client (activateServer's `sender`), which
+    /// asks TSM to draw the named layout — self does not respond to it. The
+    /// selector is ObjC-only, so it is invoked dynamically. Per Apple's contract
+    /// the name is resolved against THIS bundle, and it resolves only because
+    /// Info.plist declares KLInfo_IPAbet.
+    private func overrideViewerKeyboard(_ sender: Any!) {
+        let sel = NSSelectorFromString("overrideKeyboardWithKeyboardNamed:")
+        guard let client = sender as? NSObject, client.responds(to: sel) else { return }
+        client.perform(sel, with: "IPAbet")
     }
 
     /// The host is taking the composition away (click, focus loss, source switch).
