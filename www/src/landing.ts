@@ -41,9 +41,16 @@ function demo(word: string, ...keys: string[]) {
 
 const DEMO = [
 	demo("ship", "s", "+h", "i", "+h", "p"),
+	demo("vision", "v", "i", "+h", "z", "+h", "5", "+y", "n"),
 	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
+	demo("bird", "b", "5", "+h", "~r", "d"),
 	demo("about", "5", "+y", "b", "a", "u", "+h", "t"),
+	demo("über", "y", "~;", "b", "5", "+a"),
+	demo("loch", "l", "o", "+a", "x"),
 	demo("señor", "s", "e", "~n", "n", "o", "r"),
+	demo("Français", "f", "r", "+q", "~n", "a", "+h", "s", "e", "+h"),
+	demo("Muḥammad", "m", "u", "7", "+h", "a", "m", "m", "a", "d"),
+	demo("Zhōu", "t", "+r", "~j", "s", "+r", "o", "u", "+h"),
 	demo("Hawaiʻi", "+h", "a", "w", "a", "i", "~q", "i"),
 	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
 ];

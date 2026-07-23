@@ -20,7 +20,8 @@ table.grid tr:first-child th { font-size: 7pt; font-weight: 400; }
 table.grid tr th:first-child { text-align: left; font-size: 7pt; font-weight: 400; width: 0.72in; border: none; padding-right: 3pt; }
 table.grid tr:first-child th:first-child { border: none; }
 table.grid td { height: 0.34in; }
-table.grid td .u { display: inline-flex; flex-direction: column; align-items: center; width: 50%; }
+table.grid td .u { display: inline-flex; flex-direction: column; align-items: center; padding: 0 2.5pt; }
+table.grid td .u:empty { padding: 0; }
 table.grid td .u .ipa { font-size: 12pt; }
 table.grid td.sh { background: var(--shade); }
 table.grid td.shr { background: linear-gradient(to right, transparent 50%, var(--shade) 50%); }
