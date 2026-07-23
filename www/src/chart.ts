@@ -211,9 +211,10 @@ function cp(glyph: string): string {
 
 /** One diacritic entry, carrying its own data on the element for scrapers. */
 function DiaCell(e: ChartEntry) {
-	// The sheet prints the fused atom where one exists — ɚ for the rhotic hook on
-	// schwa, ɫ for the tilde overlay on l — not base + mark.
-	const shown = e.fuses ?? (e.glyph.startsWith("◌") && e.on ? e.on + e.glyph.slice(1) : e.glyph);
+	// The sheet shows each diacritic on a dotted-circle placeholder (◌̥, ◌̬), the
+	// standard way to display a combining mark alone; spacing modifiers (ʰ, ʷ, ˞)
+	// show bare.
+	const shown = e.glyph;
 	const bare = e.glyph.startsWith("◌") ? e.glyph.slice(1) : e.glyph;
 	return jsx`<div class="li" data-glyph=${bare} data-cp=${cp(bare)} data-keys=${display(e.keys)} data-name=${e.name}><b class="ipa">${shown}</b><i>${display(e.keys)}</i><span class="nm">${e.name}</span></div>`;
 }
