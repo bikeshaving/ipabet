@@ -122,10 +122,16 @@ productbuild --distribution "$DIST" --resources "$RES" --package-path build \
 	--sign "$DEVID_INST" "$PKG"
 
 # --- 5. notarize (waits for Apple) and staple the ticket ---
-echo "submitting to Apple notary — this usually takes a minute or two…"
-xcrun notarytool submit "$PKG" --keychain-profile "$NOTARY_PROFILE" --wait
-xcrun stapler staple "$PKG"
-xcrun stapler validate "$PKG"
+# SKIP_NOTARIZE=1 produces a signed-but-unstapled pkg for the E2E gate (the
+# gate installs via ssh, no quarantine, so Gatekeeper never assesses).
+if [ "${SKIP_NOTARIZE:-0}" = "1" ]; then
+  echo "⚠ SKIP_NOTARIZE=1 — signed, NOT notarized. Gate use only; do not ship."
+else
+  echo "submitting to Apple notary — this usually takes a minute or two…"
+  xcrun notarytool submit "$PKG" --keychain-profile "$NOTARY_PROFILE" --wait
+  xcrun stapler staple "$PKG"
+  xcrun stapler validate "$PKG"
+fi
 
 echo
 echo "✓ notarized + stapled:  $(pwd)/$PKG"
