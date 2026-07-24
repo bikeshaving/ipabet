@@ -250,6 +250,11 @@ class InputController: IMKInputController {
                                action: #selector(openCheatSheet(_:)), keyEquivalent: "")
         chart.target = self
         menu.addItem(chart)
+        menu.addItem(.separator())
+        let about = NSMenuItem(title: "About IPAbet",
+                               action: #selector(openAbout(_:)), keyEquivalent: "")
+        about.target = self
+        menu.addItem(about)
         return menu
     }
 
@@ -268,6 +273,15 @@ class InputController: IMKInputController {
         if let url = Bundle.main.url(forResource: "chart", withExtension: "pdf") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    /// The standard About panel — name, icon, version, and copyright, filled by
+    /// AppKit from Info.plist (CFBundleShortVersionString, NSHumanReadableCopyright).
+    /// We activate first: as an LSUIElement agent the panel would otherwise open
+    /// behind the frontmost app.
+    @objc func openAbout(_ sender: Any?) {
+        NSApplication.shared.activate(ignoringOtherApps: true)
+        NSApplication.shared.orderFrontStandardAboutPanel(nil)
     }
 
 
