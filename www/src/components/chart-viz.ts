@@ -6,6 +6,8 @@
 // pass supplies them.
 
 import {jsx} from "@b9g/crank/standalone";
+import spec from "../../../spec/ipabet.json";
+import {keySpelled} from "../keystrokes.ts";
 
 /* --------------------------------------------------------------- audio --- */
 let AUDIO: Record<string, string> = {};
@@ -51,10 +53,11 @@ const VOWELS = [
 	{sym:"ɑ", key:"aH",  x:1,   yo:1,    r:0, f1:750, f2:940,  name:"Open back unrounded"},
 	{sym:"ɒ", key:"oA",  x:1,   yo:1,    r:1, f1:700, f2:760,  name:"Open back rounded"},
 ];
-// Keystrokes are spec-derived (the `keys` prop, from chart-keys.ts) so a layout
-// change can never strand a stale label here; keySpelled normalizes them.
-function applyProps({keys, audio}) {
-	if (keys) for (const v of VOWELS) v.key = keys[v.sym] ?? v.key;
+// Vowel keystrokes come straight from the spec (identical on server and client
+// by construction) so a layout change can never strand a stale label here.
+const KEYS = Object.fromEntries(spec.letters.map((l) => [l.glyph, keySpelled(l.key)]));
+for (const v of VOWELS) v.key = KEYS[v.sym] ?? v.key;
+function applyProps({audio}) {
 	if (audio) AUDIO = audio;
 }
 const VBY = Object.fromEntries(VOWELS.map((v) => [v.sym, v]));
@@ -149,8 +152,8 @@ function KeyChip({text}) {
 	return jsx`<span class="chip">${text}</span>`;
 }
 
-export function *VowelApp({keys, audio}) {
-	applyProps({keys, audio});
+export function *VowelApp({audio}) {
+	applyProps({audio});
 	let morph = 0, mod = null, selected = null, hovered = null, raf = null, sweeping = false;
 
 	const animateTo = (target) => {

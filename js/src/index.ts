@@ -139,13 +139,15 @@ for (const [key, glyph] of letters) {
 }
 
 // US shift plane; letters are just uppercased.
-const SHIFTED_DIGITS: Record<string, string> = {
+/** The US shift plane for digits — exported as the one copy (kbd viewer and
+ *  the web binding derive from it rather than re-declaring it). */
+export const SHIFTED_DIGITS: Record<string, string> = {
 	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%",
 	"6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
 };
 // Punctuation shift plane: the web binding re-inserts, so a pass edit must know
 // ⇧` is ~. The IME never needs it — a declined key is typed by the host.
-const SHIFTED_PUNCT: Record<string, string> = {
+export const SHIFTED_PUNCT: Record<string, string> = {
 	"`": "~", "-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
 	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
 };

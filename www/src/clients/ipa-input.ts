@@ -11,6 +11,7 @@ import {
 	type Pending,
 	type Keystroke,
 	type Edit,
+	SHIFTED_DIGITS,
 } from "../../../js/src/index.ts";
 
 // -------------------------------------------------------------- keystrokes
@@ -43,10 +44,10 @@ export function keyFromEvent(e: KeyboardEvent): Keystroke | null {
 	};
 }
 
-const SHIFTED_DIGIT: Record<string, string> = {
-	"!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
-	"^": "6", "&": "7", "*": "8", "(": "9", ")": "0",
-};
+// symbol → digit, derived from the engine's shift plane so it can't drift.
+const SHIFTED_DIGIT: Record<string, string> = Object.fromEntries(
+	Object.entries(SHIFTED_DIGITS).map(([d, sym]) => [sym, d]),
+);
 
 /** Soft keyboards report no usable e.code, so derive the keystroke from the
  *  character. ⌥ has no soft-keyboard equivalent. */

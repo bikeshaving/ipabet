@@ -1,5 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../../spec/ipabet.json";
+import {SHIFTED_DIGITS, SHIFTED_PUNCT} from "../../../js/src/index.ts";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.
 // Unit widths are the ANSI standard (quarter-key grid, 15u per row):
@@ -62,11 +63,7 @@ export const KB_ROWS: PhysKey[][] = [
 
 /** Render a mark: combining forms as two stacked layers — a faint carrier ring
  *  behind, the mark in full ink on an invisible base in front. */
-const SHIFT_PLANE: Record<string, string> = {
-	"1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&",
-	"8": "*", "9": "(", "0": ")", "`": "~", "-": "_", "=": "+",
-	"[": "{", "]": "}", "\\": "|", ";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
-};
+const SHIFT_PLANE: Record<string, string> = {...SHIFTED_DIGITS, ...SHIFTED_PUNCT};
 
 // A combining mark rides a faint dotted-circle carrier; a spacing mark or symbol
 // stands on its own. Judged from the glyph itself (Unicode Mark), so a mark's ⌥⇧
