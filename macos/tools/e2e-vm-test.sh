@@ -97,12 +97,12 @@ step "ASSERT: the IME deploys and connects on the clean machine (its own log)"
 vmssh() { local n; for n in 1 2 3 4; do ${SSH}${IP} "$@" && return 0; echo "   (ssh retry $n)"; sleep 8; done; return 1; }
 UID_A='$(id -u admin)'
 ASUSER="sudo launchctl asuser $UID_A sudo -u admin"
-CONTAINER='$HOME/Library/Containers/org.bikeshaving.inputmethod.IPAbet/Data'
+CONTAINER='/Users/admin/Library/Containers/org.bikeshaving.inputmethod.IPAbet/Data'
 LOG="$CONTAINER/Library/Logs/IPAbet.log"
 
 vmssh "$ASUSER mkdir -p $CONTAINER/Library/Logs && $ASUSER touch $CONTAINER/.ipabet-debug && $ASUSER rm -f $LOG"
 vmssh "$ASUSER killall IPAbet 2>/dev/null; true"          # force a fresh launch with debug on
-vmssh "$ASUSER sh -c 'printf \"\" > \$HOME/probe.txt && open -t \$HOME/probe.txt'"  # focus an editable field
+vmssh "$ASUSER sh -c 'printf \"\" > /Users/admin/probe.txt && open -t /Users/admin/probe.txt'"  # focus an editable field
 sleep 6
 
 echo "   --- IME log (verbatim) ---"
