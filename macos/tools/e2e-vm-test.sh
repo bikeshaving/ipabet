@@ -24,6 +24,24 @@ SCP="scp $OPTS -i $KEY"
 
 step() { echo; echo "━━ $1"; }
 
+# Guest-initiated reboot is flaky under Virtualization.framework (sometimes it
+# halts instead of restarting). Power-cycle deterministically: halt the guest,
+# wait out the VM process, relaunch, rediscover the IP.
+reboot_vm() {
+  ${SSH}${IP} "sudo shutdown -h now" 2>/dev/null || true
+  for i in $(seq 1 30); do kill -0 $TART_PID 2>/dev/null || break; sleep 4; done
+  kill $TART_PID 2>/dev/null; wait $TART_PID 2>/dev/null
+  tart run --no-graphics "$VM" >/dev/null 2>&1 &
+  TART_PID=$!
+  sleep 25
+  for i in $(seq 1 90); do
+    IP=$(tart ip "$VM" 2>/dev/null) && [ -n "$IP" ] && ${SSH}${IP} true 2>/dev/null && break
+    IP=""; sleep 6
+  done
+  [ -n "$IP" ] && ${SSH}${IP} true || { echo "✗ VM did not come back"; exit 1; }
+}
+
+
 step "fresh VM from $IMG"
 tart delete "$VM" 2>/dev/null || true
 tart clone "$IMG" "$VM"
@@ -52,13 +70,7 @@ ${SSH}${IP} "echo admin | sudo -S installer -pkg ~/IPAbet.pkg -target / && echo 
 ${SSH}${IP} "grep -i ipabet /var/log/install.log | tail -8" || true
 
 step "reboot (the logout/login a real user performs)"
-${SSH}${IP} "echo admin | sudo -S shutdown -r now" 2>/dev/null || true
-sleep 30
-for i in $(seq 1 90); do
-  ${SSH}${IP} true 2>/dev/null && break
-  sleep 6
-done
-${SSH}${IP} true || { echo "✗ VM did not come back"; exit 1; }
+reboot_vm
 echo "   rebooted"
 
 step "ASSERT: input method registered on the clean machine"
@@ -75,13 +87,7 @@ ${SSH}${IP} 'defaults write com.apple.HIToolbox AppleEnabledInputSources -array 
 ${SSH}${IP} 'defaults write com.apple.HIToolbox AppleSelectedInputSources -array \
   "<dict><key>InputSourceKind</key><string>Input Mode</string><key>Bundle ID</key><string>org.bikeshaving.inputmethod.IPAbet</string><key>Input Mode</key><string>org.bikeshaving.inputmethod.IPAbet.IPA</string></dict>"'
 echo "   prefs written; rebooting into the selected state"
-${SSH}${IP} "sudo shutdown -r now" 2>/dev/null || true
-sleep 30
-for i in $(seq 1 90); do
-  ${SSH}${IP} true 2>/dev/null && break
-  sleep 6
-done
-${SSH}${IP} true || { echo "✗ VM did not come back from second reboot"; exit 1; }
+reboot_vm
 echo "   logged in with IPA selected"
 
 step "ASSERT: the cosmetic keylayout registered (Keyboard Viewer correctness)"
