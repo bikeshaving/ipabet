@@ -809,6 +809,16 @@ describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 		expect(typed("~0", "b")).toBe(nfc("b\u{031A}")));
 });
 
+describe("stress and steps are spacing — never dead keys", () => {
+	// ˌ ˑ ↗ ꜛ are ⌥⇧ doubles of spacing marks and must INSERT, not pend —
+	// the bug: a missing doubleSpacing made ˌ trail the next letter ("abˌ").
+	test("secondary stress lands in place: a ⌥⇧' b → aˌb", () =>
+		expect(typed("a", "~+'", "b")).toBe("aˌb"));
+	test("half-long: a ⌥⇧; b → aˑb", () => expect(typed("a", "~+;", "b")).toBe("aˑb"));
+	test("global rise: a ⌥⇧7 b → a↗b", () => expect(typed("a", "~+7", "b")).toBe("a↗b"));
+	test("upstep: a ⌥⇧6 b → aꜛb", () => expect(typed("a", "~+6", "b")).toBe("aꜛb"));
+});
+
 describe("rhoticity ⌥r — postfix like length", () => {
 	test("hook appends: a ⌥r → a˞", () => expect(typed("a", "~r")).toBe("a˞"));
 	test("schwa fuses: 5 ⇧H ⌥r → ɚ", () => expect(typed("5", "+h", "~r")).toBe("ɚ"));

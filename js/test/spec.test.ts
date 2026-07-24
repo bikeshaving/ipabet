@@ -18,6 +18,8 @@ interface Mark {
 	opt: string;
 	mark: string;
 	double?: string;
+	type?: string;
+	doubleSpacing?: boolean;
 	exclusive?: boolean;
 	ipa?: boolean;
 	beyond?: string;
@@ -229,5 +231,31 @@ describe("spec · matches its published schema", () => {
 				expect(markSchema.properties[f].enum, `⌥${m.opt}.${f}`).toContain(m[f]);
 			}
 		}
+	});
+});
+
+// A mark's spacing flags decide dead-key behavior: combining forms PEND (the
+// next base absorbs them), spacing forms INSERT immediately. The flags are
+// redundant with the glyph's Unicode class — and when one drifts (ˌ missing
+// doubleSpacing), a spacing mark acts like a dead key, trailing the next letter.
+describe("spacing flags match Unicode", () => {
+	const isSpacing = (g: string) => ![...g].some((c) => /\p{M}/u.test(c));
+	test("every mark's type matches its glyph's class", () => {
+		const bad = marks
+			.filter((m) => (m.type === "spacing") !== isSpacing(m.mark))
+			.map((m) => `⌥${m.opt} ${m.mark}: type=${m.type}, Unicode says ${isSpacing(m.mark) ? "spacing" : "combining"}`);
+		expect(bad).toEqual([]);
+	});
+	// One deliberate exception: the sliding tie ͢ (⌥⇧0) is combining but flagged
+	// spacing, because a tie lands POSTFIX on the previous segment (t ⌥⇧0 s →
+	// t͢s), like the ⌥j joiner — pending it onto the NEXT base would tie the
+	// wrong pair.
+	const POSTFIX_COMBINING = new Set(["0"]);
+	test("every double's doubleSpacing matches its glyph's class", () => {
+		const bad = marks
+			.filter((m) => m.double !== undefined && !POSTFIX_COMBINING.has(m.opt))
+			.filter((m) => (m.doubleSpacing === true) !== isSpacing(m.double!))
+			.map((m) => `⌥⇧${m.opt} ${m.double}: doubleSpacing=${m.doubleSpacing ?? false}, Unicode says ${isSpacing(m.double!) ? "spacing" : "combining"}`);
+		expect(bad).toEqual([]);
 	});
 });

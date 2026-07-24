@@ -1059,7 +1059,8 @@
    "group": "Prosody",
    "cp": "U+02C8",
    "name": "MODIFIER LETTER VERTICAL LINE",
-   "shiftSense": "lesser"
+   "shiftSense": "lesser",
+   "doubleSpacing": true
   },
   {
    "opt": ";",
@@ -1070,7 +1071,8 @@
    "group": "Length",
    "cp": "U+02D0",
    "name": "MODIFIER LETTER TRIANGULAR COLON",
-   "shiftSense": "lesser"
+   "shiftSense": "lesser",
+   "doubleSpacing": true
   },
   {
    "opt": "q",
@@ -1104,7 +1106,8 @@
    "name": "SOUTH EAST ARROW",
    "double": "↗",
    "doubleCp": "U+2197",
-   "shiftSense": "greater"
+   "shiftSense": "greater",
+   "doubleSpacing": true
   },
   {
    "opt": "8",
@@ -1129,7 +1132,8 @@
    "name": "MODIFIER LETTER RAISED DOWN ARROW",
    "double": "ꜛ",
    "doubleCp": "U+A71B",
-   "shiftSense": "greater"
+   "shiftSense": "greater",
+   "doubleSpacing": true
   },
   {
    "opt": "1",
