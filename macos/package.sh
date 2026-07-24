@@ -49,29 +49,6 @@ codesign --verify --strict --verbose=2 "$APP"
 rm -rf "$PKGROOT" "$COMPONENT" "$PKG"
 mkdir -p "$STAGE"
 cp -R "$APP" "$STAGE/"
-# A LaunchAgent completes registration at login — the one moment macOS reliably
-# accepts a new input method, as the logging-in user, no installer-context
-# fragility. The helper's --login mode is marker-gated: it enables once per
-# user and then never again, so removing IPA from the menu stays removed.
-AGENTS="$PKGROOT/Library/LaunchAgents"
-mkdir -p "$AGENTS"
-cat > "$AGENTS/org.bikeshaving.ipabet.register.plist" <<'EOF2'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>Label</key>
-	<string>org.bikeshaving.ipabet.register</string>
-	<key>ProgramArguments</key>
-	<array>
-		<string>/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register</string>
-		<string>--login</string>
-	</array>
-	<key>RunAtLoad</key>
-	<true/>
-</dict>
-</plist>
-EOF2
 # BundleIsRelocatable=false, or Installer "relocates": finding any other copy
 # of the bundle ID via Spotlight (a dev build, a Trash copy), it writes the
 # payload THERE and leaves /Library/Input Methods empty — receipt and all.
@@ -94,8 +71,6 @@ uid=$(id -u "$u" 2>/dev/null)
 if [ -n "$uid" ] && [ "$u" != "root" ]; then
   launchctl asuser "$uid" sudo -u "$u" \
     "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
-  launchctl bootstrap "gui/$uid" \
-    /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
 fi
 exit 0
 EOF
@@ -118,7 +93,7 @@ kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px
 <kbd>+</kbd> → English → <b>IPA</b>, then pick <b>IPA</b> in the input menu
 (top-right of the menu bar).</p>
 <p><b>Not listed yet?</b> Log out and back in first — macOS registers new input
-methods at login, and IPAbet finishes setting itself up at your next login.</p>
+methods at login.</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"
