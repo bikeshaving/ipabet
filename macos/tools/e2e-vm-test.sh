@@ -61,7 +61,7 @@ ${SSH}${IP} "~/tis-probe-e2e assert-present"
 step "ASSERT: enable + select (what System Settings' + does)"
 # TIS mutations need the user's GUI session context, not the ssh context —
 # launchctl asuser joins the console user's bootstrap, as the postinstall does.
-${SSH}${IP} "echo admin | sudo -S launchctl asuser \$(id -u admin) sudo -u admin \$HOME/tis-probe-e2e enable-select"
+${SSH}${IP} "sudo launchctl asuser \$(id -u admin) sudo -u admin \$HOME/tis-probe-e2e enable-select"  # cirrus images: passwordless sudo; -S would starve the nested sudo
 
 step "ASSERT: the IME process launches"
 sleep 3
