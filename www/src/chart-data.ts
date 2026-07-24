@@ -32,7 +32,7 @@ export const DIACRITICS: ChartEntry[] = [
 	{glyph: "◌̯", keys: "~o", name: "Non-syllabic", on: "e"},
 // ⌥r emits the spacing hook and the font joins it (Unicode has no combining
 // rhotic hook). ə and ɜ fuse to precomposed ɚ/ɝ; every other vowel takes the bare hook.
-	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "ə", onKeys: "5 +Y", fuses: "ɚ"},
+	{glyph: "˞", keys: "~r", name: "Rhoticity", on: "ə", onKeys: "5 +H", fuses: "ɚ"},
 	{glyph: "◌̤", keys: "~+u", name: "Breathy voiced", on: "b"},
 	{glyph: "◌̰", keys: "~+n", name: "Creaky voiced", on: "b"},
 	{glyph: "◌̼", keys: "~l", name: "Linguolabial", on: "t"},

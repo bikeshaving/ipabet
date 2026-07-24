@@ -154,7 +154,7 @@ const SHIFTED_PUNCT: Record<string, string> = {
 const QUOTE_LOCALES = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
 let quoteLocale = QUOTE_LOCALES.default;
 /** Set the active quote locale (en, de, fr, ch, pl, ru, sv). Unknown → default. */
-/** Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧Y → Ə) are OFF by default, because
+/** Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧H → Ə) are OFF by default, because
  *  they are keystroke-identical to holding shift and yelling: SHIP, THE and
  *  THINK all begin with a capital pair whose second letter is a modifier, and no
  *  lookback can tell the two intentions apart. Yelling is everyday English;
@@ -577,7 +577,7 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 				}
 			}
 		}
-		// The shifted digit is the digit's capital plane (⇧5⇧Y → Ə).
+		// The shifted digit is the digit's capital plane (⇧5⇧H → Ə).
 		if (capitalDigraphs && shift && chainLive && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			if (digit !== undefined) {

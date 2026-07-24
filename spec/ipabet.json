@@ -41,7 +41,7 @@
    "name": "LATIN SMALL LETTER R WITH FISHHOOK"
   },
   {
-   "key": "5Y",
+   "key": "5H",
    "glyph": "ə",
    "cp": "U+0259",
    "name": "LATIN SMALL LETTER SCHWA"
@@ -257,13 +257,13 @@
    "name": "LATIN SMALL LETTER V WITH RIGHT HOOK"
   },
   {
-   "key": "5H",
+   "key": "5E",
    "glyph": "ɜ",
    "cp": "U+025C",
    "name": "LATIN SMALL LETTER REVERSED OPEN E"
   },
   {
-   "key": "5W",
+   "key": "5O",
    "glyph": "ɞ",
    "cp": "U+025E",
    "name": "LATIN SMALL LETTER CLOSED REVERSED OPEN E"

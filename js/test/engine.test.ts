@@ -93,12 +93,12 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 		expect(chain("+s", "^+h", "+a")).toBe("ƩA"));
 	test("PHP stays PHP (pH is not a digraph)", () => expect(chain("+p", "+h", "+p")).toBe("PHP"));
 	// The shifted digit is the digit's capital plane — Azerbaijani's Ə lives here.
-	test("digit capitals: held ⇧5⇧Y → Ə, ⇧7⇧H → Ħ", () => {
-		expect(chain("+5", "+y")).toBe("Ə");
+	test("digit capitals: held ⇧5⇧H → Ə, ⇧7⇧H → Ħ", () => {
+		expect(chain("+5", "+h")).toBe("Ə");
 		expect(chain("+7", "+h")).toBe("Ħ");
 	});
-	test("a shift release escapes to the literal: ⇧5 ^⇧Y → %Y", () =>
-		expect(chain("+5", "^+y")).toBe("%Y"));
+	test("a shift release escapes to the literal: ⇧5 ^⇧H → %H", () =>
+		expect(chain("+5", "^+h")).toBe("%H"));
 	test("digit capital glottal: held ⇧2⇧H → Ɂ (U+0241, the Dene capital)", () =>
 		expect(chain("+2", "+h")).toBe("\u{0241}"));
 	test("THE forms the capital theta: ⇧T⇧H⇧E → ΘE (Caps Lock types the literal)", () =>
@@ -176,16 +176,17 @@ describe("airstream: implosives are ⇧P; ejectives are the ⌥⇧q mark", () =>
 });
 
 describe("number-row bases", () => {
-	test("5 ⇧Y → ə", () => expect(typed("5", "+y")).toBe("ə"));
+	test("5 ⇧H → ə", () => expect(typed("5", "+h")).toBe("ə"));
 	test("2 ⇧H → ʔ", () => expect(typed("2", "+h")).toBe("ʔ"));
 	test("4 ⇧H → ɾ", () => expect(typed("4", "+h")).toBe("ɾ"));
 	test("7 ⇧H → ħ", () => expect(typed("7", "+h")).toBe("ħ"));
-	test("family off the literal digit: 5 ⇧H → ɜ, 2 ⇧Q → ʡ", () => {
-		expect(typed("5", "+h")).toBe("ɜ");
+	test("family off the literal digit: 5 ⇧E → ɜ, 5 ⇧O → ɞ, 2 ⇧Q → ʡ", () => {
+		expect(typed("5", "+e")).toBe("ɜ");
+		expect(typed("5", "+o")).toBe("ɞ");
 		expect(typed("2", "+q")).toBe("ʡ");
 	});
-	test("about: 5 ⇧Y b a u ⇧H t → əbaʊt", () =>
-		expect(typed("5", "+y", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
+	test("about: 5 ⇧H b a u ⇧H t → əbaʊt", () =>
+		expect(typed("5", "+h", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
 	test("the roots left, so ⇧2 @ ⇧3 # ⇧4 $ ⇧5 % ⇧7 & come back", () => {
 		expect(typed("+2")).toBe("@");
 		expect(typed("+3")).toBe("#");
@@ -650,8 +651,8 @@ describe("Esc/space terminate the composition; ⌃⌫ unconverts", () => {
 		expect(typeKeys([K("t"), K("h", {shift: true}), K("⌫", {control: true})])).toBe("tH"));
 	test("a capital digraph unconverts uppercase: Θ ⌃⌫ → TH", () =>
 		expect(typeKeys([K("t", {shift: true}), K("h", {shift: true}), K("⌫", {control: true})])).toBe("TH"));
-	test("digit-base glyphs unconvert to their key spelling: ə ⌃⌫ → 5Y", () =>
-		expect(typeKeys([K("5"), K("y", {shift: true}), K("⌫", {control: true})])).toBe("5Y"));
+	test("digit-base glyphs unconvert to their key spelling: ə ⌃⌫ → 5H", () =>
+		expect(typeKeys([K("5"), K("h", {shift: true}), K("⌫", {control: true})])).toBe("5H"));
 	test("an identity glyph refuses — the chord stays the host's: s ⌃⌫ → s", () =>
 		expect(typeKeys([K("s"), K("⌫", {control: true})])).toBe("s"));
 	test("a cluster carrying marks refuses (⌫ peels first): ã ⌃⌫ → ã", () =>
@@ -765,7 +766,7 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 	test("a release starts a fresh capital, not a literal: ⇧A ^⇧E → Æ", () =>
 		expect(typed("+a", "^+e")).toBe("Æ"));
 	test("does not disturb a lowercase chain: ə ⇧O⇧H → əɔ", () =>
-		expect(typed("5", "+y", "+o", "+h")).toBe(nfc("əɔ")));
+		expect(typed("5", "+h", "+o", "+h")).toBe(nfc("əɔ")));
 	// A release BEFORE the capital (from typing the previous lowercase word) must
 	// NOT break the digraph — only a release BETWEEN base and modifier does. So the
 	// digraph gates on heldFromPrev (previous key), not the persistent chain state:
@@ -805,10 +806,10 @@ describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 
 describe("rhoticity ⌥r — postfix like length", () => {
 	test("hook appends: a ⌥r → a˞", () => expect(typed("a", "~r")).toBe("a˞"));
-	test("schwa fuses: 5 ⇧Y ⌥r → ɚ", () => expect(typed("5", "+y", "~r")).toBe("ɚ"));
-	test("open-mid fuses: 5 ⇧H ⌥r → ɝ", () => expect(typed("5", "+h", "~r")).toBe("ɝ"));
+	test("schwa fuses: 5 ⇧H ⌥r → ɚ", () => expect(typed("5", "+h", "~r")).toBe("ɚ"));
+	test("open-mid fuses: 5 ⇧E ⌥r → ɝ", () => expect(typed("5", "+e", "~r")).toBe("ɝ"));
 	test("fused glyph keeps its marks: ə̃ ⌥r → ɚ̃", () =>
-		expect(nfc(typed("~n", "5", "+y", "~r"))).toBe(nfc("ɚ\u{0303}")));
+		expect(nfc(typed("~n", "5", "+h", "~r"))).toBe(nfc("ɚ\u{0303}")));
 	test("⌥⇧r is the retroflex hook below, prefix: ⌥⇧r a → a̢", () =>
 		expect(nfc(typed("~+r", "a"))).toBe(nfc("a\u{0322}")));
 	test("vowel ⇧R does not rhoticize — the modifier tier only transforms", () =>
@@ -818,7 +819,7 @@ describe("rhoticity ⌥r — postfix like length", () => {
 describe("lower operator ⌥⇧z — the raise's shifted twin, also prefix", () => {
 	test("digit lowers: x ⌥⇧z 2 → x₂", () => expect(typed("x", "~+z", "2")).toBe("x₂"));
 	test("math run: l o g ⌥⇧z 2 → log₂", () => expect(typed("l", "o", "g", "~+z", "2")).toBe("log₂"));
-	test("schwa lowers: ⌥⇧z 5 ⇧Y → ₔ", () => expect(typed("~+z", "5", "+y")).toBe("ₔ"));
+	test("schwa lowers: ⌥⇧z 5 ⇧H → ₔ", () => expect(typed("~+z", "5", "+h")).toBe("ₔ"));
 	test("the twin replaces — nothing is raised and lowered at once", () =>
 		expect(typed("~z", "~+z", "h")).toBe("ₕ"));
 	test("the same chord again lifts it off", () =>
@@ -1068,8 +1069,8 @@ describe("capital digraphs are OFF by default — holding shift yells", () => {
 		expect(yell("RIGHT")).toBe("RIGHT");
 		expect(yell("THANKS")).toBe("THANKS");
 	});
-	test("the shifted-digit capital plane is off too: ⇧5⇧Y stays %Y", () =>
-		expect(typed("+5", "+y")).toBe("%Y"));
+	test("the shifted-digit capital plane is off too: ⇧5⇧H stays %H", () =>
+		expect(typed("+5", "+h")).toBe("%H"));
 	test("lowercase transforms are untouched: s ⇧H → ʃ", () =>
 		expect(typed("s", "+h")).toBe("ʃ"));
 	test("the held chain still continues a real glyph: ʃ⇧I⇧H → ʃɪ", () =>

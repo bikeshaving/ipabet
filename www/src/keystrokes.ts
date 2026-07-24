@@ -45,7 +45,7 @@ function joinKeys(tokens: string[]): string {
 	return tokens.reduce((out, t, i) => (i === 0 ? t : out + (/^⇧[A-Za-z0-9]$/.test(t) ? "" : " ") + t), "");
 }
 
-/** The SPEC's key strings: "sH" → "s⇧H", "5Y" → "5⇧Y". A bare digit is a base. */
+/** The SPEC's key strings: "sH" → "s⇧H", "5H" → "5⇧H". A bare digit is a base. */
 export function keySpelled(key: string): string {
 	const digitBare = key.length > 1;
 	const tokens = [...key].map((c) => (/[0-9]/.test(c) ? (digitBare ? c : "⇧" + c) : /[A-Z]/.test(c) ? "⇧" + c : c));

@@ -13,7 +13,7 @@ Bare Latin keys that are their own IPA value.
 
 ## Number-row bases
 
-IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧Y` → ə, `5` `⇧H` → ɜ, `2` `⇧Q` → ʡ); the roots take `⇧H`, or `⇧Y` on the schwa. Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols (@ # $ % ^ &). Held, a shift-chain uppercases the whole digraph — `⇧5⇧Y` → Ə, `⇧7⇧H` → Ħ — the digit's capital plane. The tie bar lives on <kbd>⌥J</kbd> (join); see the Option layer below.
+IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧H` → ə, `2` `⇧Q` → ʡ); like every root, the default sits on `⇧H` — the schwa included — and the rest of the `5` family names its nearest cardinal vowel (`5` `⇧E` → ɜ, `5` `⇧O` → ɞ, `5` `⇧A` → ɐ). Because they sit on the unshifted digit, `⇧2`–`⇧7` are all their native symbols (@ # $ % ^ &). Held, a shift-chain uppercases the whole digraph — `⇧5⇧H` → Ə, `⇧7⇧H` → Ħ — the digit's capital plane. The tie bar lives on <kbd>⌥J</kbd> (join); see the Option layer below.
 
 <SegTable kind="shiftNum"/>
 

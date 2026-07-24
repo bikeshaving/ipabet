@@ -34,11 +34,11 @@ const VOWELS = [
 	{sym:"ɵ", key:"oY",  x:.5,  yo:1/3,  r:1, f1:430, f2:1450, name:"Close-mid central rounded"},
 	{sym:"ɤ", key:"oW",  x:1,   yo:1/3,  r:0, f1:460, f2:1310, name:"Close-mid back unrounded"},
 	{sym:"o", key:"o",   x:1,   yo:1/3,  r:1, f1:360, f2:640,  name:"Close-mid back rounded"},
-	{sym:"ə", key:"5 ⇧Y",  x:.5,  yo:.5,   r:0, f1:500, f2:1500, name:"Mid central (schwa)"},
+	{sym:"ə", key:"5 ⇧H",  x:.5,  yo:.5,   r:0, f1:500, f2:1500, name:"Mid central (schwa)"},
 	{sym:"ɛ", key:"eH",  x:0,   yo:2/3,  r:0, f1:610, f2:1900, name:"Open-mid front unrounded"},
 	{sym:"œ", key:"oE",  x:0,   yo:2/3,  r:1, f1:585, f2:1710, name:"Open-mid front rounded"},
-	{sym:"ɜ", key:"5 ⇧H", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
-	{sym:"ɞ", key:"5 ⇧W", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
+	{sym:"ɜ", key:"5 ⇧E", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
+	{sym:"ɞ", key:"5 ⇧O", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
 	{sym:"ʌ", key:"uA",  x:1,   yo:2/3,  r:0, f1:600, f2:1170, name:"Open-mid back unrounded"},
 	{sym:"ɔ", key:"oH",  x:1,   yo:2/3,  r:1, f1:500, f2:700,  name:"Open-mid back rounded"},
 	{sym:"æ", key:"aE",  x:0,   yo:5/6,  r:0, f1:800, f2:1750, name:"Near-open front unrounded"},
@@ -69,7 +69,7 @@ const MODS = {
 		label: "bases", color: "#111827", pairs: [],
 		members: ["i","y","e","a","o","u","ə"],
 		desc: "Seven anchors. Six are plain letters on the periphery — i y e a o u — " +
-			"plus 5 ⇧Y for ə at dead center. Everything else is base + one trailing capital.",
+			"plus 5 ⇧H for ə at dead center. Everything else is base + one trailing capital.",
 	},
 	H: {
 		label: "-H", color: "#d97706",

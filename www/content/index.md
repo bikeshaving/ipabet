@@ -14,7 +14,7 @@ Every vowel is a base letter, at most one modifier on top: <Combo keys="i ⇧Y" 
 
 ## A normal keyboard, with the IPA one shift away
 
-IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so prose, code, and the terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧Y" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
+IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so prose, code, and the terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
 
 <Cards>
 <Card title="Works in every app">

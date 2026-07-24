@@ -89,7 +89,7 @@ export const CURRICULUM: Lesson[] = [
 		en("rock", "r", "+h", "o", "+h", "k"), en("rug", "r", "+h", "u", "+a", "g"), en("trip", "t", "r", "+h", "i", "+h", "p"),
 		en("fresh", "f", "r", "+h", "e", "+h", "s", "+h"), en("thrash", "t", "+h", "r", "+h", "a", "+e", "s", "+h"),
 	]},
-	{title: "The schwa — ə", sound: "ə", keys: ["5", "⇧Y"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
+	{title: "The schwa — ə", sound: "ə", keys: ["5", "⇧H"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
 		en("the", "d", "+h", "5", "+y"), en("a", "5", "+y"), en("sudden", "s", "u", "+a", "d", "5", "+y", "n"),
 		en("seven", "s", "e", "+h", "v", "5", "+y", "n"), en("under", "u", "+a", "n", "d", "5", "+y", "r", "+h"),
 		en("rabbit", "r", "+h", "a", "+e", "b", "5", "+y", "t"), en("listen", "l", "i", "+h", "s", "5", "+y", "n"),
