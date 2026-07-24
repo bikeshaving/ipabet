@@ -64,10 +64,25 @@ echo "   rebooted"
 step "ASSERT: input method registered on the clean machine"
 ${SSH}${IP} "~/tis-probe-e2e assert-present"
 
-step "ASSERT: enable + select (what System Settings' + does)"
-# TIS mutations need the user's GUI session context, not the ssh context —
-# launchctl asuser joins the console user's bootstrap, as the postinstall does.
-${SSH}${IP} "sudo launchctl asuser \$(id -u admin) sudo -u admin \$HOME/tis-probe-e2e enable-select"  # cirrus images: passwordless sudo; -S would starve the nested sudo
+step "select IPA the way the OS honors it: prefs, then a fresh login"
+# TISSelectInputSource refuses outside a real Aqua session (asuser included).
+# Writing HIToolbox prefs and logging in again is the legitimate equivalent of
+# "added in System Settings" — the login session comes up with IPA selected.
+${SSH}${IP} 'defaults write com.apple.HIToolbox AppleEnabledInputSources -array \
+  "<dict><key>InputSourceKind</key><string>Keyboard Layout</string><key>KeyboardLayout ID</key><integer>0</integer><key>KeyboardLayout Name</key><string>U.S.</string></dict>" \
+  "<dict><key>InputSourceKind</key><string>Keyboard Input Method</string><key>Bundle ID</key><string>org.bikeshaving.inputmethod.IPAbet</string></dict>" \
+  "<dict><key>InputSourceKind</key><string>Input Mode</string><key>Bundle ID</key><string>org.bikeshaving.inputmethod.IPAbet</string><key>Input Mode</key><string>org.bikeshaving.inputmethod.IPAbet.IPA</string></dict>"'
+${SSH}${IP} 'defaults write com.apple.HIToolbox AppleSelectedInputSources -array \
+  "<dict><key>InputSourceKind</key><string>Input Mode</string><key>Bundle ID</key><string>org.bikeshaving.inputmethod.IPAbet</string><key>Input Mode</key><string>org.bikeshaving.inputmethod.IPAbet.IPA</string></dict>"'
+echo "   prefs written; rebooting into the selected state"
+${SSH}${IP} "sudo shutdown -r now" 2>/dev/null || true
+sleep 20
+for i in $(seq 1 60); do
+  ${SSH}${IP} true 2>/dev/null && break
+  sleep 5
+done
+${SSH}${IP} true || { echo "✗ VM did not come back from second reboot"; exit 1; }
+echo "   logged in with IPA selected"
 
 step "ASSERT: the IME process launches"
 sleep 3
