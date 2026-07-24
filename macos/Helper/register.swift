@@ -14,6 +14,14 @@ let app = me.deletingLastPathComponent()   // MacOS/
     .deletingLastPathComponent()           // Contents/
     .deletingLastPathComponent()           // IPAbet.app
 let status = TISRegisterInputSource(app as CFURL)
+// KLInfo-in-bundle registration is dead on modern macOS (gate-proven): register
+// the Keyboard Viewer layout FILE explicitly. Harmless if it doesn't persist —
+// the app-side override is guarded on actual registration.
+let layout = app.appendingPathComponent("Contents/Resources/IPAbet.keylayout")
+if FileManager.default.fileExists(atPath: layout.path) {
+    let ls = TISRegisterInputSource(layout as CFURL)
+    FileHandle.standardError.write(Data("layout file registration: \(ls)\n".utf8))
+}
 guard status == noErr else {
     FileHandle.standardError.write(Data("TISRegisterInputSource failed: \(status)\n".utf8))
     exit(1)
@@ -33,6 +41,9 @@ if let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISI
         let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
         if enable.contains(id) { TISEnableInputSource(src) }
         if id == legacyLayout { TISDisableInputSource(src) }
+        if id.contains(".keylayout.") && id.contains("IPAbet") {
+            FileHandle.standardError.write(Data("layout source present: \(id)\n".utf8))
+        }
     }
 }
 print("registered + enabled in the current session")

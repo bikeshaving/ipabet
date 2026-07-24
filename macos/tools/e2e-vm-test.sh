@@ -91,7 +91,7 @@ reboot_vm
 echo "   logged in with IPA selected"
 
 step "ASSERT: the cosmetic keylayout registered (Keyboard Viewer correctness)"
-${SSH}${IP} "~/tis-probe-e2e list | grep -q 'keylayout.viewer' && echo 'VIEWER LAYOUT REGISTERED' || { echo '✗ viewer layout absent'; exit 1; }"
+${SSH}${IP} "~/tis-probe-e2e list | grep -i keylayout | grep IPAbet && echo 'VIEWER LAYOUT REGISTERED' || { echo '✗ viewer layout absent'; exit 1; }"
 
 step "selection state after login (verbatim)"
 ${SSH}${IP} "defaults read com.apple.HIToolbox AppleSelectedInputSources" || true
