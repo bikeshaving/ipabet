@@ -47,6 +47,10 @@ export const DEMOS: Demo[] = [
 	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
 ];
 
+/** The short cycle for prose embeds (<Hero still/>): the digraph story in
+ *  three words, versus the landing hero's full tour. */
+export const DEMO_TEASER = DEMOS.slice(0, 3);
+
 const IS_CLIENT = typeof window !== "undefined";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

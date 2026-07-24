@@ -1,7 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Combo, Glyph} from "./components/ui.ts";
 import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
-import {HeroDemo, DEMOS} from "./components/hero-demo.ts";
+import {HeroDemo, DEMOS, DEMO_TEASER} from "./components/hero-demo.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
 // against this map, passing attributes as `token` and contents as `children`.
@@ -17,7 +17,7 @@ export const components: Record<string, unknown> = {
 	// The landing hero, embeddable in prose; `still` renders the animation-only
 	// variant (readonly, no nav) — clients/landing.ts hydrates by the marker.
 	Hero: ({token}: any) => token.still
-		? jsx`<div id="hero-root" data-still="true"><${HeroDemo} demos=${DEMOS} still=${true} /></div>`
+		? jsx`<div id="hero-root" data-still="true"><${HeroDemo} demos=${DEMO_TEASER} still=${true} /></div>`
 		: jsx`<div id="hero-root"><${HeroDemo} demos=${DEMOS} /></div>`,
 	ConsonantChart: () => jsx`<div id="consonant-chart"><${ConsonantApp} /></div>`,
 
