@@ -10,7 +10,7 @@ description: "IPAbet is a free, open-source IPA keyboard — type the Internatio
 
 Every vowel is a base letter, at most one modifier on top: <Combo keys="i ⇧Y" out="ɨ"/>. Pick a modifier to see how the derived vowels are built, or drag between the articulatory quadrilateral and acoustic F1×F2 space. Click any vowel to hear it.
 
-<div id="vowel-chart"></div>
+<VowelChart/>
 
 ## A normal keyboard, with the IPA one shift away
 
@@ -48,7 +48,7 @@ IPAbet is in active development ahead of its first signed release. To build from
 
 ## FAQ
 
-**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US — and the shifted number symbols (<kbd>@</kbd> <kbd>#</kbd> <kbd>$</kbd> <kbd>%</kbd> <kbd>&</kbd>) type normally too. What the IPA layer claims is capital modifiers right after a letter (typing "GitHub" gives Giθub) and the digit _bases_ (an unshifted digit plus a modifier — <kbd>5</kbd> <kbd>⇧Y</kbd> → ə). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub) and Caps Lock types literal capitals. For long stretches of native typing — code, terminals, camelCase — switch input sources: <kbd>⌃Space</kbd> flips to the plain US layout macOS always keeps installed, and the menu-bar icon shows which keyboard is live. IPAbet ships no raw mode of its own; the OS already has one.
+**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US — and the shifted number symbols (<kbd>@</kbd> <kbd>#</kbd> <kbd>$</kbd> <kbd>&</kbd>) type normally too. What the IPA layer claims is capital modifiers right after a letter (typing "GitHub" gives Giθub), the digit _bases_ (an unshifted digit plus a modifier — <kbd>5</kbd> <kbd>⇧H</kbd> → ə), and <kbd>⇧5</kbd> right after a bare e, o, or a (the centralize modifier — everywhere else <kbd>%</kbd> stays %). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub) and Caps Lock types literal capitals. For long stretches of native typing — code, terminals, camelCase — switch input sources: <kbd>⌃Space</kbd> flips to the plain US layout macOS always keeps installed, and the menu-bar icon shows which keyboard is live. IPAbet ships no raw mode of its own; the OS already has one.
 
 **Are the symbols real IPA codepoints?** Yes — IPAbet emits the true characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your transcriptions are searchable, fontable Unicode.
 

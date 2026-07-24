@@ -9,6 +9,12 @@ export const components: Record<string, unknown> = {
 
 	Glyph: ({children}: any) => jsx`<${Glyph}>${children}</${Glyph}>`,
 
+	// Interactive-chart mounts. The charts are client islands (chart-viz.ts,
+	// loaded by the embedding page) — the server renders only the container the
+	// island binds to, so content stays semantic markdown with no raw HTML.
+	VowelChart: () => jsx`<div id="vowel-chart"></div>`,
+	ConsonantChart: () => jsx`<div id="consonant-chart"></div>`,
+
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
 
