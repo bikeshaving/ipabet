@@ -48,6 +48,10 @@ const VOWELS = [
 	{sym:"ɑ", key:"aH",  x:1,   yo:1,    r:0, f1:750, f2:940,  name:"Open back unrounded"},
 	{sym:"ɒ", key:"oA",  x:1,   yo:1,    r:1, f1:700, f2:760,  name:"Open back rounded"},
 ];
+// Keystrokes are spec-derived (injected server-side, like the audio map) so a
+// layout change can never strand a stale label here; keySpelled normalizes them.
+const CHART_KEYS = (window as any).__CHART_KEYS || {};
+for (const v of VOWELS) v.key = CHART_KEYS[v.sym] ?? v.key;
 const VBY = Object.fromEntries(VOWELS.map((v) => [v.sym, v]));
 
 /* pairs sharing one articulatory slot: unrounded ±dx left, rounded right   */
@@ -71,25 +75,34 @@ const MODS = {
 		desc: "Seven anchors. Six are plain letters on the periphery — i y e a o u — " +
 			"plus 5 ⇧H for ə at dead center. Everything else is base + one trailing capital.",
 	},
+	central: {
+		label: "central", color: "#0d9488",
+		members: ["ə"],
+		pairs: [["ə","ɜ"],["ə","ɞ"],["ə","ɐ"]],
+		desc: "The digit 5 is the central-vowel base. ⇧H gives the neutral schwa ə — the " +
+			"default, like every number root — and the other three name the cardinal vowel " +
+			"they sit nearest: ⇧E→ɜ, ⇧O→ɞ, ⇧A→ɐ. Nothing to memorize per vowel; just lean " +
+			"toward e, o, or a.",
+	},
 	H: {
 		label: "-H", color: "#d97706",
-		pairs: [["i","ɪ"],["y","ʏ"],["u","ʊ"],["e","ɛ"],["o","ɔ"],["ə","ɜ"],["a","ɑ"]],
+		pairs: [["i","ɪ"],["y","ʏ"],["u","ʊ"],["e","ɛ"],["o","ɔ"],["a","ɑ"]],
 		desc: "The classic partner one notch toward the interior or the far corner: " +
-			"lax for the close vowels (ɪ ʏ ʊ), lowered for the mids (ɛ ɔ ɜ), and for a " +
+			"lax for the close vowels (ɪ ʏ ʊ), lowered for the mids (ɛ ɔ), and for a " +
 			"it slides along the open edge to back ɑ. Mirrors consonantal H (p→ɸ, t→θ): " +
 			"“the other one you learn second.”",
 	},
 	W: {
 		label: "-W", color: "#dc2626",
-		pairs: [["u","ɯ"],["e","ø"],["o","ɤ"],["a","ɶ"],["ə","ɞ"]],
-		desc: "Flip rounding in place: u→ɯ, e→ø, o→ɤ, a→ɶ, ə→ɞ. Same logic as " +
+		pairs: [["u","ɯ"],["e","ø"],["o","ɤ"],["a","ɶ"]],
+		desc: "Flip rounding in place: u→ɯ, e→ø, o→ɤ, a→ɶ. Same logic as " +
 			"consonantal w→ɰ (wW). Note the asymmetry: i’s rounded twin never needs iW " +
 			"because y is already a letter.",
 	},
 	A: {
 		label: "-A", color: "#7c3aed",
-		pairs: [["u","ʌ"],["o","ɒ"],["ə","ɐ"]],
-		desc: "The open(er) counterpart: u→ʌ, o→ɒ, ə→ɐ. Rounding follows the target: " +
+		pairs: [["u","ʌ"],["o","ɒ"]],
+		desc: "The open(er) counterpart: u→ʌ, o→ɒ. Rounding follows the target: " +
 			"ʌ drops u’s rounding, ɒ keeps o’s.",
 	},
 	E: {

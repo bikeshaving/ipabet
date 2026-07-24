@@ -9,6 +9,7 @@ import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.gen.ts";
 import {AUDIO} from "./audio-map.ts";
+import {CHART_KEYS} from "./chart-keys.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -127,6 +128,7 @@ export function Landing() {
 			<${SerializeScript} name="__DEMO" value=${DEMO} />
 			<script type="module" src=${landingClient}></script>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
+			<${SerializeScript} name="__CHART_KEYS" value=${CHART_KEYS} />
 			<script type="module" src=${chartViz}></script>
 		<//>`;
 }
