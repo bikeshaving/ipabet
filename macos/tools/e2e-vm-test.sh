@@ -30,7 +30,7 @@ step() { echo; echo "━━ $1"; }
 reboot_vm() {
   ${SSH}${IP} "sudo shutdown -h now" 2>/dev/null || true
   for i in $(seq 1 30); do kill -0 $TART_PID 2>/dev/null || break; sleep 4; done
-  kill $TART_PID 2>/dev/null; wait $TART_PID 2>/dev/null
+  kill $TART_PID 2>/dev/null || true; wait $TART_PID 2>/dev/null || true
   tart run --no-graphics "$VM" >/dev/null 2>&1 &
   TART_PID=$!
   sleep 25
