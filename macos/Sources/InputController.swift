@@ -312,7 +312,22 @@ class InputController: IMKInputController {
     /// selector is ObjC-only, so it is invoked dynamically. Per Apple's contract
     /// the name is resolved against THIS bundle, and it resolves only because
     /// Info.plist declares KLInfo_IPAbet.
+    /// True when the bundled cosmetic layout actually registered with TIS. The
+    /// KLInfo registration can fail on a machine that rejects the file — and
+    /// overriding a client toward an unregistered layout name kills ALL typing
+    /// in that client. The override is cosmetic (Keyboard Viewer); its failure
+    /// mode must be cosmetic too, so verify before ever pointing a client at it.
+    private static let viewerLayoutRegistered: Bool = {
+        let filter = [kTISPropertyInputSourceID as String:
+                      "org.bikeshaving.inputmethod.IPAbet.keylayout.IPAbet"] as CFDictionary
+        let list = TISCreateInputSourceList(filter, true)?.takeRetainedValue() as? [TISInputSource]
+        let ok = (list?.isEmpty == false)
+        Dbg.log("viewer keylayout registered: \(ok)")
+        return ok
+    }()
+
     private func overrideViewerKeyboard(_ sender: Any!, name: String = "IPAbet") {
+        guard Self.viewerLayoutRegistered else { return }  // never overrode → never hand back either
         let sel = NSSelectorFromString("overrideKeyboardWithKeyboardNamed:")
         guard let client = sender as? NSObject, client.responds(to: sel) else { return }
         client.perform(sel, with: name)
