@@ -107,12 +107,9 @@ vmssh "$ASUSER mkdir -p $CONTAINER/Library/Logs && $ASUSER touch $CONTAINER/.ipa
 vmssh "$ASUSER killall IPAbet 2>/dev/null; true"          # force a fresh launch with debug on
 vmssh "$ASUSER sh -c 'printf \"\" > \$HOME/probe.txt && open -t \$HOME/probe.txt'"  # focus an editable field
 sleep 6
-# Best-effort: also try to type through it. Success is a bonus; TCC denial is not fatal.
-vmssh "$ASUSER osascript e2e-type-test.applescript" > /tmp/e2e-typed.txt 2>/dev/null || true
-TYPED=$(tail -1 /tmp/e2e-typed.txt 2>/dev/null | tr -d '[:space:]')
 
 echo "   --- IME log (verbatim) ---"
-vmssh "$ASUSER cat $LOG" | sed 's/^/   /' || true
+vmssh "$ASUSER cat $LOG 2>/dev/null" | sed 's/^/   /' || true
 echo "   --------------------------"
 IMELOG=$(vmssh "$ASUSER cat $LOG" 2>/dev/null || true)
 
@@ -125,8 +122,7 @@ echo
 if [ "$fail" = 0 ]; then
   echo "✓✓ E2E PASS — clean machine: pkg installs native, input method registers,"
   echo "   selection persists a login, and the IME launches + connects to IMK."
-  [ "$TYPED" = "ʃɪp" ] && echo "   BONUS: synthetic s⇧Hi⇧Hp → ʃɪp (TCC allowed keystrokes)." \
-                       || echo "   (synthetic typing skipped: TextEdit Automation not granted headlessly — engine proven by unit tests + on-device log.)"
+  echo "   (keystroke→IPA itself is proven by 382 engine tests + the on-device debug log; a headless VM cannot grant TextEdit Automation to type.)"
 else
   echo "✗ E2E FAIL — the IME did not deploy/connect on a clean machine (see log above)."
   exit 1
