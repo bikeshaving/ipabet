@@ -37,12 +37,12 @@ const VOWELS = [
 	{sym:"ə", key:"5 ⇧H",  x:.5,  yo:.5,   r:0, f1:500, f2:1500, name:"Mid central (schwa)"},
 	{sym:"ɛ", key:"eH",  x:0,   yo:2/3,  r:0, f1:610, f2:1900, name:"Open-mid front unrounded"},
 	{sym:"œ", key:"oE",  x:0,   yo:2/3,  r:1, f1:585, f2:1710, name:"Open-mid front rounded"},
-	{sym:"ɜ", key:"5 ⇧E", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
-	{sym:"ɞ", key:"5 ⇧O", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
+	{sym:"ɜ", key:"e⇧5", x:.5,  yo:2/3,  r:0, f1:560, f2:1550, name:"Open-mid central unrounded"},
+	{sym:"ɞ", key:"o⇧5", x:.5,  yo:2/3,  r:1, f1:550, f2:1400, name:"Open-mid central rounded"},
 	{sym:"ʌ", key:"uA",  x:1,   yo:2/3,  r:0, f1:600, f2:1170, name:"Open-mid back unrounded"},
 	{sym:"ɔ", key:"oH",  x:1,   yo:2/3,  r:1, f1:500, f2:700,  name:"Open-mid back rounded"},
 	{sym:"æ", key:"aE",  x:0,   yo:5/6,  r:0, f1:800, f2:1750, name:"Near-open front unrounded"},
-	{sym:"ɐ", key:"5 ⇧A", x:.5,  yo:5/6,  r:0, f1:680, f2:1420, name:"Near-open central"},
+	{sym:"ɐ", key:"a⇧5", x:.5,  yo:5/6,  r:0, f1:680, f2:1420, name:"Near-open central"},
 	{sym:"a", key:"a",   x:0,   yo:1,    r:0, f1:850, f2:1610, name:"Open front unrounded"},
 	{sym:"ɶ", key:"aW",  x:0,   yo:1,    r:1, f1:820, f2:1530, name:"Open front rounded"},
 	{sym:"ɑ", key:"aH",  x:1,   yo:1,    r:0, f1:750, f2:940,  name:"Open back unrounded"},
@@ -76,13 +76,13 @@ const MODS = {
 			"plus 5 ⇧H for ə at dead center. Everything else is base + one trailing capital.",
 	},
 	central: {
-		label: "central", color: "#0d9488",
+		label: "-5", color: "#0d9488",
 		members: ["ə"],
-		pairs: [["ə","ɜ"],["ə","ɞ"],["ə","ɐ"]],
-		desc: "The digit 5 is the central-vowel base. ⇧H gives the neutral schwa ə — the " +
-			"default, like every number root — and the other three name the cardinal vowel " +
-			"they sit nearest: ⇧E→ɜ, ⇧O→ɞ, ⇧A→ɐ. Nothing to memorize per vowel; just lean " +
-			"toward e, o, or a.",
+		pairs: [["e","ɜ"],["o","ɞ"],["a","ɐ"]],
+		desc: "5 is the center. As a base it carries the schwa itself — 5⇧H → ə, the " +
+			"digit's default like every number root — and as a modifier ⇧5 pulls a " +
+			"cardinal into the ə-neighborhood: e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ. Where ⇧Y slides " +
+			"a vowel central at its own height, ⇧5 converges on the center.",
 	},
 	H: {
 		label: "-H", color: "#d97706",

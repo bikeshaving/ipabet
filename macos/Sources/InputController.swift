@@ -482,11 +482,13 @@ class InputController: IMKInputController {
             return false
         }
 
-        // Number row: bare and shifted digits both decline to the host. A pending
-        // prefix diacritic absorbs onto the bare digit.
+        // Number row: a pending prefix diacritic absorbs onto the bare digit; a
+        // shifted digit falls through to the transform lookup — ⇧5 is the
+        // centralize modifier (e⇧5 → ɜ) — and declines where no transform
+        // applies, so the host layout keeps its own shifted-digit symbol.
         let bareKey = USLayout.char(event.keyCode, shift: false)
-        if bareKey.count == 1, bareKey.first!.isNumber {
-            if !shift, !pending.isEmpty { emitBase(bareKey, client); return true }
+        if bareKey.count == 1, bareKey.first!.isNumber, !shift {
+            if !pending.isEmpty { emitBase(bareKey, client); return true }
             flush(client)
             return false
         }

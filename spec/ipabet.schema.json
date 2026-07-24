@@ -21,7 +21,7 @@
     "type": "string"
    },
    "propertyNames": {
-    "pattern": "^[A-Z]$"
+    "pattern": "^([A-Z]|5)$"
    }
   },
   "letters": {
@@ -39,7 +39,7 @@
     "additionalProperties": false,
     "properties": {
      "key": {
-      "description": "Keystrokes, e.g. \"s\", \"sH\" (s then ⇧H), \"5Y\" (the digit base 5 then ⇧Y → ə).",
+      "description": "Keystrokes, e.g. \"s\", \"sH\" (s then ⇧H), \"5H\" (the digit base 5 then ⇧H → ə), \"e%\" (e then ⇧5 → ɜ).",
       "type": "string",
       "minLength": 1
      },

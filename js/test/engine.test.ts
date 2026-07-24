@@ -43,7 +43,7 @@ describe("digraph transforms", () => {
 	test("retroflex: t ⇧R → ʈ", () => expect(typed("t", "+r")).toBe("ʈ"));
 	test("palatal nasal: n ⇧J → ɲ", () => expect(typed("n", "+j")).toBe("ɲ"));
 	test("open back: a ⇧H → ɑ", () => expect(typed("a", "+h")).toBe("ɑ"));
-	test("central: 5 ⇧A → ɐ", () => expect(typed("5", "+a")).toBe("ɐ"));
+	test("central: a ⇧5 → ɐ", () => expect(typed("a", "+5")).toBe("ɐ"));
 	test("y-vowel: i ⇧Y → ɨ", () => expect(typed("i", "+y")).toBe("ɨ"));
 	test("y-vowel: o ⇧Y → ɵ", () => expect(typed("o", "+y")).toBe("ɵ"));
 	test("y-vowel: e ⇧Y → ɘ", () => expect(typed("e", "+y")).toBe("ɘ"));
@@ -180,11 +180,16 @@ describe("number-row bases", () => {
 	test("2 ⇧H → ʔ", () => expect(typed("2", "+h")).toBe("ʔ"));
 	test("4 ⇧H → ɾ", () => expect(typed("4", "+h")).toBe("ɾ"));
 	test("7 ⇧H → ħ", () => expect(typed("7", "+h")).toBe("ħ"));
-	test("family off the literal digit: 5 ⇧E → ɜ, 5 ⇧O → ɞ, 2 ⇧Q → ʡ", () => {
-		expect(typed("5", "+e")).toBe("ɜ");
-		expect(typed("5", "+o")).toBe("ɞ");
-		expect(typed("2", "+q")).toBe("ʡ");
+	test("family off the literal digit: 2 ⇧Q → ʡ", () =>
+		expect(typed("2", "+q")).toBe("ʡ"));
+	test("⇧5 pulls a cardinal toward the center: e ⇧5 → ɜ, o ⇧5 → ɞ", () => {
+		expect(typed("e", "+5")).toBe("ɜ");
+		expect(typed("o", "+5")).toBe("ɞ");
 	});
+	test("⇧5 with no base stays the layout's symbol: x ⇧5 → x%", () =>
+		expect(typed("x", "+5")).toBe("x%"));
+	test("aY completes the y-column: a ⇧Y → ä", () =>
+		expect(typed("a", "+y")).toBe("\u{00E4}"));
 	test("about: 5 ⇧H b a u ⇧H t → əbaʊt", () =>
 		expect(typed("5", "+h", "b", "a", "u", "+h", "t")).toBe("əbaʊt"));
 	test("the roots left, so ⇧2 @ ⇧3 # ⇧4 $ ⇧5 % ⇧7 & come back", () => {
@@ -555,7 +560,7 @@ describe("East Asian coverage", () => {
 		expect(typed("~0", "p")).toBe(nfc("p\u{031A}"));
 		expect(typed("~0", "k")).toBe(nfc("k\u{031A}"));
 	});
-	test("Cantonese sɐp̚", () => expect(typed("s", "5", "+a", "~0", "p")).toBe(nfc("sɐp\u{031A}")));
+	test("Cantonese sɐp̚", () => expect(typed("s", "a", "+5", "~0", "p")).toBe(nfc("sɐp\u{031A}")));
 	// The strength dimension lives on F (⌥f weak, ⌥⇧f fortis); ⌥p carries
 	// the Cyrillic primes.
 	test("fortis is ⌥⇧f: ⌥⇧f k → k͈", () =>
@@ -807,7 +812,7 @@ describe("raise operator ⌥z — prefix, like the ⌥ diacritics", () => {
 describe("rhoticity ⌥r — postfix like length", () => {
 	test("hook appends: a ⌥r → a˞", () => expect(typed("a", "~r")).toBe("a˞"));
 	test("schwa fuses: 5 ⇧H ⌥r → ɚ", () => expect(typed("5", "+h", "~r")).toBe("ɚ"));
-	test("open-mid fuses: 5 ⇧E ⌥r → ɝ", () => expect(typed("5", "+e", "~r")).toBe("ɝ"));
+	test("open-mid fuses: e ⇧5 ⌥r → ɝ", () => expect(typed("e", "+5", "~r")).toBe("ɝ"));
 	test("fused glyph keeps its marks: ə̃ ⌥r → ɚ̃", () =>
 		expect(nfc(typed("~n", "5", "+h", "~r"))).toBe(nfc("ɚ\u{0303}")));
 	test("⌥⇧r is the retroflex hook below, prefix: ⌥⇧r a → a̢", () =>

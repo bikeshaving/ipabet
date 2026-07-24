@@ -539,7 +539,10 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	// transforms (5H → ɜ). A pending diacritic absorbs onto it.
 	if (/[0-9]/.test(key)) {
 		if (!shift && pending.length > 0) return emitBase(key, pending);
-		return withFlush({type: "pass"});
+		// A shifted digit falls through to the transform lookup — ⇧5 is the
+		// centralize modifier (e⇧5 → ɜ). Where no transform applies it passes,
+		// so every layout keeps its own shifted-digit symbol.
+		if (!shift) return withFlush({type: "pass"});
 	}
 
 	// Caps Lock types the literal capital and never acts as the ⇧ modifier, so
@@ -548,7 +551,9 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 		return emitBase(key.toUpperCase(), pending);
 	}
 
-	const s = shift ? key.toUpperCase() : key;
+	// The modifier character: the shifted letter's capital, or the shifted
+	// digit's US symbol (the spec spells ⇧5 as "%": e% → ɜ).
+	const s = shift ? SHIFTED_DIGITS[key] ?? key.toUpperCase() : key;
 
 	// Shift-letter modifiers transform the previous glyph in place; its combining
 	// marks survive the swap.

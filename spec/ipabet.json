@@ -9,8 +9,9 @@
   "Q": "guttural — uvular-pharyngeal-epiglottal throat region",
   "V": "labiodental",
   "B": "bilabial place",
-  "A": "drag toward a (vowels: oA→ɒ, uA→ʌ, 5A→ɐ)",
-  "Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ); Welsh y, Russian ы",
+  "A": "drag toward a (vowels: oA→ɒ, uA→ʌ)",
+  "5": "pull toward the center — the ə-neighborhood (e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ); ə itself is the 5 base's default, 5⇧H",
+  "Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ, aY→ä); Welsh y, Russian ы",
   "E": "ligature with e",
   "C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
   "P": "implosive (voiced glottalic ingressive)"
@@ -257,13 +258,13 @@
    "name": "LATIN SMALL LETTER V WITH RIGHT HOOK"
   },
   {
-   "key": "5E",
+   "key": "e%",
    "glyph": "ɜ",
    "cp": "U+025C",
    "name": "LATIN SMALL LETTER REVERSED OPEN E"
   },
   {
-   "key": "5O",
+   "key": "o%",
    "glyph": "ɞ",
    "cp": "U+025E",
    "name": "LATIN SMALL LETTER CLOSED REVERSED OPEN E"
@@ -287,7 +288,7 @@
    "name": "LATIN SMALL LETTER TURNED V"
   },
   {
-   "key": "5A",
+   "key": "a%",
    "glyph": "ɐ",
    "cp": "U+0250",
    "name": "LATIN SMALL LETTER TURNED A"
@@ -297,6 +298,12 @@
    "glyph": "ɶ",
    "cp": "U+0276",
    "name": "LATIN LETTER SMALL CAPITAL OE"
+  },
+  {
+   "key": "aY",
+   "glyph": "ä",
+   "cp": "U+00E4",
+   "name": "LATIN SMALL LETTER A WITH DIAERESIS"
   },
   {
    "key": "bP",

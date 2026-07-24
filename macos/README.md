@@ -111,8 +111,10 @@ tmux prefixes, vim counts, and shortcuts pass through natively).
 - **Shift** — US shift, overridden where IPA needs it: a letter right after a
   glyph → an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ). The **digit keys
   are bases** too — a bare digit + a modifier gives an IPA glyph with no Latin home
-  (`5` `⇧Y` → ə, `2` `⇧H` → ʔ, `5` `⇧H` → ɜ). Because those sit on the *unshifted*
-  digit, ⇧2–7 are all their native symbols (@ # $ % ^ &).
+  (`5` `⇧H` → ə, `2` `⇧H` → ʔ). `⇧5` is also the centralize modifier — after a
+  bare e, o, or a it pulls the vowel toward the center (`e` `⇧5` → ɜ, `a` `⇧5` → ɐ).
+  Because the bases sit on the *unshifted* digit, ⇧2–7 stay their native
+  symbols (@ # $ % ^ &) — ⇧5 included, outside those three contexts.
 - **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
   style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
   tone, stress — stay postfix (`a` `⌥;` → aː). `⌥z` / `⌥⇧z` raise and lower, and
