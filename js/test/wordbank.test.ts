@@ -10,7 +10,7 @@
 
 import {describe, expect, test} from "bun:test";
 import {typeKeys, type Keystroke} from "../src/index.ts";
-import words from "../../www/src/harvest-words.json";
+import words from "../../www/src/gen/harvest-words.json";
 
 interface Entry {
 	word: string;

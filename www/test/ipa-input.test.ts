@@ -8,7 +8,7 @@
 // and lands on the following vowel — "señõr".
 
 import {test, expect} from "bun:test";
-import {bindIPAInput} from "../src/ipa-input.ts";
+import {bindIPAInput} from "../src/clients/ipa-input.ts";
 
 // Capital digraphs are an opt-in setting (they are keystroke-identical to
 // holding shift and yelling), so the suites that exercise them turn them on.

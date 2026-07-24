@@ -73,11 +73,11 @@ const all=[
   ...process("ar",300,loadFreq("freq-ar.txt"),true),
 ];
 const filtered=all.filter(w=>w.glyphs.every((g:string)=>progression.has(g)));
-fs.writeFileSync(new URL("../src/harvest-words.json", import.meta.url).pathname, JSON.stringify(filtered));
+fs.writeFileSync(new URL("../src/gen/harvest-words.json", import.meta.url).pathname, JSON.stringify(filtered));
 console.log("TOTAL", filtered.length, "(dropped", all.length-filtered.length, "needing an off-progression sound)");
 const all2=filtered; 
 for(const l of ["en","es","fr","de","it","ar"]) console.log("  "+l, all2.filter(w=>w.lang===l).length, "·", all.filter(w=>w.lang===l).slice(0,5).map(w=>w.word).join(" "));
 console.log("fr real:", all2.filter(w=>w.lang==="fr").slice(5,11).map(w=>`${w.word} /${w.target}/`).join("  "));
 console.log("de real:", all2.filter(w=>w.lang==="de").slice(3,8).map(w=>`${w.word} /${w.target}/`).join("  "));
 console.log("ar real:", all2.filter(w=>w.lang==="ar").slice(0,5).map(w=>`${w.word} /${w.target}/`).join("  "));
-console.log("KB:", Math.round(fs.statSync(new URL("../src/harvest-words.json", import.meta.url).pathname).size/1024));
+console.log("KB:", Math.round(fs.statSync(new URL("../src/gen/harvest-words.json", import.meta.url).pathname).size/1024));

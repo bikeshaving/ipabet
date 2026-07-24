@@ -4,4 +4,4 @@ build/
 node_modules/
 
 # generated at build time by scripts/bake-content.ts
-www/src/content.gen.ts
+www/src/gen/content.json

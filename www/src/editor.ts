@@ -2,7 +2,7 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
-import {docs} from "./content.gen.ts";
+import {docs} from "./content.ts";
 import {KeyboardRef} from "./components/kbd.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
@@ -11,7 +11,7 @@ import editorCss from "./styles/editor.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import editorClient from "./editor-client.ts" with {assetBase: "/assets/"};
+import editorClient from "./clients/editor-client.ts" with {assetBase: "/assets/"};
 
 // /type — prose is content/type.md; the editor DOM is an inline <Pad/> embedded in
 // it, and editor-client.ts attaches to #ed/#pad.

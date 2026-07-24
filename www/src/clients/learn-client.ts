@@ -3,9 +3,9 @@
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {keyFromEvent, mediatedByIME} from "./ipa-input.ts";
-import {keystrokeFromLabel} from "./keystrokes.ts";
+import {keystrokeFromLabel} from "../keystrokes.ts";
 import {displayKeys, KEYMODE_EVENT} from "./keycaps.ts";
-import {KB_ROWS, capBody, capTitle} from "./components/kbd.ts";
+import {KB_ROWS, capBody, capTitle} from "../components/kbd.ts";
 import {
 	handleKey,
 	handleBackspace,
@@ -13,7 +13,7 @@ import {
 	applyEdit,
 	nativeChar,
 	type Keystroke,
-} from "../../js/src/index.ts";
+} from "../../../js/src/index.ts";
 
 interface Word { word: string; lang: string; gloss: string; target: string; labels: string[]; audio?: string; }
 interface Lesson { title: string; sound?: string; keys?: string[]; intro: string; part?: string; prose?: string; review?: boolean; audio?: string; words: Word[]; }

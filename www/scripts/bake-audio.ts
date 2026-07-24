@@ -21,8 +21,8 @@ import {join, dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const AUDIO_DIR = join(HERE, "../src/word-audio");
-const MAP_FILE = join(HERE, "../src/word-audio-map.ts");
+const AUDIO_DIR = join(HERE, "../src/gen/word-audio");
+const MAP_FILE = join(HERE, "../src/gen/word-audio-map.ts");
 
 // language (as tagged in curriculum.ts) -> [voiceId, engine]
 const VOICE: Record<string, [string, string]> = {

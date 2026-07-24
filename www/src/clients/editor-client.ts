@@ -4,7 +4,7 @@
 
 import {jsx, renderer} from "@b9g/crank/standalone";
 import {bindIPAInput} from "./ipa-input.ts";
-import {handleKey} from "../../js/src/index.ts";
+import {handleKey} from "../../../js/src/index.ts";
 
 const ta = document.getElementById("ed") as HTMLTextAreaElement;
 const countEl = document.getElementById("count") as HTMLElement;

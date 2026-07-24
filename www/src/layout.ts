@@ -2,7 +2,7 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
-import keycapsClient from "./keycaps-client.ts" with {assetBase: "/assets/"};
+import keycapsClient from "./clients/keycaps-client.ts" with {assetBase: "/assets/"};
 
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
 // page renders <${Layout}> around its own <main> and trailing islands.

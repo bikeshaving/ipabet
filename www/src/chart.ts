@@ -3,12 +3,12 @@ import spec from "../../spec/ipabet.json";
 import {Layout} from "./layout.ts";
 import {keySpelled, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.
-import chartPdf from "./chart.pdf" with {assetBase: "/assets/"};
+import chartPdf from "./gen/chart.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartCss from "./styles/chart.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import chartAudio from "./chart-audio-client.ts" with {assetBase: "/assets/"};
-import {AUDIO} from "./audio-map.ts";
+import chartAudio from "./clients/chart-audio-client.ts" with {assetBase: "/assets/"};
+import {AUDIO} from "./gen/audio-map.ts";
 import {DIACRITICS, SUPRASEGMENTALS, TONES, type ChartEntry} from "./chart-data.ts";
 
 // The IPAbet chart: the IPA chart (2015 layout, CC BY-SA) with IPAbet keystrokes

@@ -1,12 +1,12 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import {CURRICULUM} from "./curriculum.ts";
-import {AUDIO} from "./audio-map.ts";
-import {WORD_AUDIO} from "./word-audio-map.ts";
+import {AUDIO} from "./gen/audio-map.ts";
+import {WORD_AUDIO} from "./gen/word-audio-map.ts";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
-import {docs} from "./content.gen.ts";
+import {docs} from "./content.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -14,7 +14,7 @@ import learnCss from "./styles/learn.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import learnClient from "./learn-client.ts" with {assetBase: "/assets/"};
+import learnClient from "./clients/learn-client.ts" with {assetBase: "/assets/"};
 
 // /learn — the graded course. Prose is content/learn.md; the drill scaffolding is
 // an inline <Scaffold/> embedded in it.

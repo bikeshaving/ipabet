@@ -3,7 +3,7 @@
 // translation, so its edge cases are the whole platform-labels feature.
 
 import {describe, expect, test} from "bun:test";
-import {pcKeys} from "../src/keycaps.ts";
+import {pcKeys} from "../src/clients/keycaps.ts";
 
 describe("pcKeys", () => {
 	test("modifier runs spell out, joined with +", () => {

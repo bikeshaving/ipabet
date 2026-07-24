@@ -2,7 +2,7 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
-import {posts, type Post} from "./content.gen.ts";
+import {posts, type Post} from "./content.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore

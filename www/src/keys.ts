@@ -5,7 +5,7 @@ import schema from "../../spec/ipabet.schema.json";
 import {Layout} from "./layout.ts";
 import {keySpelled as keystrokes} from "./keystrokes.ts";
 import {components} from "./marked-components.ts";
-import {docs} from "./content.gen.ts";
+import {docs} from "./content.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keysCss from "./styles/keys.css" with {assetBase: "/assets/"};
 

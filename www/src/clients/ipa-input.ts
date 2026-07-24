@@ -11,7 +11,7 @@ import {
 	type Pending,
 	type Keystroke,
 	type Edit,
-} from "../../js/src/index.ts";
+} from "../../../js/src/index.ts";
 
 // -------------------------------------------------------------- keystrokes
 

@@ -23,7 +23,7 @@ fi
 cp Info.plist "$APP/Contents/"
 cp ../spec/ipabet.json "$APP/Contents/Resources/ipabet.json"
 cp ipabet.pdf "$APP/Contents/Resources/"
-cp ../www/src/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
+cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
 # Regenerate the cosmetic layout from the live US layout + the spec, then bundle
 # it. Complete US so passed keys (Return, Tab, …) keep their output; ⌥/⌥⇧ show
 # the marks. See tools/genkeylayout.swift.
