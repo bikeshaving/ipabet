@@ -8,8 +8,14 @@ import Carbon
 // Connection name must match InputMethodConnectionName in Info.plist.
 let kConnectionName = "IPAbet_Connection"
 
+Dbg.log("=== LAUNCH pid=\(ProcessInfo.processInfo.processIdentifier) " +
+        "v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?")" +
+        "(\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?")) " +
+        "path=\(Bundle.main.bundlePath) macOS=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+
 let server = IMKServer(name: kConnectionName,
                        bundleIdentifier: Bundle.main.bundleIdentifier!)
+Dbg.log("IMKServer created: \(server == nil ? "NIL — connection failed" : "ok")")
 
 // There is no raw mode and no mode state to manage: for native typing,
 // switch input sources — the OS's own switcher (⌃Space) is the off switch,

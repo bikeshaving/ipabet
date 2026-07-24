@@ -17,11 +17,14 @@ enum Dbg {
         let f = DateFormatter(); f.dateFormat = "HH:mm:ss.SSS"; return f
     }()
 
-    private(set) static var enabled = false
+    // DEBUG BUILD: logging is forced on — no sentinel needed. (Release builds
+    // gate on ~/.ipabet-debug via refresh(); this artifact exists to observe a
+    // machine we cannot touch.)
+    private(set) static var enabled = true
 
     /// Re-read the sentinel so `debug.sh on/off` takes effect without a reinstall.
     static func refresh() {
-        enabled = FileManager.default.fileExists(atPath: sentinelPath)
+        enabled = true
     }
 
     static func log(_ msg: @autoclosure () -> String) {
