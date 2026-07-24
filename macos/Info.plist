@@ -8,17 +8,6 @@
 	<string>IPAbet</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.bikeshaving.inputmethod.IPAbet</string>
-	<!-- Registers the bundled cosmetic layout so Keyboard Viewer can draw the
-	     real ⌥/⌥⇧ marks. The id is NEW (.viewer): the register helper actively
-	     disables the pre-0.1.0 id as poisoned-machine cleanup, and the restored
-	     feature must not collide with that. -->
-	<key>KLInfo_IPAbet</key>
-	<dict>
-		<key>TISInputSourceID</key>
-		<string>org.bikeshaving.inputmethod.IPAbet.keylayout.viewer</string>
-		<key>TISIntendedLanguage</key>
-		<string>en</string>
-	</dict>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

@@ -308,14 +308,15 @@ class InputController: IMKInputController {
     /// touched — the Viewer stays plain US and typing is never at risk. That is
     /// the lesson of 0.1.0: this feature's failure mode must be cosmetic.
     private static let viewerLayoutRegistered: Bool = {
-        // File-based registration decides the id, so match any IPAbet keylayout
-        // source except the exact pre-0.1.0 legacy id (which the helper disables).
-        let legacy = "org.bikeshaving.inputmethod.IPAbet.keylayout.IPAbet"
+        // File registration mints the bundle-derived id — the same one the old
+        // KLInfo declared. That's fine: the helper DISABLES it as a typing source
+        // (both for old residue and fresh registrations — it must never be one)
+        // while REGISTRATION is what lets the Viewer override resolve the name.
         guard let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISInputSource] else { return false }
         for src in list {
             guard let p = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { continue }
             let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
-            if id.contains(".keylayout.") && id.contains("IPAbet") && id != legacy {
+            if id.contains(".keylayout.") && id.contains("IPAbet") {
                 Dbg.log("viewer keylayout registered: \(id)")
                 return true
             }
