@@ -161,6 +161,13 @@ let bodies = [
     // CHARACTER — dead in Safari while Terminal (which synthesizes C0 itself)
     // works. One plane covers every control combo, like Apple's US.
     keyMap(index: 5, carbonMods: ctrlMod),
+    // Caps Lock combos. Selects are EXACT matchers, so caps+⇧ / caps+⌥ match
+    // nothing without their own planes and fall to bare — Caps Lock + ⇧5 typed
+    // "5" instead of "%". UCKeyTranslate is the oracle for the case semantics;
+    // the ⌥ planes keep their mark overrides (marks are caps-neutral).
+    keyMap(index: 6, carbonMods: capsMod | shiftMod),
+    keyMap(index: 7, carbonMods: capsMod | optMod, override: optCap),
+    keyMap(index: 8, carbonMods: capsMod | optMod | shiftMod, override: optShiftCap),
 ].joined(separator: "\n")
 
 // The dead-key actions/terminators (empty if no combining marks are claimed).
@@ -197,6 +204,9 @@ let xml = """
     <keyMapSelect mapIndex="3"><modifier keys="anyOption"/></keyMapSelect>
     <keyMapSelect mapIndex="4"><modifier keys="anyOption anyShift"/></keyMapSelect>
     <keyMapSelect mapIndex="5"><modifier keys="anyShift? caps? anyOption? anyControl"/></keyMapSelect>
+    <keyMapSelect mapIndex="6"><modifier keys="anyShift caps"/></keyMapSelect>
+    <keyMapSelect mapIndex="7"><modifier keys="anyOption caps"/></keyMapSelect>
+    <keyMapSelect mapIndex="8"><modifier keys="anyOption anyShift caps"/></keyMapSelect>
   </modifierMap>
   <keyMapSet id="ANSI">
 \(bodies)
@@ -219,6 +229,7 @@ let mustHave: [(String, String)] = [
     ("49", " "),          // Space
     ("0", "&#x0001;"),   // ⌃A — the control plane; WebKit line-nav (Safari regression)
     ("14", "&#x0005;"),  // ⌃E
+    ("23", "%"),         // Caps Lock + ⇧5 — the caps-combo planes
 ]
 for (code, output) in mustHave {
     guard out.contains("<key code=\"\(code)\" output=\"\(output)\"/>") else {
