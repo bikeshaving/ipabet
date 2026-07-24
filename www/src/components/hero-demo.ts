@@ -2,6 +2,8 @@ import {jsx} from "@b9g/crank/standalone";
 import type {Context} from "@b9g/crank/standalone";
 import {bindIPAInput, type IPABinding} from "../clients/ipa-input.ts";
 import {displayKeys, KEYMODE_EVENT} from "../clients/keycaps.ts";
+import {handleKey, applyEdit, nativeChar, previewString, type Pending} from "../../../js/src/index.ts";
+import {parseKey, formatKey as keyLabel} from "../keystrokes.ts";
 
 // The hero: a real <input> bound to the engine, with the target's keystrokes
 // drawn as bars above it. Server-rendered (bars visible before any JS) and
@@ -13,10 +15,42 @@ export interface Demo {
 	steps: [string, string, string][]; // [keystroke label, output, pending dead-key]
 }
 
+// The hero demo, authored as KEYSTROKES; the engine computes the output after each
+// one, so the demo cannot drift from the notation.
+function demo(word: string, ...keys: string[]) {
+	let buffer = "";
+	let pending: Pending = [];
+	const steps: [string, string, string][] = []; // [key label, output, pending]
+	for (const kk of keys) {
+		const k = parseKey(kk);
+		const step = handleKey(buffer, k, pending);
+		pending = step.pending;
+		buffer = applyEdit(buffer, step.edit, nativeChar(k));
+		steps.push([keyLabel(kk), buffer, previewString(pending)]);
+	}
+	return {word, steps};
+}
+
+export const DEMOS: Demo[] = [
+	demo("ship", "s", "+h", "i", "+h", "p"),
+	demo("vision", "v", "i", "+h", "z", "+h", "5", "+h", "n"),
+	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
+	demo("bird", "b", "e", "+5", "~r", "d"),
+	demo("about", "5", "+h", "b", "a", "u", "+h", "t"),
+	demo("über", "y", "~;", "b", "a", "+5"),
+	demo("loch", "l", "o", "+a", "x"),
+	demo("señor", "s", "e", "~n", "n", "o", "r"),
+	demo("Français", "f", "r", "+q", "~n", "a", "+h", "s", "e", "+h"),
+	demo("Muḥammad", "m", "u", "7", "+h", "a", "m", "m", "a", "d"),
+	demo("Zhōu", "t", "+r", "~j", "s", "+r", "o", "u", "+h"),
+	demo("Hawaiʻi", "+h", "a", "w", "a", "i", "~q", "i"),
+	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
+];
+
 const IS_CLIENT = typeof window !== "undefined";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
+export function* HeroDemo(this: Context, {demos, still = false}: {demos: Demo[]; still?: boolean}) {
 	let input: HTMLInputElement | undefined;
 	let ipa: IPABinding | undefined;
 	let ti = 0;        // current target word
@@ -46,7 +80,7 @@ export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
 		const token = ++run;
 		for (;;) {
 			input!.value = "";
-			ipa!.reset();
+			ipa?.reset();
 			paint(0);
 			await sleep(600);
 			const steps = target().steps;
@@ -66,7 +100,7 @@ export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
 	const setTarget = (n: number) => {
 		ti = ((n % demos.length) + demos.length) % demos.length;
 		input!.value = "";
-		ipa!.reset();
+		ipa?.reset();
 		run++;
 		if (live) paint(0);
 		else demo();
@@ -87,8 +121,9 @@ export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
 
 	if (IS_CLIENT && demos.length) {
 		this.schedule(() => {
-			// The one engine↔input binding, shared with /type.
-			ipa = bindIPAInput(input!, (p) => paintLive(p));
+			// The one engine↔input binding, shared with /type. A `still` hero is a
+			// pure animation: no binding, no focus takeover, just the attract loop.
+			if (!still) ipa = bindIPAInput(input!, (p) => paintLive(p));
 
 			// Keyboard carousel, only while the hero is on screen so arrows still
 			// scroll the rest of the page. Arrows defer to the caret when the input
@@ -99,6 +134,7 @@ export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
 				return r.bottom > 0 && r.top < window.innerHeight;
 			};
 			const onkey = (e: KeyboardEvent) => {
+				if (still) return;
 				if (e.metaKey || e.ctrlKey || e.altKey || !heroVisible()) return;
 				if (document.activeElement instanceof HTMLButtonElement) return; // buttons keep their own Enter
 				const typing = document.activeElement === input && input!.value !== "";
@@ -127,17 +163,18 @@ export function* HeroDemo(this: Context, {demos}: {demos: Demo[]}) {
 					jsx`<kbd class=${i < hits ? "hit" : undefined}>${displayKeys(k)}</kbd>`) : null}</div>
 				<div class="out">
 					<input id="demoinput" class="ipa" ref=${(el: HTMLInputElement) => (input = el)}
-						aria-label="Type IPA — click and type it yourself"
+						aria-label=${still ? "IPA typing demo" : "Type IPA — click and type it yourself"}
+						readonly=${still} tabindex=${still ? -1 : undefined}
 						spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
-						onfocus=${onfocus} onblur=${onblur} />
+						onfocus=${still ? undefined : onfocus} onblur=${still ? undefined : onblur} />
 					<span id="demopend">${pend ? jsx`<span class="pend ipa">${pend}</span>` : null}</span>
 				</div>
 				<div id="demoword">${done && demos.length ? jsx`<span>${"“" + target().word + "”"}</span>` : null}</div>
 			</div>
-			<div id="demonav">
+			${still ? null : jsx`<div id="demonav">
 				<button id="demoprev" aria-label="Previous word" title="Previous word" onclick=${() => setTarget(ti - 1)}>◀</button>
 				<span class="hint">click the box and type it yourself · ← → to browse</span>
 				<button id="demonext" aria-label="Next word" title="Next word" onclick=${() => setTarget(ti + 1)}>▶</button>
-			</div>`;
+			</div>`}`;
 	}
 }

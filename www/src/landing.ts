@@ -1,11 +1,9 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
-import {handleKey, applyEdit, nativeChar, previewString, type Pending} from "../../js/src/index.ts";
-import {parseKey, formatKey as keyLabel} from "./keystrokes.ts";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
-import {HeroDemo} from "./components/hero-demo.ts";
+import {HeroDemo, DEMOS} from "./components/hero-demo.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
@@ -24,37 +22,6 @@ import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 
 const doc = docs.index;
 
-// The hero demo, authored as KEYSTROKES; the engine computes the output after each
-// one, so the demo cannot drift from the notation.
-function demo(word: string, ...keys: string[]) {
-	let buffer = "";
-	let pending: Pending = [];
-	const steps: [string, string, string][] = []; // [key label, output, pending]
-	for (const kk of keys) {
-		const k = parseKey(kk);
-		const step = handleKey(buffer, k, pending);
-		pending = step.pending;
-		buffer = applyEdit(buffer, step.edit, nativeChar(k));
-		steps.push([keyLabel(kk), buffer, previewString(pending)]);
-	}
-	return {word, steps};
-}
-
-const DEMO = [
-	demo("ship", "s", "+h", "i", "+h", "p"),
-	demo("vision", "v", "i", "+h", "z", "+h", "5", "+h", "n"),
-	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
-	demo("bird", "b", "e", "+5", "~r", "d"),
-	demo("about", "5", "+h", "b", "a", "u", "+h", "t"),
-	demo("über", "y", "~;", "b", "a", "+5"),
-	demo("loch", "l", "o", "+a", "x"),
-	demo("señor", "s", "e", "~n", "n", "o", "r"),
-	demo("Français", "f", "r", "+q", "~n", "a", "+h", "s", "e", "+h"),
-	demo("Muḥammad", "m", "u", "7", "+h", "a", "m", "m", "a", "d"),
-	demo("Zhōu", "t", "+r", "~j", "s", "+r", "o", "u", "+h"),
-	demo("Hawaiʻi", "+h", "a", "w", "a", "i", "~q", "i"),
-	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
-];
 
 // ⇧ + number row: the IPA glyphs with no Latin home, from the spec.
 const shiftNumbers = (spec.letters as {key: string; glyph: string}[]).filter((l) => /^[0-9]$/.test(l.key));
@@ -98,7 +65,7 @@ export function Landing() {
 					<p class="trust">A real IPA keyboard · free · open source · fully offline · native on macOS · full engine in any browser</p>
 				</header>
 
-				<div id="hero-root"><${HeroDemo} demos=${DEMO} /></div>
+				<div id="hero-root"><${HeroDemo} demos=${DEMOS} /></div>
 
 				<${Marked} markdown=${doc.body} components=${landingComponents} />
 
@@ -112,7 +79,6 @@ export function Landing() {
 					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 				</footer>
 			</main>
-			<${SerializeScript} name="__DEMO" value=${DEMO} />
 			<script type="module" src=${landingClient}></script>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
 			<script type="module" src=${chartsClient}></script>

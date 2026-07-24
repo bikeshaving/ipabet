@@ -7,6 +7,14 @@ import {posts, type Post} from "./content.ts";
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import blogCss from "./styles/blog.css" with {assetBase: "/assets/"};
+// @ts-ignore
+import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
+// @ts-ignore
+import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
+// @ts-ignore
+import heroClient from "./clients/landing.ts" with {assetBase: "/assets/"};
+import {AUDIO} from "./gen/audio-map.ts";
+import {SerializeScript} from "./components/serialize-script.ts";
 
 // /blog — dated writing about the project, in first person. Each post is a full
 // page of the site, so it can embed the same live components as any other page.
@@ -44,7 +52,7 @@ export function BlogIndex() {
 
 export function BlogPost({post}: {post: Post}) {
 	return jsx`
-		<${Layout} title=${`${post.attributes.title} — IPAbet blog`} desc=${post.attributes.description ?? ""} styles=${[globalCss, blogCss]}>
+		<${Layout} title=${`${post.attributes.title} — IPAbet blog`} desc=${post.attributes.description ?? ""} styles=${[globalCss, blogCss, chartVizCss]}>
 			<main class="blog post">
 				<p class="crumbs"><a href="/blog">← blog</a></p>
 				<h1>${post.attributes.title}</h1>
@@ -58,6 +66,9 @@ export function BlogPost({post}: {post: Post}) {
 					<a href="/feed.xml">Feed</a>
 				</footer>
 			</main>
+			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
+			<script type="module" src=${chartsClient}></script>
+			<script type="module" src=${heroClient}></script>
 		<//>`;
 }
 
