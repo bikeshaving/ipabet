@@ -63,6 +63,9 @@ step "ASSERT: enable + select (what System Settings' + does)"
 # launchctl asuser joins the console user's bootstrap, as the postinstall does.
 ${SSH}${IP} "sudo launchctl asuser \$(id -u admin) sudo -u admin \$HOME/tis-probe-e2e enable-select"  # cirrus images: passwordless sudo; -S would starve the nested sudo
 
+step "ASSERT: the cosmetic keylayout registered (Keyboard Viewer correctness)"
+${SSH}${IP} "~/tis-probe-e2e list | grep -q 'keylayout.viewer' && echo 'VIEWER LAYOUT REGISTERED' || { echo '✗ viewer layout absent'; exit 1; }"
+
 step "ASSERT: the IME process launches"
 sleep 3
 ${SSH}${IP} "pgrep -fl IPAbet" || { echo "✗ IME process not running after select"; exit 1; }
