@@ -21,7 +21,7 @@ IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits,
 A real input method, not a website or palette: type IPA directly into Word, Praat, ELAN, LaTeX, Slack, your browser — at full speed, offline.
 </Card>
 <Card title="Nothing to memorize">
-Digraphs follow pinyin/ITRANS-style romanization; diacritics sit on Apple's ABC&nbsp;Extended keys; the glyphs with no Latin letter live on the number-row bases — an unshifted digit plus a modifier (`5` `⇧Y` → ə).
+Digraphs follow pinyin/ITRANS-style romanization; diacritics sit on Apple's ABC Extended keys; the glyphs with no Latin letter live on the number-row bases — an unshifted digit plus a modifier (`5` `⇧H` → ə).
 </Card>
 <Card title="Your keyboard stays yours">
 Unshifted keys are 100% native US — Caps Lock included, so capitals stay capitals. Every key always emits something, and there is an escape for anything the IPA layer claims.
