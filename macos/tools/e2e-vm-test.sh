@@ -47,7 +47,7 @@ swiftc tools/tis-probe.swift -target arm64-apple-macos13.0 -o /tmp/tis-probe-e2e
 
 step "pkg + probe → VM, install"
 # home, not /tmp — macOS clears /tmp on the reboot below
-$SCP "$PKG" /tmp/tis-probe-e2e admin@${IP}:
+$SCP "$PKG" /tmp/tis-probe-e2e tools/e2e-type-test.applescript admin@${IP}:
 ${SSH}${IP} "echo admin | sudo -S installer -pkg ~/IPAbet.pkg -target / && echo INSTALLED"
 ${SSH}${IP} "grep -i ipabet /var/log/install.log | tail -8" || true
 
@@ -92,24 +92,12 @@ step "ASSERT: keystrokes become IPA (TextEdit, synthetic keys)"
 # TextEdit comes first and the process assertion follows it. A fresh login's
 # GUI warmup can starve the VM briefly: retry connections.
 vmssh() { local n; for n in 1 2 3 4; do ${SSH}${IP} "$@" && return 0; echo "   (ssh retry $n)"; sleep 8; done; return 1; }
-vmssh 'osascript -e "
-tell application \"TextEdit\"
-  activate
-  make new document
-end tell
-delay 2
-tell application \"System Events\"
-  keystroke \"s\"
-  keystroke \"H\" using shift down
-  keystroke \"i\"
-  keystroke \"H\" using shift down
-  keystroke \"p\"
-end tell
-delay 1
-tell application \"TextEdit\" to get text of document 1
-"'
+# GUI apps must be launched INTO the auto-login Aqua session: bare ssh context
+# gets LaunchServices -10810. launchctl asuser joins that session's bootstrap.
+GUI='sudo launchctl asuser $(id -u admin) sudo -u admin'
+vmssh "$GUI osascript e2e-type-test.applescript" > /tmp/e2e-typed.txt || true
 vmssh "pgrep -fl IPAbet" && echo "   IME process alive" || echo "   (IME process not visible to pgrep)"
-OUT=$(vmssh 'osascript -e "tell application \"TextEdit\" to get text of document 1"')
+OUT=$(tail -1 /tmp/e2e-typed.txt | tr -d '[:space:]')
 echo "   typed: '$OUT'"
 if [ "$OUT" = "ʃɪp" ]; then
   echo
