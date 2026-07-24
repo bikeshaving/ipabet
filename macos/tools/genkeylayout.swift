@@ -139,12 +139,16 @@ func keyMap(index: Int, carbonMods: UInt32, override: [String: Cap] = [:]) -> St
             continue
         }
         let out = usOutput(code, carbonMods: carbonMods)
-        if !out.isEmpty { rows.append("      <key code=\"\(code)\" output=\"\(esc(out))\"/>") }
+        // NUL (⌃2, ⌃space on US) is unrepresentable even in XML 1.1 — skip the row.
+        if !out.isEmpty, !out.unicodeScalars.contains(where: { $0.value == 0 }) {
+            rows.append("      <key code=\"\(code)\" output=\"\(esc(out))\"/>")
+        }
     }
     return "    <keyMap index=\"\(index)\">\n" + rows.joined(separator: "\n") + "\n    </keyMap>"
 }
 
 let shiftMod = UInt32(shiftKey), optMod = UInt32(optionKey), capsMod = UInt32(alphaLock)
+let ctrlMod = UInt32(controlKey)
 
 let bodies = [
     keyMap(index: 0, carbonMods: 0),
@@ -152,6 +156,11 @@ let bodies = [
     keyMap(index: 2, carbonMods: capsMod),
     keyMap(index: 3, carbonMods: optMod, override: optCap),
     keyMap(index: 4, carbonMods: optMod | shiftMod, override: optShiftCap),
+    // The control plane. Without it a declined ⌃A translates through the bare
+    // plane to "a", and WebKit's ⌃A/⌃E/⌃K bindings key off the CONTROL
+    // CHARACTER — dead in Safari while Terminal (which synthesizes C0 itself)
+    // works. One plane covers every control combo, like Apple's US.
+    keyMap(index: 5, carbonMods: ctrlMod),
 ].joined(separator: "\n")
 
 // The dead-key actions/terminators (empty if no combining marks are claimed).
@@ -187,6 +196,7 @@ let xml = """
     <keyMapSelect mapIndex="2"><modifier keys="caps"/></keyMapSelect>
     <keyMapSelect mapIndex="3"><modifier keys="anyOption"/></keyMapSelect>
     <keyMapSelect mapIndex="4"><modifier keys="anyOption anyShift"/></keyMapSelect>
+    <keyMapSelect mapIndex="5"><modifier keys="anyShift? caps? anyOption? anyControl"/></keyMapSelect>
   </modifierMap>
   <keyMapSet id="ANSI">
 \(bodies)
@@ -207,6 +217,8 @@ let mustHave: [(String, String)] = [
     ("51", "&#x0008;"),  // Backspace — the Safari regression
     ("53", "&#x001B;"),  // Escape
     ("49", " "),          // Space
+    ("0", "&#x0001;"),   // ⌃A — the control plane; WebKit line-nav (Safari regression)
+    ("14", "&#x0005;"),  // ⌃E
 ]
 for (code, output) in mustHave {
     guard out.contains("<key code=\"\(code)\" output=\"\(output)\"/>") else {
