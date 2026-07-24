@@ -1,5 +1,5 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import {Raw, type Element} from "@b9g/crank";
+import {type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keycapsClient from "./keycaps-client.ts" with {assetBase: "/assets/"};
@@ -12,13 +12,10 @@ export interface LayoutProps {
 	desc: string;
 	/** Hashed stylesheet URLs to <link> (the preferred path — real .css assets). */
 	styles?: string[];
-	/** Legacy inline stylesheet text, injected raw. Retired page-by-page in favor
-	 *  of `styles`; kept so not-yet-converted pages keep working mid-migration. */
-	css?: string;
 	children?: unknown;
 }
 
-export function Layout({title, desc, styles = [], css, children}: LayoutProps) {
+export function Layout({title, desc, styles = [], children}: LayoutProps) {
 	return jsx`
 		<html lang="en">
 			<head>
@@ -27,7 +24,6 @@ export function Layout({title, desc, styles = [], css, children}: LayoutProps) {
 				<title>${title}</title>
 				<meta name="description" content=${desc} />
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
-				${css === undefined ? null : jsx`<style><${Raw} value=${css} /></style>`}
 			</head>
 			<body>
 				${children}

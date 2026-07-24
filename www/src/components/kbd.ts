@@ -1,5 +1,5 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import spec from "../../spec/ipabet.json";
+import spec from "../../../spec/ipabet.json";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.
 // Unit widths are the ANSI standard (quarter-key grid, 15u per row):

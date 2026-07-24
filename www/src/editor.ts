@@ -3,7 +3,7 @@ import {Marked} from "@b9g/crankdown";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.gen.ts";
-import {KeyboardRef} from "./kbd.ts";
+import {KeyboardRef} from "./components/kbd.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
