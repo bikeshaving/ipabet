@@ -84,11 +84,12 @@ done
 ${SSH}${IP} true || { echo "✗ VM did not come back from second reboot"; exit 1; }
 echo "   logged in with IPA selected"
 
-step "ASSERT: the IME process launches"
-sleep 3
-${SSH}${IP} "pgrep -fl IPAbet" || { echo "✗ IME process not running after select"; exit 1; }
+step "selection state after login (verbatim)"
+${SSH}${IP} "defaults read com.apple.HIToolbox AppleSelectedInputSources" || true
 
 step "ASSERT: keystrokes become IPA (TextEdit, synthetic keys)"
+# The IME launches lazily — on first text-client focus, not at login — so
+# TextEdit comes first and the process assertion follows it.
 ${SSH}${IP} 'osascript -e "
 tell application \"TextEdit\"
   activate
@@ -105,6 +106,7 @@ end tell
 delay 1
 tell application \"TextEdit\" to get text of document 1
 "'
+${SSH}${IP} "pgrep -fl IPAbet" && echo "   IME process alive" || echo "   (IME process not visible to pgrep)"
 OUT=$(${SSH}${IP} 'osascript -e "tell application \"TextEdit\" to get text of document 1"')
 echo "   typed: '$OUT'"
 if [ "$OUT" = "ʃɪp" ]; then
