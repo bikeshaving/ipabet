@@ -245,12 +245,10 @@ class InputController: IMKInputController {
         caps.toolTip = "Off: holding shift types capitals, so SHIP stays SHIP."
         menu.addItem(caps)
 
-        menu.addItem(.separator())
         let chart = NSMenuItem(title: "IPA Cheat Sheet",
                                action: #selector(openCheatSheet(_:)), keyEquivalent: "")
         chart.target = self
         menu.addItem(chart)
-        menu.addItem(.separator())
         let about = NSMenuItem(title: "About IPAbet",
                                action: #selector(openAbout(_:)), keyEquivalent: "")
         about.target = self
