@@ -53,10 +53,10 @@ ${SSH}${IP} "grep -i ipabet /var/log/install.log | tail -8" || true
 
 step "reboot (the logout/login a real user performs)"
 ${SSH}${IP} "echo admin | sudo -S shutdown -r now" 2>/dev/null || true
-sleep 20
-for i in $(seq 1 60); do
+sleep 30
+for i in $(seq 1 90); do
   ${SSH}${IP} true 2>/dev/null && break
-  sleep 5
+  sleep 6
 done
 ${SSH}${IP} true || { echo "✗ VM did not come back"; exit 1; }
 echo "   rebooted"
@@ -76,10 +76,10 @@ ${SSH}${IP} 'defaults write com.apple.HIToolbox AppleSelectedInputSources -array
   "<dict><key>InputSourceKind</key><string>Input Mode</string><key>Bundle ID</key><string>org.bikeshaving.inputmethod.IPAbet</string><key>Input Mode</key><string>org.bikeshaving.inputmethod.IPAbet.IPA</string></dict>"'
 echo "   prefs written; rebooting into the selected state"
 ${SSH}${IP} "sudo shutdown -r now" 2>/dev/null || true
-sleep 20
-for i in $(seq 1 60); do
+sleep 30
+for i in $(seq 1 90); do
   ${SSH}${IP} true 2>/dev/null && break
-  sleep 5
+  sleep 6
 done
 ${SSH}${IP} true || { echo "✗ VM did not come back from second reboot"; exit 1; }
 echo "   logged in with IPA selected"
