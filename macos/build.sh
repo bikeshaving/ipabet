@@ -7,14 +7,25 @@ APP=build/IPAbet.app
 rm -rf build
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-swiftc Sources/*.swift \
-  -o "$APP/Contents/MacOS/IPAbet" \
-  -framework Cocoa -framework InputMethodKit \
-  -O
+# UNIVERSAL binaries — swiftc builds host-arch only, and an arm64-only input
+# method on an Intel Mac registers from its plist but can never launch: the
+# input source appears, and typing is dead. Build both slices, lipo them.
+for arch in arm64 x86_64; do
+  swiftc Sources/*.swift \
+    -target "$arch-apple-macos13.0" \
+    -o "/tmp/ipabet-main-$arch" \
+    -framework Cocoa -framework InputMethodKit \
+    -O
+done
+lipo -create -output "$APP/Contents/MacOS/IPAbet" /tmp/ipabet-main-arm64 /tmp/ipabet-main-x86_64
 
 # The registration helper: the one UNSANDBOXED binary (TIS enablement writes
 # HIToolbox prefs, which the sandbox would silently redirect into the container).
-swiftc Helper/register.swift -o "$APP/Contents/MacOS/ipabet-register" -framework Carbon -O
+for arch in arm64 x86_64; do
+  swiftc Helper/register.swift -target "$arch-apple-macos13.0" \
+    -o "/tmp/ipabet-register-$arch" -framework Carbon -O
+done
+lipo -create -output "$APP/Contents/MacOS/ipabet-register" /tmp/ipabet-register-arm64 /tmp/ipabet-register-x86_64
 
 # compile app icon if iconset present and iconutil available
 if [ -d IPAbet.iconset ] && command -v iconutil >/dev/null; then
