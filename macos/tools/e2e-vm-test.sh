@@ -14,8 +14,13 @@ PKG="${1:-build/IPAbet.pkg}"
 [ -f "$PKG" ] || { echo "✗ no pkg at $PKG"; exit 1; }
 IMG="ghcr.io/cirruslabs/macos-sequoia-base:latest"
 VM="ipabet-e2e"
-SSH="sshpass -p admin ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o PubkeyAuthentication=no -o PreferredAuthentications=password admin@"
-SCP="sshpass -p admin scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no -o PreferredAuthentications=password"
+KEY="/tmp/ipabet-e2e-key"
+[ -f "$KEY" ] || ssh-keygen -q -t ed25519 -N "" -f "$KEY"
+OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o IdentitiesOnly=yes"
+SSHP="sshpass -p admin ssh $OPTS -o PubkeyAuthentication=no -o PreferredAuthentications=password admin@"
+SSH="ssh $OPTS -i $KEY admin@"
+SCP="scp $OPTS -i $KEY"
+
 
 step() { echo; echo "━━ $1"; }
 
@@ -29,11 +34,12 @@ trap 'kill $TART_PID 2>/dev/null; wait $TART_PID 2>/dev/null; tart delete "$VM" 
 step "waiting for the VM to boot"
 IP=""
 for i in $(seq 1 60); do
-  IP=$(tart ip "$VM" 2>/dev/null) && [ -n "$IP" ] && ${SSH}${IP} true 2>/dev/null && break
+  IP=$(tart ip "$VM" 2>/dev/null) && [ -n "$IP" ] && ${SSHP}${IP} true 2>/dev/null && break
   IP=""; sleep 5
 done
 [ -n "$IP" ] || { echo "✗ VM never became reachable"; exit 1; }
-echo "   up at $IP"
+echo "   up at $IP — installing test key"
+${SSHP}${IP} "mkdir -p .ssh && chmod 700 .ssh && cat >> .ssh/authorized_keys && chmod 600 .ssh/authorized_keys" < "$KEY.pub"
 ${SSH}${IP} "sw_vers; uname -m"
 
 step "building the arm64 probe"
