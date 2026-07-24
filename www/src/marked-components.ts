@@ -14,11 +14,16 @@ export const components: Record<string, unknown> = {
 	// The interactive charts: real components, server-rendered where the markdown
 	// places them and hydrated by clients/charts.ts (which supplies the audio map).
 	VowelChart: () => jsx`<div id="vowel-chart"><${VowelApp} /></div>`,
-	// The landing hero, embeddable in prose; `still` renders the animation-only
-	// variant (readonly, no nav) — clients/landing.ts hydrates by the marker.
-	Hero: ({token}: any) => token.still
-		? jsx`<div id="hero-root" data-still="true"><${HeroDemo} demos=${DEMO_TEASER} still=${true} /></div>`
-		: jsx`<div id="hero-root"><${HeroDemo} demos=${DEMOS} /></div>`,
+	// The landing hero, embeddable in prose. `teaser` cycles the three-word
+	// digraph story instead of the full tour; `still` renders the animation-only
+	// variant (readonly, no nav). clients/landing.ts hydrates by the markers.
+	Hero: ({token}: any) => {
+		const demos = token.teaser ? DEMO_TEASER : DEMOS;
+		return jsx`<div id="hero-root"
+			data-teaser=${token.teaser ? "true" : undefined}
+			data-still=${token.still ? "true" : undefined}
+			><${HeroDemo} demos=${demos} still=${!!token.still} /></div>`;
+	},
 	ConsonantChart: () => jsx`<div id="consonant-chart"><${ConsonantApp} /></div>`,
 
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
