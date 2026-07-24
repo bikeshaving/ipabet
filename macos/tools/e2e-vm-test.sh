@@ -16,7 +16,7 @@ IMG="ghcr.io/cirruslabs/macos-sequoia-base:latest"
 VM="ipabet-e2e"
 KEY="/tmp/ipabet-e2e-key"
 [ -f "$KEY" ] || ssh-keygen -q -t ed25519 -N "" -f "$KEY"
-OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o IdentitiesOnly=yes"
+OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o IdentitiesOnly=yes"
 SSHP="sshpass -p admin ssh $OPTS -o PubkeyAuthentication=no -o PreferredAuthentications=password admin@"
 SSH="ssh $OPTS -i $KEY admin@"
 SCP="scp $OPTS -i $KEY"
@@ -92,8 +92,10 @@ ${SSH}${IP} "defaults read com.apple.HIToolbox AppleSelectedInputSources" || tru
 
 step "ASSERT: keystrokes become IPA (TextEdit, synthetic keys)"
 # The IME launches lazily — on first text-client focus, not at login — so
-# TextEdit comes first and the process assertion follows it.
-${SSH}${IP} 'osascript -e "
+# TextEdit comes first and the process assertion follows it. A fresh login's
+# GUI warmup can starve the VM briefly: retry connections.
+vmssh() { local n; for n in 1 2 3 4; do ${SSH}${IP} "$@" && return 0; echo "   (ssh retry $n)"; sleep 8; done; return 1; }
+vmssh 'osascript -e "
 tell application \"TextEdit\"
   activate
   make new document
@@ -109,8 +111,8 @@ end tell
 delay 1
 tell application \"TextEdit\" to get text of document 1
 "'
-${SSH}${IP} "pgrep -fl IPAbet" && echo "   IME process alive" || echo "   (IME process not visible to pgrep)"
-OUT=$(${SSH}${IP} 'osascript -e "tell application \"TextEdit\" to get text of document 1"')
+vmssh "pgrep -fl IPAbet" && echo "   IME process alive" || echo "   (IME process not visible to pgrep)"
+OUT=$(vmssh 'osascript -e "tell application \"TextEdit\" to get text of document 1"')
 echo "   typed: '$OUT'"
 if [ "$OUT" = "ʃɪp" ]; then
   echo
