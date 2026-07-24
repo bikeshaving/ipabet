@@ -12,7 +12,7 @@ import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 // @ts-ignore
-import heroClient from "./clients/landing.ts" with {assetBase: "/assets/"};
+import typingDemoClient from "./clients/typing-demo.ts" with {assetBase: "/assets/"};
 import {AUDIO} from "./gen/audio-map.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 
@@ -68,7 +68,7 @@ export function BlogPost({post}: {post: Post}) {
 			</main>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
 			<script type="module" src=${chartsClient}></script>
-			<script type="module" src=${heroClient}></script>
+			<script type="module" src=${typingDemoClient}></script>
 		<//>`;
 }
 

@@ -5,10 +5,10 @@ import {displayKeys, KEYMODE_EVENT} from "../clients/keycaps.ts";
 import {handleKey, applyEdit, nativeChar, previewString, type Pending} from "../../../js/src/index.ts";
 import {parseKey, formatKey as keyLabel} from "../keystrokes.ts";
 
-// The hero: a real <input> bound to the engine, with the target's keystrokes
-// drawn as bars above it. Server-rendered (bars visible before any JS) and
-// hydrated by clients/landing.ts. The input holds the text, so caret, selection
-// and the mobile keyboard come from the browser.
+// The typing demo: a real <input> bound to the engine, with the target's
+// keystrokes drawn as bars above it. Server-rendered (bars visible before any
+// JS) and hydrated by clients/typing-demo.ts. The input holds the text, so
+// caret, selection and the mobile keyboard come from the browser.
 
 export interface Demo {
 	word: string;
@@ -47,14 +47,21 @@ export const DEMOS: Demo[] = [
 	demo("ǃXóõ", "q", "+c", "+x", "~e", "o", "~n", "o"),
 ];
 
-/** The short cycle for prose embeds (<Hero still/>): the digraph story in
- *  three words, versus the landing hero's full tour. */
-export const DEMO_TEASER = DEMOS.slice(0, 3);
+/** Look up a subset of the tour by word ("ship vision thing"); unknown words
+ *  drop, and an empty pick falls back to the full tour — prose names its
+ *  examples, this resolves them identically on server and client. */
+export function pickDemos(words?: string | null): Demo[] {
+	if (!words) return DEMOS;
+	const picked = words.split(/[\s,]+/).filter(Boolean)
+		.map((w) => DEMOS.find((d) => d.word === w))
+		.filter((d): d is Demo => d !== undefined);
+	return picked.length ? picked : DEMOS;
+}
 
 const IS_CLIENT = typeof window !== "undefined";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function* HeroDemo(this: Context, {demos, still = false}: {demos: Demo[]; still?: boolean}) {
+export function* TypingDemo(this: Context, {demos, still = false}: {demos: Demo[]; still?: boolean}) {
 	let input: HTMLInputElement | undefined;
 	let ipa: IPABinding | undefined;
 	let ti = 0;        // current target word

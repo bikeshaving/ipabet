@@ -3,7 +3,7 @@ import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
-import {HeroDemo, DEMOS} from "./components/hero-demo.ts";
+import {TypingDemo, DEMOS} from "./components/typing-demo.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
@@ -13,7 +13,7 @@ import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import landingClient from "./clients/landing.ts" with {assetBase: "/assets/"};
+import typingDemoClient from "./clients/typing-demo.ts" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 
@@ -65,7 +65,7 @@ export function Landing() {
 					<p class="trust">A real IPA keyboard · free · open source · fully offline · native on macOS · full engine in any browser</p>
 				</header>
 
-				<div id="hero-root"><${HeroDemo} demos=${DEMOS} /></div>
+				<div id="typing-demo-root"><${TypingDemo} demos=${DEMOS} /></div>
 
 				<${Marked} markdown=${doc.body} components=${landingComponents} />
 
@@ -79,7 +79,7 @@ export function Landing() {
 					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 				</footer>
 			</main>
-			<script type="module" src=${landingClient}></script>
+			<script type="module" src=${typingDemoClient}></script>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
 			<script type="module" src=${chartsClient}></script>
 		<//>`;

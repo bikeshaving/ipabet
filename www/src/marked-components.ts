@@ -1,7 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Combo, Glyph} from "./components/ui.ts";
 import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
-import {HeroDemo, DEMOS, DEMO_TEASER} from "./components/hero-demo.ts";
+import {TypingDemo, pickDemos} from "./components/typing-demo.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
 // against this map, passing attributes as `token` and contents as `children`.
@@ -14,16 +14,14 @@ export const components: Record<string, unknown> = {
 	// The interactive charts: real components, server-rendered where the markdown
 	// places them and hydrated by clients/charts.ts (which supplies the audio map).
 	VowelChart: () => jsx`<div id="vowel-chart"><${VowelApp} /></div>`,
-	// The landing hero, embeddable in prose. `teaser` cycles the three-word
-	// digraph story instead of the full tour; `still` renders the animation-only
-	// variant (readonly, no nav). clients/landing.ts hydrates by the markers.
-	Hero: ({token}: any) => {
-		const demos = token.teaser ? DEMO_TEASER : DEMOS;
-		return jsx`<div id="hero-root"
-			data-teaser=${token.teaser ? "true" : undefined}
-			data-still=${token.still ? "true" : undefined}
-			><${HeroDemo} demos=${demos} still=${!!token.still} /></div>`;
-	},
+	// The typing demo, embeddable in prose: <TypingDemo words="ship vision"/>
+	// names its examples from the tour (none → all); `still` renders the
+	// animation-only variant (readonly, no nav). clients/typing-demo.ts hydrates
+	// by the markers.
+	TypingDemo: ({token}: any) => jsx`<div id="typing-demo-root"
+		data-words=${token.words || undefined}
+		data-still=${token.still ? "true" : undefined}
+		><${TypingDemo} demos=${pickDemos(token.words)} still=${!!token.still} /></div>`,
 	ConsonantChart: () => jsx`<div id="consonant-chart"><${ConsonantApp} /></div>`,
 
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
