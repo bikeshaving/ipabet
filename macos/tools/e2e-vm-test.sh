@@ -40,8 +40,9 @@ step "building the arm64 probe"
 swiftc tools/tis-probe.swift -target arm64-apple-macos13.0 -o /tmp/tis-probe-e2e -framework Carbon
 
 step "pkg + probe → VM, install"
-$SCP "$PKG" /tmp/tis-probe-e2e admin@${IP}:/tmp/
-${SSH}${IP} "echo admin | sudo -S installer -pkg /tmp/IPAbet.pkg -target / && echo INSTALLED"
+# home, not /tmp — macOS clears /tmp on the reboot below
+$SCP "$PKG" /tmp/tis-probe-e2e admin@${IP}:
+${SSH}${IP} "echo admin | sudo -S installer -pkg ~/IPAbet.pkg -target / && echo INSTALLED"
 ${SSH}${IP} "grep -i ipabet /var/log/install.log | tail -8" || true
 
 step "reboot (the logout/login a real user performs)"
@@ -55,10 +56,10 @@ ${SSH}${IP} true || { echo "✗ VM did not come back"; exit 1; }
 echo "   rebooted"
 
 step "ASSERT: input method registered on the clean machine"
-${SSH}${IP} "/tmp/tis-probe-e2e assert-present"
+${SSH}${IP} "~/tis-probe-e2e assert-present"
 
 step "ASSERT: enable + select (what System Settings' + does)"
-${SSH}${IP} "/tmp/tis-probe-e2e enable-select"
+${SSH}${IP} "~/tis-probe-e2e enable-select"
 
 step "ASSERT: the IME process launches"
 sleep 3
