@@ -27,6 +27,13 @@ export const components: Record<string, unknown> = {
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
 
+	// The three doors, as a button row: download, type, learn.
+	Callouts: () => jsx`<nav class="callouts">
+		<a class="main" href="/download">Download for macOS</a>
+		<a href="/type">Type in your browser</a>
+		<a href="/learn">Learn it in an afternoon</a>
+	</nav>`,
+
 	// A centered call-to-action line under the title; `sub` is the smaller second line.
 	Cta: ({token, children}: any) => jsx`<p class=${"cta" + (token.sub ? " sub" : "")}>${children}</p>`,
 

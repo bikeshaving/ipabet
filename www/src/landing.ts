@@ -7,15 +7,11 @@ import {TypingDemo, DEMOS} from "./components/typing-demo.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
-import {AUDIO} from "./gen/audio-map.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
-// @ts-ignore
 import typingDemoClient from "./clients/typing-demo.ts" with {assetBase: "/assets/"};
 // @ts-ignore
-import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 
 // / — the landing page. Prose is content/index.md; this page is the chrome plus
 // the landing-only components embedded in that Markdown.
@@ -56,7 +52,7 @@ export function Landing() {
 		<${Layout}
 			title=${doc.attributes.title}
 			desc=${doc.attributes.description ?? ""}
-			styles=${[globalCss, chartVizCss]}
+			styles=${[globalCss]}
 		>
 			<main>
 				<header>
@@ -71,16 +67,14 @@ export function Landing() {
 
 				<footer>
 					<span>MIT © 2026 Brian Kim</span>
-					<a href="/chart">The IPA chart in keystrokes</a>
-					<a href="/learn">Learn to type it</a>
-					<a href="/type">Scratchpad</a>
+					<a href="/chart">Chart</a>
+					<a href="/learn">Learn</a>
+					<a href="/type">Type</a>
 					<a href="/design">Design</a>
 					<a href="/blog">Blog</a>
 					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
 				</footer>
 			</main>
 			<script type="module" src=${typingDemoClient}></script>
-			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
-			<script type="module" src=${chartsClient}></script>
 		<//>`;
 }
