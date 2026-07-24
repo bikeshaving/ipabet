@@ -35,6 +35,13 @@ cp Info.plist "$APP/Contents/"
 cp ../spec/ipabet.json "$APP/Contents/Resources/ipabet.json"
 cp ipabet.pdf "$APP/Contents/Resources/"
 cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
+# The cosmetic layout for Keyboard Viewer: without it the Viewer documents the
+# US option layer while IPAbet is active — wrong on-screen documentation. The
+# override that uses it is guarded (see InputController): if registration
+# didn't take, the layout is simply absent and typing is untouched.
+swiftc tools/genkeylayout.swift -o /tmp/ipabet-genkl -framework Carbon -framework Cocoa
+( cd "$(dirname "$0")" && /tmp/ipabet-genkl )
+cp IPAbet.keylayout "$APP/Contents/Resources/IPAbet.keylayout"
 mkdir -p "$APP/Contents/Resources/en.lproj"
 cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 

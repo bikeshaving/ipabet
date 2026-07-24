@@ -298,6 +298,38 @@ class InputController: IMKInputController {
         pending = []
         Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall — FIRST, so the lines below log
         Dbg.log("── activate app=\(clientBundleID()) ──")
+        overrideViewerKeyboard(sender)
+    }
+
+    /// Keyboard Viewer draws whatever layout override points it at; without the
+    /// override it documents the US option layer while IPAbet is active — wrong
+    /// on-screen documentation. FAIL-SAFE: the override is applied only when the
+    /// bundled layout verifiably registered with TIS. If it didn't, nothing is
+    /// touched — the Viewer stays plain US and typing is never at risk. That is
+    /// the lesson of 0.1.0: this feature's failure mode must be cosmetic.
+    private static let viewerLayoutRegistered: Bool = {
+        // File registration mints the bundle-derived id — the same one the old
+        // KLInfo declared. That's fine: the helper DISABLES it as a typing source
+        // (both for old residue and fresh registrations — it must never be one)
+        // while REGISTRATION is what lets the Viewer override resolve the name.
+        guard let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISInputSource] else { return false }
+        for src in list {
+            guard let p = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { continue }
+            let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
+            if id.contains(".keylayout.") && id.contains("IPAbet") {
+                Dbg.log("viewer keylayout registered: \(id)")
+                return true
+            }
+        }
+        Dbg.log("viewer keylayout registered: false")
+        return false
+    }()
+
+    private func overrideViewerKeyboard(_ sender: Any!, name: String = "IPAbet") {
+        guard Self.viewerLayoutRegistered else { return }  // never overrode → never hand back either
+        let sel = NSSelectorFromString("overrideKeyboardWithKeyboardNamed:")
+        guard let client = sender as? NSObject, client.responds(to: sel) else { return }
+        client.perform(sel, with: name)
     }
 
     /// The host is taking the composition away (click, focus loss, source switch).
@@ -307,6 +339,11 @@ class InputController: IMKInputController {
 
     override func deactivateServer(_ sender: Any!) {
         if let c = (sender as? IMKTextInput) ?? client() { flush(c) }
+        // Hand the session's keyboard back to the system layout (guarded: a
+        // client that was never overridden is never touched). Secure input
+        // bypasses the IME but not the override, and deactivation is exactly
+        // when a password field takes the keys.
+        overrideViewerKeyboard(sender, name: "com.apple.keylayout.US")
     }
 
     // Shift-chaining state: BROKEN by a shift release, re-armed by producing an
