@@ -250,10 +250,6 @@ class InputController: IMKInputController {
                                action: #selector(openCheatSheet(_:)), keyEquivalent: "")
         chart.target = self
         menu.addItem(chart)
-        let site = NSMenuItem(title: "ipabet.org/keys",
-                              action: #selector(openSite(_:)), keyEquivalent: "")
-        site.target = self
-        menu.addItem(site)
         return menu
     }
 
@@ -272,10 +268,6 @@ class InputController: IMKInputController {
         if let url = Bundle.main.url(forResource: "chart", withExtension: "pdf") {
             NSWorkspace.shared.open(url)
         }
-    }
-
-    @objc func openSite(_ sender: Any?) {
-        if let url = URL(string: "https://ipabet.org/keys") { NSWorkspace.shared.open(url) }
     }
 
 
