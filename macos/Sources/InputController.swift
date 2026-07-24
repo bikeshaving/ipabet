@@ -275,11 +275,19 @@ class InputController: IMKInputController {
 
     /// The standard About panel — name, icon, version, and copyright, filled by
     /// AppKit from Info.plist (CFBundleShortVersionString, NSHumanReadableCopyright).
-    /// We activate first: as an LSUIElement agent the panel would otherwise open
-    /// behind the frontmost app.
+    /// The credits string carries the site as a live link (a .link attribute is
+    /// clickable in the panel). We activate first: as an LSUIElement agent the
+    /// panel would otherwise open behind the frontmost app.
     @objc func openAbout(_ sender: Any?) {
         NSApplication.shared.activate(ignoringOtherApps: true)
-        NSApplication.shared.orderFrontStandardAboutPanel(nil)
+        let center = NSMutableParagraphStyle()
+        center.alignment = .center
+        let credits = NSAttributedString(string: "ipabet.org", attributes: [
+            .link: URL(string: "https://ipabet.org")!,
+            .font: NSFont.systemFont(ofSize: 11),
+            .paragraphStyle: center,
+        ])
+        NSApplication.shared.orderFrontStandardAboutPanel(options: [.credits: credits])
     }
 
 
