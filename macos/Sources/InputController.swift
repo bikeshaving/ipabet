@@ -312,10 +312,10 @@ class InputController: IMKInputController {
     /// selector is ObjC-only, so it is invoked dynamically. Per Apple's contract
     /// the name is resolved against THIS bundle, and it resolves only because
     /// Info.plist declares KLInfo_IPAbet.
-    private func overrideViewerKeyboard(_ sender: Any!) {
+    private func overrideViewerKeyboard(_ sender: Any!, name: String = "IPAbet") {
         let sel = NSSelectorFromString("overrideKeyboardWithKeyboardNamed:")
         guard let client = sender as? NSObject, client.responds(to: sel) else { return }
-        client.perform(sel, with: "IPAbet")
+        client.perform(sel, with: name)
     }
 
     /// The host is taking the composition away (click, focus loss, source switch).
@@ -325,6 +325,12 @@ class InputController: IMKInputController {
 
     override func deactivateServer(_ sender: Any!) {
         if let c = (sender as? IMKTextInput) ?? client() { flush(c) }
+        // Hand the session's keyboard back to the system layout. Secure input
+        // (password fields) bypasses the IME but NOT the layout override, and the
+        // cosmetic layout's 64 ⌥ dead keys would compose ◌-carrier junk into a
+        // password; deactivation is exactly when secure input takes over, so the
+        // plain layout — one that already exists — is live there instead.
+        overrideViewerKeyboard(sender, name: "com.apple.keylayout.US")
     }
 
     // Shift-chaining state: BROKEN by a shift release, re-armed by producing an
