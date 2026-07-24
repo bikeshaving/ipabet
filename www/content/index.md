@@ -37,12 +37,4 @@ Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes]
 
 Prefer to build from source? One command — <kbd>cd macos && ./build.sh install</kbd> — from [the repo](https://github.com/bikeshaving/ipabet).
 
-## The fine print
-
-**Does it mess with normal typing?** The bare layer doesn't: letters, digits, punctuation, ⌘/⌃ shortcuts, tmux prefixes, and vim counts are all native US — and the shifted number symbols (<kbd>@</kbd> <kbd>#</kbd> <kbd>$</kbd> <kbd>&</kbd>) type normally too. What the IPA layer claims is capital modifiers right after a letter (typing "GitHub" gives Giθub), the digit _bases_ (an unshifted digit plus a modifier — <kbd>5</kbd> <kbd>⇧H</kbd> → ə), and <kbd>⇧5</kbd> right after a bare e, o, or a (the centralize modifier — everywhere else <kbd>%</kbd> stays %). <kbd>⌃⇧</kbd>+letter escapes a capital to itself (so "GitHub" typed with <kbd>⌃⇧H</kbd> stays GitHub) and Caps Lock types literal capitals. For long stretches of native typing — code, terminals, camelCase — switch input sources: <kbd>⌃Space</kbd> flips to the plain US layout macOS always keeps installed, and the menu-bar icon shows which keyboard is live. IPAbet ships no raw mode of its own; the OS already has one.
-
-**Are the symbols real IPA codepoints?** Yes — IPAbet emits the true characters (ə U+0259, ǃ U+01C3, ː U+02D0), never lookalikes. Your transcriptions are searchable, fontable Unicode.
-
-**What does it cover?** The full standard IPA chart — every consonant, vowel, click, diacritic, and suprasegmental, including Chao tone letters (<kbd>⌥1</kbd>–<kbd>⌥5</kbd>) and both tie bars. Plus every diacritic of the 2015 extIPA set, the extensions for disordered speech; its symbol letters (ʬ ʭ ʪ ʫ ʩ ꞎ ʞ) are not assigned.
-
-**Privacy?** An input method sees every keystroke, so IPAbet doesn't ask for trust — it's **App-Sandboxed with zero network entitlements**: macOS itself denies it any network access. Fully offline by OS enforcement, and open source (MIT), so you can check both claims.
+An input method sees every keystroke, so IPAbet doesn't ask for trust: it is **App-Sandboxed with zero network entitlements** — macOS itself denies it the network — fully offline by OS enforcement, and MIT-licensed so you can check both claims. Bug reports and feature requests live on [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
