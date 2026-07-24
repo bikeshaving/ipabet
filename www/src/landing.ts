@@ -42,10 +42,10 @@ function demo(word: string, ...keys: string[]) {
 
 const DEMO = [
 	demo("ship", "s", "+h", "i", "+h", "p"),
-	demo("vision", "v", "i", "+h", "z", "+h", "5", "+y", "n"),
+	demo("vision", "v", "i", "+h", "z", "+h", "5", "+h", "n"),
 	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
-	demo("bird", "b", "5", "+h", "~r", "d"),
-	demo("about", "5", "+y", "b", "a", "u", "+h", "t"),
+	demo("bird", "b", "5", "+e", "~r", "d"),
+	demo("about", "5", "+h", "b", "a", "u", "+h", "t"),
 	demo("über", "y", "~;", "b", "5", "+a"),
 	demo("loch", "l", "o", "+a", "x"),
 	demo("señor", "s", "e", "~n", "n", "o", "r"),

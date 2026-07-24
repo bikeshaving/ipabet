@@ -90,9 +90,9 @@ export const CURRICULUM: Lesson[] = [
 		en("fresh", "f", "r", "+h", "e", "+h", "s", "+h"), en("thrash", "t", "+h", "r", "+h", "a", "+e", "s", "+h"),
 	]},
 	{title: "The schwa — ə", sound: "ə", keys: ["5", "⇧H"], intro: "The schwa — English’s reduced, unstressed vowel, as in the “the”.", words: [
-		en("the", "d", "+h", "5", "+y"), en("a", "5", "+y"), en("sudden", "s", "u", "+a", "d", "5", "+y", "n"),
-		en("seven", "s", "e", "+h", "v", "5", "+y", "n"), en("under", "u", "+a", "n", "d", "5", "+y", "r", "+h"),
-		en("rabbit", "r", "+h", "a", "+e", "b", "5", "+y", "t"), en("listen", "l", "i", "+h", "s", "5", "+y", "n"),
+		en("the", "d", "+h", "5", "+h"), en("a", "5", "+h"), en("sudden", "s", "u", "+a", "d", "5", "+h", "n"),
+		en("seven", "s", "e", "+h", "v", "5", "+h", "n"), en("under", "u", "+a", "n", "d", "5", "+h", "r", "+h"),
+		en("rabbit", "r", "+h", "a", "+e", "b", "5", "+h", "t"), en("listen", "l", "i", "+h", "s", "5", "+h", "n"),
 	]},
 
 	// ── Phase 3 · diphthongs (combinations of vowels you know) ───────
@@ -183,14 +183,14 @@ const FALSE_FRIENDS: Record<number, ReturnType<typeof w>[]> = {
 	8: [en("chef", "s", "+h", "e", "+h", "f"), en("sure", "s", "+h", "o", "+h")],
 	9: [en("ink", "i", "+h", "n", "+g", "k"), en("bank", "b", "a", "+e", "n", "+g", "k"), en("monkey", "m", "u", "+a", "n", "+g", "k", "i")],
 	12: [en("wrong", "r", "+h", "o", "+h", "n", "+g"), en("wrist", "r", "+h", "i", "+h", "s", "t")],
-	13: [en("pencil", "p", "e", "+h", "n", "s", "5", "+y", "l"), en("lemon", "l", "e", "+h", "m", "5", "+y", "n")],
-	14: [en("aisle", "a", "i", "+h", "l"), en("height", "h", "a", "i", "+h", "t"), en("buy", "b", "a", "i", "+h"), en("island", "a", "i", "+h", "l", "5", "+y", "n", "d")],
+	13: [en("pencil", "p", "e", "+h", "n", "s", "5", "+h", "l"), en("lemon", "l", "e", "+h", "m", "5", "+h", "n")],
+	14: [en("aisle", "a", "i", "+h", "l"), en("height", "h", "a", "i", "+h", "t"), en("buy", "b", "a", "i", "+h"), en("island", "a", "i", "+h", "l", "5", "+h", "n", "d")],
 	15: [en("bough", "b", "a", "u", "+h"), en("drought", "d", "r", "+h", "a", "u", "+h", "t")],
 	16: [en("though", "d", "+h", "o", "u", "+h"), en("dough", "d", "o", "u", "+h"), en("beau", "b", "o", "u", "+h")],
 	17: [en("eight", "e", "i", "+h", "t"), en("steak", "s", "t", "e", "i", "+h", "k"), en("they", "d", "+h", "e", "i", "+h")],
 	18: [en("buoy", "b", "o", "+h", "i", "+h")],
 	22: [en("loch", "l", "o", "+h", "x")],
-	26: [en("button", "b", "u", "+a", "2", "+h", "5", "+y", "n")],
+	26: [en("button", "b", "u", "+a", "2", "+h", "5", "+h", "n")],
 };
 for (let i = 0; i < CURRICULUM.length; i++)
 	for (const friend of FALSE_FRIENDS[i + 1] ?? []) CURRICULUM[i].words.push(friend); // unlabelled — the jolt is the lesson
@@ -217,7 +217,7 @@ const A_LESSON: Lesson = {
 	intro: "The deep, open vowel in “spa” — a, pushed to the back of the mouth.",
 	words: [
 		en("spa", "s", "p", "a", "+h"), en("palm", "p", "a", "+h", "m"),
-		en("calm", "k", "a", "+h", "m"), en("lava", "l", "a", "+h", "v", "5", "+y"),
+		en("calm", "k", "a", "+h", "m"), en("lava", "l", "a", "+h", "v", "5", "+h"),
 	],
 };
 CURRICULUM.splice(CURRICULUM.findIndex((l) => l.title.startsWith("Nasal vowels")), 0, A_LESSON);
