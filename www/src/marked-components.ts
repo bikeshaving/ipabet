@@ -18,6 +18,15 @@ export const components: Record<string, unknown> = {
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
 
+	// A centered call-to-action line under the title; `sub` is the smaller second line.
+	Cta: ({token, children}: any) => jsx`<p class=${"cta" + (token.sub ? " sub" : "")}>${children}</p>`,
+
+	// An aside card: <Note>…</Note> → the accent-barred .note box.
+	Note: ({children}: any) => jsx`<div class="note">${children}</div>`,
+
+	// A compact heading over an embedded interactive chart.
+	ChartTitle: ({children}: any) => jsx`<h3 class="chart-title">${children}</h3>`,
+
 	// Plain headings (crankdown's default adds a slug id + anchor link we don't want).
 	heading: ({token, children}: any) => {
 		const tag = `h${token.depth}`;

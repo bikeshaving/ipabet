@@ -35,9 +35,9 @@ They are _predicted_, not hidden. A sound more than one articulatory step from a
 
 The operator algebra is easiest to see in motion. Every vowel and every pulmonic consonant below sits at its true articulatory position; choose an operator to light up the arrows that _generate_ the derived symbols from their bases — the same <kbd>⇧H</kbd>, <kbd>⇧R</kbd>, <kbd>⇧J</kbd> that you type. Drag the slider to morph the vowel quadrilateral into acoustic F1×F2 space, or the consonant grid into the vocal tract. Click any symbol to hear it.
 
-<h3 style="margin:1.5rem 0 0;font-size:1rem">Vowels</h3>
+<ChartTitle>Vowels</ChartTitle>
 <VowelChart/>
-<h3 style="margin:1.5rem 0 0;font-size:1rem">Pulmonic consonants</h3>
+<ChartTitle>Pulmonic consonants</ChartTitle>
 <ConsonantChart/>
 
 ## Coverage

@@ -3,8 +3,8 @@ title: "IPAbet — type the IPA at typing speed"
 description: "IPAbet is a free, open-source IPA keyboard — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste. Native on macOS, full engine in any browser."
 ---
 
-<p style="text-align:center;margin-top:-1rem"><a href="/learn">Try it yourself — learn to type it, right in the browser →</a></p>
-<p style="text-align:center;margin-top:-.5rem;font-size:.92rem"><a href="/type">or just start typing in the scratchpad →</a></p>
+<Cta>[Try it yourself — learn to type it, right in the browser →](/learn)</Cta>
+<Cta sub>[or just start typing in the scratchpad →](/type)</Cta>
 
 ## The vowel space
 
@@ -44,7 +44,7 @@ IPAbet is in active development ahead of its first signed release. To build from
 2. **Log out and back in** — macOS registers new input methods at login. (The install also attempts same-session registration; if **IPA** is already in your input menu, skip the logout.)
 3. Pick **IPA** in the input menu, or add it under System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → **IPA**.
 
-<div class="note">A notarized installer package and Homebrew cask are coming with the first release — no Xcode, no logout surprises un-narrated.</div>
+<Note>A notarized installer package and Homebrew cask are coming with the first release — no Xcode, no logout surprises un-narrated.</Note>
 
 ## FAQ
 
