@@ -59,7 +59,9 @@ step "ASSERT: input method registered on the clean machine"
 ${SSH}${IP} "~/tis-probe-e2e assert-present"
 
 step "ASSERT: enable + select (what System Settings' + does)"
-${SSH}${IP} "~/tis-probe-e2e enable-select"
+# TIS mutations need the user's GUI session context, not the ssh context —
+# launchctl asuser joins the console user's bootstrap, as the postinstall does.
+${SSH}${IP} "echo admin | sudo -S launchctl asuser \$(id -u admin) sudo -u admin \$HOME/tis-probe-e2e enable-select"
 
 step "ASSERT: the IME process launches"
 sleep 3

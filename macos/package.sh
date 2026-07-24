@@ -108,7 +108,7 @@ cat > "$DIST" <<EOF
 <installer-gui-script minSpecVersion="1">
     <title>IPAbet</title>
     <conclusion file="conclusion.html"/>
-    <options customize="never" require-scripts="false"/>
+    <options customize="never" require-scripts="false" hostArchitectures="arm64,x86_64"/>
     <pkg-ref id="org.bikeshaving.inputmethod.IPAbet.pkg" version="$VERSION">IPAbet-component.pkg</pkg-ref>
     <choices-outline>
         <line choice="default"/>
