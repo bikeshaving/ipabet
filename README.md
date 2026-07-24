@@ -3,8 +3,8 @@
 Type the International Phonetic Alphabet at typing speed, in any app.
 
 IPAbet is a **normal US keyboard** with the IPA added on its shifted layers.
-Bare keys stay plain US — letters, digits, punctuation, shortcuts — so English,
-code, and the terminal are untouched. Every IPA symbol is one or two keystrokes.
+Bare keys stay plain US — letters, digits, punctuation, shortcuts — so ordinary
+writing is untouched. Every IPA symbol is one or two keystrokes.
 
 ```
 s ⇧H i ⇧H p    → ʃɪp
