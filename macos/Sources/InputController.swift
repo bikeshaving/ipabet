@@ -287,7 +287,10 @@ class InputController: IMKInputController {
             .font: NSFont.systemFont(ofSize: 11),
             .paragraphStyle: center,
         ])
-        NSApplication.shared.orderFrontStandardAboutPanel(options: [.credits: credits])
+        // Empty .version suppresses the parenthetical build number — the panel
+        // shows it (CFBundleVersion) next to the version otherwise, even when they
+        // match. We want a bare "Version 0.1.0".
+        NSApplication.shared.orderFrontStandardAboutPanel(options: [.credits: credits, .version: ""])
     }
 
 
