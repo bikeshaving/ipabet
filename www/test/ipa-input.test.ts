@@ -108,10 +108,10 @@ test("a whole word: ship = s ⇧H i ⇧H p → ʃɪp", () => {
 	expect(f.value).toBe("ʃɪp");
 });
 
-test("digit base + modifier gives the homeless glyphs: 5 ⇧Y → ə", () => {
+test("digit base + modifier gives the homeless glyphs: 5 ⇧H → ə", () => {
 	const {f, press} = setup();
 	press("5");
-	press("y", {shift: true});
+	press("h", {shift: true});
 	expect(f.value).toBe("ə");
 });
 
@@ -164,9 +164,9 @@ test("soft keyboard: characters drive the engine when there is no e.code", () =>
 	expect(f.value).toBe("ʃ");
 });
 
-test("soft keyboard: a digit base + modifier — 5 then Y → ə", () => {
+test("soft keyboard: a digit base + modifier — 5 then H → ə", () => {
 	const {f, tap} = setup();
-	tap("5"); tap("Y");
+	tap("5"); tap("H");
 	expect(f.value).toBe("ə");
 });
 

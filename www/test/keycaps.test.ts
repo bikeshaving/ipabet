@@ -15,7 +15,7 @@ describe("pcKeys", () => {
 
 	test("sequences translate per keystroke, spaces intact", () => {
 		expect(pcKeys("s ⇧H")).toBe("s Shift+H");
-		expect(pcKeys("5 ⇧Y")).toBe("5 Shift+Y");
+		expect(pcKeys("5 ⇧H")).toBe("5 Shift+H");
 		expect(pcKeys("⌥n ⌥n")).toBe("AltGr+n AltGr+n");
 	});
 

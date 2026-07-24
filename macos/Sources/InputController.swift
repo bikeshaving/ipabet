@@ -518,7 +518,7 @@ class InputController: IMKInputController {
                     chainBroken = false; return true
                 }
             }
-            // The shifted digit is the digit's capital plane (⇧5⇧Y → Ə), gated on the
+            // The shifted digit is the digit's capital plane (⇧5⇧H → Ə), gated on the
             // live chain.
             if capitalDigraphs, chainLive, !flags.contains(.capsLock),
                let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
@@ -550,7 +550,7 @@ class InputController: IMKInputController {
         if let glyph = t.letters[s] {
             Dbg.log("  → emitBase '\(glyph)'")
             emitBase(glyph, client)
-            // A non-ASCII base (5 ⇧Y → ə) is an IPA segment and re-arms the chain.
+            // A non-ASCII base (5 ⇧H → ə) is an IPA segment and re-arms the chain.
             if glyph.unicodeScalars.contains(where: { $0.value > 127 }) { chainBroken = false }
             return true
         }
@@ -770,7 +770,7 @@ class InputController: IMKInputController {
         updateMarked(client)
     }
 
-    /// Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧Y → Ə) are OFF by default: they
+    /// Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧H → Ə) are OFF by default: they
     /// are keystroke-identical to holding shift and yelling, and no lookback can
     /// tell SHIP from Ʃ. Yelling is everyday English; word-initial capital IPA
     /// belongs to a handful of orthographies, so those users opt in.
