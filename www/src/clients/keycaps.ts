@@ -10,6 +10,8 @@ export const KEYMODE_EVENT = "ipabet:keymode";
 const STORAGE = "ipabet:keymode";
 
 export function detectKeyMode(): KeyMode {
+	// Server renders the canonical mac spellings; a pc client patches at hydrate.
+	if (typeof window === "undefined") return "mac";
 	return /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "mac" : "pc";
 }
 

@@ -5,6 +5,7 @@ import {handleKey, applyEdit, nativeChar, previewString, type Pending} from "../
 import {parseKey, formatKey as keyLabel} from "./keystrokes.ts";
 import {Layout} from "./layout.ts";
 import {Combo} from "./components/ui.ts";
+import {HeroDemo} from "./components/hero-demo.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
@@ -14,7 +15,7 @@ import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import landingClient from "./clients/landing-client.ts" with {assetBase: "/assets/"};
+import landingClient from "./clients/landing.ts" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 
@@ -97,20 +98,7 @@ export function Landing() {
 					<p class="trust">A real IPA keyboard · free · open source · fully offline · native on macOS · full engine in any browser</p>
 				</header>
 
-				<div id="demo">
-					<div id="demokeys"></div>
-					<div class="out">
-						<input id="demoinput" class="ipa" aria-label="Type IPA — click and type it yourself"
-							spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" />
-						<span id="demopend"></span>
-					</div>
-					<div id="demoword"></div>
-				</div>
-				<div id="demonav">
-					<button id="demoprev" aria-label="Previous word" title="Previous word">◀</button>
-					<span class="hint">click the box and type it yourself · ← → to browse</span>
-					<button id="demonext" aria-label="Next word" title="Next word">▶</button>
-				</div>
+				<div id="hero-root"><${HeroDemo} demos=${DEMO} /></div>
 
 				<${Marked} markdown=${doc.body} components=${landingComponents} />
 

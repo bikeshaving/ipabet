@@ -7,6 +7,7 @@ import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
+import {LearnApp} from "./components/learn-app.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -14,7 +15,7 @@ import learnCss from "./styles/learn.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import learnClient from "./clients/learn-client.ts" with {assetBase: "/assets/"};
+import learnClient from "./clients/learn.ts" with {assetBase: "/assets/"};
 
 // /learn — the graded course. Prose is content/learn.md; the drill scaffolding is
 // an inline <Scaffold/> embedded in it.
@@ -32,21 +33,9 @@ const LESSONS = CURRICULUM.map((l) => ({
 
 const doc = docs.learn;
 
-// The drill scaffolding — empty containers the island fills. The island builds
-// #kbd itself, so it must NOT be pre-populated here.
-const Scaffold = () => jsx`
-	<div id="controls">
-		<div id="lessonnav">
-			<button id="prevlesson" aria-label="Previous lesson" title="Previous lesson">◀</button>
-			<button id="indextoggle" aria-expanded="false" title="All lessons">All lessons</button>
-			<button id="nextlesson" aria-label="Next lesson" title="Next lesson">▶</button>
-		</div>
-		<button id="ear" aria-pressed="false" title="Hide the symbol and type from the sound alone">
-			<span class="dot"></span>Ear training</button>
-	</div>
-	<div id="lessonindex"></div>
-	<div id="drill"></div>
-	<div id="kbd"></div>`;
+// The drill, server-rendered at its fresh-start frame; clients/learn.ts
+// hydrates the same component and restores saved progress at mount.
+const Scaffold = () => jsx`<div id="learn-root"><${LearnApp} lessons=${LESSONS} /></div>`;
 
 export function Learn() {
 	return jsx`
