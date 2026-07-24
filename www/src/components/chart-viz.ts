@@ -1,11 +1,14 @@
 // @ts-nocheck
 // Interactive IPA charts (vowel + pulmonic consonant), embedded on /design and
-// the landing page. Procedural Web Audio synth, recordings where they exist.
+// the landing page. One component each: server-rendered where the markdown
+// places them, hydrated by clients/charts.ts. Keystrokes and the audio map
+// arrive as props; the server render is silent (no audio URLs), the hydration
+// pass supplies them.
 
-import {jsx, renderer} from "@b9g/crank/standalone";
+import {jsx} from "@b9g/crank/standalone";
 
 /* --------------------------------------------------------------- audio --- */
-const AUDIO: Record<string, string> = (window as any).__CHART_AUDIO || {};
+let AUDIO: Record<string, string> = {};
 let curAudio: HTMLAudioElement | null = null;
 function playGlyph(sym: string): void {
 	const url = AUDIO[sym];
@@ -48,10 +51,12 @@ const VOWELS = [
 	{sym:"ɑ", key:"aH",  x:1,   yo:1,    r:0, f1:750, f2:940,  name:"Open back unrounded"},
 	{sym:"ɒ", key:"oA",  x:1,   yo:1,    r:1, f1:700, f2:760,  name:"Open back rounded"},
 ];
-// Keystrokes are spec-derived (injected server-side, like the audio map) so a
-// layout change can never strand a stale label here; keySpelled normalizes them.
-const CHART_KEYS = (window as any).__CHART_KEYS || {};
-for (const v of VOWELS) v.key = CHART_KEYS[v.sym] ?? v.key;
+// Keystrokes are spec-derived (the `keys` prop, from chart-keys.ts) so a layout
+// change can never strand a stale label here; keySpelled normalizes them.
+function applyProps({keys, audio}) {
+	if (keys) for (const v of VOWELS) v.key = keys[v.sym] ?? v.key;
+	if (audio) AUDIO = audio;
+}
 const VBY = Object.fromEntries(VOWELS.map((v) => [v.sym, v]));
 
 /* pairs sharing one articulatory slot: unrounded ±dx left, rounded right   */
@@ -144,7 +149,8 @@ function KeyChip({text}) {
 	return jsx`<span class="chip">${text}</span>`;
 }
 
-function *VowelApp() {
+export function *VowelApp({keys, audio}) {
+	applyProps({keys, audio});
 	let morph = 0, mod = null, selected = null, hovered = null, raf = null, sweeping = false;
 
 	const animateTo = (target) => {
@@ -173,7 +179,8 @@ function *VowelApp() {
 		}
 		this.refresh(() => (sweeping = false));
 	};
-	this.cleanup(() => cancelAnimationFrame(raf));
+	// cancelAnimationFrame is a browser global; the server render unmounts too.
+	this.cleanup(() => { if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(raf); });
 
 	for ({} of this) {
 		const m = MODS[mod];
@@ -488,7 +495,8 @@ function roofY(ax) {
 	return 60 + (ax - 0.62) / 0.38 * 40;
 }
 
-function *ConsonantApp() {
+export function *ConsonantApp({audio}) {
+	applyProps({audio});
 	let morph = 0, op = null, selected = null, hovered = null, raf = null;
 
 	const animateTo = (target) => {
@@ -504,7 +512,8 @@ function *ConsonantApp() {
 	const onslider = (ev) => { cancelAnimationFrame(raf); this.refresh(() => (morph = ev.target.valueAsNumber / 1000)); };
 	const pick = (sym) => { playGlyph(sym); this.refresh(() => (selected = sym)); };
 	const toggleOp = (k) => this.refresh(() => (op = op === k ? null : k));
-	this.cleanup(() => cancelAnimationFrame(raf));
+	// cancelAnimationFrame is a browser global; the server render unmounts too.
+	this.cleanup(() => { if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(raf); });
 
 	for ({} of this) {
 		const o = OPS[op];
@@ -644,7 +653,3 @@ function *ConsonantApp() {
 }
 
 /* --------------------------------------------------------------- mount --- */
-const vEl = document.getElementById("vowel-chart");
-if (vEl) renderer.render(jsx`<${VowelApp} />`, vEl);
-const cEl = document.getElementById("consonant-chart");
-if (cEl) renderer.render(jsx`<${ConsonantApp} />`, cEl);

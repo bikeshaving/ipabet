@@ -89,6 +89,8 @@ export interface IPAInput {
 
 /** Wire a real text field to the engine. The field holds the text, so caret,
  *  selection, editing and the mobile keyboard come from the browser. */
+export type IPABinding = ReturnType<typeof bindIPAInput>;
+
 export function bindIPAInput(
 	el: Field,
 	onChange: (pendingText: string) => void = () => {},

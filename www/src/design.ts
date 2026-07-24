@@ -5,7 +5,6 @@ import {components} from "./marked-components.ts";
 import {SerializeScript} from "./components/serialize-script.ts";
 import {docs} from "./content.ts";
 import {AUDIO} from "./gen/audio-map.ts";
-import {CHART_KEYS} from "./chart-keys.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -13,7 +12,7 @@ import designCss from "./styles/design.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartVizCss from "./styles/chart-viz.css" with {assetBase: "/assets/"};
 // @ts-ignore
-import chartViz from "./clients/chart-viz.ts" with {assetBase: "/assets/"};
+import chartsClient from "./clients/charts.ts" with {assetBase: "/assets/"};
 
 // /design — the reference explanation. Prose is content/design.md; this page is
 // chrome plus the interactive-chart islands.
@@ -35,7 +34,6 @@ export function Design() {
 				<${Marked} markdown=${doc.body} components=${components} />
 			</main>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
-			<${SerializeScript} name="__CHART_KEYS" value=${CHART_KEYS} />
-			<script type="module" src=${chartViz}></script>
+			<script type="module" src=${chartsClient}></script>
 		<//>`;
 }

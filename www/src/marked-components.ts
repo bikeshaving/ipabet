@@ -1,5 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Combo, Glyph} from "./components/ui.ts";
+import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
+import {CHART_KEYS} from "./chart-keys.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
 // against this map, passing attributes as `token` and contents as `children`.
@@ -9,11 +11,10 @@ export const components: Record<string, unknown> = {
 
 	Glyph: ({children}: any) => jsx`<${Glyph}>${children}</${Glyph}>`,
 
-	// Interactive-chart mounts. The charts are client islands (clients/chart-viz.ts,
-	// loaded by the embedding page) — the server renders only the container the
-	// island binds to, so content stays semantic markdown with no raw HTML.
-	VowelChart: () => jsx`<div id="vowel-chart"></div>`,
-	ConsonantChart: () => jsx`<div id="consonant-chart"></div>`,
+	// The interactive charts: real components, server-rendered where the markdown
+	// places them and hydrated by clients/charts.ts (which supplies the audio map).
+	VowelChart: () => jsx`<div id="vowel-chart"><${VowelApp} keys=${CHART_KEYS} /></div>`,
+	ConsonantChart: () => jsx`<div id="consonant-chart"><${ConsonantApp} /></div>`,
 
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
