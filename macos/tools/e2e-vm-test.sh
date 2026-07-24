@@ -14,8 +14,8 @@ PKG="${1:-build/IPAbet.pkg}"
 [ -f "$PKG" ] || { echo "✗ no pkg at $PKG"; exit 1; }
 IMG="ghcr.io/cirruslabs/macos-sequoia-base:latest"
 VM="ipabet-e2e"
-SSH="sshpass -p admin ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 admin@"
-SCP="sshpass -p admin scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+SSH="sshpass -p admin ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o PubkeyAuthentication=no -o PreferredAuthentications=password admin@"
+SCP="sshpass -p admin scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no -o PreferredAuthentications=password"
 
 step() { echo; echo "━━ $1"; }
 
