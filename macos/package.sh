@@ -66,9 +66,15 @@ SCRIPTS="build/scripts"
 mkdir -p "$SCRIPTS"
 cat > "$SCRIPTS/postinstall" <<'EOF'
 #!/bin/bash
+# Clean up what earlier releases left behind: the 0.1.0-v2 LaunchAgent (pkg
+# upgrades never delete files absent from the new payload, and the orphaned
+# plist would re-register at every login, unguarded).
+launchctl bootout system /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
+rm -f /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist
 u=$(stat -f%Su /dev/console)
 uid=$(id -u "$u" 2>/dev/null)
 if [ -n "$uid" ] && [ "$u" != "root" ]; then
+  launchctl bootout "gui/$uid" /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
   launchctl asuser "$uid" sudo -u "$u" \
     "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
 fi
