@@ -7,7 +7,7 @@ description: "IPAbet is a free, open-source IPA keyboard — type the Internatio
 
 ## A normal keyboard, with the IPA one shift away
 
-IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so prose, code, and the terminal feel native; the IPA lives only on shifted positions. The IPA chart is layered onto the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
+IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so you can leave it switched on all day — notes, email, and prose feel native (and yes, code and the terminal too). The IPA lives only on the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
 
 <Cards>
 <Card title="Works in every app">
