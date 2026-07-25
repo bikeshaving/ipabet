@@ -658,6 +658,8 @@ describe("Esc/space terminate the composition; ⌃⌫ unconverts", () => {
 		expect(typeKeys([K("t", {shift: true}), K("h", {shift: true}), K("⌫", {control: true})])).toBe("TH"));
 	test("digit-base glyphs unconvert to their key spelling: ə ⌃⌫ → 5H", () =>
 		expect(typeKeys([K("5"), K("h", {shift: true}), K("⌫", {control: true})])).toBe("5H"));
+	test("an aliased identity glyph still refuses: c ⌃⌫ → c, not tJ", () =>
+		expect(typeKeys([K("c"), K("⌫", {control: true})])).toBe("c"));
 	test("an identity glyph refuses — the chord stays the host's: s ⌃⌫ → s", () =>
 		expect(typeKeys([K("s"), K("⌫", {control: true})])).toBe("s"));
 	test("a cluster carrying marks refuses (⌫ peels first): ã ⌃⌫ → ã", () =>

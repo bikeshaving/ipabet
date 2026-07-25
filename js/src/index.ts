@@ -134,7 +134,9 @@ for (const [key, glyph] of letters) {
 			// A leading digit is a literal base a modifier transforms (5H → ɜ).
 		const prev = /[0-9]/.test(key[0]) ? key[0] : letters.get(key[0]);
 		if (prev !== undefined) transforms.set(prev + key[1], glyph);
-		if (!unconvertKey.has(glyph)) unconvertKey.set(glyph, key);
+		// An identity glyph's canonical spelling is itself — a digraph alias
+		// (tJ → c) stays typeable but must not hijack unconvert (c ⌃⌫ → c).
+		if (!unconvertKey.has(glyph) && letters.get(glyph) !== glyph) unconvertKey.set(glyph, key);
 	}
 }
 

@@ -136,7 +136,9 @@ struct Tables {
         var transforms: [String: String] = [:]
         var unconvertKey: [String: String] = [:]
         for (k, glyph) in letters where k.count == 2 {
-            if unconvertKey[glyph] == nil { unconvertKey[glyph] = k }
+            // An identity glyph's canonical spelling is itself — a digraph alias
+            // (tJ → c) stays typeable but must not hijack unconvert (c ⌃⌫ → c).
+            if unconvertKey[glyph] == nil && letters[glyph] != glyph { unconvertKey[glyph] = k }
             let base = String(k.prefix(1)), mod = String(k.suffix(1))
             // A leading digit is a literal base a modifier transforms (5H → ɜ).
             let prev = base.first!.isNumber ? base : letters[base]
