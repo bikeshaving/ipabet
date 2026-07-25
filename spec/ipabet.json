@@ -672,12 +672,6 @@
    "name": "LATIN LETTER SMALL CAPITAL G WITH HOOK"
   },
   {
-   "key": "tJ",
-   "glyph": "c",
-   "cp": "U+0063",
-   "name": "LATIN SMALL LETTER C"
-  },
-  {
    "key": "sS",
    "ipa": false,
    "glyph": "ß",
