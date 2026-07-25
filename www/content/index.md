@@ -7,27 +7,23 @@ description: "IPAbet is a free, open-source IPA keyboard — type the Internatio
 
 ## A normal keyboard, with the IPA one shift away
 
-IPAbet is a **normal US keyboard**. Bare keys type plain US — letters, digits, punctuation, shortcuts, all untouched — so you can leave it switched on all day — notes, email, and prose feel native (and yes, code and the terminal too). The IPA lives only on the shifted positions: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/> — grounded in romanization conventions you already know, not codes to memorize. The [full IPA chart, annotated with its keystrokes](/chart), is one page away.
+IPAbet is a **normal US keyboard**. Bare keys type what they normally type — letters, digits, punctuation, shortcuts — so you can leave it on all day. The IPA is typed with shift and option: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/>. Every symbol and its keystrokes are on [the chart](/chart).
 
 <Cards>
 <Card title="Works in every app">
-A real input method, not a website or palette: type IPA directly into Word, Praat, ELAN, LaTeX, Slack, your browser — at full speed, offline.
+A real input method, not a website or a palette: type IPA directly into Word, Praat, ELAN, LaTeX, Slack, or your browser. Runs offline.
 </Card>
 <Card title="Nothing to memorize">
-Digraphs follow spellings you already know — sh, th, zh; diacritics sit where the Mac's own accent keys put them; and the glyphs with no Latin letter live on the number row (`5` `⇧H` → ə).
+Digraphs follow familiar spellings (sh, th, zh). Diacritics are on Option, where the Mac's accent keys already are. Glyphs with no Latin letter start from the number row (`5` `⇧H` → ə).
 </Card>
 <Card title="Your keyboard stays yours">
-Unshifted keys are 100% native US — Caps Lock included, so capitals stay capitals. Every key always emits something, and there is an escape for anything the IPA layer claims.
+Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as PATH. Every key types something, and everything the IPA layer claims has an escape.
 </Card>
 </Cards>
 
-## The layers
-
-<LayersTable/>
-
 ## The full reference
 
-Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes](/chart) — one printable page, with audio. And [/learn](/learn) teaches it to your fingers in an afternoon.
+[The chart](/chart) lists every symbol with its keystrokes and audio, on one printable page. [/learn](/learn) is a guided course that drills them, real words from the first lesson.
 
 ## Install
 
@@ -37,7 +33,7 @@ Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes]
 
 Prefer to build from source? One command — <kbd>cd macos && ./build.sh install</kbd> — from [the repo](https://github.com/bikeshaving/ipabet).
 
-An input method sees every keystroke, so IPAbet doesn't ask for trust: it is **App-Sandboxed with zero network entitlements** — macOS itself denies it the network — fully offline by OS enforcement, and MIT-licensed so you can check both claims. Bug reports and feature requests live on [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
+IPAbet runs fully offline. Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
 
 ## From the blog
 
