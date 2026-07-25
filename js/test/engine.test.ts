@@ -469,7 +469,10 @@ describe("dot-above / dot-below (⌥g, a Latin-tenant shape twin)", () => {
 		expect(typed("~+.", "r")).toBe(nfc("ṛ"));
 	});
 	test("dot above on a capital: Ż", () => expect(typed("~.", "+z")).toBe(nfc("Ż")));
-	test("palatalize series is complete: t ⇧J → c", () => expect(typed("t", "+j")).toBe("c"));
+	// t ⇧J does NOT alias to c: an identity-ASCII output from a transform reads
+	// as a mistake and swallows the literal fall-through that exposes typos.
+	test("no identity-ASCII aliases: t ⇧J stays the honest literal tJ", () =>
+		expect(typed("t", "+j")).toBe("tJ"));
 });
 
 describe("Latin tenants: orthography the layout must not silently corrupt", () => {
