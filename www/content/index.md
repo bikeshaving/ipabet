@@ -29,9 +29,7 @@ Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as
 2. **Log out and back in** — macOS registers new input methods at login.
 3. Pick **IPA** in the input menu, or add it under System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → **IPA**.
 
-Prefer to build from source? One command — <kbd>cd macos && ./build.sh install</kbd> — from [the repo](https://github.com/bikeshaving/ipabet).
-
-IPAbet runs fully offline. Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
+Or [build from source](https://github.com/bikeshaving/ipabet). Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
 
 ## From the blog
 
