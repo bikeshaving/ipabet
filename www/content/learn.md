@@ -1,6 +1,6 @@
 ---
 title: Learn IPAbet — the typing tutor
-description: "A touch-typing tutor for the IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser — powered by the real IPAbet engine. No theory, no quizzes."
+description: "A touch-typing tutor for IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser — powered by the real IPAbet engine. No theory, no quizzes."
 ---
 
 <p class="tagline">Learn it like touch typing.</p>

@@ -25,7 +25,7 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 ## Extra letters
 
-Latin letters beyond the IPA, for writing real orthographies — each typed by doubling a base with its own shift (`s⇧S` → ß, `t⇧T` → þ).
+Latin letters beyond IPA, for writing real orthographies — each typed by doubling a base with its own shift (`s⇧S` → ß, `t⇧T` → þ).
 
 <SegTable kind="extra"/>
 
@@ -52,7 +52,7 @@ A few keys carry their own behavior: the rhotic hook (`⌥r`) is postfix and fus
 
 Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in [`ipabet.json`](/ipabet.json).
 
-## Beyond the IPA
+## Beyond IPA
 
 Marks the IPA chart has no cell for, kept because the layout should be able to write real orthographies and not only transcribe them. They are fully typeable and stack like any other mark; they are simply absent from [the chart](/chart). Each carries `"ipa": false` and a `beyond` value in the spec.
 

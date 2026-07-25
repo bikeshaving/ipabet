@@ -5,7 +5,7 @@ description: "IPAbet is a fast and memorable keyboard for typing the Internation
 
 <Callouts/>
 
-IPAbet is a **normal US keyboard**. Unshifted keys type plain US — letters, digits, punctuation, shortcuts — so you can leave it on all day. The IPA is typed with Shift and Option: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/>. Every symbol is one or two keystrokes, and all of them are on [the chart](/chart).
+IPAbet is a **normal US keyboard**. Unshifted keys type plain US — letters, digits, punctuation, shortcuts — so you can leave it on all day. IPA is typed with Shift and Option: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/>. Every symbol is one or two keystrokes, and all of them are on [the chart](/chart).
 
 <Cards>
 <Card title="Works in every app">
