@@ -66,7 +66,7 @@ router.route("/blog/:slug").get((_req: Request, context: {params: {slug: string}
 // The Atom feed — the planet contract: bikeshaving.org (and any feed reader)
 // consumes this and nothing else.
 router.route("/feed.xml").get(() => new Response(atomFeed(), {
-	headers: {"Content-Type": "application/atom+xml; charset=utf-8"},
+	headers: {"Content-Type": "application/atom+xml; charset=utf-8", "Cache-Control": "public, max-age=300"},
 }));
 
 // The download is one branded URL that outlives whatever hosts the binary.
@@ -81,6 +81,7 @@ router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
 		headers: {
 			"Content-Type": "application/json; charset=utf-8",
+			"Cache-Control": "public, max-age=300",
 			"Access-Control-Allow-Origin": "*",
 		},
 	});
@@ -99,6 +100,7 @@ router.route("/ipabet.json").get(() => {
 	return new Response(SPEC_JSON, {
 		headers: {
 			"Content-Type": "application/json; charset=utf-8",
+			"Cache-Control": "public, max-age=300",
 			"Access-Control-Allow-Origin": "*",
 		},
 	});

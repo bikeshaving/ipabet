@@ -10,7 +10,7 @@
     "predevelop": "npm run bake",
     "develop": "shovel develop src/server.ts --platform cloudflare",
     "prebuild": "npm run bake",
-    "build": "shovel build src/server.ts --platform cloudflare",
+    "build": "shovel build src/server.ts --platform cloudflare && printf '/assets/*\\n  Cache-Control: public, max-age=31536000, immutable\\n' > dist/public/_headers",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
