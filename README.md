@@ -24,7 +24,7 @@ Building from source is one command — `cd macos && ./build.sh install` — see
 [`macos/README.md`](macos/README.md) for the build, the architecture, and the
 install prefixes.
 
-## How it types
+## How it works
 
 - **Shift + letter** modifies the glyph before it, following spellings you
   already know rather than codes:
