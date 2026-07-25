@@ -1,7 +1,7 @@
 {
  "modifiers": {
-  "H": "lenite toward /h/ — spirantize consonants (sH→ʃ, tH→θ); vowels lax (iH→ɪ, uH→ʊ) or, for a, back (aH→ɑ)",
-  "R": "retroflex (coronals); trill (elsewhere)",
+  "H": "the h-digraph — plosives spirantize (tH→θ, pH→ɸ), sibilants hush (sH→ʃ), vowels lax (iH→ɪ, uH→ʊ); for a, back (aH→ɑ)",
+  "R": "retroflex (coronals)",
   "J": "palatalize (consonants only)",
   "W": "labialize / round-flip",
   "L": "lateralize",

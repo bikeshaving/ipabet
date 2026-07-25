@@ -449,7 +449,7 @@ const OPS = {
 	H: {
 		label:"-H", color:"#dc2626",
 		pairs:[["p","ɸ"],["b","β"],["t","θ"],["d","ð"],["c","ç"],["ɡ","ɣ"],["q","χ"],["s","ʃ"],["z","ʒ"],["h","ɦ"]],
-		desc:"The frication operator: turn a plosive into the fricative at its own place — p→ɸ, t→θ, c→ç, ɡ→ɣ, q→χ. Same H that lenites vowels to “the second one you learn.” Two riders: s→ʃ z→ʒ slide one column back (there’s no sibilant plosive to sit under), and h→ɦ just voices.",
+		desc:"The frication operator: turn a plosive into its fricative partner — p→ɸ, t→θ, c→ç, ɡ→ɣ, q→χ. Same H that laxes vowels to “the second one you learn.” Two riders: s→ʃ z→ʒ slide one column back (there’s no sibilant plosive to sit under), and h→ɦ just voices.",
 	},
 	R: {
 		label:"-R", color:"#d97706",
@@ -459,7 +459,7 @@ const OPS = {
 	J: {
 		label:"-J", color:"#7c3aed",
 		pairs:[["d","ɟ"],["n","ɲ"],["l","ʎ"],["ɡ","ʝ"]],
-		desc:"Palatalize — pull the constriction up to the hard palate: d→ɟ, n→ɲ, l→ʎ, ɡ→ʝ. (The alveolo-palatal fricatives ɕ ʑ = sJ zJ live in Other Symbols, off this grid, but share the logic.)",
+		desc:"Palatalize — pull the constriction up to the hard palate: d→ɟ, n→ɲ, l→ʎ. ɡ→ʝ overshoots stop to fricative — the system’s documented rough edge. (The alveolo-palatal fricatives ɕ ʑ = sJ zJ live in Other Symbols, off this grid, but share the logic.)",
 	},
 	Q: {
 		label:"-Q", color:"#0891b2",
