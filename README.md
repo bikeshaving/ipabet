@@ -1,10 +1,9 @@
 # IPAbet
 
-Type the International Phonetic Alphabet at typing speed, in any app.
+A fast and memorable keyboard for typing the International Phonetic Alphabet.
 
-IPAbet is a **normal US keyboard** with the IPA added on its shifted layers.
-Bare keys stay plain US — letters, digits, punctuation, shortcuts — so ordinary
-writing is untouched. Every IPA symbol is one or two keystrokes.
+IPAbet is a normal US keyboard: unshifted keys type plain US — letters, digits,
+punctuation, shortcuts — and every IPA symbol is one or two keystrokes.
 
 ```
 s ⇧H i ⇧H p    → ʃɪp

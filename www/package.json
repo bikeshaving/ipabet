@@ -2,7 +2,7 @@
   "name": "ipabet-org",
   "private": true,
   "version": "0.1.0",
-  "description": "ipabet.org \u2014 IPAbet, type IPA at typing speed",
+  "description": "ipabet.org \u2014 IPAbet, a fast and memorable keyboard for typing the International Phonetic Alphabet",
   "type": "module",
   "scripts": {
     "test": "bun test",

@@ -1,13 +1,11 @@
 ---
-title: "IPAbet — type the IPA at typing speed"
-description: "IPAbet is a free, open-source IPA keyboard — type the International Phonetic Alphabet at full typing speed, in every app. A real input method, not a picker: your normal US keyboard with the IPA chart on its shifted layers, no codes to memorize, no copy-paste. Native on macOS, full engine in any browser."
+title: "IPAbet — a fast and memorable keyboard for the International Phonetic Alphabet"
+description: "IPAbet is a fast and memorable keyboard for typing the International Phonetic Alphabet — directly, in any app. Unshifted keys stay plain US. Free, open source, offline."
 ---
 
 <Callouts/>
 
-## A normal keyboard, with the IPA one shift away
-
-IPAbet is a **normal US keyboard**. Bare keys type what they normally type — letters, digits, punctuation, shortcuts — so you can leave it on all day. The IPA is typed with shift and option: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/>. Every symbol and its keystrokes are on [the chart](/chart).
+IPAbet is a **normal US keyboard**. Unshifted keys type plain US — letters, digits, punctuation, shortcuts — so you can leave it on all day. The IPA is typed with Shift and Option: <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="5 ⇧H" out="ə"/> <Combo keys="⌥n n" out="ñ"/>. Every symbol is one or two keystrokes, and all of them are on [the chart](/chart).
 
 <Cards>
 <Card title="Works in every app">
