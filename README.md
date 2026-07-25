@@ -2,8 +2,7 @@
 
 A fast and memorable keyboard for typing the International Phonetic Alphabet.
 
-IPAbet is a normal US keyboard: unshifted keys type plain US — letters, digits,
-punctuation, shortcuts — and every IPA symbol is one or two keystrokes.
+IPAbet is an extended US keyboard: unshifted keys type plain US letters, digits, punctuation, while IPA symbols are typed as at most two keystrokes, using a grammatical mnemonic system based on shifted modifiers.
 
 ```
 s ⇧H i ⇧H p    → ʃɪp
@@ -33,22 +32,18 @@ install prefixes.
   `t ⇧R` → ʈ
   `n ⇧G` → ŋ
 - **Digits are bases** for the symbols with no Latin letter:
-  `5 ⇧H` → ə
   `2 ⇧H` → ʔ
+  `3 ⇧H` → ʕ
   `7 ⇧H` → ħ
-  They sit on the *unshifted* digit, so `⇧2`–`⇧7` type `@ # $ % ^ &` as normal
-  (`⇧5` doubles as the centralize modifier right after a bare e, o, or a).
+  `4 ⇧H` → ɾ
+  `5 ⇧H` → ə
 - **Option** is the diacritic layer, dead-key style like the US layout's own é/ñ:
   `⌥e a` → á (combining marks are prefix)
   `a ⌥;` → aː (spacing marks are postfix)
 - **Escapes** exist for everything the IPA layer claims: `⌃⇧`+letter for a
-  literal capital ("GitHub", not "Giθub"), Caps Lock for literal capitals, `⌃⌫`
-  to unconvert a transform back to its keystrokes, and `⌃Space` to flip to the
-  plain US layout macOS always keeps installed.
+  literal capital ("GitHub", not "Giθub"), Caps Lock for literal capitals.
 
-Every glyph has exactly one keystroke sequence, so IPAbet↔IPA round-trips
-losslessly. The complete mapping is at [ipabet.org/keys](https://ipabet.org/keys)
-and in [`spec/ipabet.json`](spec/ipabet.json).
+The full official IPA chart is covered and notated at [ipabet.org/chart](https://ipabet.org/chart). The complete mapping is at [ipabet.org/keys](https://ipabet.org/keys) and in [`spec/ipabet.json`](spec/ipabet.json).
 
 ## Repo
 
@@ -65,7 +60,7 @@ Planned, each driven by the same spec and pinned to the `js/` parity suite:
 
 ## Status
 
-**The standard IPA chart is complete** — pulmonic and non-pulmonic consonants,
+**The [standard IPA chart](https://ipabet.org/chart) is complete** — pulmonic and non-pulmonic consonants,
 all 28 vowels, ɧ, both tie bars, every diacritic and suprasegmental, and the
 Chao tone letters.
 
