@@ -14,6 +14,8 @@ interface MarkE {
 
 const marks = new Map((spec.marks as MarkE[]).map((m) => [m.opt, m]));
 const modifiers = spec.modifiers as Record<string, string>;
+// The ⌥⇧<digit> spends (¡ ʾ ʿ ˭) live in optShift, not marks.
+const optShift = spec.optShift as Record<string, string>;
 
 
 const quotes = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
@@ -99,7 +101,8 @@ export function capBody(ch: string) {
 	const sp = SPECIALS[ch];
 	const m = marks.get(ch);
 	const p = sp?.main ?? (m === undefined ? undefined : shown(m.mark));
-	const s = sp?.second ?? (m?.double === undefined ? undefined : shown(m.double));
+	const s = sp?.second ?? (m?.double !== undefined ? shown(m.double)
+		: optShift[ch] !== undefined ? shown(optShift[ch]) : undefined);
 	// The ⇧ view is LIVE on /type; the island repaints each capital. Server-rendered
 	// state is the empty-pad truth.
 	const shifted = /[a-z]/.test(ch) ? ch.toUpperCase() : SHIFT_PLANE[ch];
