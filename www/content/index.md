@@ -38,3 +38,7 @@ Every symbol, every keystroke, every sound: [the IPA chart in IPAbet keystrokes]
 Prefer to build from source? One command — <kbd>cd macos && ./build.sh install</kbd> — from [the repo](https://github.com/bikeshaving/ipabet).
 
 An input method sees every keystroke, so IPAbet doesn't ask for trust: it is **App-Sandboxed with zero network entitlements** — macOS itself denies it the network — fully offline by OS enforcement, and MIT-licensed so you can check both claims. Bug reports and feature requests live on [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
+
+## From the blog
+
+<LatestPosts/>

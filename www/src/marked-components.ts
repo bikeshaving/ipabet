@@ -1,6 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Combo, Glyph} from "./components/ui.ts";
 import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
+import {posts} from "./content.ts";
 import {TypingDemo, pickDemos} from "./components/typing-demo.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
@@ -23,6 +24,16 @@ export const components: Record<string, unknown> = {
 		data-still=${token.still ? "true" : undefined}
 		><${TypingDemo} demos=${pickDemos(token.words)} still=${!!token.still} /></div>`,
 	ConsonantChart: () => jsx`<div id="consonant-chart"><${ConsonantApp} /></div>`,
+
+	// The newest published posts, for the homepage's "From the blog" section.
+	LatestPosts: () => jsx`<ul class="latestposts">${
+		posts.filter((p) => p.attributes.draft !== true).slice(0, 3).map((p) => jsx`
+			<li>
+				<time datetime=${p.attributes.date}>${p.attributes.date}</time>
+				<a href=${"/blog/" + p.slug}>${p.attributes.title}</a>
+				${p.attributes.description ? jsx`<span class="d">${p.attributes.description}</span>` : null}
+			</li>`)
+	}</ul>`,
 
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
