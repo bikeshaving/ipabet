@@ -667,6 +667,10 @@ describe("Esc/space terminate the composition; ⌃⌫ unconverts", () => {
 		expect(typeKeys([K("s"), K("⌫", {control: true})])).toBe("s"));
 	test("a cluster carrying marks refuses (⌫ peels first): ã ⌃⌫ → ã", () =>
 		expect(typeKeys([K("n", {option: true}), K("a"), K("⌫", {control: true})])).toBe(nfc("ã")));
+	test("a transform whose glyph decomposes still unconverts: ä ⌃⌫ → aY", () =>
+		expect(typeKeys([K("a"), K("y", {shift: true}), K("⌫", {control: true})])).toBe("aY"));
+	test("ç too, uppercase: Ç ⌃⌫ → CH", () =>
+		expect(typeKeys([K("c", {shift: true}), K("h", {shift: true}), K("⌫", {control: true})])).toBe("CH"));
 	test("⌃⌫ while marks pend peels, like plain ⌫: ⌥n ⌃⌫ x → x", () =>
 		expect(typeKeys([K("n", {option: true}), K("⌫", {control: true}), K("x")])).toBe("x"));
 });

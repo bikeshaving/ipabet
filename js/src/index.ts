@@ -645,18 +645,18 @@ export function handleBackspace(textBefore: string, pending: Pending = []): Step
 }
 
 /** ⌃⌫ — unconvert: the committed transform before the cursor becomes its literal
- *  keystroke spelling (θ → "tH"), stateless via the reverse map. */
+ *  keystroke spelling (θ → "tH"), stateless via the reverse map. The cluster is
+ *  matched whole and canonically: ä and ç decompose under NFD, but their marks
+ *  are part of the glyph, not something the user stacked on. */
 export function handleUnconvert(textBefore: string, pending: Pending = []): Step {
 	if (pending.length > 0) return handleBackspace(textBefore, pending);
 	const p = lastCluster(textBefore);
 	if (p !== undefined) {
-		const {base, marks} = decompose(p);
-		if (marks.length === 0 && base.length > 0) {
-			const low = base.toLowerCase();
-			const key = unconvertKey.get(low);
-			if (key !== undefined) {
-				return {edit: replaceCluster(p, base === low ? key : key.toUpperCase()), pending: []};
-			}
+		const whole = p.normalize("NFC");
+		const low = whole.toLowerCase();
+		const key = unconvertKey.get(low);
+		if (key !== undefined) {
+			return {edit: replaceCluster(p, whole === low ? key : key.toUpperCase()), pending: []};
 		}
 	}
 	return {edit: {type: "pass"}, pending: []};

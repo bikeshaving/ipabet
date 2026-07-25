@@ -901,17 +901,18 @@ class InputController: IMKInputController {
 
     // MARK: - backspace
 
-    /// Diacritic peel: a cluster carrying combining marks loses its last mark,
-    /// rewritten in place through decomposition; a bare glyph is declined so the
-    /// host deletes it natively.
+    /// ⌃⌫ — the committed transform before the cursor becomes its literal
+    /// keystroke spelling (θ → "tH"). The cluster is matched whole — Swift
+    /// String equality is canonical, so ä and ç (which decompose under NFD)
+    /// unconvert like any other glyph; their marks are part of the glyph, not
+    /// something the user stacked on.
     private func unconvert(_ client: IMKTextInput) -> Bool {
         guard let (p, site) = prevCluster(client) else { return false }
-        let (base, marks) = decompose(p)
-        guard marks.isEmpty, !base.isEmpty else { return false }
-        let low = base.lowercased()
+        let whole = String(p)
+        let low = whole.lowercased()
         guard let key = Tables.shared.unconvertKey[low] else { return false }
-        let text = base == low ? key : key.uppercased()
-        Dbg.log("  → unconvert \(Dbg.str(base)) ⇒ '\(text)'")
+        let text = whole == low ? key : key.uppercased()
+        Dbg.log("  → unconvert \(Dbg.str(whole)) ⇒ '\(text)'")
         replace(site, with: text, client)
         return true
     }
