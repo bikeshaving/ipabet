@@ -34,7 +34,7 @@ export function Landing() {
 				<header>
 					<h1>IPA<span class="ipa">bet</span> <span class="beta">beta</span></h1>
 					<p class="tagline">A fast and memorable keyboard for the International Phonetic Alphabet.</p>
-					<p class="trust">free · open source · offline · a native input method · the same engine in any browser</p>
+					<p class="trust">free · open source · offline</p>
 				</header>
 
 				<div id="typing-demo-root"><${TypingDemo} demos=${DEMOS} /></div>
