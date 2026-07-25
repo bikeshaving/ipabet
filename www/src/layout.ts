@@ -36,6 +36,12 @@ export function Layout({title, desc, styles = [], children}: LayoutProps) {
  *  because the jsx tag can't parse `<!` inside a template. */
 export function page(node: Element): Response {
 	return new Response("<!DOCTYPE html>" + renderer.render(node), {
-		headers: {"Content-Type": "text/html; charset=utf-8"},
+		headers: {
+			"Content-Type": "text/html; charset=utf-8",
+			// Serve from browser cache for 5 minutes, then revalidate in the
+			// background for a day — a deploy reaches returning visitors within
+			// one navigation after the max-age lapses.
+			"Cache-Control": "public, max-age=300, stale-while-revalidate=86400",
+		},
 	});
 }
