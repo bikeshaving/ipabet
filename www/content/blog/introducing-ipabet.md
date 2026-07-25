@@ -8,7 +8,7 @@ The International Phonetic Alphabet (IPA) is the universal standard for document
 
 As a programmer, this situation has always struck me as absurd. IPA is around 140 years old. It is used professionally by linguists, language instructors, singers, actors, speech pathologists, news broadcasters — basically anyone who cares about describing and pronouncing speech with scientific precision. Nevertheless, there’s no easy way to type it, even though there are complex input method editors (IMEs), like those for Japanese and Chinese, which allow users to type thousands of individual logographs.
 
-Armed with Claude, who can reasonably write a macOS IME, and is highly knowledgeable on matters of phonetics and orthography, I set out to create a better way to type IPA. The result is *IPAbet*, a fast and intuitive typing system designed for phonetic transcription, with native macOS and browser support for its initial release.
+Armed with Claude, who can reasonably vibe-code a macOS IME, and is highly knowledgeable on matters of phonetics and orthography, I set out to create a better way to type IPA. The result is *IPAbet*, a fast and intuitive typing system designed for phonetic transcription, with native macOS and browser support for its initial release.
 
 Here is what it looks like:
 
