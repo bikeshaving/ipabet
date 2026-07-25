@@ -630,8 +630,11 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	return withFlush({type: "pass"});
 }
 
-/** Backspace: peel the last combining mark off the previous cluster; a bare
- *  glyph passes so the host deletes it natively. */
+/** Backspace: marks are PREFIX keystrokes, so undoing the last keystroke of a
+ *  marked cluster deletes the base and re-arms the mark stack as pending — the
+ *  next base absorbs it (ãː ⌫ o → õ). Ties are postfix joiners typed after
+ *  their base, so a trailing tie peels instead. A bare glyph passes so the
+ *  host deletes it natively. */
 export function handleBackspace(textBefore: string, pending: Pending = []): Step {
 	// The pending accent is peeled first, before the document is touched.
 	if (pending.length > 0) return {edit: {type: "noop"}, pending: pending.slice(0, -1)};
@@ -641,7 +644,9 @@ export function handleBackspace(textBefore: string, pending: Pending = []): Step
 	if (marks.length === 0) return {edit: {type: "pass"}, pending: []};
 	// orphan combining mark: let the host delete the whole cluster
 	if (base.length === 0) return {edit: {type: "pass"}, pending: []};
-	return {edit: replaceCluster(p, recompose(base, marks.slice(0, -1))), pending: []};
+	if (COMBINING_TIES.includes(marks[marks.length - 1]))
+		return {edit: replaceCluster(p, recompose(base, marks.slice(0, -1))), pending: []};
+	return {edit: replaceCluster(p, ""), pending: marks};
 }
 
 /** ⌃⌫ — unconvert: the committed transform before the cursor becomes its literal

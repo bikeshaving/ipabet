@@ -41,9 +41,11 @@ recompose to NFC on write, so NFC fusion (é is one codepoint, n̥ is two) never
 changes rule behavior. On any rule miss the keystroke falls through until
 something emits; no key ever dead-ends.
 
-Backspace peels the last combining mark off the previous cluster (é → e,
-n̥ → n); a bare glyph is declined so the host deletes it natively — Korean's
-jamo-peel-then-native pattern.
+Backspace on a marked cluster deletes the base and re-arms its marks as
+pending — marks are prefix keystrokes, so the base was typed last, and the fix
+for a wrong base is one key (ã ⌫ o → õ). A trailing tie is postfix and peels
+instead; a bare glyph is declined so the host deletes it natively — Korean's
+jamo-then-native pattern.
 
 ## Files
 

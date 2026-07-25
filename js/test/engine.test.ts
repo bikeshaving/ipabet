@@ -972,16 +972,22 @@ describe("option-shift digits pass native", () => {
 		expect(handleKey("", {key: "[", shift: true, option: true}).edit).toEqual({type: "insert", text: "”"}));
 });
 
-describe("backspace peel", () => {
-	test("ñ peels to n", () => expect(typed("~n", "n", "⌫")).toBe("n"));
-	test("stacked marks peel one at a time", () =>
-		expect(typed("~n", "~e", "a", "⌫")).toBe(nfc("ã")));
+describe("backspace re-arms the prefix stack", () => {
+	// Marks are prefix keystrokes: the base was typed LAST, so ⌫ undoes the
+	// base and the marks pend again — the fix for a wrong base is one key.
+	test("ñ ⌫ o → õ: the base swaps, the mark survives", () =>
+		expect(typed("~n", "n", "⌫", "o")).toBe(nfc("õ")));
+	test("a whole stack re-arms at once", () =>
+		expect(typed("~n", "~e", "a", "⌫", "o")).toBe(typed("~n", "~e", "o")));
+	test("⌫ again peels the re-armed stack: ñ ⌫ ⌫ o → o", () =>
+		expect(typed("~n", "n", "⌫", "⌫", "o")).toBe("o"));
 	test("bare glyph passes to native delete", () => {
 		expect(handleBackspace("sa").edit).toEqual({type: "pass"});
 	});
-	test("precomposed é (NFC input) still peels", () => {
-		expect(typeKeys(seq("⌫"), "caf\u{00E9}")).toBe("cafe");
-	});
+	test("precomposed é (NFC input) re-arms its acute", () =>
+		expect(typeKeys(seq("⌫", "i"), "caf\u{00E9}")).toBe(nfc("cafí")));
+	test("a trailing tie is postfix — it peels, the base stays: t͡ ⌫ → t", () =>
+		expect(typed("t", "~j", "⌫")).toBe("t"));
 });
 
 describe("daily-driver invariants", () => {

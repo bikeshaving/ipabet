@@ -540,7 +540,7 @@ class InputController: IMKInputController {
             if shift, !flags.contains(.capsLock),
                base.count == 1, let bc = base.unicodeScalars.first, (65...90).contains(bc.value) {
                 let p2Segment = clusterBefore(site, client).map {
-                    String($0).unicodeScalars.contains(where: isSegmentScalar)
+                    String($0.0).unicodeScalars.contains(where: isSegmentScalar)
                 } ?? false
                 if p2Segment, chainLive {
                     base = base.lowercased()
@@ -917,6 +917,11 @@ class InputController: IMKInputController {
         return true
     }
 
+    /// ⌫ — marks are PREFIX keystrokes, so undoing the last keystroke of a
+    /// marked cluster deletes the base and re-arms the mark stack as pending:
+    /// the next base absorbs it (ã ⌫ o → õ). Ties are postfix joiners typed
+    /// after their base, so a trailing tie peels instead. A bare glyph is
+    /// declined so the host deletes it natively.
     private func handleBackspace(_ client: IMKTextInput) -> Bool {
         guard let (p, r) = lastCluster(client) else { return false }
         let (base, marks) = decompose(p)
@@ -925,7 +930,20 @@ class InputController: IMKInputController {
         // inserting an empty replacement, which the macOS 15 transport
         // silently drops — decline and let the host delete it natively.
         guard !base.isEmpty else { return false }
-        replace(r, with: recompose(base, marks.dropLast()), client)
+        if let last = marks.last, [Self.tieAbove, Self.tieBelow, Self.slide].contains(last) {
+            replace(r, with: recompose(base, Array(marks.dropLast())), client)
+            return true
+        }
+        // Deleting the cluster is a net-empty replacement — dropped by the
+        // transport — so the deletion rides a carrier: the untouched cluster
+        // before it, rewritten verbatim over the joint range. With no carrier
+        // (document start) decline; the host deletes the whole cluster, and
+        // the stack is not re-armed rather than re-armed invisibly.
+        guard let (c, cr) = clusterBefore(r, client) else { return false }
+        pending = marks
+        Dbg.log("  → ⌫ re-arms \(marks.count) mark(s); carrier '\(Dbg.str(String(c)))'")
+        replace(NSRange(location: cr.location, length: cr.length + r.length), with: String(c), client)
+        updateMarked(client)
         return true
     }
 
@@ -968,14 +986,17 @@ class InputController: IMKInputController {
         }
     }
 
-    /// Lookback for shift-chaining. Nil at the document start.
-    private func clusterBefore(_ range: NSRange, _ client: IMKTextInput) -> Character? {
+    /// The cluster ending at `range`'s start, with its UTF-16 range. Nil at the
+    /// document start. Lookback for shift-chaining and the ⌫ deletion carrier.
+    private func clusterBefore(_ range: NSRange, _ client: IMKTextInput) -> (Character, NSRange)? {
         let end = range.location
         guard end > 0 else { return nil }
         let start = max(0, end - 16)
         var actual = NSRange()
-        return client.string(from: NSRange(location: start, length: end - start),
-                             actualRange: &actual)?.last
+        guard let last = client.string(from: NSRange(location: start, length: end - start),
+                                       actualRange: &actual)?.last else { return nil }
+        let len = (String(last) as NSString).length
+        return (last, NSRange(location: end - len, length: len))
     }
 
     private func insert(_ text: String, _ client: IMKTextInput) {

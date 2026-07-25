@@ -10,8 +10,8 @@ description: "A touch-typing tutor for the IPA. Drill the glyphs and a growing b
 <Scaffold/>
 
 <p class="notice">Type on your keyboard or tap the keys — the next one lights up.
-<kbd>⇧</kbd> and <kbd>⌥</kbd> behave like the real keyboard, and backspace peels
-diacritics off one mark at a time. Click the symbol to hear it. Flip on
+<kbd>⇧</kbd> and <kbd>⌥</kbd> behave like the real keyboard, and backspace on a
+marked glyph re-arms its diacritics for the next letter. Click the symbol to hear it. Flip on
 <b>Ear training</b> to hide the symbol and transcribe from sound alone.</p>
 
 <footer>
