@@ -31,8 +31,6 @@ Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as
 
 Or [build from source](https://github.com/bikeshaving/ipabet). Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
 
-To uninstall: <kbd>sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"</kbd>, then log out and back in.
-
 ## From the blog
 
 <LatestPosts/>
