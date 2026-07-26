@@ -13,6 +13,25 @@ let me = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath(
 let app = me.deletingLastPathComponent()   // MacOS/
     .deletingLastPathComponent()           // Contents/
     .deletingLastPathComponent()           // IPAbet.app
+
+// --disable: the uninstall path (Resources/uninstall.sh runs this as the
+// console user before deleting the bundle). Deselect + disable every IPAbet
+// source; TIS state is per-session, so this must NOT run as root.
+if CommandLine.arguments.contains("--disable") {
+    if let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISInputSource] {
+        for src in list {
+            guard let p = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { continue }
+            let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
+            if id.hasPrefix("org.bikeshaving.inputmethod.IPAbet") {
+                TISDeselectInputSource(src)
+                TISDisableInputSource(src)
+                print("disabled \(id)")
+            }
+        }
+    }
+    exit(0)
+}
+
 let status = TISRegisterInputSource(app as CFURL)
 // KLInfo-in-bundle registration is dead on modern macOS (gate-proven): register
 // the Keyboard Viewer layout FILE explicitly. Harmless if it doesn't persist —

@@ -47,6 +47,7 @@ cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input me
 swiftc tools/genkeylayout.swift -o /tmp/ipabet-genkl -framework Carbon -framework Cocoa
 ( cd "$(dirname "$0")" && /tmp/ipabet-genkl )
 cp IPAbet.keylayout "$APP/Contents/Resources/IPAbet.keylayout"
+install -m 755 uninstall.sh "$APP/Contents/Resources/uninstall.sh"
 mkdir -p "$APP/Contents/Resources/en.lproj"
 cp en.lproj/InfoPlist.strings "$APP/Contents/Resources/en.lproj/"
 

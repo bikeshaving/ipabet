@@ -24,6 +24,10 @@ Building from source is one command — `cd macos && ./build.sh install` — see
 [`macos/README.md`](macos/README.md) for the build, the architecture, and the
 install prefixes.
 
+Uninstalling is one command too:
+`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`,
+then log out and back in.
+
 ## How it works
 
 - **Shift + letter** modifies the glyph before it, following spellings you
