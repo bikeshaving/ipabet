@@ -1,15 +1,18 @@
 import Cocoa
 
-/// Runtime-gated debug logging for IME development.
+/// Debug logging for IME development — DEBUG BUILDS ONLY.
 ///
-/// Off in production: writes nothing unless the sentinel file `~/.ipabet-debug`
-/// exists, so a shipped build carries this at ~zero cost (one cached bool check
-/// per keystroke, and `msg` is an @autoclosure so the string is never built
-/// when disabled). Toggle live with `tools/debug.sh on|off` — no rebuild — and
-/// the flag refreshes on every focus change (`activateServer`).
+/// Release builds carry no logging capability at all: an input method that can
+/// write keystrokes to disk is a keylogger with a config switch, whatever the
+/// default, and the trust story ("sandboxed, offline") requires the capability
+/// to not exist in the shipped binary. `DEBUG=1 ./build.sh` compiles it in
+/// (-D IPABET_DEBUG); such builds ship only as GitHub prereleases.
 ///
-/// Log lands at `~/Library/Logs/IPAbet.log`; `tools/debug.sh tail` follows it.
+/// In a debug build, logging is still runtime-gated on the sentinel file
+/// `~/.ipabet-debug` (toggle with `tools/debug.sh on|off`, refreshed on every
+/// focus change); the log lands at `~/Library/Logs/IPAbet.log`.
 enum Dbg {
+#if IPABET_DEBUG
     private static let home = FileManager.default.homeDirectoryForCurrentUser
     static let logURL = home.appendingPathComponent("Library/Logs/IPAbet.log")
     private static let sentinelPath = home.appendingPathComponent(".ipabet-debug").path
@@ -36,6 +39,10 @@ enum Dbg {
             try? data.write(to: logURL)   // first line creates the file
         }
     }
+#else
+    static func refresh() {}
+    static func log(_ msg: @autoclosure () -> String) {}
+#endif
 
     // ---- readable formatters (debug-only, so clarity over speed) ----
 

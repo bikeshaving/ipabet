@@ -7,6 +7,11 @@ APP=build/IPAbet.app
 rm -rf build
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
+# DEBUG=1 compiles the keystroke logger in (Dbg — see Sources/Debug.swift).
+# Release builds have NO logging capability; debug builds ship only as
+# GitHub prereleases, never as /download.
+DBGFLAGS="${DEBUG:+-D IPABET_DEBUG}"
+
 # UNIVERSAL binaries — swiftc builds host-arch only, and an arm64-only input
 # method on an Intel Mac registers from its plist but can never launch: the
 # input source appears, and typing is dead. Build both slices, lipo them.
@@ -15,7 +20,7 @@ for arch in arm64 x86_64; do
     -target "$arch-apple-macos13.0" \
     -o "/tmp/ipabet-main-$arch" \
     -framework Cocoa -framework InputMethodKit \
-    -O
+    -O $DBGFLAGS
 done
 lipo -create -output "$APP/Contents/MacOS/IPAbet" /tmp/ipabet-main-arm64 /tmp/ipabet-main-x86_64
 
