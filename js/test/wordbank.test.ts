@@ -9,7 +9,8 @@
 // missing one. This test types every entry and demands its target back.
 
 import {describe, expect, test} from "bun:test";
-import {typeKeys, type Keystroke} from "../src/index.ts";
+import {type Keystroke} from "../src/index.ts";
+import {typeKeys} from "./vectors.ts";
 import words from "../../www/src/gen/harvest-words.json";
 
 interface Entry {

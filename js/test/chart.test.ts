@@ -8,7 +8,8 @@
 // "press it twice" after double-press cycling was replaced by ⌥⇧.
 
 import {describe, expect, test} from "bun:test";
-import {typeKeys, type Keystroke} from "../src/index.ts";
+import {type Keystroke} from "../src/index.ts";
+import {typeKeys} from "./vectors.ts";
 import {
 	DIACRITICS,
 	SUPRASEGMENTALS,

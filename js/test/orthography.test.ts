@@ -7,7 +7,8 @@
 // cannot reorder and only the engine's order-insensitive recompose saves you.
 
 import {describe, expect, test} from "bun:test";
-import {typeKeys, type Keystroke} from "../src/index.ts";
+import {type Keystroke} from "../src/index.ts";
+import {typeKeys} from "./vectors.ts";
 
 const K = (key: string, o: Partial<Keystroke> = {}) => ({key, ...o});
 const opt = (key: string) => K(key, {option: true});

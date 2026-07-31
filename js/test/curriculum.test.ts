@@ -4,7 +4,7 @@
 // leaving a literal like "5Y" in the target — "not even IPA" on the drill card.
 // This types every lesson word and headline and demands real IPA back.
 import {describe, expect, test} from "bun:test";
-import {typeKeys} from "../src/index.ts";
+import {typeKeys} from "./vectors.ts";
 import {CURRICULUM} from "../../www/src/curriculum.ts";
 import {keystrokeFromLabel} from "../../www/src/keystrokes.ts";
 

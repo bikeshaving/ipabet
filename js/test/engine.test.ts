@@ -3,7 +3,8 @@
 // this port disagree with a row, one of them is wrong.
 
 import {afterAll, beforeAll, describe, expect, test} from "bun:test";
-import {typeKeys, handleKey, handleBackspace, setQuoteLocale, type Keystroke} from "../src/index.ts";
+import {handleKey, handleBackspace, type Keystroke} from "../src/index.ts";
+import {typeKeys, setQuoteLocale} from "./vectors.ts";
 
 // Capital digraphs are an opt-in setting (they are keystroke-identical to
 // holding shift and yelling), so the suites that exercise them turn them on.
