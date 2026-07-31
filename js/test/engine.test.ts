@@ -4,11 +4,10 @@
 
 import {afterAll, beforeAll, describe, expect, test} from "bun:test";
 import {handleKey, handleBackspace, type Keystroke} from "../src/index.ts";
-import {typeKeys, setQuoteLocale} from "./vectors.ts";
+import {typeKeys, setQuoteLocale, setCapitalDigraphs} from "./vectors.ts";
 
 // Capital digraphs are an opt-in setting (they are keystroke-identical to
 // holding shift and yelling), so the suites that exercise them turn them on.
-import {setCapitalDigraphs} from "../src/index.ts";
 setCapitalDigraphs(true);
 
 // Compact keystroke notation: "s" bare, "+H" shift, "~n" option, "~+2"

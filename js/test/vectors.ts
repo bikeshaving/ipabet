@@ -16,7 +16,12 @@
 // the worst case to losing only the last few entries, not the whole run.
 
 import {afterAll} from "bun:test";
-import {typeKeys as realTypeKeys, setQuoteLocale as realSetQuoteLocale, type Keystroke} from "../src/index.ts";
+import {
+	typeKeys as realTypeKeys,
+	setQuoteLocale as realSetQuoteLocale,
+	setCapitalDigraphs as realSetCapitalDigraphs,
+	type Keystroke,
+} from "../src/index.ts";
 import spec from "../../spec/ipabet.json";
 
 const DUMP = process.env.IPABET_DUMP_VECTORS === "1";
@@ -34,6 +39,12 @@ interface Vector {
 	// because the ⌥[/⌥]/⌥⇧[/⌥⇧] outputs depend on it — without this a replay
 	// can't tell a German-locale vector from an English one.
 	locale: string;
+	// Capital digraphs are OFF by default in the real engine; one describe
+	// block in engine.test.ts (the "yelling doesn't eat words" suite)
+	// deliberately toggles them off again for its own tests before restoring
+	// them. Recorded per-vector for the same reason as locale: whether ⇧S⇧H
+	// becomes Ʃ or stays "SH" depends on this setting at type-time.
+	capital_digraphs: boolean;
 }
 
 const QUOTE_LOCALES = spec.quotes as {default: string; locales: Record<string, unknown>};
@@ -41,6 +52,7 @@ const QUOTE_LOCALES = spec.quotes as {default: string; locales: Record<string, u
 const vectors: Vector[] = [];
 const FLUSH_EVERY = 25;
 let activeLocale = QUOTE_LOCALES.default;
+let capitalDigraphsOn = false; // matches index.ts's own default
 
 function writeOut() {
 	require("node:fs").writeFileSync(OUT_PATH, JSON.stringify(vectors, null, 1) + "\n");
@@ -49,10 +61,15 @@ function writeOut() {
 export function typeKeys(keys: Keystroke[], initial = ""): string {
 	const result = realTypeKeys(keys, initial);
 	if (DUMP) {
-		vectors.push({keys, initial, expected: result, locale: activeLocale});
+		vectors.push({keys, initial, expected: result, locale: activeLocale, capital_digraphs: capitalDigraphsOn});
 		if (vectors.length % FLUSH_EVERY === 0) writeOut();
 	}
 	return result;
+}
+
+export function setCapitalDigraphs(on: boolean): void {
+	capitalDigraphsOn = on;
+	realSetCapitalDigraphs(on);
 }
 
 export function setQuoteLocale(locale: string): void {
