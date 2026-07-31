@@ -13,7 +13,9 @@ function paintShiftPreview(pad: HTMLTextAreaElement, board: HTMLElement) {
 	const before = pad.value.slice(0, pad.selectionStart ?? pad.value.length);
 	for (const cap of board.querySelectorAll<HTMLElement>(".cap[data-key]")) {
 		const k = cap.dataset.key!;
-		if (!/^[a-z]$/.test(k)) continue;
+		// The centralize modifier is ⇧5 (spelled "%" on the shift-digit plane), the
+		// one modifier chord that isn't a letter — every other lives on a-z.
+		if (!/^[a-z]$/.test(k) && k !== "5") continue;
 		const t = cap.querySelector<HTMLElement>(".h.t");
 		if (t === null) continue;
 		const step = handleKey(before, {key: k, shift: true}, [], false);
@@ -21,7 +23,7 @@ function paintShiftPreview(pad: HTMLTextAreaElement, board: HTMLElement) {
 			t.textContent = step.edit.text;
 			t.classList.add("mod", "ipa");
 		} else {
-			t.textContent = k.toUpperCase();
+			t.textContent = k === "5" ? "%" : k.toUpperCase();
 			t.classList.remove("mod", "ipa");
 		}
 	}
