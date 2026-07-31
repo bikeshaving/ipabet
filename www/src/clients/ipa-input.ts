@@ -236,32 +236,14 @@ export function bindIPAInput(
 		}
 		if (stood) return;
 		// keydown already produced this key's output, and the field owns its input.
-		// A duplicate INSERT riding the same event is a foreign copy — the native
-		// IPAbet IME committing the same ː / ˈ / letter it also gave us (a fresh
-		// insertText, so it never tripped the insertReplacementText standdown above).
-		// Cancel it; two engines must not both land. But a DELETE here is the native
+		// A duplicate INSERT riding the same event is a foreign copy — the macOS
+		// IPAbet IME re-inserting the same ː / ˩ it also transformed (a fresh insert,
+		// so it never tripped the insertReplacementText standdown above) — so cancel
+		// it; two engines must not both land. But a DELETE here is the native
 		// backspace the engine deliberately delegated for a bare glyph — let it land.
 		if (consumed) {
 			consumed = false;
 			if (ie.inputType.startsWith("insert")) e.preventDefault();
-			// A COMMITTED foreign insert (insertText, not a composition) echoing a
-			// key we already handled means the native IME is live — nothing else
-			// inserts through a keydown we preventDefaulted. It owns the field from
-			// here, so stop racing it. In WebKit this beforeinput is not cancelable,
-			// so the echo lands regardless; delete our copy so only one remains.
-			// (US-layout dead keys arrive as insertCompositionText and never reach
-			// this branch — their composition precedes the letter's keydown, so
-			// consumed is false — so real IMEs are the only trigger.)
-			if (ie.inputType === "insertText") {
-				if (!e.cancelable && ie.data) {
-					const at = caret();
-					if (el.value.slice(at - ie.data.length, at) === ie.data) {
-						el.value = el.value.slice(0, at - ie.data.length) + el.value.slice(at);
-						el.selectionStart = el.selectionEnd = at - ie.data.length;
-					}
-				}
-				standDown();
-			}
 			return;
 		}
 		if (ie.inputType === "deleteContentBackward") { engineBackspace(e); return; }
