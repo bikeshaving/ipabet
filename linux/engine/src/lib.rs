@@ -2,18 +2,16 @@
 // ported from macos/Sources/InputController.swift). Section comments mirror
 // the reference file so the two can be read side by side. Verified
 // byte-for-byte against every case in spec/parity-vectors.json (see
-// tests/parity.rs) — the same fixture the C port (linux/src/engine.c,
-// superseded by this crate) and the eventual Windows port replay against.
+// tests/parity.rs) — the same fixture the eventual Windows port replays
+// against too, since this crate is meant to be reused there directly.
 //
-// Unlike the C port, there's no hand-rolled JSON parser (serde handles
-// spec/ipabet.json generically via `spec.rs`) and no manual canonical-order
-// workaround for composition (unicode-normalization's nfc() correctly
-// reorders combining marks by class before composing, verified directly —
-// utf8proc's raw-codepoint-array API did NOT do this and needed a hand-written
-// fix). Internal representation is `char`/`String` throughout (Rust's `char`
-// already IS a Unicode scalar value), with `Edit::Replace.length` a codepoint
-// count — the same deliberate departure from JS's UTF-16-unit semantics the
-// C port documents, for the same reason: nothing here is ever UTF-16.
+// spec/ipabet.json parses generically via serde (`spec.rs`) — no hand-written
+// parser. Composition uses unicode-normalization's nfc(), which correctly
+// reorders combining marks by class before composing (verified directly
+// against the tone-vs-shape-mark case this matters for). Internal
+// representation is `char`/`String` throughout (Rust's `char` already IS a
+// Unicode scalar value), with `Edit::Replace.length` a codepoint count —
+// nothing here is ever UTF-16.
 
 mod spec;
 

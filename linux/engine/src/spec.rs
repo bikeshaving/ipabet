@@ -1,6 +1,5 @@
 // The subset of spec/ipabet.json's shape the engine actually reads. serde
-// handles the parsing generically — no hand-written parser, unlike the C
-// port, which is the whole reason for being here.
+// handles the parsing generically.
 
 use serde::Deserialize;
 use std::collections::HashMap;

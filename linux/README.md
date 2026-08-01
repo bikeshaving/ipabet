@@ -5,16 +5,6 @@ byte-for-byte against every vector in `spec/parity-vectors.json`
 (3825/3825, generated straight from `js/test`, the same suite the macOS
 Swift mirror is pinned to). No fcitx5 integration yet — that's L1.
 
-An earlier pass hand-ported the engine to C first; it worked (also
-3825/3825) but cost a hand-rolled JSON parser and a real Unicode bug
-(`utf8proc_normalize_utf32` doesn't canonically reorder combining marks by
-class before composing, unlike a real `.normalize("NFC")` — needed a
-hand-written fix). Rewritten in Rust: `serde_json` replaces the JSON parser
-outright, and `unicode-normalization`'s `nfc()`/`nfd()` operate on real
-`char` sequences the way JS's `.normalize()` does, so that whole bug class
-doesn't exist here — verified directly before relying on it. The C version
-is gone; this crate is the only implementation now.
-
 ## Layout
 
 - `engine/src/lib.rs` — the transform logic, ported from `js/src/index.ts`
@@ -52,8 +42,8 @@ cd js && IPABET_DUMP_VECTORS=1 bun test
 
 The same crate is meant to be reused there: cross-compile for the Windows
 targets, generate a C header with `cbindgen`, link it into the TSF text
-service the same way `fcitx5`'s C++ glue will link it here. Avoids a second
-hand-port and, more importantly, a second from-scratch Unicode bug hunt.
+service the same way `fcitx5`'s C++ glue will link it here — one engine,
+two thin platform shells.
 
 ## Next (L1)
 
