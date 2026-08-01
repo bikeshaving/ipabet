@@ -14,6 +14,7 @@
 // nothing here is ever UTF-16.
 
 mod spec;
+pub mod ffi;
 
 use spec::Spec;
 use std::collections::HashMap;
