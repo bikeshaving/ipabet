@@ -80,13 +80,13 @@ fn replay(engine: &Engine, keys: Vec<RawKeystroke>, initial: &str) -> String {
 #[test]
 fn parity_vectors() {
     let spec_json = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../spec/ipabet.json"),
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"),
     )
     .expect("read spec/ipabet.json");
     let mut engine = Engine::new(&spec_json).expect("parse spec");
 
     let vectors_json = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../../spec/parity-vectors.json"),
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"),
     )
     .expect("read spec/parity-vectors.json");
     let vectors: Vec<Vector> = serde_json::from_str(&vectors_json).expect("parse vectors");
@@ -133,11 +133,11 @@ fn parity_vectors() {
 fn ffi_buffer_bounds() {
     const EDIT_TEXT_MAX: usize = 64; // must match ffi.rs's EDIT_TEXT_MAX
 
-    let spec_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../spec/ipabet.json"))
+    let spec_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"))
         .expect("read spec/ipabet.json");
     let mut engine = Engine::new(&spec_json).expect("parse spec");
 
-    let vectors_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../spec/parity-vectors.json"))
+    let vectors_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"))
         .expect("read spec/parity-vectors.json");
     let vectors: Vec<Vector> = serde_json::from_str(&vectors_json).expect("parse vectors");
 

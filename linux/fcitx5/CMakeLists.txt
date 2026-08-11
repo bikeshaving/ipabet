@@ -8,10 +8,10 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 find_package(Fcitx5Core REQUIRED)
 
-# The engine is the Rust staticlib in linux/engine, built by cargo — the same
-# crate and the same C ABI header the Windows port will use. Building it here
+# The engine is the Rust staticlib in engine/, built by cargo — the same
+# crate and the same C ABI header the Windows port uses. Building it here
 # rather than expecting a prior `cargo build` keeps one command in the loop.
-set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../engine")
+set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../engine")
 set(ENGINE_LIB "${ENGINE_DIR}/target/release/libipabet_engine.a")
 # rustup puts cargo in ~/.cargo/bin, which a non-login shell (ssh, CI) does not
 # have on PATH — look there too rather than failing at build time.

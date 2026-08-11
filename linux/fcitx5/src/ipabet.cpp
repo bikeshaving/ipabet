@@ -1,6 +1,6 @@
 // The fcitx5 side of IPAbet: it owns no phonetics of its own. Every decision
-// about what a keystroke means comes back from the Rust engine in
-// linux/engine (the same crate the Windows port will link), reached through
+// about what a keystroke means comes back from the Rust engine in engine/
+// (the same crate the Windows port links), reached through
 // its C ABI; this file only translates fcitx5's key events into the engine's
 // Keystroke shape and turns the Edit it hands back into client text.
 //
