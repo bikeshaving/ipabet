@@ -39,11 +39,11 @@ jobs:
       - name: Register
         run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
 
-      - name: Registered
-        run: .\windows\build\Release\profile-probe.exe assert-present
-
       - name: What Windows sees
         run: .\windows\build\Release\profile-probe.exe list
+
+      - name: Registered
+        run: .\windows\build\Release\profile-probe.exe assert-present
 
       # Uninstall has to actually uninstall — a profile left behind is what
       # makes a reinstall register twice.

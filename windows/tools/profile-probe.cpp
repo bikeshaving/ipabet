@@ -45,14 +45,16 @@ bool IsIpabet(const TF_INPUTPROCESSORPROFILE &p) {
     return IsEqualCLSID(p.clsid, kService) && IsEqualGUID(p.guidProfile, kProfile);
 }
 
-int Walk(ITfInputProcessorProfileMgr *mgr, bool print, TF_INPUTPROCESSORPROFILE *found) {
+int WalkLang(ITfInputProcessorProfileMgr *mgr, LANGID lang, bool print,
+             TF_INPUTPROCESSORPROFILE *found, int *total) {
     IEnumTfInputProcessorProfiles *e = nullptr;
-    if (FAILED(mgr->EnumProfiles(0, &e))) return 2;
+    if (FAILED(mgr->EnumProfiles(lang, &e))) return 0;
 
     int hits = 0;
     TF_INPUTPROCESSORPROFILE p{};
     ULONG got = 0;
     while (e->Next(1, &p, &got) == S_OK && got == 1) {
+        (*total)++;
         const bool ours = IsIpabet(p);
         if (ours) {
             hits++;
@@ -66,6 +68,22 @@ int Walk(ITfInputProcessorProfileMgr *mgr, bool print, TF_INPUTPROCESSORPROFILE 
         }
     }
     e->Release();
+    return hits;
+}
+
+/// Enumerates every profile, reporting how many were seen in `total` — the
+/// count is what separates "IPAbet is missing" from "the enumeration came back
+/// empty", which are different bugs with the same symptom.
+int Walk(ITfInputProcessorProfileMgr *mgr, bool print, TF_INPUTPROCESSORPROFILE *found,
+         int *total) {
+    int seen = 0;
+    int hits = WalkLang(mgr, 0, print, found, &seen);
+    // A zero langid is documented as "all languages"; if it turns out to mean
+    // "the language whose id is zero", ask for the one IPAbet registers under.
+    if (seen == 0) {
+        hits = WalkLang(mgr, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), print, found, &seen);
+    }
+    if (total) *total = seen;
     return hits;
 }
 
@@ -125,16 +143,18 @@ int main(int argc, char **argv) {
     }
 
     int rc = 2;
+    int total = 0;
     if (strcmp(cmd, "list") == 0) {
-        Walk(mgr, true, nullptr);
+        Walk(mgr, true, nullptr, &total);
+        printf("%d profiles total.\n", total);
         rc = 0;
     } else if (strcmp(cmd, "assert-present") == 0) {
-        const int hits = Walk(mgr, false, nullptr);
+        const int hits = Walk(mgr, false, nullptr, &total);
         if (hits == 1) {
             printf("IPAbet is registered.\n");
             rc = 0;
         } else if (hits == 0) {
-            fprintf(stderr, "IPAbet is NOT registered.\n");
+            fprintf(stderr, "IPAbet is NOT registered (%d profiles enumerated).\n", total);
             rc = 1;
         } else {
             fprintf(stderr, "IPAbet is registered %d times — a stale profile is still around.\n",
@@ -143,7 +163,7 @@ int main(int argc, char **argv) {
         }
     } else if (strcmp(cmd, "enable-select") == 0) {
         TF_INPUTPROCESSORPROFILE p{};
-        if (Walk(mgr, false, &p) != 1) {
+        if (Walk(mgr, false, &p, &total) != 1) {
             fprintf(stderr, "IPAbet is not registered — nothing to select.\n");
             rc = 1;
         } else {
