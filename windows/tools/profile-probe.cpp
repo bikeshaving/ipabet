@@ -167,9 +167,11 @@ int main(int argc, char **argv) {
             fprintf(stderr, "IPAbet is not registered — nothing to select.\n");
             rc = 1;
         } else {
+            // Not TF_IPPMF_FORPROCESS: that would switch the input method for
+            // this probe and nothing else, and the point is to leave it active
+            // for whatever the session runs next.
             hr = mgr->ActivateProfile(TF_PROFILETYPE_INPUTPROCESSOR, p.langid, p.clsid,
-                                      p.guidProfile, nullptr,
-                                      TF_IPPMF_FORPROCESS | TF_IPPMF_ENABLEPROFILE);
+                                      p.guidProfile, nullptr, TF_IPPMF_ENABLEPROFILE);
             if (SUCCEEDED(hr)) {
                 printf("IPAbet is active.\n");
                 rc = 0;

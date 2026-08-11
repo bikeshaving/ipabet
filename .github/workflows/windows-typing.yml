@@ -1,16 +1,21 @@
 name: windows-typing
 
-# The layer the macOS gate cannot reach: real keystrokes, through the real text
-# service, into a real edit control, with the result read back out of the
-# control. Windows has no consent wall in front of synthetic input, so what is
-# impossible to automate on one platform is a per-push check on this one.
+# Types into Notepad and reads back what Notepad ended up holding.
+#
+# A real application rather than a purpose-built one. What needs proving is the
+# lookback -- the text service reading what it already wrote, which is what
+# turns t then shift-H into θ rather than tH -- and that needs a document that
+# survives from one keystroke to the next. Writing a text store to test against
+# would be testing the test.
 
-# Run on request, not on push. The harness does not yet hold a document across
-# keystrokes -- see "What the typing gate has established" in windows/README.md
-# -- so it would sit red on every push while telling nobody anything new. The
-# layers it does not cover are gated by windows-build, windows-registration and
-# windows-parity, which do run on push.
 on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/windows-typing.yml'
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -27,17 +32,15 @@ jobs:
       - name: Register
         run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
 
-      # Whether ctfmon is up decides whether this environment can host a text
-      # service at all, which is a different failure from a broken one.
-      - name: Text services host
-        run: |
-          Get-Process ctfmon -ErrorAction SilentlyContinue | Format-Table -AutoSize | Out-String
-          exit 0
+      # Active for the session, so the Notepad started next comes up with it on.
+      - name: Make it the active input method
+        run: .\windows\build\Release\profile-probe.exe enable-select
 
-      - name: Type
+      - name: Type into Notepad
         env:
           IPABET_DEBUG_LOG: ${{ github.workspace }}\ipabet-debug.log
-        run: .\windows\build\Release\type-test.exe
+        run: .\windows\tools\notepad-type-test.ps1
+        shell: pwsh
 
       - name: What the text service saw
         if: always()
