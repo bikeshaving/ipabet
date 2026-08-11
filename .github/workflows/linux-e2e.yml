@@ -1,0 +1,53 @@
+name: linux-e2e
+
+# The same check the macOS gate documents as impossible: real keystrokes,
+# through the real fcitx5 stack, into a real text entry, read back out of it.
+# X11 extends ambient trust to any client on the display, so nothing has to
+# consent to synthetic input the way macOS makes it.
+#
+# The honest limit: this is X11. Wayland deliberately closes that hole, so the
+# path some users are on is not covered here and cannot be.
+
+on:
+  push:
+    paths:
+      - 'linux/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/linux-e2e.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            fcitx5 fcitx5-frontend-gtk3 libfcitx5core-dev libfcitx5utils-dev \
+            libfcitx5config-dev cmake build-essential \
+            xvfb xdotool x11-utils openbox dbus-x11 python3-gi gir1.2-gtk-3.0
+
+      - name: Build and install
+        run: |
+          cd linux
+          ./build.sh
+          sudo cmake --install fcitx5/build
+
+      - name: Type
+        run: |
+          eval "$(dbus-launch --sh-syntax)"
+          ./linux/tools/e2e-test.sh 200
+
+      - name: The awkward labels specifically
+        run: |
+          eval "$(dbus-launch --sh-syntax)"
+          ./linux/tools/e2e-test.sh 999 tricky
+
+      - name: fcitx5 log
+        if: failure()
+        run: tail -50 /tmp/fcitx5.log || true
