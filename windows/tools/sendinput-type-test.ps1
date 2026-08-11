@@ -44,6 +44,28 @@ public static class Input {
     [DllImport("user32.dll")]
     static extern uint MapVirtualKey(uint code, uint mapType);
 
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetProcessWindowStation();
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern bool GetUserObjectInformation(
+        IntPtr obj, int index, System.Text.StringBuilder info, int len, out int needed);
+
+    // The window station a process is attached to decides whether it has a
+    // desktop at all: injected input goes nowhere from a station that is not
+    // WinSta0, and SendInput reports success either way.
+    public static string StationName() {
+        var sb = new System.Text.StringBuilder(256);
+        int needed;
+        if (GetUserObjectInformation(GetProcessWindowStation(), 2, sb, 512, out needed)) {
+            return sb.ToString();
+        }
+        return "<unknown>";
+    }
+
     const uint KEYEVENTF_KEYUP = 0x0002;
     const uint KEYEVENTF_SCANCODE = 0x0008;
     const ushort VK_SHIFT = 0x10;
@@ -95,6 +117,12 @@ $form.Add_Shown({
     $box.Focus() | Out-Null
     [Windows.Forms.Application]::DoEvents()
     Start-Sleep -Milliseconds 500
+
+    # Printed whether or not the run passes: a failure is only actionable if it
+    # says which of the preconditions was missing.
+    Write-Host "interactive:  $([Windows.Forms.SystemInformation]::UserInteractive)"
+    Write-Host "station:      $([Input]::StationName())"
+    Write-Host "foreground:   $([Input]::GetForegroundWindow()) (form is $($form.Handle))"
 
     [Input]::Type($expected)
 
