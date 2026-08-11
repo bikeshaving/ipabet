@@ -32,6 +32,7 @@ jobs:
         run: |
           .\windows\build\Release\profile-probe.exe assert-present
           if ($LASTEXITCODE -eq 0) { throw "IPAbet was already registered" }
+          exit 0
 
       - name: Register
         run: regsvr32 /s .\windows\build\Release\ipabet.dll
@@ -51,3 +52,4 @@ jobs:
         run: |
           .\windows\build\Release\profile-probe.exe assert-present
           if ($LASTEXITCODE -eq 0) { throw "IPAbet survived unregistration" }
+          exit 0
