@@ -33,7 +33,9 @@ HRESULT UnregisterServer();
 /// The text service. TSF hands it keystrokes through ITfKeyEventSink and it
 /// answers by editing the document through an edit session — the engine decides
 /// what the answer is.
-class TextService : public ITfTextInputProcessorEx, public ITfKeyEventSink {
+class TextService : public ITfTextInputProcessorEx,
+                    public ITfKeyEventSink,
+                    public ITfCompositionSink {
 public:
     TextService();
 
@@ -54,6 +56,10 @@ public:
     STDMETHODIMP OnTestKeyUp(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) override;
     STDMETHODIMP OnKeyUp(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) override;
     STDMETHODIMP OnPreservedKey(ITfContext *cx, REFGUID guid, BOOL *eaten) override;
+
+    // ITfCompositionSink — the client can end a composition without asking,
+    // and a pointer kept past that point is a pointer to nothing.
+    STDMETHODIMP OnCompositionTerminated(TfEditCookie ec, ITfComposition *composition) override;
 
     /// Commit what is composed and stop composing. The boundary behaviour for a
     /// key IPAbet declines, and for losing focus.

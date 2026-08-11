@@ -162,6 +162,8 @@ STDMETHODIMP TextService::QueryInterface(REFIID riid, void **ppv) {
         *ppv = static_cast<ITfTextInputProcessorEx *>(this);
     } else if (IsEqualIID(riid, IID_ITfKeyEventSink)) {
         *ppv = static_cast<ITfKeyEventSink *>(this);
+    } else if (IsEqualIID(riid, IID_ITfCompositionSink)) {
+        *ppv = static_cast<ITfCompositionSink *>(this);
     } else {
         return E_NOINTERFACE;
     }
@@ -332,6 +334,16 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
     return S_OK;
 }
 
+STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie, ITfComposition *composition) {
+    Dbg("composition terminated by the client");
+    if (composition_ == composition) {
+        composition_->Release();
+        composition_ = nullptr;
+        written_.clear();
+    }
+    return S_OK;
+}
+
 
 HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::wstring &text) {
     if (!composition_) {
@@ -349,7 +361,8 @@ HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::
         ITfContextComposition *comp = nullptr;
         hr = cx->QueryInterface(IID_ITfContextComposition, (void **)&comp);
         if (SUCCEEDED(hr)) {
-            hr = comp->StartComposition(ec, sel.range, nullptr, &composition_);
+            hr = comp->StartComposition(ec, sel.range, static_cast<ITfCompositionSink *>(this),
+                                        &composition_);
             comp->Release();
         }
         sel.range->Release();
