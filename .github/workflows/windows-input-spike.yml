@@ -18,12 +18,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  # x86_64 only. The ARM runners are interactive and on WinSta0, but another
+  # window holds the foreground there and will not give it up — not to a
+  # SetForegroundWindow loop, not with the foreground lock timeout at zero, not
+  # through AttachThreadInput. Injected input goes to the foreground, so the
+  # keystroke layer cannot be gated there. The engine itself still is, natively,
+  # by windows-parity.
   spike:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [windows-latest, windows-11-arm]
-    runs-on: ${{ matrix.runner }}
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v5
       - name: Synthetic keystrokes into a real text field

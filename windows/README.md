@@ -16,6 +16,21 @@ runner, replays `spec/parity-vectors.json` through it, and produces the
 `x86_64` and `aarch64` static libraries. PE has no fat-binary mechanism, so
 each architecture ships its own artifact rather than a slice of one file.
 
+## Synthetic keystrokes work in CI
+
+`windows/tools/sendinput-type-test.ps1` injects scancodes through `SendInput`
+into a real focused text field on a hosted runner and reads the text back, and
+it passes. Windows has no equivalent of the consent wall that makes this
+impossible to automate on macOS, so the Windows port can be gated on real
+keystroke correctness — the layer the macOS gate documents as out of reach.
+
+x86_64 only. The ARM runners report themselves interactive and attached to
+`WinSta0`, but another window holds the foreground there and will not yield it
+— not to a `SetForegroundWindow` loop, not with the foreground lock timeout at
+zero, not through `AttachThreadInput`. Injected input goes wherever the
+foreground is, so that architecture cannot gate the keystroke layer. It still
+gates the engine natively.
+
 ## What the text service has to do (W1)
 
 `ITfTextInputProcessor` for activation and `ITfKeyEventSink` for keystrokes;
