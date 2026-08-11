@@ -1,0 +1,31 @@
+name: windows-input-spike
+
+# Does a hosted Windows runner have a desktop real enough to inject keystrokes
+# into? The macOS gate cannot answer the equivalent question at all — TCC puts a
+# consent dialog in front of synthetic input, and nothing in CI can click it —
+# so the Windows port's ceiling is worth establishing before any of it is built
+# around an assumption.
+#
+# Nothing here involves IPAbet. It tests the harness, not the product: if
+# keystrokes cannot reach a plain text box on a runner, they will not reach one
+# through a text service either, and the Windows gate has to be a local VM.
+
+on:
+  push:
+    paths:
+      - 'windows/tools/sendinput-type-test.ps1'
+      - '.github/workflows/windows-input-spike.yml'
+  workflow_dispatch:
+
+jobs:
+  spike:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Synthetic keystrokes into a real text field
+        run: .\windows\tools\sendinput-type-test.ps1
+        shell: pwsh
