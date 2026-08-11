@@ -173,6 +173,21 @@ int main(int argc, char **argv) {
             // for whatever the session runs next.
             hr = mgr->ActivateProfile(TF_PROFILETYPE_INPUTPROCESSOR, p.langid, p.clsid,
                                       p.guidProfile, nullptr, TF_IPPMF_ENABLEPROFILE);
+
+            // ActivateProfile changes the calling thread, which is gone the
+            // moment this exits. What an application started afterwards reads
+            // is the user's default profile, so set that too.
+            ITfInputProcessorProfiles *legacy = nullptr;
+            HRESULT dhr = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr,
+                                           CLSCTX_INPROC_SERVER, IID_ITfInputProcessorProfiles,
+                                           (void **)&legacy);
+            if (SUCCEEDED(dhr)) {
+                dhr = legacy->SetDefaultLanguageProfile(p.langid, kService, kProfile);
+                HRESULT ahr = legacy->ActivateLanguageProfile(kService, p.langid, kProfile);
+                printf("SetDefaultLanguageProfile=0x%08lx ActivateLanguageProfile=0x%08lx\n", dhr,
+                       ahr);
+                legacy->Release();
+            }
             if (SUCCEEDED(hr)) {
                 printf("IPAbet is active.\n");
                 rc = 0;
