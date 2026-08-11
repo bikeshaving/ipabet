@@ -1,0 +1,37 @@
+name: windows-typing
+
+# The layer the macOS gate cannot reach: real keystrokes, through the real text
+# service, into a real edit control, with the result read back out of the
+# control. Windows has no consent wall in front of synthetic input, so what is
+# impossible to automate on one platform is a per-push check on this one.
+
+on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/windows-typing.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  typing:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: |
+          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build windows/build --config Release
+
+      - name: Register
+        run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
+
+      - name: Type
+        run: .\windows\build\Release\type-test.exe
+
+      - name: Unregister
+        if: always()
+        run: .\windows\build\Release\profile-probe.exe unregister .\windows\build\Release\ipabet.dll

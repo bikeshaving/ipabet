@@ -53,3 +53,9 @@ add_custom_command(TARGET ipabet POST_BUILD
 # can ask what Windows thinks is registered without being the thing under test.
 add_executable(profile-probe tools/profile-probe.cpp)
 target_link_libraries(profile-probe PRIVATE ole32.lib)
+
+# The typing gate's target: a real edit control with the text service active in
+# the same process, since activating a text service applies to the process that
+# asks for it.
+add_executable(type-test tools/type-test.cpp)
+target_link_libraries(type-test PRIVATE ole32.lib user32.lib)
