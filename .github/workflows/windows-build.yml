@@ -1,0 +1,30 @@
+name: windows-build
+
+# Builds the text service itself. The riskiest part is not the TSF code but the
+# seam: a Rust static library linked into an MSVC C++ DLL, where a CRT mismatch
+# shows up as duplicate symbols rather than as anything that explains itself.
+
+on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - '.github/workflows/windows-build.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tsf:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Configure
+        run: cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build windows/build --config Release
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ipabet-tsf-x86_64
+          path: |
+            windows/build/Release/ipabet.dll
+            windows/build/Release/ipabet.json
