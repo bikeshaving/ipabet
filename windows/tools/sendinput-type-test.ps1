@@ -48,6 +48,26 @@ public static class Input {
     public static extern IntPtr GetForegroundWindow();
 
     [DllImport("user32.dll")]
+    static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    static extern bool ShowWindow(IntPtr hWnd, int cmd);
+
+    // Injected input goes to whatever holds the foreground, so a window that
+    // merely exists is not enough — another window owning it silently swallows
+    // everything. Ask repeatedly rather than once: the shell does not always
+    // hand the foreground over on the first request.
+    public static bool Foreground(IntPtr hWnd, int timeoutMs) {
+        for (int waited = 0; waited < timeoutMs; waited += 100) {
+            if (GetForegroundWindow() == hWnd) return true;
+            ShowWindow(hWnd, 9); // SW_RESTORE
+            SetForegroundWindow(hWnd);
+            System.Threading.Thread.Sleep(100);
+        }
+        return GetForegroundWindow() == hWnd;
+    }
+
+    [DllImport("user32.dll")]
     public static extern IntPtr GetProcessWindowStation();
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -118,11 +138,13 @@ $form.Add_Shown({
     [Windows.Forms.Application]::DoEvents()
     Start-Sleep -Milliseconds 500
 
+    $focused = [Input]::Foreground($form.Handle, 5000)
+
     # Printed whether or not the run passes: a failure is only actionable if it
     # says which of the preconditions was missing.
     Write-Host "interactive:  $([Windows.Forms.SystemInformation]::UserInteractive)"
     Write-Host "station:      $([Input]::StationName())"
-    Write-Host "foreground:   $([Input]::GetForegroundWindow()) (form is $($form.Handle))"
+    Write-Host "foreground:   $([Input]::GetForegroundWindow()) (form is $($form.Handle), acquired: $focused)"
 
     [Input]::Type($expected)
 
