@@ -1,53 +1,80 @@
 # IPAbet for Linux
 
-Status: **L0 done** — the pure keystroke engine is a Rust crate, verified
-byte-for-byte against every vector in `spec/parity-vectors.json`
-(3825/3825, generated straight from `js/test`, the same suite the macOS
-Swift mirror is pinned to). No fcitx5 integration yet — that's L1.
+Status: **L1 done** — the fcitx5 addon runs, and parity vectors replayed as
+real X11 keystrokes through the whole stack come back correct. Verified on
+Ubuntu 24.04 (arm64) under X11 with GTK 3 clients. Wayland, Qt clients and
+x86_64 are untested.
+
+fcitx5 rather than IBus: its plugin API is a C++ class to subclass, its
+registration is config files scanned at daemon startup, and it has the better
+Wayland trajectory. The cost is real — Ubuntu and GNOME default to IBus, so an
+Ubuntu user has to swap input-method frameworks rather than just add a source.
+An IBus engine would reuse the same crate, and is worth building when someone
+asks for it.
 
 ## Layout
 
-- `engine/src/lib.rs` — the transform logic, ported from `js/src/index.ts`
-  (itself ported from `macos/Sources/InputController.swift`). Loads
-  `spec/ipabet.json` as data at runtime (`Engine::new`), exactly like the
-  macOS IME loads the same file as a bundled resource — never
-  hand-transcribed.
-- `engine/src/spec.rs` — `serde::Deserialize` structs matching
-  `spec/ipabet.json`'s shape.
-- `engine/tests/parity.rs` — replays `spec/parity-vectors.json` directly
-  against the crate. No fcitx5, no VM, sub-second (`cargo test`). This is
-  the fast, cheap verification layer; a tart-based real-fcitx5-stack E2E
-  gate is L3.
-- `engine/Cargo.toml` — `serde`/`serde_json` (spec parsing) and
-  `unicode-normalization` (NFC/NFD, combining-mark detection) are real
-  crates.io dependencies, resolved and compiled once at build time on the
-  maintainer's machine — no package manager is involved in what ships to
-  users, same spirit as SECURITY.md's existing "no third-party dependencies
-  in the shipped binary" stance, just no longer "no dependencies at build
-  time at all."
+- `../engine/` — the Rust crate holding every keystroke decision, shared with
+  the Windows port. It loads `spec/ipabet.json` as data at runtime, exactly as
+  the macOS IME loads the same file as a bundled resource; the tables are never
+  transcribed into code. `serde`/`serde_json` and `unicode-normalization` are
+  real crates.io dependencies, compiled once on the maintainer's machine — no
+  package manager is involved in what ships to users.
+- `fcitx5/src/ipabet.cpp` — the addon. It owns no phonetics: it translates
+  fcitx5 key events into the engine's keystroke shape and turns the edit that
+  comes back into client text.
+- `fcitx5/src/uslayout.h` — X11 keycode to the US label of the physical key.
+  IPAbet's tables are keyed by that label, not by what the user's layout
+  produces, which is how ⇧5 stays the centralize modifier on any layout.
+- `fcitx5/ipabet-addon.conf`, `fcitx5/ipabet-im.conf` — the manifests fcitx5
+  scans at startup, installed under `share/fcitx5/`.
+- `ipabet-register` — puts IPAbet in the user's input-method group.
 
-## Building and testing
+## Composition model
+
+The trailing run lives in the preedit rather than being committed straight into
+the document. The engine looks back at most two grapheme clusters, so that is
+all the preedit ever holds — everything older is committed as soon as the
+engine can no longer reach it. Reading and rewriting already-committed text
+would need the surrounding-text capability, which many clients (terminals
+especially) do not offer; preedit is supported by every fcitx5 frontend.
+
+One consequence worth knowing before touching the addon: the engine's `Pass`
+means "the host inserts the key's own character." On a platform that can read
+the document back, that is the end of it. Here the preedit buffer is the only
+record of the run, so a printable key the engine passes on still keeps
+composing, with its native character appended.
+
+## Building
 
 ```
-cd linux/engine && cargo test
+./build.sh            # configure + build, engine included
+./build.sh install    # and install into /usr (needs sudo)
+./ipabet-register     # enable it for your user
+./package.sh          # a .deb from the same install tree
+```
+
+`/usr`, not CMake's `/usr/local` default: fcitx5 only scans its own prefix for
+addon libraries and manifests, so an addon under `/usr/local` is invisible to a
+distro-packaged daemon no matter how correct it is.
+
+Run the engine's own tests — no fcitx5, no VM, sub-second — with:
+
+```
+cd ../engine && cargo test
 ```
 
 Regenerate the fixture after any `js/test` change:
 
 ```
-cd js && IPABET_DUMP_VECTORS=1 bun test
+cd ../js && IPABET_DUMP_VECTORS=1 bun test
 ```
 
-## Windows, later
+## Next (L3)
 
-The same crate is meant to be reused there: cross-compile for the Windows
-targets, generate a C header with `cbindgen`, link it into the TSF text
-service the same way `fcitx5`'s C++ glue will link it here — one engine,
-two thin platform shells.
-
-## Next (L1)
-
-Wrap the crate in a minimal fcitx5 `InputMethodEngineV2` addon (C++, via a
-thin `extern "C"` FFI boundary — `cbindgen` generates the header) and verify
-manually on a `tart` Linux VM. See the plan at the top-level for the full
-phased rollout (L1–L3) and the Windows track.
+Turn the manual verification into a gate: `Xvfb` and `xdotool` driving
+`spec/parity-vectors.json` into a real text entry through the real fcitx5
+stack. X11 has no consent wall in front of synthetic keystrokes, so this closes
+the "real keystroke correctness" gap the macOS gate documents as impossible to
+automate — but only for X11. Wayland deliberately closes that same hole, so the
+gate will not cover the path some users are on.

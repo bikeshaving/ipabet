@@ -1,0 +1,130 @@
+#!/bin/sh
+# Enable (or disable) IPAbet for the current user.
+#
+# fcitx5 discovers input methods by scanning its data directories at startup, so
+# installing the files is what makes IPAbet *available*; this script is what puts
+# it in the user's input-method group, which is the per-user half of the job.
+#
+# There are two ways in and only one of them is safe at a time. A running daemon
+# owns ~/.config/fcitx5/profile and rewrites it from memory when it saves, so an
+# edit made underneath it is lost the moment it does — with a daemon up, the
+# change has to go through D-Bus and let the daemon persist it. With no daemon,
+# the file is the only record and is edited directly.
+#
+# Matching is on the exact unique name. A prefix match here would be the same
+# mistake the macOS registrar once made, where a cosmetic keylayout got enabled
+# as a typing keyboard because its id started with the right characters.
+
+set -eu
+
+IM=ipabet
+BUS=org.fcitx.Fcitx5
+PATH_=/controller
+IFACE=org.fcitx.Fcitx.Controller1
+PROFILE="${XDG_CONFIG_HOME:-$HOME/.config}/fcitx5/profile"
+
+usage() {
+    cat >&2 <<EOF
+usage: ipabet-register [--disable]
+
+Adds IPAbet to the current user's fcitx5 input-method group, or removes it
+with --disable. Idempotent either way.
+EOF
+    exit 2
+}
+
+DISABLE=no
+case "${1:-}" in
+    --disable) DISABLE=yes ;;
+    "") ;;
+    *) usage ;;
+esac
+
+die() {
+    echo "ipabet-register: $1" >&2
+    exit 1
+}
+
+# --- the files fcitx5 scans ------------------------------------------------
+# Missing files mean a broken install, not something to work around: enabling an
+# input method the daemon cannot load would leave the user with a dead entry.
+for f in \
+    /usr/share/fcitx5/addon/ipabet.conf \
+    /usr/share/fcitx5/inputmethod/ipabet.conf \
+    /usr/share/fcitx5/ipabet/ipabet.json
+do
+    [ -s "$f" ] || die "missing or empty: $f (is IPAbet installed?)"
+done
+
+daemon_running() {
+    gdbus call --session --dest "$BUS" --object-path "$PATH_" \
+        --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1
+}
+
+# --- with a daemon up: go through D-Bus ------------------------------------
+via_dbus() {
+    group=$(gdbus call --session --dest "$BUS" --object-path "$PATH_" \
+        --method "$IFACE.CurrentInputMethodGroup" | sed "s/^('//; s/',)$//")
+    [ -n "$group" ] || die "fcitx5 reported no current input-method group"
+
+    info=$(gdbus call --session --dest "$BUS" --object-path "$PATH_" \
+        --method "$IFACE.InputMethodGroupInfo" "$group")
+    layout=$(echo "$info" | sed "s/^('//; s/',.*$//")
+
+    # Each item is ('name', 'layout'); rebuild the list rather than patch it, so
+    # the result is the same whether or not IPAbet was already there.
+    items=$(echo "$info" | grep -o "('[^']*', '[^']*')" | grep -v "^('$IM', ")
+    if [ "$DISABLE" = no ]; then
+        items="$items
+('$IM', '')"
+    fi
+    list=$(echo "$items" | sed '/^$/d' | paste -sd, -)
+
+    gdbus call --session --dest "$BUS" --object-path "$PATH_" \
+        --method "$IFACE.SetInputMethodGroupInfo" \
+        "$group" "$layout" "[$list]" >/dev/null
+}
+
+# --- with no daemon: the profile file is the record ------------------------
+edit_profile() {
+    [ -f "$PROFILE" ] || die "no fcitx5 profile at $PROFILE (run fcitx5 once first)"
+    tmp=$(mktemp)
+    # Items are numbered sections, so dropping or adding one means renumbering
+    # the rest — collect the names, edit the list, write it back out.
+    names=$(awk -F= '/^\[/ {section=$0} /^Name=/ && section ~ /Items/ {print $2}' "$PROFILE" \
+        | grep -vx "$IM" || true)
+    [ "$DISABLE" = no ] && names="$names $IM"
+    names=$(echo $names)
+
+    awk -v names="$names" '
+        /^\[Groups\/0\/Items\// { initems = 1 }
+        /^\[/ && !/^\[Groups\/0\/Items\// {
+            if (initems && !written) { printitems(); written = 1 }
+            initems = 0
+        }
+        !initems { print }
+        END { if (initems && !written) printitems() }
+        function printitems(   n, i, a) {
+            n = split(names, a, " ")
+            for (i = 1; i <= n; i++) {
+                if (a[i] == "") continue
+                printf "[Groups/0/Items/%d]\n", i - 1
+                printf "Name=%s\n", a[i]
+                printf "Layout=\n\n"
+            }
+        }
+    ' "$PROFILE" > "$tmp"
+    mv "$tmp" "$PROFILE"
+}
+
+if daemon_running; then
+    via_dbus
+else
+    edit_profile
+fi
+
+if [ "$DISABLE" = yes ]; then
+    echo "IPAbet disabled."
+else
+    echo "IPAbet enabled. Switch to it with the input-method toggle (Ctrl+Space by default)."
+fi
