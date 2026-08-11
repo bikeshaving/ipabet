@@ -1,9 +1,9 @@
 # IPAbet for Linux
 
-Status: **L1 done** — the fcitx5 addon runs, and parity vectors replayed as
-real X11 keystrokes through the whole stack come back correct. Verified on
-Ubuntu 24.04 (arm64) under X11 with GTK 3 clients. Wayland, Qt clients and
-x86_64 are untested.
+Status: **L3 done** — the fcitx5 addon runs, installs as a `.deb`, and parity
+vectors replayed as real X11 keystrokes through the whole stack come back
+correct on every push (`linux-e2e.yml`, on `ubuntu-latest` under Xvfb).
+Wayland and Qt clients are untested, and the gate cannot cover Wayland.
 
 fcitx5 rather than IBus: its plugin API is a C++ class to subclass, its
 registration is config files scanned at daemon startup, and it has the better
@@ -70,11 +70,23 @@ Regenerate the fixture after any `js/test` change:
 cd ../js && IPABET_DUMP_VECTORS=1 bun test
 ```
 
-## Next (L3)
+## The gate
 
-Turn the manual verification into a gate: `Xvfb` and `xdotool` driving
-`spec/parity-vectors.json` into a real text entry through the real fcitx5
-stack. X11 has no consent wall in front of synthetic keystrokes, so this closes
-the "real keystroke correctness" gap the macOS gate documents as impossible to
-automate — but only for X11. Wayland deliberately closes that same hole, so the
-gate will not cover the path some users are on.
+`tools/e2e-test.sh` brings up Xvfb, openbox and fcitx5, then drives
+`spec/parity-vectors.json` into a real text entry with `xdotool` and reads the
+result back out. It runs locally the same way it runs in CI:
+
+```
+./tools/e2e-test.sh 200        # a spread across the vectors
+./tools/e2e-test.sh 999 tricky # the labels that are not the key pressed
+```
+
+X11 has no consent wall in front of synthetic keystrokes, which is what makes
+this possible where the macOS gate documents it as out of reach. The limit is
+permanent rather than temporary: Wayland deliberately closes that same hole, so
+the path some users are on cannot be driven this way and is not covered.
+
+A vector names a key by the label the engine sees, which is not always the key
+a person presses — `|` is typed as ⇧\, `H` as ⇧h. The harness translates label
+back to physical keystroke, which is the same translation the addon performs in
+reverse, so those cases are worth keeping in the sample rather than skipping.
