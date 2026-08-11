@@ -109,6 +109,39 @@ private:
     bool backspace_;
 };
 
+/// Ends the composition and nothing else. Committing needs a cookie too, and a
+/// key IPAbet declines is exactly when the run has to be handed over.
+class CommitEditSession : public ITfEditSession {
+public:
+    CommitEditSession(TextService *ts) : ts_(ts) {}
+
+    STDMETHODIMP QueryInterface(REFIID riid, void **ppv) override {
+        if (!ppv) return E_INVALIDARG;
+        *ppv = nullptr;
+        if (IsEqualIID(riid, IID_IUnknown) || IsEqualIID(riid, IID_ITfEditSession)) {
+            *ppv = static_cast<ITfEditSession *>(this);
+            AddRef();
+            return S_OK;
+        }
+        return E_NOINTERFACE;
+    }
+    STDMETHODIMP_(ULONG) AddRef() override { return ++refs_; }
+    STDMETHODIMP_(ULONG) Release() override {
+        LONG n = --refs_;
+        if (!n) delete this;
+        return n;
+    }
+
+    STDMETHODIMP DoEditSession(TfEditCookie ec) override {
+        ts_->EndComposition(ec);
+        return S_OK;
+    }
+
+private:
+    LONG refs_ = 1;
+    TextService *ts_;
+};
+
 } // namespace
 
 // --- TextService -----------------------------------------------------------
@@ -177,6 +210,10 @@ STDMETHODIMP TextService::Deactivate() {
         }
         thread_->Release();
         thread_ = nullptr;
+    }
+    if (composition_) {
+        composition_->Release();
+        composition_ = nullptr;
     }
     if (engine_) {
         ipabet_engine_free(engine_);
@@ -248,8 +285,14 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
 
     CKeystroke k{};
     if (!Claims(wp, lp, &k)) {
-        // The run ends at a key IPAbet does not claim, and so does what is known
-        // about the text around it.
+        // The run ends at a key IPAbet does not claim: hand over what is
+        // composed before the client sees the key itself.
+        if (composition_) {
+            CommitEditSession *commit = new CommitEditSession(this);
+            HRESULT chr = S_OK;
+            cx->RequestEditSession(client_, commit, TF_ES_READWRITE | TF_ES_SYNC, &chr);
+            commit->Release();
+        }
         written_.clear();
         *eaten = FALSE;
         return S_OK;
@@ -289,6 +332,74 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
     return S_OK;
 }
 
+
+HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::wstring &text) {
+    if (!composition_) {
+        ITfInsertAtSelection *insert = nullptr;
+        if (FAILED(cx->QueryInterface(IID_ITfInsertAtSelection, (void **)&insert))) return E_FAIL;
+        ITfRange *at = nullptr;
+        HRESULT hr = insert->InsertTextAtSelection(ec, TF_IAS_QUERYONLY, nullptr, 0, &at);
+        insert->Release();
+        if (FAILED(hr)) return hr;
+
+        ITfContextComposition *comp = nullptr;
+        if (SUCCEEDED(cx->QueryInterface(IID_ITfContextComposition, (void **)&comp))) {
+            hr = comp->StartComposition(ec, at, nullptr, &composition_);
+            comp->Release();
+        } else {
+            hr = E_FAIL;
+        }
+        at->Release();
+        if (FAILED(hr) || !composition_) return FAILED(hr) ? hr : E_FAIL;
+    }
+
+    ITfRange *range = nullptr;
+    HRESULT hr = composition_->GetRange(&range);
+    if (FAILED(hr)) return hr;
+    hr = range->SetText(ec, 0, text.c_str(), (LONG)text.size());
+    Dbg("composition now %zu units, SetText=0x%08lx", text.size(), hr);
+
+    // The caret belongs after what has been typed, not inside it.
+    TF_SELECTION sel{};
+    sel.range = range;
+    sel.style.ase = TF_AE_END;
+    sel.style.fInterimChar = FALSE;
+    ITfRange *caret = nullptr;
+    if (SUCCEEDED(range->Clone(&caret))) {
+        caret->Collapse(ec, TF_ANCHOR_END);
+        sel.range = caret;
+        cx->SetSelection(ec, 1, &sel);
+        caret->Release();
+    }
+    range->Release();
+    return hr;
+}
+
+void TextService::EndComposition(TfEditCookie ec) {
+    if (!composition_) return;
+    composition_->EndComposition(ec);
+    composition_->Release();
+    composition_ = nullptr;
+    written_.clear();
+}
+
+HRESULT TextService::Trim(TfEditCookie ec, ITfContext *cx) {
+    // Two grapheme clusters is the whole of the engine's lookback. Anything
+    // older can be committed, and committing it is what keeps the underline
+    // short. Ending the composition commits whatever it holds, so the head goes
+    // in first and a fresh composition picks the tail back up.
+    const size_t keep = 4;
+    if (written_.size() <= keep) return S_OK;
+
+    const std::wstring head = written_.substr(0, written_.size() - keep);
+    const std::wstring tail = written_.substr(written_.size() - keep);
+    HRESULT hr = SetComposition(ec, cx, head);
+    if (FAILED(hr)) return hr;
+    EndComposition(ec);
+    written_ = tail;
+    return SetComposition(ec, cx, tail);
+}
+
 HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const CKeystroke &k,
                                         bool backspace) {
     const std::wstring &before = written_;
@@ -323,53 +434,18 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
     default: // Noop: only the pending composition moved
         return S_OK;
     }
-
-    // Keep the record in step with the document. Two grapheme clusters is the
-    // whole of the engine's lookback, so anything older is dead weight — a
-    // generous cap rather than a precise one, since the engine ignores the rest.
+    // Keep the record in step with what is composed. Two grapheme clusters is
+    // the whole of the engine's lookback, so anything older is dead weight.
     if (replaceUnits > 0 && (size_t)replaceUnits <= written_.size()) {
         written_.resize(written_.size() - replaceUnits);
     } else if (replaceUnits > 0) {
         written_.clear();
     }
     written_ += text;
-    if (written_.size() > 16) written_.erase(0, written_.size() - 16);
-    if (text.empty() && replaceUnits == 0) return S_OK;
 
-    TF_SELECTION sel{};
-    ULONG fetched = 0;
-    if (FAILED(cx->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &sel, &fetched)) || !fetched) {
-        return S_OK;
-    }
-
-    HRESULT hr = S_OK;
-    if (replaceUnits > 0) {
-        LONG shifted = 0;
-        sel.range->ShiftStart(ec, -replaceUnits, &shifted, nullptr);
-    }
-    hr = sel.range->SetText(ec, 0, text.c_str(), (LONG)text.size());
-    Dbg("edit type=%d replace=%ld SetText=0x%08lx", (int)step.edit.edit_type, replaceUnits, hr);
-    if (SUCCEEDED(hr)) {
-        sel.range->Collapse(ec, TF_ANCHOR_END);
-        sel.style.ase = TF_AE_NONE;
-        sel.style.fInterimChar = FALSE;
-        HRESULT sethr = cx->SetSelection(ec, 1, &sel);
-        // Read the whole document straight back. If a write that reported
-        // success is not there afterwards, the document being edited is not the
-        // one the control shows, and nothing about the engine is in question.
-        ITfRange *all = nullptr;
-        if (SUCCEEDED(cx->GetStart(ec, &all))) {
-            LONG moved = 0;
-            all->ShiftEnd(ec, 64, &moved, nullptr);
-            WCHAR doc[65]{};
-            ULONG docLen = 0;
-            all->GetText(ec, 0, doc, 64, &docLen);
-            Dbg("SetSelection=0x%08lx document now %lu units", sethr, docLen);
-            all->Release();
-        }
-    }
-    sel.range->Release();
-    return hr;
+    HRESULT hr = SetComposition(ec, cx, written_);
+    if (FAILED(hr)) return hr;
+    return Trim(ec, cx);
 }
 
 } // namespace ipabet

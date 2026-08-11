@@ -55,6 +55,10 @@ public:
     STDMETHODIMP OnKeyUp(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) override;
     STDMETHODIMP OnPreservedKey(ITfContext *cx, REFGUID guid, BOOL *eaten) override;
 
+    /// Commit what is composed and stop composing. The boundary behaviour for a
+    /// key IPAbet declines, and for losing focus.
+    void EndComposition(TfEditCookie ec);
+
     /// Runs one keystroke through the engine and applies what comes back.
     /// Called from the edit session, the only place a cookie exists — reading
     /// the document and writing to it both need one.
@@ -74,6 +78,18 @@ private:
     /// Whether IPAbet claims this key. Decided without consulting the engine,
     /// because TSF asks before any edit cookie exists.
     bool Claims(WPARAM wp, LPARAM lp, CKeystroke *out);
+
+    /// The run being typed lives in a composition — a range this service owns
+    /// and can rewrite whole. Replacing a glyph means putting different text in
+    /// the composition, never moving an anchor backwards over the document,
+    /// which is what does not work here.
+    HRESULT SetComposition(TfEditCookie ec, ITfContext *cx, const std::wstring &text);
+
+    /// Commit everything the engine can no longer reach, so the composed region
+    /// stays a glyph or two rather than growing to the whole line.
+    HRESULT Trim(TfEditCookie ec, ITfContext *cx);
+
+    ITfComposition *composition_ = nullptr;
 
     /// spec/ipabet.json, shipped beside the DLL and read at activation.
     std::string LoadSpec();
