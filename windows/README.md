@@ -1,9 +1,9 @@
 # IPAbet for Windows
 
-Status: **W1 in progress** — the engine passes every parity vector on Windows,
-the text service builds, links, registers and unregisters cleanly, loads into a
-real application and runs edit sessions. Typing does not work yet: the lookback
-reads nothing, so digraphs do not compose. See "The open bug" below.
+Status: **W1 done** — the engine passes every parity vector on Windows, and the
+text service builds, registers, loads into a real application and types IPA
+into it. What remains is an installer and signing, and confirming behaviour in
+applications beyond Notepad.
 
 ## One engine, two shells
 
@@ -33,35 +33,28 @@ zero, not through `AttachThreadInput`. Injected input goes wherever the
 foreground is, so that architecture cannot gate the keystroke layer. It still
 gates the engine natively.
 
-## The open bug: the lookback reads nothing
+## Typing works, and is checked on every push
 
 `tools/notepad-type-test.ps1` types into Notepad through the registered text
-service and reads the result back off the clipboard. Run it with the
-`windows-typing` workflow. What is established:
+service and reads the result back off the clipboard — real keystrokes, a real
+application, no VM. `t` then ⇧H gives θ there.
 
-- the text service loads into a real application and `ActivateEx` runs
-- the engine initialises from the shipped spec
-- keystrokes arrive with the right scancodes, and the US label resolves
-- edit sessions run and `SetText` reports success
+Two things about this platform are worth knowing before changing any of it,
+because both cost a day to find.
 
-What fails is the lookback. `ShiftStart` back from the selection moves zero
-units on every keystroke, so the engine is asked what follows an empty
-document. `⇧H` after `t` therefore has no `t` to rebase and correctly passes,
-which is why Notepad ends up with `tH` rather than `θ`. Plain letters, which
-need no lookback, are correct.
+**Anchors do not move.** `ShiftStart` back from the selection reports success
+and shifts nothing, so reading the document back returns an empty string
+however it is asked, and a replacement built on it inserts rather than
+replaces. The service therefore keeps its own record of the run as it wrote it
+and hands that to the engine as the lookback — the same thing the fcitx5 addon
+does for clients that cannot be read at all. The record ends when the run does.
 
-Two facts worth keeping together, because they do not fit the obvious
-explanation. Reading the whole document straight after a successful `SetText`
-returns one unit, and it still returns one unit after the next keystroke — the
-document never grows. Meanwhile Notepad visibly ends up holding two characters.
-Whatever the text service is editing may not be the buffer the application is
-showing, which would point at the context rather than at the range arithmetic.
-
-Reproduced in Notepad, so this is not an artefact of a purpose-built test host
-— `tools/type-test.cpp`, which drives a RichEdit control in its own process,
-shows the same thing. The next signal worth having is how this behaves across
-several real applications, which is a question for an interactive machine
-rather than for more CI rounds.
+**The run lives in a composition.** A composition is a range the service owns
+and can rewrite whole, which is how a glyph gets replaced without moving an
+anchor over the document, and it is what every Windows input method does.
+`StartComposition` requires a composition sink; it answers `E_INVALIDARG`
+without one. Composed text is not committed text — the client takes it when the
+run ends at a key IPAbet declines, or when focus moves.
 
 ## What the text service has to do (W1)
 

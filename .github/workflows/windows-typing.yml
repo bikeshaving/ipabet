@@ -8,10 +8,14 @@ name: windows-typing
 # survives from one keystroke to the next. Writing a text store to test against
 # would be testing the test.
 
-# On request rather than on push: this currently fails on a known open bug --
-# see "The open bug" in windows/README.md -- and a gate that is always red
-# stops being read. The layers beneath it gate every push.
 on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/windows-typing.yml'
+  pull_request:
   workflow_dispatch:
 
 jobs:
