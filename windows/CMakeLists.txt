@@ -30,7 +30,8 @@ add_dependencies(ipabet ipabet_engine_build)
 target_include_directories(ipabet PRIVATE "${ENGINE_DIR}/include")
 target_link_libraries(ipabet PRIVATE
     "${ENGINE_LIB}"
-    msctf.lib
+    # No msctf.lib: TSF is reached entirely through COM, and its interface and
+    # category GUIDs come from uuid.lib, which MSVC links by default.
     ole32.lib
     oleaut32.lib
     advapi32.lib
