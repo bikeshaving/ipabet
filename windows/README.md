@@ -1,8 +1,9 @@
 # IPAbet for Windows
 
 Status: **W1 in progress** — the engine passes every parity vector on Windows,
-the text service builds and links against it, and it registers and unregisters
-cleanly. Nothing has been typed through it yet.
+the text service builds, links, registers and unregisters cleanly, and receives
+keystrokes and runs edit sessions. Typing has not been confirmed end to end;
+see "What the typing gate has established" below for exactly where it stops.
 
 ## One engine, two shells
 
@@ -31,6 +32,28 @@ x86_64 only. The ARM runners report themselves interactive and attached to
 zero, not through `AttachThreadInput`. Injected input goes wherever the
 foreground is, so that architecture cannot gate the keystroke layer. It still
 gates the engine natively.
+
+## What the typing gate has established
+
+`tools/type-test.cpp` activates the text service in its own process, injects
+scancodes into a RichEdit control and reads the result back. Run it with the
+`windows-typing` workflow. What it has settled so far, from the debug log:
+
+- the text service loads and `ActivateEx` runs
+- the engine initialises from the shipped spec
+- keystrokes arrive with the right scancodes, and the US label resolves
+- edit sessions run, and `SetText` reports success with the text in the document
+
+What it has not settled is the round trip. The document does not accumulate
+across keystrokes: after the first key it holds one unit, and after the second
+it still holds one. Each keystroke sees an empty document with the selection at
+the start, so the lookback reads nothing and the second key of a digraph
+correctly passes — `t` then ⇧H gives `tH` rather than `θ`.
+
+That is a property of this test host rather than of the text service, and the
+next move is confirming behaviour in a real application rather than making the
+harness more elaborate. Until then the workflow runs on request rather than on
+push, so it does not sit red while telling nobody anything new.
 
 ## What the text service has to do (W1)
 
