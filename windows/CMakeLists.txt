@@ -59,3 +59,10 @@ target_link_libraries(profile-probe PRIVATE ole32.lib)
 # asks for it.
 add_executable(type-test tools/type-test.cpp)
 target_link_libraries(type-test PRIVATE ole32.lib user32.lib)
+
+# Debug builds compile in the keystroke logger; release builds have no logging
+# capability at all.
+option(IPABET_DEBUG "Compile in the debug logger" OFF)
+if(IPABET_DEBUG)
+    target_compile_definitions(ipabet PRIVATE IPABET_DEBUG)
+endif()

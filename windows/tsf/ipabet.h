@@ -12,6 +12,15 @@ extern "C" {
 
 namespace ipabet {
 
+// Keystroke logging exists only in debug builds. A release build has no logging
+// capability at all — an input method sees everything typed, so the ability to
+// record it is not something to ship and leave switched off.
+#ifdef IPABET_DEBUG
+void Dbg(const char *fmt, ...);
+#else
+#define Dbg(...) ((void)0)
+#endif
+
 // {6B2E1F0C-9A44-4C3B-B0D5-1E7A2C5D8F31} — the text service's class id, and the
 // name every registry key and profile entry is filed under.
 extern const CLSID CLSID_IpabetTextService;

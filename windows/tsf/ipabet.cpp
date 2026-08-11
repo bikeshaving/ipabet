@@ -149,6 +149,7 @@ STDMETHODIMP TextService::Activate(ITfThreadMgr *mgr, TfClientId id) {
 }
 
 STDMETHODIMP TextService::ActivateEx(ITfThreadMgr *mgr, TfClientId id, DWORD) {
+    Dbg("ActivateEx client=%u", (unsigned)id);
     thread_ = mgr;
     thread_->AddRef();
     client_ = id;
@@ -157,6 +158,7 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr *mgr, TfClientId id, DWORD) {
     // recover from — without it every key is declined rather than eaten.
     const std::string spec = LoadSpec();
     if (!spec.empty()) engine_ = ipabet_engine_new(spec.c_str());
+    Dbg("spec %zu bytes, engine %s", spec.size(), engine_ ? "up" : "MISSING");
 
     ITfKeystrokeMgr *keys = nullptr;
     if (SUCCEEDED(thread_->QueryInterface(IID_ITfKeystrokeMgr, (void **)&keys))) {
@@ -234,6 +236,7 @@ STDMETHODIMP TextService::OnTestKeyDown(ITfContext *, WPARAM wp, LPARAM lp, BOOL
 }
 
 STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) {
+    Dbg("OnKeyDown vk=0x%02x scan=0x%02x", (unsigned)wp, (unsigned)((lp >> 16) & 0xFF));
     if (wp == VK_SHIFT) {
         shiftDown_ = true;
         *eaten = FALSE;
@@ -308,6 +311,7 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
                                         bool backspace) {
     // Two grapheme clusters is the whole of the engine's lookback; eight UTF-16
     // units is comfortably more than that even when both carry marks.
+    Dbg("edit session running");
     const std::wstring before = TextBefore(ec, cx, 8);
     const std::string beforeUtf8 = ToUtf8(before);
 

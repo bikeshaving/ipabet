@@ -11,9 +11,14 @@
 #include "ipabet.h"
 
 #include <shlwapi.h>
+#include <algorithm>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace ipabet {
 
@@ -23,11 +28,32 @@ HINSTANCE g_dll = nullptr;
 LONG g_locks = 0;
 
 const WCHAR kDescription[] = L"IPAbet";
-// The IPA is not a language, and there is no way to say so here: Windows files
-// every text service under a language, with no neutral option that survives the
-// language bar. en-US is where a phonetic-alphabet service is least surprising
-// to find, not a claim that the two are the same thing.
-const LANGID kLangId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+// The language a profile is filed under is not optional — TSF has no neutral
+// slot — so IPAbet is filed under all of them, which is as close as this
+// platform gets to what it means: a phonetic alphabet is not a language, and
+// belongs wherever the user already types. Falling back to en-US only if the
+// machine somehow reports no input languages at all.
+const LANGID kFallbackLangId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+/// The input languages this machine has, taken from the keyboard layouts
+/// already registered with TSF. Read at registration time rather than baked in,
+/// so the service turns up under the languages actually in use.
+std::vector<LANGID> InstalledInputLanguages(ITfInputProcessorProfileMgr *mgr) {
+    std::vector<LANGID> langs;
+    IEnumTfInputProcessorProfiles *e = nullptr;
+    if (FAILED(mgr->EnumProfiles(0, &e))) return langs;
+
+    TF_INPUTPROCESSORPROFILE p{};
+    ULONG got = 0;
+    while (e->Next(1, &p, &got) == S_OK && got == 1) {
+        if (p.dwProfileType != TF_PROFILETYPE_KEYBOARDLAYOUT) continue;
+        if (std::find(langs.begin(), langs.end(), p.langid) == langs.end()) {
+            langs.push_back(p.langid);
+        }
+    }
+    e->Release();
+    return langs;
+}
 
 std::wstring ModulePath() {
     WCHAR path[MAX_PATH]{};
@@ -89,6 +115,21 @@ bool WriteKey(HKEY root, const std::wstring &sub, const WCHAR *name, const std::
 
 } // namespace
 
+#ifdef IPABET_DEBUG
+void Dbg(const char *fmt, ...) {
+    const char *path = getenv("IPABET_DEBUG_LOG");
+    if (!path) return;
+    FILE *f = nullptr;
+    if (fopen_s(&f, path, "a") != 0 || !f) return;
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(f, fmt, args);
+    va_end(args);
+    fputc('\n', f);
+    fclose(f);
+}
+#endif
+
 std::string TextService::LoadSpec() {
     // Beside the DLL: the installer puts them in the same directory, and a
     // build tree has them there too, so development needs no install step.
@@ -119,9 +160,16 @@ HRESULT RegisterServer(HINSTANCE module) {
     HRESULT hr = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr, CLSCTX_INPROC_SERVER,
                                   IID_ITfInputProcessorProfileMgr, (void **)&profiles);
     if (FAILED(hr)) return hr;
-    hr = profiles->RegisterProfile(CLSID_IpabetTextService, kLangId, GUID_IpabetProfile,
-                                   kDescription, (ULONG)wcslen(kDescription), ModulePath().c_str(),
-                                   (ULONG)ModulePath().size(), 0, nullptr, 0, TRUE, 0);
+
+    std::vector<LANGID> langs = InstalledInputLanguages(profiles);
+    if (langs.empty()) langs.push_back(kFallbackLangId);
+    const std::wstring path = ModulePath();
+    for (LANGID lang : langs) {
+        hr = profiles->RegisterProfile(CLSID_IpabetTextService, lang, GUID_IpabetProfile,
+                                       kDescription, (ULONG)wcslen(kDescription), path.c_str(),
+                                       (ULONG)path.size(), 0, nullptr, 0, TRUE, 0);
+        if (FAILED(hr)) break;
+    }
     profiles->Release();
     if (FAILED(hr)) return hr;
 
@@ -146,7 +194,24 @@ HRESULT UnregisterServer() {
     HRESULT hr = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr, CLSCTX_INPROC_SERVER,
                                   IID_ITfInputProcessorProfileMgr, (void **)&profiles);
     if (SUCCEEDED(hr)) {
-        hr = profiles->UnregisterProfile(CLSID_IpabetTextService, kLangId, GUID_IpabetProfile, 0);
+        // Which languages it went in under is whatever was installed at the
+        // time, so ask rather than assume: anything filed under this class is
+        // ours to take back out.
+        std::vector<LANGID> mine;
+        IEnumTfInputProcessorProfiles *e = nullptr;
+        if (SUCCEEDED(profiles->EnumProfiles(0, &e))) {
+            TF_INPUTPROCESSORPROFILE p{};
+            ULONG got = 0;
+            while (e->Next(1, &p, &got) == S_OK && got == 1) {
+                if (IsEqualCLSID(p.clsid, CLSID_IpabetTextService)) mine.push_back(p.langid);
+            }
+            e->Release();
+        }
+        for (LANGID lang : mine) {
+            HRESULT one =
+                profiles->UnregisterProfile(CLSID_IpabetTextService, lang, GUID_IpabetProfile, 0);
+            if (FAILED(one)) hr = one;
+        }
         profiles->Release();
     }
     if (FAILED(hr)) result = hr;

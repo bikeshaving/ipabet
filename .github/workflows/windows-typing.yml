@@ -23,14 +23,30 @@ jobs:
 
       - name: Build
         run: |
-          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release -DIPABET_DEBUG=ON
           cmake --build windows/build --config Release
 
       - name: Register
         run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
 
+      # Whether ctfmon is up decides whether this environment can host a text
+      # service at all, which is a different failure from a broken one.
+      - name: Text services host
+        run: |
+          Get-Process ctfmon -ErrorAction SilentlyContinue | Format-Table -AutoSize | Out-String
+          exit 0
+
       - name: Type
+        env:
+          IPABET_DEBUG_LOG: ${{ github.workspace }}\ipabet-debug.log
         run: .\windows\build\Release\type-test.exe
+
+      - name: What the text service saw
+        if: always()
+        run: |
+          if (Test-Path ipabet-debug.log) { Get-Content ipabet-debug.log }
+          else { Write-Host "the text service was never loaded" }
+          exit 0
 
       - name: Unregister
         if: always()
