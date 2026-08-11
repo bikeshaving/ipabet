@@ -32,6 +32,9 @@ jobs:
       - name: Register
         run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
 
+      - name: What Windows sees
+        run: .\windows\build\Release\profile-probe.exe list
+
       # Active for the session, so the Notepad started next comes up with it on.
       - name: Make it the active input method
         run: .\windows\build\Release\profile-probe.exe enable-select

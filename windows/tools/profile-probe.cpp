@@ -150,23 +150,24 @@ int main(int argc, char **argv) {
         rc = 0;
     } else if (strcmp(cmd, "assert-present") == 0) {
         const int hits = Walk(mgr, false, nullptr, &total);
-        if (hits == 1) {
-            printf("IPAbet is registered.\n");
+        if (hits > 0) {
+            // One entry per input language is the intent, so the count is not
+            // an error by itself. A repeat within a single language would be.
+            printf("IPAbet is registered under %d language%s.\n", hits, hits == 1 ? "" : "s");
             rc = 0;
-        } else if (hits == 0) {
-            fprintf(stderr, "IPAbet is NOT registered (%d profiles enumerated).\n", total);
-            rc = 1;
         } else {
-            fprintf(stderr, "IPAbet is registered %d times — a stale profile is still around.\n",
-                    hits);
+            fprintf(stderr, "IPAbet is NOT registered (%d profiles enumerated).\n", total);
             rc = 1;
         }
     } else if (strcmp(cmd, "enable-select") == 0) {
         TF_INPUTPROCESSORPROFILE p{};
-        if (Walk(mgr, false, &p, &total) != 1) {
-            fprintf(stderr, "IPAbet is not registered — nothing to select.\n");
+        const int hits = Walk(mgr, false, &p, &total);
+        if (hits < 1) {
+            fprintf(stderr, "IPAbet is not registered (%d profiles enumerated) — nothing to "
+                            "select.\n", total);
             rc = 1;
         } else {
+            printf("selecting IPAbet under language 0x%04x of %d registered\n", p.langid, hits);
             // Not TF_IPPMF_FORPROCESS: that would switch the input method for
             // this probe and nothing else, and the point is to leave it active
             // for whatever the session runs next.
