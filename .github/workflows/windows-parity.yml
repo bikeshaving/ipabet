@@ -30,7 +30,7 @@ jobs:
             arch: aarch64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Installed here rather than through a third-party action, so the only
       # code this workflow trusts is GitHub's own and Rust's own.
@@ -58,7 +58,7 @@ jobs:
         working-directory: engine
         run: cargo build --release
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ipabet-engine-windows-${{ matrix.arch }}
           path: |
