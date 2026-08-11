@@ -53,15 +53,40 @@ public static class Input {
     [DllImport("user32.dll")]
     static extern bool ShowWindow(IntPtr hWnd, int cmd);
 
+    [DllImport("user32.dll")]
+    static extern bool AttachThreadInput(uint attach, uint to, bool attaching);
+
+    [DllImport("user32.dll")]
+    static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr pid);
+
+    [DllImport("kernel32.dll")]
+    static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll")]
+    static extern bool SystemParametersInfo(uint action, uint param, IntPtr ptr, uint winIni);
+
     // Injected input goes to whatever holds the foreground, so a window that
     // merely exists is not enough — another window owning it silently swallows
-    // everything. Ask repeatedly rather than once: the shell does not always
-    // hand the foreground over on the first request.
+    // everything while SendInput still reports success.
+    //
+    // Windows refuses SetForegroundWindow from a process the user has not
+    // interacted with, which is every process in an automated session. The two
+    // documented ways around it: drop the lock timeout, and attach to the input
+    // queue of the thread that currently owns the foreground, which makes the
+    // two threads count as one for this rule.
     public static bool Foreground(IntPtr hWnd, int timeoutMs) {
+        SystemParametersInfo(0x2001 /* SPI_SETFOREGROUNDLOCKTIMEOUT */, 0, IntPtr.Zero, 0);
+        uint self = GetCurrentThreadId();
+
         for (int waited = 0; waited < timeoutMs; waited += 100) {
             if (GetForegroundWindow() == hWnd) return true;
+
+            uint owner = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            bool attached = owner != 0 && owner != self && AttachThreadInput(self, owner, true);
             ShowWindow(hWnd, 9); // SW_RESTORE
             SetForegroundWindow(hWnd);
+            if (attached) AttachThreadInput(self, owner, false);
+
             System.Threading.Thread.Sleep(100);
         }
         return GetForegroundWindow() == hWnd;
