@@ -1,0 +1,53 @@
+name: windows-registration
+
+# Registering a text service is where an input method most often fails
+# silently: the COM object is created, the profile is not, and the keyboard
+# simply never appears with nothing anywhere saying why. Hosted runners are
+# elevated, so the whole path -- regsvr32, enumerate, unregister -- is checkable
+# without a Windows machine.
+
+on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - '.github/workflows/windows-registration.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  registration:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: |
+          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build windows/build --config Release
+
+      # Nothing of ours should be registered before we register it: if this
+      # passes, the assertion afterwards proves nothing.
+      - name: Absent to begin with
+        run: |
+          .\windows\build\Release\profile-probe.exe assert-present
+          if ($LASTEXITCODE -eq 0) { throw "IPAbet was already registered" }
+
+      - name: Register
+        run: regsvr32 /s .\windows\build\Release\ipabet.dll
+
+      - name: Registered
+        run: .\windows\build\Release\profile-probe.exe assert-present
+
+      - name: What Windows sees
+        run: .\windows\build\Release\profile-probe.exe list
+
+      # Uninstall has to actually uninstall — a profile left behind is what
+      # makes a reinstall register twice.
+      - name: Unregister
+        run: regsvr32 /s /u .\windows\build\Release\ipabet.dll
+
+      - name: Gone again
+        run: |
+          .\windows\build\Release\profile-probe.exe assert-present
+          if ($LASTEXITCODE -eq 0) { throw "IPAbet survived unregistration" }

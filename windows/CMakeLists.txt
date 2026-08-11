@@ -48,3 +48,8 @@ add_custom_command(TARGET ipabet POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_CURRENT_SOURCE_DIR}/../spec/ipabet.json"
         "$<TARGET_FILE_DIR:ipabet>/ipabet.json")
+
+# The registration probe: a console binary, no TSF text service involved, so it
+# can ask what Windows thinks is registered without being the thing under test.
+add_executable(profile-probe tools/profile-probe.cpp)
+target_link_libraries(profile-probe PRIVATE ole32.lib)
