@@ -137,24 +137,36 @@ HRESULT RegisterServer(HINSTANCE module) {
 }
 
 HRESULT UnregisterServer() {
+    // Every failure here is reported. Swallowing them is what turns a botched
+    // uninstall into a profile that survives it, and a reinstall that registers
+    // a second copy alongside the first.
+    HRESULT result = S_OK;
+
     ITfInputProcessorProfileMgr *profiles = nullptr;
-    if (SUCCEEDED(CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr, CLSCTX_INPROC_SERVER,
-                                   IID_ITfInputProcessorProfileMgr, (void **)&profiles))) {
-        profiles->UnregisterProfile(CLSID_IpabetTextService, kLangId, GUID_IpabetProfile, 0);
+    HRESULT hr = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr, CLSCTX_INPROC_SERVER,
+                                  IID_ITfInputProcessorProfileMgr, (void **)&profiles);
+    if (SUCCEEDED(hr)) {
+        hr = profiles->UnregisterProfile(CLSID_IpabetTextService, kLangId, GUID_IpabetProfile, 0);
         profiles->Release();
     }
+    if (FAILED(hr)) result = hr;
 
     ITfCategoryMgr *categories = nullptr;
-    if (SUCCEEDED(CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER,
-                                   IID_ITfCategoryMgr, (void **)&categories))) {
-        categories->UnregisterCategory(CLSID_IpabetTextService, GUID_TFCAT_TIP_KEYBOARD,
-                                       CLSID_IpabetTextService);
+    hr = CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER, IID_ITfCategoryMgr,
+                          (void **)&categories);
+    if (SUCCEEDED(hr)) {
+        hr = categories->UnregisterCategory(CLSID_IpabetTextService, GUID_TFCAT_TIP_KEYBOARD,
+                                            CLSID_IpabetTextService);
         categories->Release();
     }
+    if (FAILED(hr) && SUCCEEDED(result)) result = hr;
 
     const std::wstring base = L"CLSID\\" + GuidToString(CLSID_IpabetTextService);
-    RegDeleteTreeW(HKEY_CLASSES_ROOT, base.c_str());
-    return S_OK;
+    LONG rc = RegDeleteTreeW(HKEY_CLASSES_ROOT, base.c_str());
+    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
+        result = HRESULT_FROM_WIN32(rc);
+    }
+    return result;
 }
 
 } // namespace ipabet
