@@ -5,6 +5,12 @@
 //   profile-probe list            every registered text service profile
 //   profile-probe assert-present  exit 0 if IPAbet is registered, 1 if not
 //   profile-probe enable-select   enable IPAbet and make it the active profile
+//   profile-probe register <dll>    call DllRegisterServer, report the HRESULT
+//   profile-probe unregister <dll>  call DllUnregisterServer, report the HRESULT
+//
+// The register commands exist because regsvr32 reports failure in a message box
+// it cannot show under automation, and suppressing that with /s throws the
+// reason away — leaving "it did not register" with no explanation attached.
 //
 // Exit codes are the interface: 0 success, 1 the answer was no, 2 misuse.
 
@@ -65,12 +71,47 @@ int Walk(ITfInputProcessorProfileMgr *mgr, bool print, TF_INPUTPROCESSORPROFILE 
 
 } // namespace
 
+/// Loads the text service and calls one of its self-registration exports.
+int CallRegistrationExport(const char *dll, const char *entry) {
+    HMODULE module = LoadLibraryA(dll);
+    if (!module) {
+        fprintf(stderr, "LoadLibrary(%s) failed: %lu\n", dll, GetLastError());
+        return 2;
+    }
+    typedef HRESULT(STDAPICALLTYPE * Fn)();
+    Fn fn = (Fn)GetProcAddress(module, entry);
+    if (!fn) {
+        fprintf(stderr, "%s is not exported: %lu\n", entry, GetLastError());
+        FreeLibrary(module);
+        return 2;
+    }
+    HRESULT hr = fn();
+    printf("%s returned 0x%08lx\n", entry, hr);
+    FreeLibrary(module);
+    return SUCCEEDED(hr) ? 0 : 1;
+}
+
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "usage: profile-probe list|assert-present|enable-select\n");
+    if (argc < 2) {
+        fprintf(stderr,
+                "usage: profile-probe list|assert-present|enable-select|register <dll>|"
+                "unregister <dll>\n");
         return 2;
     }
     const char *cmd = argv[1];
+
+    if (strcmp(cmd, "register") == 0 || strcmp(cmd, "unregister") == 0) {
+        if (argc != 3) {
+            fprintf(stderr, "usage: profile-probe %s <dll>\n", cmd);
+            return 2;
+        }
+        // COM has to be up: the exports reach the profile manager through it.
+        if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) return 2;
+        const int rc = CallRegistrationExport(
+            argv[2], strcmp(cmd, "register") == 0 ? "DllRegisterServer" : "DllUnregisterServer");
+        CoUninitialize();
+        return rc;
+    }
 
     if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) return 2;
 

@@ -34,8 +34,10 @@ jobs:
           if ($LASTEXITCODE -eq 0) { throw "IPAbet was already registered" }
           exit 0
 
+      # Not regsvr32: it reports failure in a message box it cannot show under
+      # automation, and /s throws the reason away.
       - name: Register
-        run: regsvr32 /s .\windows\build\Release\ipabet.dll
+        run: .\windows\build\Release\profile-probe.exe register .\windows\build\Release\ipabet.dll
 
       - name: Registered
         run: .\windows\build\Release\profile-probe.exe assert-present
@@ -46,7 +48,7 @@ jobs:
       # Uninstall has to actually uninstall — a profile left behind is what
       # makes a reinstall register twice.
       - name: Unregister
-        run: regsvr32 /s /u .\windows\build\Release\ipabet.dll
+        run: .\windows\build\Release\profile-probe.exe unregister .\windows\build\Release\ipabet.dll
 
       - name: Gone again
         run: |
