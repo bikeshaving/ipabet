@@ -1,9 +1,9 @@
 # IPAbet for Windows
 
 Status: **W1 in progress** — the engine passes every parity vector on Windows,
-the text service builds, links, registers and unregisters cleanly, and receives
-keystrokes and runs edit sessions. Typing has not been confirmed end to end;
-see "What the typing gate has established" below for exactly where it stops.
+the text service builds, links, registers and unregisters cleanly, loads into a
+real application and runs edit sessions. Typing does not work yet: the lookback
+reads nothing, so digraphs do not compose. See "The open bug" below.
 
 ## One engine, two shells
 
@@ -33,27 +33,35 @@ zero, not through `AttachThreadInput`. Injected input goes wherever the
 foreground is, so that architecture cannot gate the keystroke layer. It still
 gates the engine natively.
 
-## What the typing gate has established
+## The open bug: the lookback reads nothing
 
-`tools/type-test.cpp` activates the text service in its own process, injects
-scancodes into a RichEdit control and reads the result back. Run it with the
-`windows-typing` workflow. What it has settled so far, from the debug log:
+`tools/notepad-type-test.ps1` types into Notepad through the registered text
+service and reads the result back off the clipboard. Run it with the
+`windows-typing` workflow. What is established:
 
-- the text service loads and `ActivateEx` runs
+- the text service loads into a real application and `ActivateEx` runs
 - the engine initialises from the shipped spec
 - keystrokes arrive with the right scancodes, and the US label resolves
-- edit sessions run, and `SetText` reports success with the text in the document
+- edit sessions run and `SetText` reports success
 
-What it has not settled is the round trip. The document does not accumulate
-across keystrokes: after the first key it holds one unit, and after the second
-it still holds one. Each keystroke sees an empty document with the selection at
-the start, so the lookback reads nothing and the second key of a digraph
-correctly passes — `t` then ⇧H gives `tH` rather than `θ`.
+What fails is the lookback. `ShiftStart` back from the selection moves zero
+units on every keystroke, so the engine is asked what follows an empty
+document. `⇧H` after `t` therefore has no `t` to rebase and correctly passes,
+which is why Notepad ends up with `tH` rather than `θ`. Plain letters, which
+need no lookback, are correct.
 
-That is a property of this test host rather than of the text service, and the
-next move is confirming behaviour in a real application rather than making the
-harness more elaborate. Until then the workflow runs on request rather than on
-push, so it does not sit red while telling nobody anything new.
+Two facts worth keeping together, because they do not fit the obvious
+explanation. Reading the whole document straight after a successful `SetText`
+returns one unit, and it still returns one unit after the next keystroke — the
+document never grows. Meanwhile Notepad visibly ends up holding two characters.
+Whatever the text service is editing may not be the buffer the application is
+showing, which would point at the context rather than at the range arithmetic.
+
+Reproduced in Notepad, so this is not an artefact of a purpose-built test host
+— `tools/type-test.cpp`, which drives a RichEdit control in its own process,
+shows the same thing. The next signal worth having is how this behaves across
+several real applications, which is a question for an interactive machine
+rather than for more CI rounds.
 
 ## What the text service has to do (W1)
 
