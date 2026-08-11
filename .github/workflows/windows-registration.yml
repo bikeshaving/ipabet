@@ -50,6 +50,15 @@ jobs:
       - name: Unregister
         run: .\windows\build\Release\profile-probe.exe unregister .\windows\build\Release\ipabet.dll
 
+      # If the profile outlives unregistration again, this says which key kept
+      # it alive rather than leaving it to guesswork.
+      - name: What is left in the registry
+        run: |
+          $clsid = '{6B2E1F0C-9A44-4C3B-B0D5-1E7A2C5D8F31}'
+          reg query "HKLM\SOFTWARE\Microsoft\CTF\TIP\$clsid" /s 2>&1 | Out-String
+          reg query "HKCR\CLSID\$clsid" /s 2>&1 | Out-String
+          exit 0
+
       - name: Gone again
         run: |
           .\windows\build\Release\profile-probe.exe assert-present

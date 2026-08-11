@@ -161,8 +161,18 @@ HRESULT UnregisterServer() {
     }
     if (FAILED(hr) && SUCCEEDED(result)) result = hr;
 
-    const std::wstring base = L"CLSID\\" + GuidToString(CLSID_IpabetTextService);
+    const std::wstring clsid = GuidToString(CLSID_IpabetTextService);
+    const std::wstring base = L"CLSID\\" + clsid;
     LONG rc = RegDeleteTreeW(HKEY_CLASSES_ROOT, base.c_str());
+    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
+        result = HRESULT_FROM_WIN32(rc);
+    }
+
+    // The COM key is only where the class lives. What the profile enumeration
+    // reads is TSF's own key, and UnregisterProfile leaves it behind — so the
+    // service keeps turning up as registered after a clean-looking uninstall.
+    const std::wstring tip = L"SOFTWARE\\Microsoft\\CTF\\TIP\\" + clsid;
+    rc = RegDeleteTreeW(HKEY_LOCAL_MACHINE, tip.c_str());
     if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
         result = HRESULT_FROM_WIN32(rc);
     }
