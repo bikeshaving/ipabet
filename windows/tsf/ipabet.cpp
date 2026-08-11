@@ -286,7 +286,9 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
 std::wstring TextService::TextBefore(TfEditCookie ec, ITfContext *cx, LONG count) {
     TF_SELECTION sel{};
     ULONG fetched = 0;
-    if (FAILED(cx->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &sel, &fetched)) || !fetched) {
+    HRESULT hr = cx->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &sel, &fetched);
+    if (FAILED(hr) || !fetched) {
+        Dbg("GetSelection=0x%08lx fetched=%lu", hr, fetched);
         return {};
     }
 
@@ -295,13 +297,12 @@ std::wstring TextService::TextBefore(TfEditCookie ec, ITfContext *cx, LONG count
     if (SUCCEEDED(sel.range->Clone(&range))) {
         LONG shifted = 0;
         range->Collapse(ec, TF_ANCHOR_START);
-        if (SUCCEEDED(range->ShiftStart(ec, -count, &shifted, nullptr))) {
-            std::vector<WCHAR> buf(count + 1, 0);
-            ULONG got = 0;
-            if (SUCCEEDED(range->GetText(ec, 0, buf.data(), count, &got))) {
-                text.assign(buf.data(), got);
-            }
-        }
+        hr = range->ShiftStart(ec, -count, &shifted, nullptr);
+        std::vector<WCHAR> buf(count + 1, 0);
+        ULONG got = 0;
+        HRESULT hrText = range->GetText(ec, 0, buf.data(), count, &got);
+        Dbg("ShiftStart=0x%08lx shifted=%ld GetText=0x%08lx got=%lu", hr, shifted, hrText, got);
+        if (SUCCEEDED(hrText)) text.assign(buf.data(), got);
         range->Release();
     }
     sel.range->Release();
@@ -363,7 +364,8 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         sel.range->Collapse(ec, TF_ANCHOR_END);
         sel.style.ase = TF_AE_NONE;
         sel.style.fInterimChar = FALSE;
-        cx->SetSelection(ec, 1, &sel);
+        HRESULT sethr = cx->SetSelection(ec, 1, &sel);
+        Dbg("SetSelection=0x%08lx", sethr);
     }
     sel.range->Release();
     return hr;
