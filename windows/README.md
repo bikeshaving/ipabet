@@ -1,8 +1,8 @@
 # IPAbet for Windows
 
 Status: **W1 in progress** — the engine passes every parity vector on Windows,
-and the text service builds and links against it. Nothing has been registered
-or typed into yet, so it is not installable.
+the text service builds and links against it, and it registers and unregisters
+cleanly. Nothing has been typed through it yet.
 
 ## One engine, two shells
 
@@ -53,6 +53,18 @@ under `HKLM\SOFTWARE\Microsoft\CTF\TIP\{clsid}`, written by the DLL's
 `DllRegisterServer` — so `regsvr32 ipabet.dll` is what `register.swift` is on
 macOS. Both need administrator rights, which makes every development iteration
 an elevation prompt.
+
+`windows-registration.yml` runs the whole lifecycle on every push: absent,
+register, present, unregister, absent again. The last step earns its keep —
+`UnregisterProfile` reports success and leaves TSF's own key behind, which
+leaves the service registered after an uninstall that looked clean and makes a
+reinstall register a second copy of it.
+
+Two habits worth keeping when touching any of this. The probe matches on the
+class id *and* the profile id, because matching the class alone passes on any
+profile the service happens to own. And `regsvr32` reports failure in a message
+box it cannot show under automation, so the gate calls `DllRegisterServer`
+directly and prints the HRESULT — otherwise a failure arrives as silence.
 
 ## Signing
 
