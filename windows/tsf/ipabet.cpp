@@ -182,13 +182,16 @@ STDMETHODIMP TextService::Deactivate() {
         ipabet_engine_free(engine_);
         engine_ = nullptr;
     }
+    written_.clear();
     pending_ = CPending{};
     chainBroken_ = false;
     return S_OK;
 }
 
 STDMETHODIMP TextService::OnSetFocus(BOOL) {
-    // Focus moved: an armed diacritic does not carry across documents.
+    // Focus moved: neither an armed diacritic nor what was typed before carries
+    // across documents.
+    written_.clear();
     pending_ = CPending{};
     chainBroken_ = false;
     shiftDown_ = false;
@@ -245,6 +248,9 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
 
     CKeystroke k{};
     if (!Claims(wp, lp, &k)) {
+        // The run ends at a key IPAbet does not claim, and so does what is known
+        // about the text around it.
+        written_.clear();
         *eaten = FALSE;
         return S_OK;
     }
@@ -283,37 +289,9 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
     return S_OK;
 }
 
-std::wstring TextService::TextBefore(TfEditCookie ec, ITfContext *cx, LONG count) {
-    TF_SELECTION sel{};
-    ULONG fetched = 0;
-    HRESULT hr = cx->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &sel, &fetched);
-    if (FAILED(hr) || !fetched) {
-        Dbg("GetSelection=0x%08lx fetched=%lu", hr, fetched);
-        return {};
-    }
-
-    std::wstring text;
-    ITfRange *range = nullptr;
-    if (SUCCEEDED(sel.range->Clone(&range))) {
-        LONG shifted = 0;
-        range->Collapse(ec, TF_ANCHOR_START);
-        hr = range->ShiftStart(ec, -count, &shifted, nullptr);
-        std::vector<WCHAR> buf(count + 1, 0);
-        ULONG got = 0;
-        HRESULT hrText = range->GetText(ec, 0, buf.data(), count, &got);
-        Dbg("ShiftStart=0x%08lx shifted=%ld GetText=0x%08lx got=%lu", hr, shifted, hrText, got);
-        if (SUCCEEDED(hrText)) text.assign(buf.data(), got);
-        range->Release();
-    }
-    sel.range->Release();
-    return text;
-}
-
 HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const CKeystroke &k,
                                         bool backspace) {
-    // Two grapheme clusters is the whole of the engine's lookback; eight UTF-16
-    // units is comfortably more than that even when both carry marks.
-    const std::wstring before = TextBefore(ec, cx, 8);
+    const std::wstring &before = written_;
     Dbg("lookback %zu units", before.size());
     const std::string beforeUtf8 = ToUtf8(before);
 
@@ -345,6 +323,17 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
     default: // Noop: only the pending composition moved
         return S_OK;
     }
+
+    // Keep the record in step with the document. Two grapheme clusters is the
+    // whole of the engine's lookback, so anything older is dead weight — a
+    // generous cap rather than a precise one, since the engine ignores the rest.
+    if (replaceUnits > 0 && (size_t)replaceUnits <= written_.size()) {
+        written_.resize(written_.size() - replaceUnits);
+    } else if (replaceUnits > 0) {
+        written_.clear();
+    }
+    written_ += text;
+    if (written_.size() > 16) written_.erase(0, written_.size() - 16);
     if (text.empty() && replaceUnits == 0) return S_OK;
 
     TF_SELECTION sel{};

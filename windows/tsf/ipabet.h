@@ -64,17 +64,19 @@ public:
 private:
     ~TextService();
 
+    /// The tail of the run as this service wrote it. TSF offers to read the
+    /// document back, but reading it here returns nothing usable — so the
+    /// service keeps its own record instead, the same way the fcitx5 addon does
+    /// for clients that cannot be read at all. Only the last couple of clusters
+    /// matter, which is the whole of the engine's lookback.
+    std::wstring written_;
+
     /// Whether IPAbet claims this key. Decided without consulting the engine,
     /// because TSF asks before any edit cookie exists.
     bool Claims(WPARAM wp, LPARAM lp, CKeystroke *out);
 
     /// spec/ipabet.json, shipped beside the DLL and read at activation.
     std::string LoadSpec();
-
-    /// The engine's whole lookback, read straight out of the document: TSF can
-    /// walk backwards from the selection, so unlike the fcitx5 addon there is no
-    /// need to shadow the text in a composition buffer.
-    std::wstring TextBefore(TfEditCookie ec, ITfContext *cx, LONG count);
 
     LONG refs_ = 1;
     ITfThreadMgr *thread_ = nullptr;
