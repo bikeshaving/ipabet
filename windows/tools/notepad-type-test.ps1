@@ -41,6 +41,9 @@ foreach ($c in $cases) {
     foreach ($k in $c.keys) {
         [Input]::Press($k.k, [bool]$k.shift, $false)
     }
+    # Composed text is not committed text, and the clipboard only gets the
+    # latter. Enter is a key IPAbet declines, so the client takes the run.
+    [Input]::Press(0x0D, $false, $false)
     Start-Sleep -Milliseconds 400
 
     Set-Clipboard -Value ''
