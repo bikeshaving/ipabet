@@ -365,7 +365,19 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         sel.style.ase = TF_AE_NONE;
         sel.style.fInterimChar = FALSE;
         HRESULT sethr = cx->SetSelection(ec, 1, &sel);
-        Dbg("SetSelection=0x%08lx", sethr);
+        // Read the whole document straight back. If a write that reported
+        // success is not there afterwards, the document being edited is not the
+        // one the control shows, and nothing about the engine is in question.
+        ITfRange *all = nullptr;
+        if (SUCCEEDED(cx->GetStart(ec, &all))) {
+            LONG moved = 0;
+            all->ShiftEnd(ec, 64, &moved, nullptr);
+            WCHAR doc[65]{};
+            ULONG docLen = 0;
+            all->GetText(ec, 0, doc, 64, &docLen);
+            Dbg("SetSelection=0x%08lx document now %lu units", sethr, docLen);
+            all->Release();
+        }
     }
     sel.range->Release();
     return hr;
