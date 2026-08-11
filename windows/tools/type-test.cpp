@@ -96,6 +96,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 int main() {
     if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) return 2;
 
+    // A plain EDIT control is not TSF-aware: the text service is called, its
+    // edit sessions run, and the edits have no document to land in. RichEdit is
+    // TSF-aware, which is what makes this a test of IPAbet rather than a test of
+    // how much TSF a bare Win32 control implements.
+    if (!LoadLibraryW(L"msftedit.dll")) {
+        fprintf(stderr, "msftedit.dll unavailable: %lu\n", GetLastError());
+        return 2;
+    }
+
     WNDCLASSW wc{};
     wc.lpfnWndProc = WndProc;
     wc.hInstance = GetModuleHandleW(nullptr);
@@ -105,8 +114,8 @@ int main() {
     HWND host = CreateWindowExW(WS_EX_TOPMOST, L"IpabetTypeTest", L"ipabet-type-test",
                                 WS_OVERLAPPEDWINDOW, 100, 100, 640, 200, nullptr, nullptr,
                                 wc.hInstance, nullptr);
-    g_edit = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 10, 600,
-                             30, host, nullptr, wc.hInstance, nullptr);
+    g_edit = CreateWindowExW(0, L"RICHEDIT50W", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 10,
+                             600, 30, host, nullptr, wc.hInstance, nullptr);
     ShowWindow(host, SW_SHOW);
     Pump(300);
 

@@ -256,7 +256,8 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
 
     KeyEditSession *session = new KeyEditSession(this, cx, k, wp == VK_BACK);
     HRESULT hr = S_OK;
-    cx->RequestEditSession(client_, session, TF_ES_READWRITE | TF_ES_SYNC, &hr);
+    HRESULT req = cx->RequestEditSession(client_, session, TF_ES_READWRITE | TF_ES_SYNC, &hr);
+    Dbg("RequestEditSession req=0x%08lx session=0x%08lx", req, hr);
     session->Release();
 
     *eaten = TRUE;
@@ -311,8 +312,8 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
                                         bool backspace) {
     // Two grapheme clusters is the whole of the engine's lookback; eight UTF-16
     // units is comfortably more than that even when both carry marks.
-    Dbg("edit session running");
     const std::wstring before = TextBefore(ec, cx, 8);
+    Dbg("lookback %zu units", before.size());
     const std::string beforeUtf8 = ToUtf8(before);
 
     CStep step = backspace
@@ -357,6 +358,7 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         sel.range->ShiftStart(ec, -replaceUnits, &shifted, nullptr);
     }
     hr = sel.range->SetText(ec, 0, text.c_str(), (LONG)text.size());
+    Dbg("edit type=%d replace=%ld SetText=0x%08lx", (int)step.edit.edit_type, replaceUnits, hr);
     if (SUCCEEDED(hr)) {
         sel.range->Collapse(ec, TF_ANCHOR_END);
         sel.style.ase = TF_AE_NONE;
