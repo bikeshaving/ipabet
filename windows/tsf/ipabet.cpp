@@ -335,21 +335,25 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
 
 HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::wstring &text) {
     if (!composition_) {
-        ITfInsertAtSelection *insert = nullptr;
-        if (FAILED(cx->QueryInterface(IID_ITfInsertAtSelection, (void **)&insert))) return E_FAIL;
-        ITfRange *at = nullptr;
-        HRESULT hr = insert->InsertTextAtSelection(ec, TF_IAS_QUERYONLY, nullptr, 0, &at);
-        insert->Release();
-        if (FAILED(hr)) return hr;
+        // The composition starts where the caret is. The selection range is the
+        // simplest way to say that, and it is a range the context already
+        // vouches for.
+        TF_SELECTION sel{};
+        ULONG fetched = 0;
+        HRESULT hr = cx->GetSelection(ec, TF_DEFAULT_SELECTION, 1, &sel, &fetched);
+        if (FAILED(hr) || !fetched) {
+            Dbg("start: GetSelection=0x%08lx fetched=%lu", hr, fetched);
+            return FAILED(hr) ? hr : E_FAIL;
+        }
 
         ITfContextComposition *comp = nullptr;
-        if (SUCCEEDED(cx->QueryInterface(IID_ITfContextComposition, (void **)&comp))) {
-            hr = comp->StartComposition(ec, at, nullptr, &composition_);
+        hr = cx->QueryInterface(IID_ITfContextComposition, (void **)&comp);
+        if (SUCCEEDED(hr)) {
+            hr = comp->StartComposition(ec, sel.range, nullptr, &composition_);
             comp->Release();
-        } else {
-            hr = E_FAIL;
         }
-        at->Release();
+        sel.range->Release();
+        Dbg("start: StartComposition=0x%08lx composition=%p", hr, (void *)composition_);
         if (FAILED(hr) || !composition_) return FAILED(hr) ? hr : E_FAIL;
     }
 
