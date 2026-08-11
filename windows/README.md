@@ -1,7 +1,8 @@
 # IPAbet for Windows
 
-Status: **W0** — the engine builds and passes every parity vector on Windows.
-There is no text service yet, so nothing is installable; that is W1.
+Status: **W1 in progress** — the engine passes every parity vector on Windows,
+and the text service builds and links against it. Nothing has been registered
+or typed into yet, so it is not installable.
 
 ## One engine, two shells
 
