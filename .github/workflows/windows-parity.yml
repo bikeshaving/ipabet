@@ -1,0 +1,66 @@
+name: windows-parity
+
+# The engine is where every keystroke decision is made, and it is the same
+# crate on every platform — so verifying it on a real Windows host needs no
+# text service, no COM registration and no VM. That makes this the one layer of
+# the Windows port that can be gated on every push from the first day.
+#
+# Both architectures are built and tested natively rather than cross-compiled,
+# because PE has no fat-binary mechanism: an ARM machine needs its own artifact,
+# not a slice of someone else's.
+
+on:
+  push:
+    paths:
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/windows-parity.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  engine:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x86_64
+          - runner: windows-11-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installed here rather than through a third-party action, so the only
+      # code this workflow trusts is GitHub's own and Rust's own.
+      - name: Rust toolchain
+        shell: pwsh
+        run: |
+          if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+            Invoke-WebRequest "https://win.rustup.rs/${{ matrix.arch }}" -OutFile rustup-init.exe
+            ./rustup-init.exe -y --default-toolchain stable --profile minimal
+            "$env:USERPROFILE\.cargo\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+          }
+
+      - name: Toolchain version
+        run: cargo -V
+
+      # spec/parity-vectors.json is generated from js/test, the suite the macOS
+      # implementation is pinned to, so a pass here means Windows agrees with
+      # macOS keystroke for keystroke.
+      - name: Parity vectors
+        working-directory: engine
+        run: cargo test --release
+
+      # What the text service links.
+      - name: Static library
+        working-directory: engine
+        run: cargo build --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ipabet-engine-windows-${{ matrix.arch }}
+          path: |
+            engine/target/release/ipabet_engine.lib
+            engine/include/ipabet_engine.h
