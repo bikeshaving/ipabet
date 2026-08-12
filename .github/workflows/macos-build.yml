@@ -68,3 +68,47 @@ jobs:
             echo "debug logging symbols present in a release build"
             exit 1
           fi
+
+  # An experiment, not a gate — hence continue-on-error. Two things have been
+  # assumed to block a typing test on macOS and only one of them has ever been
+  # checked: that new input methods need a session restart before the system
+  # will offer them, and that driving keystrokes needs accessibility consent no
+  # runner can grant. The first is cheap to settle, and settling it decides
+  # whether a real typing gate is possible here at all.
+  registration:
+    runs-on: macos-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: cd macos && ./build.sh
+
+      - name: Install where the system looks
+        run: |
+          sudo mkdir -p "/Library/Input Methods"
+          sudo cp -R macos/build/IPAbet.app "/Library/Input Methods/"
+          ls -d "/Library/Input Methods/IPAbet.app"
+
+      - name: Register
+        run: |
+          "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
+
+      # The question: does the system list it in this session, or only after a
+      # logout the runner cannot perform?
+      - name: Does the system see it without a logout?
+        run: |
+          swiftc macos/tools/tis-probe.swift -o /tmp/tis-probe -framework Carbon -O
+          echo "--- every input source id:"
+          /tmp/tis-probe list | grep -i ipabet || echo "(no ipabet source listed)"
+          echo "--- assertion:"
+          if /tmp/tis-probe assert-present; then
+            echo "REGISTERED IN-SESSION — a typing gate may be possible here"
+          else
+            echo "NOT VISIBLE — the logout requirement is real, and CI cannot type"
+          fi
+
+      - name: Can it be enabled and selected?
+        run: |
+          /tmp/tis-probe enable-select && echo "SELECTED" || echo "could not select"
+          /tmp/tis-probe list | grep -i ipabet || true
