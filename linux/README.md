@@ -1,7 +1,12 @@
 # IPAbet for Linux
 
 Status: **done** — two shells over one engine, both gated on every push, and
-confirmed by hand on KDE Plasma Wayland in a Qt application.
+the whole user journey walked on a clean machine: the published package
+downloaded from the release, `apt install` pulling nothing else in because
+Ubuntu already ships IBus, **English (IPAbet)** appearing in Settings →
+Keyboard → Input Sources, and typing confirmed in GNOME Shell's search, the
+text editor, and Firefox. Also confirmed on KDE Plasma Wayland with Qt clients,
+on both shells.
 
 ## Install
 
