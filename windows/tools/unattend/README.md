@@ -19,9 +19,20 @@ language.
 ./build-unattend-iso.sh
 ```
 
-**3. Create the VM.** UTM → **+** → **Virtualize** → **Windows**. Point it at
-the Windows ISO. Then, before starting it, add the unattend ISO as a second CD
-drive in the VM's settings. 4GB memory, 40GB disk.
+**3. Create the VM.** UTM → **+** → **Virtualize** → **Windows**. Take that
+path even though the answer file makes some of what it configures redundant —
+UTM's "Other" classification gives Linux-shaped defaults, and every one of them
+is a wall further down:
+
+| Setting | Windows template | "Other" |
+|---|---|---|
+| Storage interface | NVMe | **VirtIO — Windows cannot see it at all** |
+| TPM 2.0, Secure Boot | present | absent, so setup refuses |
+| Disk size | 64 GB | 40 GB, below the minimum setup checks |
+
+4GB memory. Then, before starting it, add the unattend ISO as a second drive:
+Settings → **New Drive** → **Removable**, interface **USB**. Never IDE or SATA —
+the ARM machine has no such bus and QEMU refuses to start.
 
 **4. Start it, and come back later.**
 
@@ -34,6 +45,13 @@ open. Type `t` then `⇧H`; you want `θ`.
 partitioning, the account screens, the privacy carousel — creates a passwordless
 local administrator, logs it in, downloads IPAbet from the published release and
 installs it silently.
+
+## When it drops to a UEFI shell
+
+Windows install media waits about five seconds on *"Press any key to boot from
+CD"* and then gives up. Click into the window and press something. If it has
+already fallen through, `fs1:` then `cd efi\boot` then `bootaa64.efi` boots it
+by hand — check with `ls` first, since the volume numbering moves around.
 
 ## Why the machine is disposable
 
