@@ -1,0 +1,69 @@
+name: windows-installer
+
+# Builds the MSI and then installs it, which is the only way to find out whether
+# it installs. An installer that builds is not an installer that works: the
+# custom action that registers the text service runs in the elevated half of the
+# install and fails there or nowhere.
+
+on:
+  push:
+    paths:
+      - 'windows/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/windows-installer.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: |
+          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build windows/build --config Release
+
+      - name: Package
+        run: .\windows\package.ps1
+        shell: pwsh
+
+      - name: Nothing registered yet
+        run: |
+          .\windows\build\Release\profile-probe.exe assert-present
+          if ($LASTEXITCODE -eq 0) { throw "IPAbet was registered before installing" }
+          exit 0
+
+      - name: Install
+        run: |
+          $p = Start-Process msiexec -ArgumentList '/i','windows\build\IPAbet.msi','/qn','/l*v','install.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content install.log -Tail 40; throw "msiexec exited $($p.ExitCode)" }
+
+      # The installed copy, not the build tree's — what a user would have.
+      - name: Registered, and the files are where they should be
+        run: |
+          Get-ChildItem 'C:\Program Files\IPAbet' | Format-Table -AutoSize | Out-String
+          .\windows\build\Release\profile-probe.exe assert-present
+
+      - name: Uninstall
+        run: |
+          $p = Start-Process msiexec -ArgumentList '/x','windows\build\IPAbet.msi','/qn','/l*v','uninstall.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content uninstall.log -Tail 40; throw "msiexec exited $($p.ExitCode)" }
+
+      - name: Gone, and nothing left behind
+        run: |
+          .\windows\build\Release\profile-probe.exe assert-present
+          if ($LASTEXITCODE -eq 0) { throw "IPAbet survived uninstallation" }
+          if (Test-Path 'C:\Program Files\IPAbet\ipabet.dll') { throw "files left behind" }
+          exit 0
+
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: ipabet-msi
+          path: |
+            windows/build/IPAbet.msi
+            install.log
+            uninstall.log
