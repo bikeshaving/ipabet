@@ -109,6 +109,16 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           find dist -type f | sort
+          # Version-less copies alongside the canonical names: the website links
+          # to a fixed URL, and a URL with a version in it breaks on release day.
+          mkdir -p stable
+          for f in $(find dist -name '*.deb'); do
+            base=$(basename "$f")
+            name=${base%%_*}
+            arch=$(echo "$base" | sed 's/.*_\(.*\)\.deb/\1/')
+            cp "$f" "stable/${name}-${arch}.deb"
+          done
+          ls stable 2>/dev/null || true
           # A tag with a suffix is a prerelease: v0.1.2-beta.1, not v0.1.2.
           case "$TAG" in *-*) PRERELEASE=--prerelease ;; *) PRERELEASE= ;; esac
           gh release create "$TAG" --repo "$REPO" --draft $PRERELEASE \
@@ -123,4 +133,4 @@ jobs:
           Unsigned, so Windows will warn on first run. The macOS package is
           attached separately: it is notarized on a real machine rather than
           built here." \
-            $(find dist -type f)
+            $(find dist -type f) $(find stable -type f 2>/dev/null)

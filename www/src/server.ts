@@ -69,13 +69,27 @@ router.route("/feed.xml").get(() => new Response(atomFeed(), {
 	headers: {"Content-Type": "application/atom+xml; charset=utf-8", "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400"},
 }));
 
-// The download is one branded URL that outlives whatever hosts the binary.
+// The downloads are branded URLs that outlive whatever hosts the binaries.
 // GitHub's /releases/latest/download/<name> always resolves to the newest
-// published release, so this never needs touching either — but published prose
+// published release, so these never need touching either — but published prose
 // points HERE, so the host can change without editing a dated blog post.
-const RELEASE_PKG =
-	"https://github.com/bikeshaving/ipabet/releases/latest/download/IPAbet.pkg";
-router.route("/download").get(() => Response.redirect(RELEASE_PKG, 302));
+//
+// /download stays macOS: it is what every existing link and post means.
+const RELEASE = "https://github.com/bikeshaving/ipabet/releases/latest/download";
+const DOWNLOADS: Record<string, string> = {
+	"/download": `${RELEASE}/IPAbet.pkg`,
+	"/download/macos": `${RELEASE}/IPAbet.pkg`,
+	"/download/windows": `${RELEASE}/IPAbet.msi`,
+	// The release attaches these under version-less names on purpose: a URL
+	// with a version in it stops working the day the version changes, and
+	// dpkg reads the version out of the package rather than off the name.
+	"/download/linux": `${RELEASE}/ipabet-ibus-amd64.deb`,
+	"/download/linux/arm64": `${RELEASE}/ipabet-ibus-arm64.deb`,
+	"/download/linux/fcitx5": `${RELEASE}/ipabet-fcitx5-amd64.deb`,
+};
+for (const [path, url] of Object.entries(DOWNLOADS)) {
+	router.route(path).get(() => Response.redirect(url, 302));
+}
 
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
