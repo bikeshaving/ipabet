@@ -119,6 +119,35 @@ static void ipabet_truncate_codepoints(GString *s, int count) {
 
 // --- the key path ----------------------------------------------------------
 
+/// A modifier key pressed on its own. It is not a keystroke IPAbet declines —
+/// it is not a keystroke at all, and treating it as one ends the run, which
+/// throws away an armed diacritic every time ⌥ goes down.
+static gboolean ipabet_is_modifier(guint keyval) {
+    switch (keyval) {
+    case IBUS_KEY_Shift_L:
+    case IBUS_KEY_Shift_R:
+    case IBUS_KEY_Control_L:
+    case IBUS_KEY_Control_R:
+    case IBUS_KEY_Alt_L:
+    case IBUS_KEY_Alt_R:
+    case IBUS_KEY_Meta_L:
+    case IBUS_KEY_Meta_R:
+    case IBUS_KEY_Super_L:
+    case IBUS_KEY_Super_R:
+    case IBUS_KEY_Hyper_L:
+    case IBUS_KEY_Hyper_R:
+    case IBUS_KEY_Caps_Lock:
+    case IBUS_KEY_Shift_Lock:
+    case IBUS_KEY_Num_Lock:
+    case IBUS_KEY_ISO_Level3_Shift:
+    case IBUS_KEY_ISO_Level5_Shift:
+    case IBUS_KEY_Mode_switch:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
 static gboolean ipabet_process_key_event(IBusEngine *engine, guint keyval, guint keycode,
                                          guint state) {
     IpabetIBusEngine *self = (IpabetIBusEngine *)engine;
@@ -135,6 +164,9 @@ static gboolean ipabet_process_key_event(IBusEngine *engine, guint keyval, guint
     }
     if (is_shift) {
         self->shift_down = TRUE;
+        return FALSE;
+    }
+    if (ipabet_is_modifier(keyval)) {
         return FALSE;
     }
 
