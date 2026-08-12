@@ -20,7 +20,9 @@ def publish_window_id(*_):
     # Only once mapped: before that there is no underlying window to ask, and
     # asking early wrote an empty file that cost an afternoon.
     gdk_window = win.get_window()
-    if gdk_window is not None:
+    # Wayland windows have no X id, and the harness there does not need one:
+    # the compositor gives the only client focus by itself.
+    if gdk_window is not None and hasattr(gdk_window, "get_xid"):
         with open(WID_OUT, "w") as f:
             f.write(str(gdk_window.get_xid()))
     return False

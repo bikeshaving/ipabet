@@ -17,11 +17,16 @@ run — there is no framework to install or switch first. A second package,
 `ipabet-fcitx5`, is there for people already running fcitx5; the two install
 side by side and neither owns the other's files.
 
-Two things a fcitx5 user needs that an IBus user does not: run
-`./ipabet-register` to add IPAbet to the input-method group, and, on KDE
-Wayland, set System Settings → Virtual Keyboard → Fcitx 5. Without that second
-step typing still works but the indicator is unreliable and the trigger key
-does not register — it is fcitx5's own documented requirement, not ours.
+A fcitx5 user needs one extra step an IBus user does not: run
+`./ipabet-register` to add IPAbet to the input-method group.
+
+**KDE Wayland asks for one more thing, whichever framework you use.** The
+compositor has to launch the input method for the Wayland input-method protocol
+to work, and KDE does not do it on its own — both IBus and fcitx5 pop up a
+notification saying so. System Settings → Virtual Keyboard → **IBus Wayland**
+or **Fcitx 5**, then log back in. Ignoring it is survivable: typing works in Qt
+and GTK applications either way, and what you lose is the panel indicator and
+the toggle key. GNOME launches IBus itself, so nothing there needs doing.
 
 ## Layout
 
@@ -101,10 +106,21 @@ diacritic — a bug that existed only in the IBus shell and only showed up
 because the other one passed.
 
 X11 has no consent wall in front of synthetic keystrokes, which is what makes
-this possible where the macOS gate documents it as out of reach. The limit is
-permanent rather than temporary: Wayland deliberately closes that same hole, so
-the gate cannot drive it. Wayland is covered by hand instead — Plasma Wayland
-with Qt clients, confirmed 2026-08-12.
+this possible where the macOS gate documents it as out of reach. Wayland closes
+that same hole deliberately, so the gate cannot drive it and Wayland is checked
+by hand instead: both shells confirmed on Plasma Wayland in Qt clients on
+2026-08-12, IBus in the Plasma launcher itself.
+
+The gap that leaves is smaller than it looks. With `GTK_IM_MODULE=ibus` the
+client talks to IBus over D-Bus and the compositor is not in the input-method
+protocol at all, so the engine sees the same evdev keycode either way — what
+differs between X11 and Wayland is upstream of anything here.
+
+`wtype` looks like the answer for driving Wayland and is not: it synthesises
+its own keymap and assigns keysyms to arbitrary keycodes, and IPAbet reads the
+physical keycode to know which key was pressed. Its keycodes mean nothing here.
+`ydotool` injects through uinput and would carry real ones, if this is ever
+worth automating.
 
 A vector names a key by the label the engine sees, which is not always the key
 a person presses — `|` is typed as ⇧\, `H` as ⇧h. The harness translates label

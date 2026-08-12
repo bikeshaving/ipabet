@@ -130,11 +130,12 @@ fi
 
 echo "IPAbet enabled. Switch to it with the input-method toggle (Ctrl+Space by default)."
 
-# On KDE Wayland fcitx5 has to be launched by the compositor or its Wayland
-# frontend never engages: typing works, but the panel button does nothing, the
-# toggle key is never seen, and fcitx5 itself pops up a dialog about it. That is
-# fcitx5's own requirement rather than IPAbet's, and it is worth saying here
-# because this is the moment someone is setting it up.
+# On KDE Wayland the compositor has to launch the input method or the Wayland
+# input-method protocol never engages: typing still works in Qt and GTK
+# applications, but the panel button does nothing and the toggle key is never
+# seen. This is KDE's arrangement rather than any one framework's — IBus prints
+# the same notice — and it is worth saying here because this is the moment
+# someone is setting it up. GNOME launches its input method itself.
 case "${XDG_CURRENT_DESKTOP:-}" in
     *KDE*)
         if [ "${XDG_SESSION_TYPE:-}" = wayland ]; then
@@ -145,10 +146,12 @@ work:
 
     System Settings → Virtual Keyboard → Fcitx 5
 
-then log out and back in. Do not use "Restart" in the fcitx5 tray menu
-afterwards — the compositor hands it a socket that a restart cannot reuse.
+then log out and back in. Typing works without it; the indicator and the toggle
+key are what you lose. Do not use "Restart" in the fcitx5 tray menu afterwards —
+the compositor hands it a socket that a restart cannot reuse.
 
-Or use the IBus package instead, which needs none of this.
+KDE asks the same of IBus, so switching packages does not avoid this step.
+GNOME does it for you.
 EOF
         fi
         ;;
