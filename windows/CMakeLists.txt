@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(ipabet-tsf VERSION 0.1.0 LANGUAGES CXX)
+project(ipabet-tsf VERSION 0.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -66,3 +66,8 @@ option(IPABET_DEBUG "Compile in the debug logger" OFF)
 if(IPABET_DEBUG)
     target_compile_definitions(ipabet PRIVATE IPABET_DEBUG)
 endif()
+
+# The registrar the installer calls, and the one a person runs by hand after an
+# unzipped build. The DLL registers itself; this only asks it to.
+add_executable(ipabet-register tools/ipabet-register.cpp)
+target_link_libraries(ipabet-register PRIVATE ole32.lib)
