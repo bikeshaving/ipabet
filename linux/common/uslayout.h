@@ -8,17 +8,16 @@
 // A key absent from the table is one IPAbet never claims, so the caller
 // declines it and the host layout keeps whatever it would have produced.
 
-#ifndef IPABET_USLAYOUT_H
-#define IPABET_USLAYOUT_H
-
-#include <string>
-
-namespace ipabet {
+#ifndef IPABET_LINUX_USLAYOUT_H
+#define IPABET_LINUX_USLAYOUT_H
 
 /// The unshifted US character for `code`, or "" for a key IPAbet has no
 /// opinion about. The engine applies shift itself (⇧5 → %), so this is
 /// deliberately the unshifted plane only.
-inline std::string usLayoutLabel(int code) {
+///
+/// Plain C so both shells can share it: the fcitx5 addon is C++, the IBus
+/// engine is C against GObject.
+static inline const char *ipabet_us_layout_label(int code) {
     switch (code) {
     // number row
     case 10: return "1";
@@ -77,6 +76,4 @@ inline std::string usLayoutLabel(int code) {
     }
 }
 
-} // namespace ipabet
-
-#endif // IPABET_USLAYOUT_H
+#endif // IPABET_LINUX_USLAYOUT_H

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What the IBus daemon scans at startup. Installing this file and the binary is
+  the whole of "registering" on this platform — there is no framework to swap,
+  which is the point of shipping IBus rather than fcitx5.
+-->
+<component>
+    <name>org.freedesktop.IBus.IPAbet</name>
+    <description>Type the International Phonetic Alphabet</description>
+    <exec>@LIBEXECDIR@/ibus-engine-ipabet --ibus</exec>
+    <version>@VERSION@</version>
+    <author>Brian Kim</author>
+    <license>MIT</license>
+    <homepage>https://ipabet.org</homepage>
+    <textdomain>ipabet</textdomain>
+    <engines>
+        <engine>
+            <name>ipabet</name>
+            <longname>IPAbet</longname>
+            <description>Type the International Phonetic Alphabet</description>
+            <!-- The IPA is not a language, but GNOME's input-source picker
+                 groups by one, and a source nobody can find is a source nobody
+                 uses. English is where a phonetic alphabet is least surprising
+                 to look for, not a claim that the two are the same thing. -->
+            <language>en</language>
+            <license>MIT</license>
+            <author>Brian Kim</author>
+            <icon>ipabet</icon>
+            <layout>us</layout>
+            <rank>50</rank>
+        </engine>
+    </engines>
+</component>

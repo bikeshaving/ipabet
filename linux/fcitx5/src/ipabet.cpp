@@ -14,7 +14,7 @@
 // which plenty of clients (terminals especially) do not offer.
 
 #include "ipabet.h"
-#include "uslayout.h"
+#include "../../common/uslayout.h"
 
 #include <fcitx-utils/standardpath.h>
 #include <fcitx-utils/utf8.h>
@@ -174,7 +174,7 @@ void IpabetEngine::keyEvent(const fcitx::InputMethodEntry &, fcitx::KeyEvent &ev
     if (sym == FcitxKey_Escape) {
         label = "Escape";
     } else if (sym != FcitxKey_BackSpace) {
-        label = usLayoutLabel(raw.code());
+        label = ipabet_us_layout_label(raw.code());
         if (label.empty()) {
             // Arrows, Return, Tab, anything off the claimed plane: the run
             // ends here and the client gets the key untouched.

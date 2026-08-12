@@ -68,10 +68,11 @@ if ! grep -q "Loaded addon ipabet" /tmp/fcitx5.log; then
     exit 1
 fi
 
+rm -f /tmp/entry-wid.txt
 python3 test-entry.py >/tmp/entry.log 2>&1 &
 sleep 3
 
-WID=$(xdotool search --name ipabet-test-entry | head -1)
+WID=$(cat /tmp/entry-wid.txt 2>/dev/null || xdotool search --name ipabet-test-entry | head -1)
 if [ -z "$WID" ]; then
     echo "FAIL: no text entry to type into"
     cat /tmp/entry.log
