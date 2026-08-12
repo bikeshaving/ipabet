@@ -1,0 +1,70 @@
+name: macos-build
+
+# Nothing checked that the macOS side still compiles. It is built on one
+# machine, by hand, at release time — so a change to the Swift could break it
+# and the first sign would be release day.
+#
+# What this cannot do is the rest of the macOS gate. Registering an input
+# method needs a logout, and typing into applications needs accessibility
+# consent that cannot be granted headlessly — the wall the macOS gate has
+# always documented. Signing and notarization could run here with credentials
+# in secrets; that is a decision about where a signing identity lives, not a
+# technical limit.
+
+on:
+  push:
+    paths:
+      - 'macos/**'
+      - 'spec/**'
+      - '.github/workflows/macos-build.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build
+        run: cd macos && ./build.sh
+
+      # An arm64-only input method on an Intel Mac registers from its plist and
+      # can never launch: the input source appears and typing is dead. That has
+      # bitten this project before, and it is invisible without checking.
+      - name: Universal, both slices
+        run: |
+          bin="macos/build/IPAbet.app/Contents/MacOS/IPAbet"
+          file "$bin"
+          for arch in arm64 x86_64; do
+            lipo -archs "$bin" | grep -qw "$arch" || {
+              echo "missing $arch slice"; exit 1; }
+          done
+
+      - name: The registrar is universal too
+        run: |
+          bin="macos/build/IPAbet.app/Contents/MacOS/ipabet-register"
+          for arch in arm64 x86_64; do
+            lipo -archs "$bin" | grep -qw "$arch" || {
+              echo "missing $arch slice"; exit 1; }
+          done
+
+      # The spec is data the app reads at runtime; a bundle without it builds
+      # fine and does nothing.
+      - name: The bundle carries what it needs
+        run: |
+          app="macos/build/IPAbet.app"
+          for f in Contents/Info.plist Contents/Resources/ipabet.json; do
+            [ -s "$app/$f" ] || { echo "missing $f"; exit 1; }
+          done
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist"
+
+      # Release builds have no logging capability at all — an input method sees
+      # everything typed, so the ability to record it is not something to ship
+      # and leave switched off.
+      - name: No logger in a release build
+        run: |
+          if nm -a macos/build/IPAbet.app/Contents/MacOS/IPAbet 2>/dev/null | grep -qi "ipabet_debug"; then
+            echo "debug logging symbols present in a release build"
+            exit 1
+          fi
