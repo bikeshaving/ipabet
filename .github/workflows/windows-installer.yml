@@ -42,6 +42,25 @@ jobs:
         run: .\windows\package.ps1
         shell: pwsh
 
+      # A text service loads into every application on the system, so a
+      # dependency on a redistributable means it fails to load anywhere that
+      # has not installed one. CI images ship Visual Studio and would never
+      # notice, so the check is on the binary rather than on the install.
+      - name: No C runtime dependency
+        run: |
+          $bad = @()
+          foreach ($f in 'ipabet.dll','ipabet-register.exe','profile-probe.exe') {
+            $p = "windows\build\Release\$f"
+            $deps = (dumpbin /dependents $p 2>$null) -join "`n"
+            if ($deps -match 'VCRUNTIME|MSVCP\d') {
+              $bad += $f
+              Write-Host "$f depends on the redistributable:"
+              $deps -split "`n" | Select-String 'VCRUNTIME|MSVCP\d'
+            }
+          }
+          if ($bad.Count) { throw "$($bad -join ', ') would not load on a clean Windows" }
+          Write-Host "no redistributable needed"
+
       - name: Nothing registered yet
         run: |
           .\windows\build\Release\profile-probe.exe assert-present

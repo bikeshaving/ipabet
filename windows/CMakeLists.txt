@@ -4,10 +4,16 @@ project(ipabet-tsf VERSION 0.1.2 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# The Rust staticlib links against the dynamic CRT, so the C++ side has to as
-# well — mixing the two produces duplicate-symbol errors at link time rather
-# than anything that explains itself.
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+# Static C runtime, on both sides. A text service is loaded into every
+# application on the system, and depending on a redistributable means it fails
+# to load on any machine that has not installed one — which is a clean Windows
+# install. CI never sees this: its Windows images ship Visual Studio, so the
+# runtime is always there.
+#
+# Both sides or neither: mixing produces duplicate-symbol errors at link time
+# rather than anything that explains itself. The cargo invocation below passes
+# the matching flag.
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
 set(ENGINE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../engine")
 set(ENGINE_LIB "${ENGINE_DIR}/target/release/ipabet_engine.lib")
@@ -16,9 +22,10 @@ set(ENGINE_LIB "${ENGINE_DIR}/target/release/ipabet_engine.lib")
 find_program(CARGO cargo HINTS "$ENV{USERPROFILE}/.cargo/bin" REQUIRED)
 add_custom_command(
     OUTPUT "${ENGINE_LIB}"
-    COMMAND "${CARGO}" build --release
+    COMMAND ${CMAKE_COMMAND} -E env RUSTFLAGS=-Ctarget-feature=+crt-static
+            "${CARGO}" build --release
     WORKING_DIRECTORY "${ENGINE_DIR}"
-    COMMENT "Building the IPAbet engine (cargo)"
+    COMMENT "Building the IPAbet engine (cargo, static CRT)"
     VERBATIM)
 add_custom_target(ipabet_engine_build DEPENDS "${ENGINE_LIB}")
 
