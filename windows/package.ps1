@@ -14,8 +14,11 @@ foreach ($f in @('ipabet.dll', 'ipabet.json', 'ipabet-register.exe')) {
     }
 }
 
+# WiX 5, not the latest. From v6 the toolset requires accepting the Open Source
+# Maintenance Fee EULA, which is a decision for the project's owner rather than
+# for a build script. v5 is MIT and builds this installer perfectly well.
 if (-not (Get-Command wix -ErrorAction SilentlyContinue)) {
-    dotnet tool install --global wix | Out-Host
+    dotnet tool install --global wix --version "5.*" | Out-Host
     $env:PATH = "$env:PATH;$env:USERPROFILE\.dotnet\tools"
 }
 
