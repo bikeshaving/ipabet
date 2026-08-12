@@ -14,19 +14,34 @@ n ⇧J a         → ɲa
 **[ipabet.org](https://ipabet.org)** — the full chart with audio, the keystroke
 reference, a browser scratchpad, and a typing course.
 
-## Install (macOS)
+## Install
 
-[Download **IPAbet.pkg**](https://ipabet.org/download) and run the installer,
-then log out and back in (first install only) and add **IPA** under System
-Settings → Keyboard → Input Sources.
+Three steps everywhere: install, log out and back in, pick IPAbet from the
+input menu.
 
-Building from source is one command — `cd macos && ./build.sh install` — see
-[`macos/README.md`](macos/README.md) for the build, the architecture, and the
-install prefixes.
+**macOS** — [download **IPAbet.pkg**](https://ipabet.org/download), run it, then
+add **IPA** under System Settings → Keyboard → Input Sources. Uninstalling is
+`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`.
 
-Uninstalling is one command too:
-`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`,
-then log out and back in.
+**Windows** — download **IPAbet.msi** and run it, then pick IPAbet from the
+language bar. The installer is not signed yet, so Windows warns on first run.
+
+**Linux** — `sudo apt install ./ipabet-ibus_*.deb`, then pick IPAbet from the
+input menu. IBus is what GNOME, Ubuntu and Fedora already run, so there is no
+framework to install first; `ipabet-fcitx5` is there for people already running
+fcitx5.
+
+Building from source is one command per platform — `cd macos && ./build.sh
+install`, `cd linux && ./build.sh install`, or `windows\package.ps1`. See
+[`macos/README.md`](macos/README.md), [`linux/README.md`](linux/README.md) and
+[`windows/README.md`](windows/README.md) for the builds and install prefixes.
+
+Every download carries a build provenance attestation naming the commit and
+workflow that produced it:
+
+```
+gh attestation verify IPAbet.msi --owner bikeshaving
+```
 
 ## How it works
 
