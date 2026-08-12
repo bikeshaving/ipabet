@@ -1,0 +1,119 @@
+name: release
+
+# Tag v0.1.1 and this builds what a person downloads: the Windows MSI and the
+# Linux packages, each with a provenance attestation saying which commit and
+# which workflow produced it. `gh attestation verify` checks that against
+# GitHub's transparency log, which is the strongest integrity claim available
+# to an unsigned build.
+#
+# It stops at a DRAFT. Publishing is a person's decision, and with immutable
+# releases enabled a published tag cannot be taken back or quietly amended.
+#
+# The macOS package is not built here: notarization needs Brian's keychain, so
+# it is attached to the draft by hand.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # A tag that disagrees with the version in the tree would ship a file
+      # whose name lies about what is inside it.
+      - name: The tag and the version agree
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path windows\CMakeLists.txt `
+              -Pattern 'project\(ipabet-tsf VERSION ([0-9.]+)').Matches[0].Groups[1].Value
+          $tag = "${{ github.ref_name }}" -replace '^v', ''
+          if ($version -ne $tag) { throw "tag $tag does not match version $version" }
+
+      - name: Build
+        run: |
+          cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build windows/build --config Release
+
+      - name: Package
+        run: .\windows\package.ps1
+        shell: pwsh
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: windows/build/IPAbet.msi
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: msi
+          path: windows/build/IPAbet.msi
+
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libfcitx5core-dev libfcitx5utils-dev libfcitx5config-dev cmake build-essential
+
+      - name: Build and package
+        run: |
+          cd linux
+          ./build.sh
+          ./package.sh
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: linux/build/*.deb
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: deb-${{ matrix.arch }}
+          path: linux/build/*.deb
+
+  draft:
+    needs: [windows, linux]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          path: dist
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          find dist -type f | sort
+          gh release create "$TAG" --repo "$REPO" --draft \
+            --title "IPAbet $TAG" \
+            --notes "Windows and Linux builds, each with a provenance attestation.
+
+          Verify before installing:
+
+              gh attestation verify IPAbet.msi --repo $REPO
+
+          The macOS package is attached separately — it is notarized on a real
+          machine rather than built here." \
+            $(find dist -type f)
