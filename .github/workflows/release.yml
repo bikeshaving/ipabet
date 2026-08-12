@@ -36,7 +36,9 @@ jobs:
         run: |
           $version = (Select-String -Path windows\CMakeLists.txt `
               -Pattern 'project\(ipabet-tsf VERSION ([0-9.]+)').Matches[0].Groups[1].Value
-          $tag = "${{ github.ref_name }}" -replace '^v', ''
+          # v0.1.2-beta.1 carries version 0.1.2: MSI product versions are
+          # numeric, so the prerelease lives in the tag and nowhere else.
+          $tag = "${{ github.ref_name }}" -replace '^v', '' -replace '-.*$', ''
           if ($version -ne $tag) { throw "tag $tag does not match version $version" }
 
       - name: Build
@@ -106,14 +108,18 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           find dist -type f | sort
-          gh release create "$TAG" --repo "$REPO" --draft \
+          # A tag with a suffix is a prerelease: v0.1.2-beta.1, not v0.1.2.
+          case "$TAG" in *-*) PRERELEASE=--prerelease ;; *) PRERELEASE= ;; esac
+          gh release create "$TAG" --repo "$REPO" --draft $PRERELEASE \
             --title "IPAbet $TAG" \
-            --notes "Windows and Linux builds, each with a provenance attestation.
+            --notes "Windows and Linux builds, each with a provenance attestation
+          naming the commit and workflow that produced them.
 
           Verify before installing:
 
-              gh attestation verify IPAbet.msi --repo $REPO
+              gh attestation verify IPAbet.msi --owner ${REPO%%/*}
 
-          The macOS package is attached separately — it is notarized on a real
-          machine rather than built here." \
+          Unsigned, so Windows will warn on first run. The macOS package is
+          attached separately: it is notarized on a real machine rather than
+          built here." \
             $(find dist -type f)
