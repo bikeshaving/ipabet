@@ -90,6 +90,22 @@ profile the service happens to own. And `regsvr32` reports failure in a message
 box it cannot show under automation, so the gate calls `DllRegisterServer`
 directly and prints the HRESULT — otherwise a failure arrives as silence.
 
+## The installer
+
+`package.ps1` builds `IPAbet.msi` from `installer/Product.wxs`. Per-machine,
+because a text service's profile is machine-wide; registration runs through
+`ipabet-register.exe` rather than MSI self-registration, so there is one idea of
+what registering means rather than two. `windows-installer.yml` installs the
+result, checks the profile appears and the files land, uninstalls, and checks
+both are gone — an installer that builds is not an installer that works.
+
+WiX is pinned to 5, which is MIT. From v6 the toolset requires accepting the
+Open Source Maintenance Fee EULA, which asks anyone earning over $10,000/yr to
+sponsor the project. That is a reasonable thing to ask and IPAbet would be
+exempt, but it is the owner's agreement to make and not a build script's — and
+nothing here needs v6. Do not bump the pin as housekeeping. If v5 ever stops
+working, NSIS is the fallback: its zlib licence asks nothing of anyone.
+
 ## Signing
 
 SmartScreen is a reputation heuristic rather than a hard gate, but an unsigned
