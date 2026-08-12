@@ -26,7 +26,9 @@ if (-not (Get-Command wix -ErrorAction SilentlyContinue)) {
 $version = (Select-String -Path (Join-Path $root 'windows\CMakeLists.txt') `
     -Pattern 'project\(ipabet-tsf VERSION ([0-9.]+)').Matches[0].Groups[1].Value
 
+# -arch x64, or WiX builds a 32-bit package and a 64-bit text service lands in
+# the 32-bit Program Files, where a 64-bit host will not look for it.
 wix build (Join-Path $root 'windows\installer\Product.wxs') `
-    -d "BinDir=$bin" -d "Version=$version" -o $out | Out-Host
+    -arch x64 -d "BinDir=$bin" -d "Version=$version" -o $out | Out-Host
 
 Write-Host "packaged: $out ($version)"

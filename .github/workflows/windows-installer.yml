@@ -44,7 +44,7 @@ jobs:
       # The installed copy, not the build tree's — what a user would have.
       - name: Registered, and the files are where they should be
         run: |
-          Get-ChildItem 'C:\Program Files\IPAbet' | Format-Table -AutoSize | Out-String
+          Get-ChildItem (Join-Path $env:ProgramFiles 'IPAbet') | Format-Table -AutoSize | Out-String
           .\windows\build\Release\profile-probe.exe assert-present
 
       - name: Uninstall
@@ -56,7 +56,7 @@ jobs:
         run: |
           .\windows\build\Release\profile-probe.exe assert-present
           if ($LASTEXITCODE -eq 0) { throw "IPAbet survived uninstallation" }
-          if (Test-Path 'C:\Program Files\IPAbet\ipabet.dll') { throw "files left behind" }
+          if (Test-Path (Join-Path $env:ProgramFiles 'IPAbet\ipabet.dll')) { throw "files left behind" }
           exit 0
 
       - uses: actions/upload-artifact@v5
