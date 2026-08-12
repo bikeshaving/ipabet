@@ -69,15 +69,13 @@ jobs:
             exit 1
           fi
 
-  # An experiment, not a gate — hence continue-on-error. Two things have been
-  # assumed to block a typing test on macOS and only one of them has ever been
-  # checked: that new input methods need a session restart before the system
-  # will offer them, and that driving keystrokes needs accessibility consent no
-  # runner can grant. The first is cheap to settle, and settling it decides
-  # whether a real typing gate is possible here at all.
+  # Registration IS checkable here, which was not believed until it was tried:
+  # a newly registered input method is visible to the system in the same
+  # session, with no logout. What is not checkable is selecting it — that fails
+  # on a runner, so typing cannot be driven, one step earlier than the
+  # accessibility wall that was assumed to be the blocker.
   registration:
     runs-on: macos-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
 
@@ -96,19 +94,18 @@ jobs:
 
       # The question: does the system list it in this session, or only after a
       # logout the runner cannot perform?
-      - name: Does the system see it without a logout?
+      # The same assertion the clean-VM gate makes, and the reason that gate
+      # existed: an input method that installs and does not register is a
+      # keyboard that never appears, with nothing anywhere saying why.
+      - name: The system sees it
         run: |
           swiftc macos/tools/tis-probe.swift -o /tmp/tis-probe -framework Carbon -O
-          echo "--- every input source id:"
-          /tmp/tis-probe list | grep -i ipabet || echo "(no ipabet source listed)"
-          echo "--- assertion:"
-          if /tmp/tis-probe assert-present; then
-            echo "REGISTERED IN-SESSION — a typing gate may be possible here"
-          else
-            echo "NOT VISIBLE — the logout requirement is real, and CI cannot type"
-          fi
+          /tmp/tis-probe list | grep -i ipabet
+          /tmp/tis-probe assert-present
 
-      - name: Can it be enabled and selected?
-        run: |
-          /tmp/tis-probe enable-select && echo "SELECTED" || echo "could not select"
-          /tmp/tis-probe list | grep -i ipabet || true
+      # Informational: selecting fails on a runner, which is where the typing
+      # gate stops. Recorded rather than asserted, so the day it starts working
+      # the log says so.
+      - name: Selecting it (not expected to work here)
+        continue-on-error: true
+        run: /tmp/tis-probe enable-select
