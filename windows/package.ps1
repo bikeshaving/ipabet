@@ -6,7 +6,13 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $bin = Join-Path $root 'windows\build\Release'
-$out = Join-Path $root 'windows\build\IPAbet.msi'
+
+# The installer carries a text service, and TSF loads that DLL into every
+# client process — so an x64 build is not merely suboptimal on an ARM machine,
+# it cannot load into a native ARM application at all. One installer per
+# architecture, named so nobody has to guess which they have.
+$arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
+$out = Join-Path $root "windows\build\IPAbet-$arch.msi"
 
 foreach ($f in @('ipabet.dll', 'ipabet.json', 'ipabet-register.exe')) {
     if (-not (Test-Path (Join-Path $bin $f))) {
@@ -26,9 +32,10 @@ if (-not (Get-Command wix -ErrorAction SilentlyContinue)) {
 $version = (Select-String -Path (Join-Path $root 'windows\CMakeLists.txt') `
     -Pattern 'project\(ipabet-tsf VERSION ([0-9.]+)').Matches[0].Groups[1].Value
 
-# -arch x64, or WiX builds a 32-bit package and a 64-bit text service lands in
-# the 32-bit Program Files, where a 64-bit host will not look for it.
+# Never the default: WiX builds a 32-bit package unless told otherwise, and a
+# 64-bit text service then lands in the 32-bit Program Files where a 64-bit host
+# will not look for it.
 wix build (Join-Path $root 'windows\installer\Product.wxs') `
-    -arch x64 -d "BinDir=$bin" -d "Version=$version" -o $out | Out-Host
+    -arch $arch -d "BinDir=$bin" -d "Version=$version" -o $out | Out-Host
 
-Write-Host "packaged: $out ($version)"
+Write-Host "packaged: $out ($version, $arch)"

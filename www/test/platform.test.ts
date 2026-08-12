@@ -18,6 +18,12 @@ describe("readTarget", () => {
 		expect(readTarget({platform: "Linux"})?.platform).toBe("linux");
 	});
 
+	test("ARM Windows wants a different installer — an x64 text service cannot load there", () => {
+		expect(readTarget({platform: "Windows", userAgent: "Mozilla/5.0 (Windows NT 10.0; ARM64)"}))
+			.toEqual({platform: "windows", arm: true});
+		expect(readTarget({platform: "Win32"})).toEqual({platform: "windows", arm: false});
+	});
+
 	test("ARM Linux wants a different package", () => {
 		expect(readTarget({platform: "Linux aarch64"})).toEqual({platform: "linux", arm: true});
 		expect(readTarget({platform: "Linux x86_64"})).toEqual({platform: "linux", arm: false});
@@ -41,13 +47,15 @@ describe("download targets", () => {
 	test("paths match the routes the server serves", () => {
 		expect(downloadPath({platform: "macos", arm: false})).toBe("/download/macos");
 		expect(downloadPath({platform: "windows", arm: false})).toBe("/download/windows");
+		expect(downloadPath({platform: "windows", arm: true})).toBe("/download/windows/arm64");
 		expect(downloadPath({platform: "linux", arm: false})).toBe("/download/linux");
 		expect(downloadPath({platform: "linux", arm: true})).toBe("/download/linux/arm64");
 	});
 
 	test("names match the files the release attaches", () => {
 		expect(downloadName({platform: "macos", arm: false})).toBe("IPAbet.pkg");
-		expect(downloadName({platform: "windows", arm: false})).toBe("IPAbet.msi");
+		expect(downloadName({platform: "windows", arm: false})).toBe("IPAbet-x64.msi");
+		expect(downloadName({platform: "windows", arm: true})).toBe("IPAbet-arm64.msi");
 		expect(downloadName({platform: "linux", arm: true})).toBe("ipabet-ibus-arm64.deb");
 	});
 });

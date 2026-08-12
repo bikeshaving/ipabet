@@ -27,7 +27,9 @@ export function readTarget(hints: {
 	// Android reports Linux and has nothing here to install, so it is checked
 	// first and dropped.
 	if (/android/i.test(both)) return null;
-	if (/win/i.test(both)) return {platform: "windows", arm: false};
+	if (/win/i.test(both)) {
+		return {platform: "windows", arm: /aarch64|arm64/i.test(both)};
+	}
 	if (/mac|iphone|ipad|ipod/i.test(both)) return {platform: "macos", arm: false};
 	if (/linux|x11|cros/i.test(both)) {
 		return {platform: "linux", arm: /aarch64|arm64|armv/i.test(both)};
@@ -51,7 +53,7 @@ export function detectTarget(): Target | null {
 export function downloadPath(target: Target): string {
 	switch (target.platform) {
 		case "windows":
-			return "/download/windows";
+			return target.arm ? "/download/windows/arm64" : "/download/windows";
 		case "linux":
 			return target.arm ? "/download/linux/arm64" : "/download/linux";
 		default:
@@ -63,7 +65,7 @@ export function downloadPath(target: Target): string {
 export function downloadName(target: Target): string {
 	switch (target.platform) {
 		case "windows":
-			return "IPAbet.msi";
+			return target.arm ? "IPAbet-arm64.msi" : "IPAbet-x64.msi";
 		case "linux":
 			return target.arm ? "ipabet-ibus-arm64.deb" : "ipabet-ibus-amd64.deb";
 		default:

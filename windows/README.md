@@ -90,6 +90,19 @@ profile the service happens to own. And `regsvr32` reports failure in a message
 box it cannot show under automation, so the gate calls `DllRegisterServer`
 directly and prints the HRESULT — otherwise a failure arrives as silence.
 
+## Two architectures, two installers
+
+`IPAbet-x64.msi` and `IPAbet-arm64.msi`. This is not a nicety. TSF loads the
+text service DLL **into every client process**, so an x64 build on an ARM
+machine cannot load into a native ARM application at all — and it does not get
+that far: the registration custom action fails and the install rolls back with
+a generic "a program run as part of the setup did not finish as expected".
+
+The engine was built for both architectures from the start; the installer was
+not, and CI could not notice because its Windows runner is x64 and the
+installer job only ever ran there. Both are gated now, on `windows-latest` and
+`windows-11-arm`.
+
 ## The installer
 
 `package.ps1` builds `IPAbet.msi` from `installer/Product.wxs`. Per-machine,

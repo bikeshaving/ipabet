@@ -76,7 +76,8 @@ router.route("/feed.xml").get(() => new Response(atomFeed(), {
 const RELEASE = "https://github.com/bikeshaving/ipabet/releases/latest/download";
 const DOWNLOADS: Record<string, string> = {
 	"/download/macos": `${RELEASE}/IPAbet.pkg`,
-	"/download/windows": `${RELEASE}/IPAbet.msi`,
+	"/download/windows": `${RELEASE}/IPAbet-x64.msi`,
+	"/download/windows/arm64": `${RELEASE}/IPAbet-arm64.msi`,
 	// The release attaches these under version-less names on purpose: a URL
 	// with a version in it stops working the day the version changes, and
 	// dpkg reads the version out of the package rather than off the name.
@@ -96,7 +97,13 @@ for (const [path, url] of Object.entries(DOWNLOADS)) {
 // CDN-cached, and varying a cached page on User-Agent hands someone else's
 // platform to whoever asks second.
 function downloadFor(userAgent: string): string {
-	if (/Windows NT/i.test(userAgent)) return DOWNLOADS["/download/windows"];
+	if (/Windows NT/i.test(userAgent)) {
+		// Windows on ARM says so in the UA; an x64 build there installs and then
+		// cannot load into a native application.
+		return /ARM64|aarch64/i.test(userAgent)
+			? DOWNLOADS["/download/windows/arm64"]
+			: DOWNLOADS["/download/windows"];
+	}
 	// Android reports Linux too, and there is nothing here to install on it.
 	if (/Linux/i.test(userAgent) && !/Android/i.test(userAgent)) {
 		return /aarch64|arm64/i.test(userAgent)

@@ -24,7 +24,15 @@ permissions:
 
 jobs:
   windows:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v5
 
@@ -52,12 +60,12 @@ jobs:
 
       - uses: actions/attest-build-provenance@v2
         with:
-          subject-path: windows/build/IPAbet.msi
+          subject-path: windows/build/IPAbet-${{ matrix.arch }}.msi
 
       - uses: actions/upload-artifact@v5
         with:
-          name: msi
-          path: windows/build/IPAbet.msi
+          name: msi-${{ matrix.arch }}
+          path: windows/build/IPAbet-${{ matrix.arch }}.msi
 
   linux:
     strategy:

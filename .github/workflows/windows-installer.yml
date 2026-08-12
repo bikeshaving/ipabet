@@ -17,7 +17,19 @@ on:
 
 jobs:
   installer:
-    runs-on: windows-latest
+    # Both architectures. An x64 installer on an ARM machine fails outright at
+    # the registration step, and if it did not it would be worse: TSF loads the
+    # text service into every client process, and a native ARM application
+    # cannot load an x64 DLL.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v5
 
@@ -38,7 +50,7 @@ jobs:
 
       - name: Install
         run: |
-          $p = Start-Process msiexec -ArgumentList '/i','windows\build\IPAbet.msi','/qn','/l*v','install.log' -Wait -PassThru
+          $p = Start-Process msiexec -ArgumentList '/i',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','install.log' -Wait -PassThru
           if ($p.ExitCode -ne 0) { Get-Content install.log -Tail 40; throw "msiexec exited $($p.ExitCode)" }
 
       # The installed copy, not the build tree's — what a user would have.
@@ -49,7 +61,7 @@ jobs:
 
       - name: Uninstall
         run: |
-          $p = Start-Process msiexec -ArgumentList '/x','windows\build\IPAbet.msi','/qn','/l*v','uninstall.log' -Wait -PassThru
+          $p = Start-Process msiexec -ArgumentList '/x',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','uninstall.log' -Wait -PassThru
           if ($p.ExitCode -ne 0) { Get-Content uninstall.log -Tail 40; throw "msiexec exited $($p.ExitCode)" }
 
       - name: Gone, and nothing left behind
@@ -62,8 +74,8 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: ipabet-msi
+          name: ipabet-msi-${{ matrix.arch }}
           path: |
-            windows/build/IPAbet.msi
+            windows/build/IPAbet-${{ matrix.arch }}.msi
             install.log
             uninstall.log
