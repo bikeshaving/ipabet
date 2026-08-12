@@ -85,6 +85,11 @@ private:
     /// because TSF asks before any edit cookie exists.
     bool Claims(WPARAM wp, LPARAM lp, CKeystroke *out);
 
+    /// ⇧ is tracked from every key event, claimed or not: a release between two
+    /// keystrokes is what breaks the chain, and TSF only calls OnKeyDown for
+    /// keys the service claims — which ⇧ never is.
+    void TrackShift(WPARAM wp, bool down);
+
     /// The run being typed lives in a composition — a range this service owns
     /// and can rewrite whole. Replacing a glyph means putting different text in
     /// the composition, never moving an anchor backwards over the document,

@@ -162,8 +162,10 @@ void IpabetEngine::keyEvent(const fcitx::InputMethodEntry &, fcitx::KeyEvent &ev
     auto *state = ic->propertyFor(&factory_);
     const fcitx::KeyStates states = raw.states();
 
-    // Super chords are the desktop's, never ours.
-    if (states.test(fcitx::KeyState::Super)) {
+    // Super chords are the desktop's, never ours. So is AltGr: on a layout that
+    // has one, that is how the user reaches @ and €, and claiming the key would
+    // hand them the US letter underneath it instead.
+    if (states.test(fcitx::KeyState::Super) || states.test(fcitx::KeyState::Mod5)) {
         flush(ic, state);
         return;
     }

@@ -251,10 +251,12 @@ bool TextService::Claims(WPARAM wp, LPARAM lp, CKeystroke *out) {
     if (wp == VK_ESCAPE) {
         label = "Escape";
     } else if (wp == VK_BACK) {
-        // Backspace only when a mark is armed and there is something to peel:
-        // otherwise the host's own deletion is the right behaviour, and eating
-        // the key to reproduce it would be a worse version of it.
-        if (pending_.count == 0) return false;
+        // ⌃⌫ unconverts the glyph before the cursor back to the keystrokes that
+        // made it, so it needs something written to work on. A plain ⌫ peels an
+        // armed mark; with nothing armed the host's own deletion is the right
+        // behaviour, and eating the key to reproduce it would be a worse
+        // version of it.
+        if (ctrl ? written_.empty() : pending_.count == 0) return false;
     } else {
         if (ctrl) return false;
         label = usLayoutLabel(scancode);
@@ -272,15 +274,28 @@ bool TextService::Claims(WPARAM wp, LPARAM lp, CKeystroke *out) {
     return true;
 }
 
+void TextService::TrackShift(WPARAM wp, bool down) {
+    if (wp != VK_SHIFT) return;
+    if (down) {
+        shiftDown_ = true;
+    } else if (shiftDown_) {
+        shiftBroke_ = true;
+        shiftDown_ = false;
+    }
+}
+
 STDMETHODIMP TextService::OnTestKeyDown(ITfContext *, WPARAM wp, LPARAM lp, BOOL *eaten) {
+    // Every key comes through here, which is the only reason ⇧ can be tracked
+    // at all: OnKeyDown is reached only for keys the service claims.
+    TrackShift(wp, true);
     *eaten = Claims(wp, lp, nullptr) ? TRUE : FALSE;
     return S_OK;
 }
 
 STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) {
     Dbg("OnKeyDown vk=0x%02x scan=0x%02x", (unsigned)wp, (unsigned)((lp >> 16) & 0xFF));
+    TrackShift(wp, true);
     if (wp == VK_SHIFT) {
-        shiftDown_ = true;
         *eaten = FALSE;
         return S_OK;
     }
@@ -316,15 +331,13 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
 }
 
 STDMETHODIMP TextService::OnTestKeyUp(ITfContext *, WPARAM wp, LPARAM, BOOL *eaten) {
+    TrackShift(wp, false);
     *eaten = FALSE;
-    if (wp == VK_SHIFT && shiftDown_) {
-        shiftBroke_ = true;
-        shiftDown_ = false;
-    }
     return S_OK;
 }
 
-STDMETHODIMP TextService::OnKeyUp(ITfContext *, WPARAM, LPARAM, BOOL *eaten) {
+STDMETHODIMP TextService::OnKeyUp(ITfContext *, WPARAM wp, LPARAM, BOOL *eaten) {
+    TrackShift(wp, false);
     *eaten = FALSE;
     return S_OK;
 }
@@ -423,9 +436,14 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
     Dbg("lookback %zu units", before.size());
     const std::string beforeUtf8 = ToUtf8(before);
 
-    CStep step = backspace
-                     ? ipabet_engine_handle_backspace(engine_, beforeUtf8.c_str(), pending_)
-                     : ipabet_engine_handle_key(engine_, beforeUtf8.c_str(), k, pending_, chainBroken_);
+    CStep step;
+    if (backspace) {
+        step = k.control
+                   ? ipabet_engine_handle_unconvert(engine_, beforeUtf8.c_str(), pending_)
+                   : ipabet_engine_handle_backspace(engine_, beforeUtf8.c_str(), pending_);
+    } else {
+        step = ipabet_engine_handle_key(engine_, beforeUtf8.c_str(), k, pending_, chainBroken_);
+    }
 
     pending_ = step.pending;
     if (step.has_chain_broken) chainBroken_ = step.chain_broken;
