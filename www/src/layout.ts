@@ -3,6 +3,7 @@ import {type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keycapsClient from "./clients/keycaps-client.ts" with {assetBase: "/assets/"};
+import downloadClient from "./clients/download-client.ts" with {assetBase: "/assets/"};
 
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
 // page renders <${Layout}> around its own <main> and trailing islands.
@@ -28,6 +29,7 @@ export function Layout({title, desc, styles = [], children}: LayoutProps) {
 			<body>
 				${children}
 				<script type="module" src=${keycapsClient}></script>
+				<script type="module" src=${downloadClient}></script>
 			</body>
 		</html>`;
 }

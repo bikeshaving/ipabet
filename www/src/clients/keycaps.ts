@@ -2,6 +2,8 @@
 // One vocabulary, two spellings: Mac symbols are canonical, Windows/Linux names
 // are the alternate.
 
+import {detectTarget} from "./platform.ts";
+
 export type KeyMode = "mac" | "pc";
 
 /** Fired on window whenever the mode changes; islands re-render on it. */
@@ -11,8 +13,10 @@ const STORAGE = "ipabet:keymode";
 
 export function detectKeyMode(): KeyMode {
 	// Server renders the canonical mac spellings; a pc client patches at hydrate.
+	// Two spellings out of three platforms: anything that is not a Mac — and
+	// anything unrecognised, which is mostly PCs — reads the pc names.
 	if (typeof window === "undefined") return "mac";
-	return /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "mac" : "pc";
+	return detectTarget()?.platform === "macos" ? "mac" : "pc";
 }
 
 export function keyMode(): KeyMode {

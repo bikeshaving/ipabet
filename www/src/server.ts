@@ -73,11 +73,8 @@ router.route("/feed.xml").get(() => new Response(atomFeed(), {
 // GitHub's /releases/latest/download/<name> always resolves to the newest
 // published release, so these never need touching either — but published prose
 // points HERE, so the host can change without editing a dated blog post.
-//
-// /download stays macOS: it is what every existing link and post means.
 const RELEASE = "https://github.com/bikeshaving/ipabet/releases/latest/download";
 const DOWNLOADS: Record<string, string> = {
-	"/download": `${RELEASE}/IPAbet.pkg`,
 	"/download/macos": `${RELEASE}/IPAbet.pkg`,
 	"/download/windows": `${RELEASE}/IPAbet.msi`,
 	// The release attaches these under version-less names on purpose: a URL
@@ -90,6 +87,35 @@ const DOWNLOADS: Record<string, string> = {
 for (const [path, url] of Object.entries(DOWNLOADS)) {
 	router.route(path).get(() => Response.redirect(url, 302));
 }
+
+// /download sends you the build for the machine you asked from. Every existing
+// link and published post points here, and this is the one place that can tell
+// what you are running without the page having to guess.
+//
+// The sniff lives on the redirect and not in the HTML on purpose: pages are
+// CDN-cached, and varying a cached page on User-Agent hands someone else's
+// platform to whoever asks second.
+function downloadFor(userAgent: string): string {
+	if (/Windows NT/i.test(userAgent)) return DOWNLOADS["/download/windows"];
+	// Android reports Linux too, and there is nothing here to install on it.
+	if (/Linux/i.test(userAgent) && !/Android/i.test(userAgent)) {
+		return /aarch64|arm64/i.test(userAgent)
+			? DOWNLOADS["/download/linux/arm64"]
+			: DOWNLOADS["/download/linux"];
+	}
+	// macOS, iOS, and anything unrecognised: the Mac build is the one most
+	// people asking are here for, and it is what /download has always meant.
+	return DOWNLOADS["/download/macos"];
+}
+
+router.route("/download").get((request: Request) => {
+	const target = downloadFor(request.headers.get("user-agent") ?? "");
+	// Never cached: the answer depends on who is asking.
+	return new Response(null, {
+		status: 302,
+		headers: {Location: target, "Cache-Control": "no-store"},
+	});
+});
 
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
