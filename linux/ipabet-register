@@ -125,6 +125,31 @@ fi
 
 if [ "$DISABLE" = yes ]; then
     echo "IPAbet disabled."
-else
-    echo "IPAbet enabled. Switch to it with the input-method toggle (Ctrl+Space by default)."
+    exit 0
 fi
+
+echo "IPAbet enabled. Switch to it with the input-method toggle (Ctrl+Space by default)."
+
+# On KDE Wayland fcitx5 has to be launched by the compositor or its Wayland
+# frontend never engages: typing works, but the panel button does nothing, the
+# toggle key is never seen, and fcitx5 itself pops up a dialog about it. That is
+# fcitx5's own requirement rather than IPAbet's, and it is worth saying here
+# because this is the moment someone is setting it up.
+case "${XDG_CURRENT_DESKTOP:-}" in
+    *KDE*)
+        if [ "${XDG_SESSION_TYPE:-}" = wayland ]; then
+            cat <<'EOF'
+
+On KDE Wayland, one more step, or the toggle key and the panel button will not
+work:
+
+    System Settings → Virtual Keyboard → Fcitx 5
+
+then log out and back in. Do not use "Restart" in the fcitx5 tray menu
+afterwards — the compositor hands it a socket that a restart cannot reuse.
+
+Or use the IBus package instead, which needs none of this.
+EOF
+        fi
+        ;;
+esac
