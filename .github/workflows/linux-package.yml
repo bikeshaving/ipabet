@@ -28,9 +28,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Cheap, and the only check that sees all four build systems at once.
+      # Cheap, and the only checks that see more than one port at once.
       - name: The four version strings agree
         run: ./tools/check-version.sh
+
+      - name: The Windows and Linux key tables describe the same keyboard
+        run: |
+          c++ -std=c++17 tools/uslayout-agree.cpp -o /tmp/uslayout-agree
+          /tmp/uslayout-agree
 
       - name: Dependencies
         run: |
