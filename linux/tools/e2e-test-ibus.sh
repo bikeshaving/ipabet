@@ -55,11 +55,20 @@ echo "active engine: $(ibus engine)"
 
 rm -f /tmp/entry-wid.txt
 python3 test-entry.py >/tmp/entry.log 2>&1 &
-sleep 3
+ENTRY_PID=$!
 
-WID=$(cat /tmp/entry-wid.txt 2>/dev/null || xdotool search --name ipabet-test-entry | head -1)
+# Polled rather than slept at: how long a GTK client takes to map its window
+# depends on what its input-method module does at startup, and a fixed wait
+# turns a slow start into a failure that reads like a broken input method.
+WID=""
+for _ in $(seq 1 40); do
+    WID=$(cat /tmp/entry-wid.txt 2>/dev/null || xdotool search --name ipabet-test-entry 2>/dev/null | head -1)
+    [ -n "$WID" ] && break
+    kill -0 "$ENTRY_PID" 2>/dev/null || break
+    sleep 0.5
+done
 if [ -z "$WID" ]; then
-    echo "FAIL: no text entry to type into"
+    echo "FAIL: no text entry to type into after 20s"
     cat /tmp/entry.log
     exit 1
 fi
