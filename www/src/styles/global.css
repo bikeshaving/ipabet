@@ -135,6 +135,13 @@ ol.install li { margin-bottom: 0.75rem; }
 .callouts a:hover { border-color: var(--accent); }
 .callouts a.main { background: var(--accent); border-color: var(--accent); color: #fff; }
 .callouts a.main:hover { filter: brightness(1.08); }
+.doors { display: flex; flex-direction: column; align-items: center; }
+/* Empty until the client knows the machine, and taking no space until then. */
+.download-note { margin: 0.6rem 0 0; color: var(--dim); font-size: 0.9rem; text-align: center; }
+.download-note:empty { display: none; }
+.download-note code { font-size: 0.95em; }
+.download-note a { color: var(--dim); text-decoration: none; border-bottom: 1px solid var(--line); }
+.download-note a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 h3.chart-title { margin: 1.5rem 0 0; font-size: 1rem; }
 footer {
 	margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
