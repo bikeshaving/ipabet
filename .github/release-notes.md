@@ -74,13 +74,6 @@ Unshifted keys type ordinary letters, digits and punctuation, so you can leave
 IPAbet on all day. IPA comes from Shift and from the Alt key. The full chart and
 a tutorial are at [ipabet.org](https://ipabet.org).
 
-IPAbet is a US keyboard, and it reads the position of a key rather than the
-character your own layout puts there. On a German or French keyboard that means
-the letters follow US positions while IPAbet is selected, and the characters
-your layout puts on AltGr belong to IPAbet's diacritics instead. Switch back to
-your own keyboard to write your own language — that is what the keyboard menu
-is for, and IPAbet is meant to sit beside your layout rather than replace it.
-
 ## Checking the files are genuine
 
 Each file was built by a public GitHub Actions run, and GitHub recorded which
