@@ -48,8 +48,21 @@ jobs:
       - name: What the text service saw
         if: always()
         run: |
-          if (Test-Path ipabet-debug.log) { Get-Content ipabet-debug.log }
-          else { Write-Host "the text service was never loaded" }
+          if (-not (Test-Path ipabet-debug.log)) {
+            Write-Host "the text service was never loaded"; exit 0
+          }
+          Get-Content ipabet-debug.log
+
+          # The question this run exists to answer: TSF delivers Alt-modified
+          # keys as WM_SYSKEYDOWN, and it is not obvious that a text service is
+          # offered them at all. 0x45 is E, the key the diacritic cases press.
+          Write-Host ""
+          if (Select-String -Path ipabet-debug.log -Pattern 'OnKeyDown vk=0x45' -Quiet) {
+            Write-Host "ALT KEYS ARE DELIVERED - the diacritic layer is reachable"
+          } else {
+            Write-Host "ALT KEYS NEVER ARRIVED - TSF does not offer them, and no"
+            Write-Host "choice of modifier fixes that"
+          }
           exit 0
 
       - name: Unregister

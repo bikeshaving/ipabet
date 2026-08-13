@@ -26,9 +26,19 @@ const GUID kProfile = {
 
 HWND g_edit = nullptr;
 
+struct Key {
+    WORD vk;
+    bool shift;
+    /// Held with the LEFT Alt. The diacritic layer lives on this modifier, and
+    /// nothing in this test touched it until it turned out not to work.
+    bool alt;
+    /// Held with the RIGHT Alt, which is AltGr on any layout that has one.
+    bool altGr;
+};
+
 struct Case {
     const wchar_t *name;
-    std::vector<std::pair<WORD, bool>> keys; // virtual key, shift held
+    std::vector<Key> keys;
     const wchar_t *expected;
 };
 
@@ -55,14 +65,18 @@ INPUT KeyInput(WORD vk, bool up) {
     return in;
 }
 
-void SendKey(WORD vk, bool shift) {
+void SendKey(const Key &k) {
     std::vector<INPUT> seq;
-    if (shift) seq.push_back(KeyInput(VK_SHIFT, false));
-    seq.push_back(KeyInput(vk, false));
-    seq.push_back(KeyInput(vk, true));
-    if (shift) seq.push_back(KeyInput(VK_SHIFT, true));
+    if (k.shift) seq.push_back(KeyInput(VK_SHIFT, false));
+    if (k.alt) seq.push_back(KeyInput(VK_LMENU, false));
+    if (k.altGr) seq.push_back(KeyInput(VK_RMENU, false));
+    seq.push_back(KeyInput(k.vk, false));
+    seq.push_back(KeyInput(k.vk, true));
+    if (k.altGr) seq.push_back(KeyInput(VK_RMENU, true));
+    if (k.alt) seq.push_back(KeyInput(VK_LMENU, true));
+    if (k.shift) seq.push_back(KeyInput(VK_SHIFT, true));
     SendInput((UINT)seq.size(), seq.data(), sizeof(INPUT));
-    Pump(120);
+    Pump(150);
 }
 
 bool TakeForeground(HWND hwnd) {
@@ -145,17 +159,22 @@ int main() {
     // digraph that rewrites what came before, and a digit base that only works
     // if the passed-through character stayed in the document.
     const std::vector<Case> cases = {
-        {L"t + shift-H -> theta", {{'T', false}, {'H', true}}, L"θ"},
-        {L"s + shift-H -> esh", {{'S', false}, {'H', true}}, L"ʃ"},
-        {L"5 + shift-H -> schwa", {{'5', false}, {'H', true}}, L"ə"},
-        {L"plain letters", {{'M', false}, {'A', false}}, L"ma"},
+        {L"t + shift-H -> theta", {{'T'}, {'H', true}}, L"θ"},
+        {L"s + shift-H -> esh", {{'S'}, {'H', true}}, L"ʃ"},
+        {L"5 + shift-H -> schwa", {{'5'}, {'H', true}}, L"ə"},
+        {L"plain letters", {{'M'}, {'A'}}, L"ma"},
+        // The diacritic layer. Marks are prefixes: the modifier arms one and the
+        // next base letter absorbs it.
+        {L"left alt+e then a -> acute", {{'E', false, true}, {'A'}}, L"á"},
+        {L"right alt+e then a -> acute", {{'E', false, false, true}, {'A'}}, L"á"},
+        {L"left alt+n then a -> tilde", {{'N', false, true}, {'A'}}, L"ã"},
     };
 
     int failures = 0;
     for (const Case &c : cases) {
         SetWindowTextW(g_edit, L"");
         Pump(150);
-        for (const auto &k : c.keys) SendKey(k.first, k.second);
+        for (const Key &k : c.keys) SendKey(k);
         Pump(400);
 
         wchar_t buf[256]{};
