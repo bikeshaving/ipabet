@@ -22,6 +22,20 @@ jobs:
         run: cmake -S windows -B windows/build -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build windows/build --config Release
+      # Windows draws a text service in the tray by its icon and by nothing
+      # else — a profile with no icon shows as the bare language code, which is
+      # not a failure any other gate can see.
+      - name: The DLL carries its icon
+        shell: pwsh
+        run: |
+          Add-Type -Name Ico -Namespace W -MemberDefinition @'
+[DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+public static extern uint ExtractIconExW(string file, int index, IntPtr[] large, IntPtr[] small, uint count);
+'@
+          $n = [W.Ico]::ExtractIconExW("$pwd\windows\build\Release\ipabet.dll", -1, $null, $null, 0)
+          Write-Host "$n icon group(s) in ipabet.dll"
+          if ($n -lt 1) { throw "no icon resource: the tray would show ENG and nothing else" }
+
       - uses: actions/upload-artifact@v5
         with:
           name: ipabet-tsf-x86_64

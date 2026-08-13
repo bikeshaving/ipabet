@@ -32,6 +32,7 @@ add_custom_target(ipabet_engine_build DEPENDS "${ENGINE_LIB}")
 add_library(ipabet SHARED
     tsf/ipabet.cpp
     tsf/dllmain.cpp
+    tsf/ipabet.rc
     tsf/ipabet.def)
 add_dependencies(ipabet ipabet_engine_build)
 target_include_directories(ipabet PRIVATE "${ENGINE_DIR}/include")
@@ -76,5 +77,5 @@ endif()
 
 # The registrar the installer calls, and the one a person runs by hand after an
 # unzipped build. The DLL registers itself; this only asks it to.
-add_executable(ipabet-register tools/ipabet-register.cpp)
+add_executable(ipabet-register tools/ipabet-register.cpp tsf/ipabet.rc)
 target_link_libraries(ipabet-register PRIVATE ole32.lib)

@@ -1,0 +1,3 @@
+// What Windows draws in the tray for the text service, and the installer's
+// entry in Installed Apps. RegisterProfile is handed this DLL and icon index 0.
+1 ICON "ipabet.ico"
