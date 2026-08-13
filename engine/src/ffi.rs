@@ -1,14 +1,22 @@
-// The C ABI the fcitx5 addon (L1, C++) links against, generated into a header
-// by cbindgen (see build.rs). Every type here is a plain repr(C) value —
-// fixed-size buffers, not owned/allocated strings — so the caller never has
-// to free anything the Rust side handed back. Pending/Edit mirror the same
-// representation the (now-deleted) C port used: pending items are codepoints
-// with two reserved negative sentinels for the Raise/Lower operators, since
-// real codepoints are never negative.
+// The C ABI, generated into a header by cbindgen (see build.rs). Three shells
+// link it: the IBus engine (C), the fcitx5 addon (C++), and the Windows text
+// service (C++). None of them owns any phonetics; they translate their
+// framework's key events into these structs and turn what comes back into
+// client text.
+//
+// Every type here is a plain repr(C) value — fixed-size buffers, not owned or
+// allocated strings — so a caller never frees anything Rust handed it. Pending
+// items are codepoints, with two reserved negative sentinels for the Raise and
+// Lower operators, since real codepoints are never negative.
+//
+// A panic across this boundary is undefined behaviour, so every entry point
+// treats its arguments as hostile: null pointers answer with a no-op rather
+// than dereferencing, and a count that exceeds its array is clamped rather than
+// indexed with.
 
 use crate::{apply_edit as rust_apply_edit, last_cluster_byte_len, native_char as rust_native_char};
 use crate::{Edit, Engine, Keystroke, Pending, PendingItem};
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 use std::os::raw::c_char;
 
 // pub: cbindgen needs these to emit #defines for the array sizes below.
@@ -21,6 +29,7 @@ pub const PENDING_RAISE: i32 = -1;
 pub const PENDING_LOWER: i32 = -2;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct CPending {
     pub items: [i32; PENDING_MAX],
     pub count: i32,
@@ -66,7 +75,10 @@ pub struct CKeystroke {
 }
 
 fn pending_from_c(p: &CPending) -> Pending {
-    (0..p.count.max(0) as usize)
+    // Clamped, not trusted: count arrives from C, and indexing past the array
+    // would be a panic across an FFI boundary, which is undefined behaviour.
+    let count = (p.count.max(0) as usize).min(PENDING_MAX);
+    (0..count)
         .map(|i| match p.items[i] {
             PENDING_RAISE => PendingItem::Raise,
             PENDING_LOWER => PendingItem::Lower,
@@ -105,6 +117,30 @@ fn str_into_buf(s: &str, buf: &mut [c_char; EDIT_TEXT_MAX]) {
     buf[n] = 0;
 }
 
+/// A C string, or the empty string when the pointer is null. Every entry point
+/// takes pointers from a caller in another language, and a null one is a bug in
+/// that caller rather than a reason to dereference it.
+///
+/// # Safety
+/// `p` must be null or a valid NUL-terminated C string.
+unsafe fn str_from_c(p: *const c_char) -> String {
+    if p.is_null() {
+        return String::new();
+    }
+    unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()
+}
+
+/// What every entry point answers with when it is handed a null engine: the
+/// host inserts nothing and the run is unchanged.
+fn noop_step() -> CStep {
+    CStep {
+        edit: edit_to_c(&Edit::Noop),
+        pending: CPending { items: [0; PENDING_MAX], count: 0 },
+        chain_broken: false,
+        has_chain_broken: false,
+    }
+}
+
 fn edit_to_c(e: &Edit) -> CEdit {
     let mut text = [0 as c_char; EDIT_TEXT_MAX];
     let (edit_type, replace_length) = match e {
@@ -126,11 +162,7 @@ fn edit_to_c(e: &Edit) -> CEdit {
 /// `key.key` must be a valid NUL-terminated UTF-8 C string for the duration
 /// of this call.
 unsafe fn keystroke_from_c(k: &CKeystroke) -> Keystroke {
-    let key = if k.key.is_null() {
-        String::new()
-    } else {
-        unsafe { CStr::from_ptr(k.key) }.to_string_lossy().into_owned()
-    };
+    let key = unsafe { str_from_c(k.key) };
     Keystroke { key, shift: k.shift, option: k.option, shift_broke: k.shift_broke, caps_lock: k.caps_lock, control: k.control }
 }
 
@@ -141,6 +173,9 @@ unsafe fn keystroke_from_c(k: &CKeystroke) -> Keystroke {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_engine_new(spec_json: *const c_char) -> *mut Engine {
     unsafe {
+        if spec_json.is_null() {
+            return std::ptr::null_mut();
+        }
         let json = match CStr::from_ptr(spec_json).to_str() {
             Ok(s) => s,
             Err(_) => return std::ptr::null_mut(),
@@ -168,6 +203,9 @@ pub unsafe extern "C" fn ipabet_engine_free(engine: *mut Engine) {
 /// `engine` must be a live pointer from `ipabet_engine_new`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_engine_set_capital_digraphs(engine: *mut Engine, on: bool) {
+    if engine.is_null() {
+        return;
+    }
     unsafe { (*engine).set_capital_digraphs(on) };
 }
 
@@ -175,8 +213,11 @@ pub unsafe extern "C" fn ipabet_engine_set_capital_digraphs(engine: *mut Engine,
 /// `engine` must be live; `locale` must be a valid NUL-terminated UTF-8 C string.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_engine_set_quote_locale(engine: *mut Engine, locale: *const c_char) {
+    if engine.is_null() {
+        return;
+    }
     unsafe {
-        let locale = CStr::from_ptr(locale).to_string_lossy();
+        let locale = str_from_c(locale);
         (*engine).set_quote_locale(&locale);
     }
 }
@@ -192,8 +233,11 @@ pub unsafe extern "C" fn ipabet_engine_handle_key(
     pending: CPending,
     chain_broken: bool,
 ) -> CStep {
+    if engine.is_null() {
+        return noop_step();
+    }
     unsafe {
-        let text = CStr::from_ptr(text_before).to_string_lossy();
+        let text = str_from_c(text_before);
         let k = keystroke_from_c(&keystroke);
         let p = pending_from_c(&pending);
         let step = (*engine).handle_key(&text, &k, &p, chain_broken);
@@ -214,8 +258,11 @@ pub unsafe extern "C" fn ipabet_engine_handle_backspace(
     text_before: *const c_char,
     pending: CPending,
 ) -> CStep {
+    if engine.is_null() {
+        return noop_step();
+    }
     unsafe {
-        let text = CStr::from_ptr(text_before).to_string_lossy();
+        let text = str_from_c(text_before);
         let p = pending_from_c(&pending);
         let step = (*engine).handle_backspace(&text, &p);
         CStep {
@@ -235,8 +282,11 @@ pub unsafe extern "C" fn ipabet_engine_handle_unconvert(
     text_before: *const c_char,
     pending: CPending,
 ) -> CStep {
+    if engine.is_null() {
+        return noop_step();
+    }
     unsafe {
-        let text = CStr::from_ptr(text_before).to_string_lossy();
+        let text = str_from_c(text_before);
         let p = pending_from_c(&pending);
         let step = (*engine).handle_unconvert(&text, &p);
         CStep {
@@ -253,6 +303,10 @@ pub unsafe extern "C" fn ipabet_engine_handle_unconvert(
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_preview_string(engine: *const Engine, pending: CPending, out: *mut c_char, out_cap: usize) {
     unsafe {
+        if engine.is_null() {
+            write_c_string("", out, out_cap);
+            return;
+        }
         let p = pending_from_c(&pending);
         let s = (*engine).preview_string(&p);
         write_c_string(&s, out, out_cap);
@@ -264,6 +318,10 @@ pub unsafe extern "C" fn ipabet_preview_string(engine: *const Engine, pending: C
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_commit_string(engine: *const Engine, pending: CPending, out: *mut c_char, out_cap: usize) {
     unsafe {
+        if engine.is_null() {
+            write_c_string("", out, out_cap);
+            return;
+        }
         let p = pending_from_c(&pending);
         let s = (*engine).commit_string(&p);
         write_c_string(&s, out, out_cap);
@@ -294,10 +352,19 @@ pub unsafe extern "C" fn ipabet_apply_edit(
     out_cap: usize,
 ) {
     unsafe {
-        let text = CStr::from_ptr(text_before).to_string_lossy();
-        let native = CStr::from_ptr(native).to_string_lossy();
+        if edit.is_null() {
+            write_c_string("", out, out_cap);
+            return;
+        }
+        let text = str_from_c(text_before);
+        let native = str_from_c(native);
         let e = &*edit;
-        let text_str = CStr::from_ptr(e.text.as_ptr()).to_string_lossy();
+        // Bounded by the array rather than by a NUL: a caller-built CEdit whose
+        // text field is full has no terminator, and CStr would read past it.
+        let raw: &[u8] =
+            std::slice::from_raw_parts(e.text.as_ptr() as *const u8, EDIT_TEXT_MAX);
+        let end = raw.iter().position(|&b| b == 0).unwrap_or(EDIT_TEXT_MAX);
+        let text_str = String::from_utf8_lossy(&raw[..end]);
         let edit = match e.edit_type {
             CEditType::Insert => Edit::Insert { text: text_str.into_owned() },
             CEditType::Replace => Edit::Replace { length: e.replace_length as usize, text: text_str.into_owned() },
@@ -314,22 +381,30 @@ pub unsafe extern "C" fn ipabet_apply_edit(
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn ipabet_last_cluster_byte_len(text_before: *const c_char) -> usize {
     unsafe {
-        let text = CStr::from_ptr(text_before).to_string_lossy();
+        let text = str_from_c(text_before);
         last_cluster_byte_len(&text)
     }
 }
 
+/// # Safety
+/// `out` must point to at least `out_cap` writable bytes, or be null.
 unsafe fn write_c_string(s: &str, out: *mut c_char, out_cap: usize) {
     unsafe {
-        if out_cap == 0 {
+        if out.is_null() || out_cap == 0 {
             return;
         }
-        let c_string = CString::new(s.replace('\0', "")).unwrap_or_default();
-        let bytes = c_string.as_bytes_with_nul();
-        let n = bytes.len().min(out_cap);
-        std::ptr::copy_nonoverlapping(bytes.as_ptr() as *const c_char, out, n);
-        if n == out_cap {
-            *out.add(out_cap - 1) = 0; // truncated: force NUL-termination
+        let owned = s.replace('\0', "");
+        let bytes = owned.as_bytes();
+        // Truncation backs up over continuation bytes, the same as
+        // str_into_buf: a caller handed half a codepoint has invalid UTF-8 and
+        // no way to know it.
+        let mut n = bytes.len().min(out_cap - 1);
+        if n < bytes.len() {
+            while n > 0 && (bytes[n] & 0xC0) == 0x80 {
+                n -= 1;
+            }
         }
+        std::ptr::copy_nonoverlapping(bytes.as_ptr() as *const c_char, out, n);
+        *out.add(n) = 0;
     }
 }
