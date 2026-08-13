@@ -98,7 +98,7 @@ jobs:
                      Where-Object { $_.DisplayName -eq 'IPAbet' })
           $found | Format-Table DisplayName, DisplayVersion, Publisher | Out-String
           if ($found.Count -ne 1) { throw "$($found.Count) copies of IPAbet in Installed Apps" }
-          if ($found[0].Publisher -ne 'Bikeshaving') { throw "publisher is $($found[0].Publisher)" }
+          if ($found[0].Publisher -ne 'Brian Kim') { throw "publisher is $($found[0].Publisher)" }
 
       - name: Uninstall
         run: |

@@ -10,7 +10,7 @@
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="IPAbet"
-           Manufacturer="Bikeshaving"
+           Manufacturer="Brian Kim"
            Version="$(var.Version)"
            UpgradeCode="8f3d5a21-6c74-4e90-9b12-3a7e5d0c4f88"
            Scope="perMachine"
