@@ -72,10 +72,39 @@ One notation, one implementation per platform.
 - `macos/` — the input method (Swift / InputMethodKit). The reference implementation.
 - `js/` — `@b9g/ipabet`, the engine in TypeScript. Its parity suite is the
   notation's executable spec.
+- `linux/` — two shells over one engine: IBus (what ships) and fcitx5.
+- `windows/` — the TSF text service.
+- `engine/` — the Rust crate `linux/` and `windows/` both link, through a C ABI.
 - `www/` — [ipabet.org](https://ipabet.org).
 
-Planned, each driven by the same spec and pinned to the `js/` parity suite:
-`linux/` (IBus/fcitx), `windows/` (TSF), `ios/` and `android/`.
+Planned, driven by the same spec and pinned to the `js/` parity suite: `ios/`
+and `android/`.
+
+## Releasing
+
+`main` is always releasable and a tag only comes off a green `main`. Every gate
+runs on every push, so there is no release branch and no freeze.
+
+The version lives in four files — `windows/CMakeLists.txt`,
+`linux/ibus/CMakeLists.txt`, `linux/fcitx5/CMakeLists.txt`, `macos/Info.plist`
+— and `tools/check-version.sh` fails if they disagree.
+
+1. Bump all four in one commit. Push. Wait for green.
+2. Tag `v0.1.3`. A suffix (`v0.1.3-beta.1`) makes it a prerelease, which GitHub
+   keeps out of `releases/latest`.
+3. CI builds both Windows installers and all four debs, attaches a provenance
+   attestation to each, and stops at a draft. The Mac package is built by hand
+   because notarization needs the keychain: `cd macos && ./package.sh`, then
+   `gh release upload <tag> macos/build/IPAbet.pkg`.
+4. Publish: `gh release edit <tag> --draft=false`.
+5. **Then** deploy the site: `cd www && npm run deploy`. This order is not a
+   preference — the download buttons resolve through `releases/latest/download`,
+   so deploying first points them at a file that does not exist.
+
+Three things no gate covers, so a human checks them before a non-prerelease:
+Wayland (synthetic input is exactly what it closes), macOS typing (a runner
+cannot grant accessibility consent), and typing on Windows on ARM (those
+runners will not yield the foreground).
 
 ## Status
 

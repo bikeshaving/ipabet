@@ -8,6 +8,7 @@ name: release
 #
 # It stops at a DRAFT. Publishing is a person's decision, and with immutable
 # releases enabled a published tag cannot be taken back or quietly amended.
+# The order of the whole thing is in README.md under Releasing.
 #
 # The macOS package is not built here: notarization needs Brian's keychain, so
 # it is attached to the draft by hand.
