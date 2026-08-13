@@ -46,20 +46,25 @@ jobs:
       # dependency on a redistributable means it fails to load anywhere that
       # has not installed one. CI images ship Visual Studio and would never
       # notice, so the check is on the binary rather than on the install.
+      # Imported DLL names sit in the file as plain ASCII, so this needs no
+      # Visual Studio tooling — dumpbin is not on the PATH here, and reaching
+      # for it is how this check silently passed by erroring.
       - name: No C runtime dependency
         run: |
           $bad = @()
           foreach ($f in 'ipabet.dll','ipabet-register.exe','profile-probe.exe') {
-            $p = "windows\build\Release\$f"
-            $deps = (dumpbin /dependents $p 2>$null) -join "`n"
-            if ($deps -match 'VCRUNTIME|MSVCP\d') {
+            $path = "windows\build\Release\$f"
+            $text = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($path))
+            $hits = [regex]::Matches($text, 'VCRUNTIME\d+\.dll|MSVCP\d+\.dll') |
+              ForEach-Object { $_.Value } | Sort-Object -Unique
+            if ($hits) {
               $bad += $f
-              Write-Host "$f depends on the redistributable:"
-              $deps -split "`n" | Select-String 'VCRUNTIME|MSVCP\d'
+              Write-Host "$f imports $($hits -join ', ')"
+            } else {
+              Write-Host "$f needs no redistributable"
             }
           }
           if ($bad.Count) { throw "$($bad -join ', ') would not load on a clean Windows" }
-          Write-Host "no redistributable needed"
 
       - name: Nothing registered yet
         run: |
