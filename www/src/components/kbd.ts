@@ -92,7 +92,7 @@ export function capTitle(ch: string): string {
 	if (sp !== undefined) return sp.title + modTitle;
 	const m = marks.get(ch);
 	if (m !== undefined) return `⌥${ch} ${(m.name ?? "").toLowerCase()}` + modTitle;
-	return (ch === "-" ? "⌥- reserved — the host's dashes pass through" : `⌥${ch} passes to the host`) + modTitle;
+	return (ch === "-" ? "⌥- reserved — the host’s dashes pass through" : `⌥${ch} passes to the host`) + modTitle;
 }
 
 /** A typing cap's body: bare char in the corner, ⌥ and ⌥⇧ glyphs as layers.

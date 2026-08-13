@@ -88,7 +88,7 @@ const MODS = {
 		members: ["ə"],
 		pairs: [["e","ɜ"],["o","ɞ"],["a","ɐ"]],
 		desc: "5 is the center. As a base it carries the schwa itself — 5⇧H → ə, the " +
-			"digit's default like every number root — and as a modifier ⇧5 pulls a " +
+			"digit’s default like every number root — and as a modifier ⇧5 pulls a " +
 			"cardinal into the ə-neighborhood: e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ. Where ⇧Y slides " +
 			"a vowel central at its own height, ⇧5 converges on the center.",
 	},

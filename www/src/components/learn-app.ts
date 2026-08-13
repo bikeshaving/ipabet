@@ -211,7 +211,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 				<div id="finish">
 					<div class="big ipa">/kəmˈpliːt/</div>
 					<p>${lessons.length} lessons — every sound on the chart, under your fingers.
-					The course ends; the keyboard doesn't.</p>
+					The course ends; the keyboard doesn’t.</p>
 					<div class="acts">
 						<button id="hintbtn" onclick=${() => { finished = false; goWord(true); }}>Practice this lesson again</button>
 						<a href="/type">Open the scratchpad</a>
@@ -237,7 +237,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 				}
 			</div>
 			<div id="note">${les.intro}</div>
-			${les.prose ? jsx`<details id="prose"><summary>more, if you're curious</summary><p>${les.prose}</p></details>` : null}
+			${les.prose ? jsx`<details id="prose"><summary>more, if you’re curious</summary><p>${les.prose}</p></details>` : null}
 			<div id="prog">${wi === 0 && les.sound ? jsx`<span class="unlock">new sound</span> on its own first — keys shown` : `${wi + 1} / ${les.words.length}`}</div>
 			<div id="hero">
 				<div id="target" class=${earHide ? "ipa masked" : "ipa"}
@@ -305,7 +305,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 		const seen = lessons.slice(0, Math.max(reached, li) + 1).filter((l) => l.sound);
 		return jsx`
 			${seen.length ? jsx`<div class="owned">
-				<span class="olabel">sounds you've seen · ${seen.length}</span>
+				<span class="olabel">sounds you’ve seen · ${seen.length}</span>
 				${seen.map((l) => jsx`<button class="ochip ipa" title=${l.title} onclick=${() => play(l.audio)}>${l.sound}</button>`)}
 			</div>` : null}
 			<ol class="lessonlist">

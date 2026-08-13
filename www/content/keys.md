@@ -13,7 +13,7 @@ Bare Latin keys that are their own IPA value.
 
 ## Number-row bases
 
-IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧H` → ə, `2` `⇧Q` → ʡ); the roots take `⇧H` — the schwa included: 5 is the center key, and its default is the center vowel. The digit works the other way too: `⇧5` is the **centralize modifier**, pulling a cardinal vowel into the ə-neighborhood (`e` `⇧5` → ɜ, `o` `⇧5` → ɞ, `a` `⇧5` → ɐ). Because the bases sit on the unshifted digit, `⇧2`–`⇧7` stay their native symbols (@ # $ % ^ &) — `⇧5` included, everywhere except right after a bare e, o, or a. Held, a shift-chain uppercases the whole digraph — `⇧5⇧H` → Ə, `⇧7⇧H` → Ħ — the digit's capital plane. The tie bar lives on <kbd>⌥J</kbd> (join); see the Option layer below.
+IPA glyphs with no Latin letter. The digit is a base, typed **unshifted**, with a modifier after it (`5` `⇧H` → ə, `2` `⇧Q` → ʡ); the roots take `⇧H` — the schwa included: 5 is the center key, and its default is the center vowel. The digit works the other way too: `⇧5` is the **centralize modifier**, pulling a cardinal vowel into the ə-neighborhood (`e` `⇧5` → ɜ, `o` `⇧5` → ɞ, `a` `⇧5` → ɐ). Because the bases sit on the unshifted digit, `⇧2`–`⇧7` stay their native symbols (@ # $ % ^ &) — `⇧5` included, everywhere except right after a bare e, o, or a. Held, a shift-chain uppercases the whole digraph — `⇧5⇧H` → Ə, `⇧7⇧H` → Ħ — the digit’s capital plane. The tie bar lives on <kbd>⌥J</kbd> (join); see the Option layer below.
 
 <SegTable kind="shiftNum"/>
 
@@ -40,7 +40,7 @@ Latin letters beyond IPA, for writing real orthographies — each typed by doubl
 | Caps Lock | A **lock**, not a modifier: letters type their literal capitals and never transform (locked `T` then `H` is "TH", not θ). `⇧` still means the modifier while locked. |
 | Holding `⇧` | Types capitals. SHIP stays SHIP: **capital digraphs** (`⇧A⇧E` → Æ, `⇧S⇧H` → Ʃ) are an input-menu option, off by default, because they are keystroke-identical to yelling. |
 | `⌥⇧1` | `¡` (a deliberate spend). Every other shifted digit types its symbol directly; there is no raw-US digit escape. |
-| `⌃Space` | Not IPAbet's key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
+| `⌃Space` | Not IPAbet’s key but the off switch: macOS always keeps a plain US layout installed, and the system input-source switcher flips to it — the menu-bar icon shows which keyboard is live. IPAbet has no raw mode of its own; the OS already ships one. |
 
 ## Diacritics & suprasegmentals (Option layer)
 
@@ -62,7 +62,7 @@ Marks the IPA chart has no cell for, kept because the layout should be able to w
 
 ## Superscripts (⌥z + base)
 
-⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `⁻`. A glyph that is already raised still transforms, so a digraph works: ⌥z `s` ⇧H → ᶴ. Generated from Unicode's `<super>` decompositions, plus the raised letters Unicode gives no decomposition. Where no raised form exists the arm lifts and the glyph lands plain.
+⌥z arms the raise and the next glyph arrives raised (`t` ⌥z `h` → tʰ) — a prefix, like the ⌥ diacritics, previewing as `⁻`. A glyph that is already raised still transforms, so a digraph works: ⌥z `s` ⇧H → ᶴ. Generated from Unicode’s `<super>` decompositions, plus the raised letters Unicode gives no decomposition. Where no raised form exists the arm lifts and the glyph lands plain.
 
 <SupTable/>
 
@@ -102,4 +102,4 @@ On macOS pick it in the input menu (Quote Style); on the web editor, the picker.
 
 `GET /ipabet.schema.json` is the JSON Schema (Draft 2020-12) for `ipabet.json`: every field, its meaning, and the invariants that hold between them (a mark has a `shiftSense` exactly when it has a `double`; `ipa: false` and `beyond` imply each other).
 
-`GET /chart.json` returns the IPA chart as structured data — every symbol with its codepoint, keystrokes, and place/manner or vowel coordinates. `GET /ipabet.json` returns the canonical mapping verbatim (the source of every row above). The `letters` array is the base/digraph list (`key` is the keystroke sequence, `glyph` the output); `marks` is the Option layer; `modifiers` documents each ⇧ modifier's meaning.
+`GET /chart.json` returns the IPA chart as structured data — every symbol with its codepoint, keystrokes, and place/manner or vowel coordinates. `GET /ipabet.json` returns the canonical mapping verbatim (the source of every row above). The `letters` array is the base/digraph list (`key` is the keystroke sequence, `glyph` the output); `marks` is the Option layer; `modifiers` documents each ⇧ modifier’s meaning.
