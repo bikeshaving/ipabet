@@ -8,15 +8,16 @@ release, so expect rough edges and please report them.
 | Windows, Intel or AMD processor | `IPAbet-x64.msi` |
 | Windows, ARM processor | `IPAbet-arm64.msi` |
 | Mac | `IPAbet.pkg` |
-| Ubuntu, Debian, Fedora, or any desktop that uses IBus | `ipabet-ibus-amd64.deb` |
-| The same, on an ARM machine such as a Raspberry Pi | `ipabet-ibus-arm64.deb` |
-| Linux, and you already run fcitx5 | `ipabet-fcitx5-amd64.deb` or `-arm64` |
+| Linux, Intel or AMD processor | `ipabet-ibus-amd64.deb` |
+| Linux, ARM processor | `ipabet-ibus-arm64.deb` |
+| Linux with fcitx5, Intel or AMD processor | `ipabet-fcitx5-amd64.deb` |
+| Linux with fcitx5, ARM processor | `ipabet-fcitx5-arm64.deb` |
 
 On Windows, if you do not know which processor you have, open Settings, go to
 System, then About, and read the line called System type.
 
-On Linux, pick the IBus package unless you know you run fcitx5. IBus is what
-Ubuntu, Fedora and anything with the GNOME desktop already use.
+On Linux, pick an `ipabet-ibus` file unless you know you run fcitx5. IBus is
+what Ubuntu, Debian, Fedora and every GNOME desktop already use.
 
 ## Windows
 
