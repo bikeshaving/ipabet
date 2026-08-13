@@ -77,7 +77,10 @@ ENTRY_PID=$!
 # turns a slow start into a failure that reads like a broken input method.
 WID=""
 for _ in $(seq 1 40); do
-    WID=$(cat /tmp/entry-wid.txt 2>/dev/null || xdotool search --name ipabet-test-entry 2>/dev/null | head -1)
+    # `|| true`, because set -e kills the script the moment neither lookup
+    # finds anything -- which is every iteration before the window maps, and
+    # takes the diagnostic below down with it.
+    WID=$(cat /tmp/entry-wid.txt 2>/dev/null || xdotool search --name ipabet-test-entry 2>/dev/null | head -1) || true
     [ -n "$WID" ] && break
     kill -0 "$ENTRY_PID" 2>/dev/null || break
     sleep 0.5
