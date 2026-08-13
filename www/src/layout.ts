@@ -1,5 +1,5 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import {type Element} from "@b9g/crank";
+import {Raw, type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keycapsClient from "./clients/keycaps-client.ts" with {assetBase: "/assets/"};
@@ -64,7 +64,10 @@ export function Layout({title, desc, styles = [], path = "/", children}: LayoutP
 				<meta name="twitter:title" content=${title} />
 				<meta name="twitter:description" content=${desc} />
 
-				<script type="application/ld+json">${schema}</script>
+				<!-- Raw, because a script's contents are text to the HTML parser and
+				     never entity-decoded: escaped quotes would reach a crawler as
+				     literal &quot; and the JSON would not parse. -->
+				<script type="application/ld+json"><${Raw} value=${schema} /></script>
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
 			</head>
 			<body>
