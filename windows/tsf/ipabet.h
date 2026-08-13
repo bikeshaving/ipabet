@@ -5,6 +5,7 @@
 #include <msctf.h>
 
 #include <string>
+#include <vector>
 
 extern "C" {
 #include "ipabet_engine.h"
@@ -84,6 +85,21 @@ private:
     /// Whether IPAbet claims this key. Decided without consulting the engine,
     /// because TSF asks before any edit cookie exists.
     bool Claims(WPARAM wp, LPARAM lp, CKeystroke *out);
+
+    /// TSF hands a text service ordinary typing, but treats Control and Alt
+    /// chords as commands and never offers them to the key sink at all — Shift
+    /// arrives, Ctrl and Alt do not. A service that wants one has to reserve it
+    /// by name, and gets it back through OnPreservedKey rather than OnKeyDown.
+    /// This is why the diacritic layer needs registering key by key.
+    void PreserveDiacriticKeys();
+    void ReleaseDiacriticKeys();
+
+    struct Preserved {
+        GUID guid;
+        std::string label;
+        bool shift;
+    };
+    std::vector<Preserved> preserved_;
 
     /// ⇧ is tracked from every key event, claimed or not: a release between two
     /// keystrokes is what breaks the chain, and TSF only calls OnKeyDown for

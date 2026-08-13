@@ -200,10 +200,63 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr *mgr, TfClientId id, DWORD) {
         keys->AdviseKeyEventSink(client_, static_cast<ITfKeyEventSink *>(this), TRUE);
         keys->Release();
     }
+    PreserveDiacriticKeys();
     return S_OK;
 }
 
+void TextService::PreserveDiacriticKeys() {
+    ITfKeystrokeMgr *keys = nullptr;
+    if (FAILED(thread_->QueryInterface(IID_ITfKeystrokeMgr, (void **)&keys))) return;
+
+    // One reservation per key per shift state. The guid only has to be unique
+    // and stable within this service, so it is the class id with the last two
+    // bytes carrying the scancode and the shift state.
+    for (unsigned scancode = 0; scancode < 0x60; scancode++) {
+        const char *label = ipabet_us_layout_label((int)scancode);
+        if (!label[0]) continue;
+        const UINT vk = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK);
+        if (!vk) continue;
+
+        for (int shift = 0; shift < 2; shift++) {
+            Preserved p{};
+            p.guid = CLSID_IpabetTextService;
+            p.guid.Data4[6] = (BYTE)scancode;
+            p.guid.Data4[7] = (BYTE)shift;
+            p.label = label;
+            p.shift = shift != 0;
+
+            TF_PRESERVEDKEY key{};
+            key.uVKey = vk;
+            key.uModifiers = TF_MOD_CONTROL | TF_MOD_ALT | (shift ? TF_MOD_SHIFT : 0);
+
+            const WCHAR desc[] = L"IPAbet diacritic";
+            if (SUCCEEDED(keys->PreserveKey(client_, p.guid, &key, desc,
+                                            (ULONG)wcslen(desc)))) {
+                preserved_.push_back(p);
+            }
+        }
+    }
+    keys->Release();
+    Dbg("reserved %zu diacritic keys", preserved_.size());
+}
+
+void TextService::ReleaseDiacriticKeys() {
+    if (!thread_ || preserved_.empty()) return;
+    ITfKeystrokeMgr *keys = nullptr;
+    if (SUCCEEDED(thread_->QueryInterface(IID_ITfKeystrokeMgr, (void **)&keys))) {
+        for (const Preserved &p : preserved_) {
+            TF_PRESERVEDKEY key{};
+            key.uVKey = MapVirtualKeyW(p.guid.Data4[6], MAPVK_VSC_TO_VK);
+            key.uModifiers = TF_MOD_CONTROL | TF_MOD_ALT | (p.shift ? TF_MOD_SHIFT : 0);
+            keys->UnpreserveKey(p.guid, &key);
+        }
+        keys->Release();
+    }
+    preserved_.clear();
+}
+
 STDMETHODIMP TextService::Deactivate() {
+    ReleaseDiacriticKeys();
     if (thread_) {
         ITfKeystrokeMgr *keys = nullptr;
         if (SUCCEEDED(thread_->QueryInterface(IID_ITfKeystrokeMgr, (void **)&keys))) {
@@ -365,8 +418,32 @@ STDMETHODIMP TextService::OnKeyUp(ITfContext *, WPARAM wp, LPARAM, BOOL *eaten) 
     return S_OK;
 }
 
-STDMETHODIMP TextService::OnPreservedKey(ITfContext *, REFGUID, BOOL *eaten) {
+STDMETHODIMP TextService::OnPreservedKey(ITfContext *cx, REFGUID rguid, BOOL *eaten) {
     *eaten = FALSE;
+    for (const Preserved &p : preserved_) {
+        if (!IsEqualGUID(p.guid, rguid)) continue;
+
+        Dbg("OnPreservedKey '%s' shift=%d — the diacritic layer", p.label.c_str(), p.shift);
+        CKeystroke k{};
+        k.key = p.label.c_str();
+        k.shift = p.shift;
+        // Reserved keys are only ever the diacritic layer, so this is Option to
+        // the engine and never a Control chord — the engine checks control
+        // first and would pass on it.
+        k.option = true;
+        k.control = false;
+        k.caps_lock = (GetKeyState(VK_CAPITAL) & 1) != 0;
+        k.shift_broke = shiftBroke_;
+        shiftBroke_ = false;
+
+        KeyEditSession *session = new KeyEditSession(this, cx, k, false);
+        HRESULT hr = S_OK;
+        cx->RequestEditSession(client_, session, TF_ES_READWRITE | TF_ES_SYNC, &hr);
+        session->Release();
+
+        *eaten = TRUE;
+        return S_OK;
+    }
     return S_OK;
 }
 
