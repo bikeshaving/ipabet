@@ -1,0 +1,101 @@
+name: linux-package
+
+# Builds the .deb and then installs it the way a person does — `apt install
+# ./file.deb` on a machine that has never seen this project — and on an older
+# release than the one it was built on, which is where a package that lies about
+# its dependencies gets caught.
+#
+# linux-e2e proves the input method types. This proves the file people download
+# can be installed at all.
+
+on:
+  push:
+    paths:
+      - 'linux/**'
+      - 'engine/**'
+      - 'spec/**'
+      - '.github/workflows/linux-package.yml'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Built on the oldest release worth supporting, so the package runs on every
+    # newer one. glibc is forward compatible and not backward compatible: a deb
+    # built on 24.04 refuses to install on 22.04, and nothing about the build
+    # says so.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libfcitx5core-dev libfcitx5utils-dev libfcitx5config-dev \
+            libibus-1.0-dev cmake build-essential pkg-config dpkg-dev
+
+      - name: Build and package
+        run: cd linux && ./build.sh && ./package.sh
+
+      # The dependency line is the whole point of the packaging step, and an
+      # empty one looks identical to a correct one until someone installs it.
+      - name: The packages say what they link
+        run: |
+          fail=0
+          for deb in linux/build/*.deb; do
+            echo "=== $deb"
+            depends=$(dpkg-deb -f "$deb" Depends)
+            echo "Depends: $depends"
+            case "$depends" in
+              *libc6*) ;;
+              *) echo "  no libc6 dependency — dpkg-shlibdeps did not run"; fail=1 ;;
+            esac
+          done
+          exit $fail
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: debs
+          path: linux/build/*.deb
+
+  install:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        # The oldest release worth supporting and the current one. A package
+        # built on the newer of the two is the case that goes wrong.
+        image: ['ubuntu:22.04', 'ubuntu:24.04', 'debian:12']
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: debs
+          path: debs
+
+      - name: Install it the way a person would
+        run: |
+          set -e
+          apt-get update
+          arch=$(dpkg --print-architecture)
+          deb=$(ls debs/ipabet-ibus_*_${arch}.deb)
+          cp "$deb" /tmp/ipabet.deb
+          apt-get install -y /tmp/ipabet.deb
+
+      - name: And it can actually load
+        run: |
+          set -e
+          so=$(find /usr/lib -name 'ipabet.so' -o -name 'libipabet.so' | head -1)
+          echo "library: $so"
+          # Unresolved symbols are what a missing dependency looks like at
+          # runtime, which is the failure a package with no dependency line
+          # produces instead of refusing to install.
+          ldd -r "$so" 2>&1 | tee /tmp/ldd.log
+          if grep -qi "not found\|undefined symbol" /tmp/ldd.log; then
+            echo "the library cannot load here"
+            exit 1
+          fi
+          test -f /usr/share/ibus/component/ipabet.xml
+          echo "component manifest present"

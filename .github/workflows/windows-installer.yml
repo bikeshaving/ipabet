@@ -100,6 +100,43 @@ jobs:
           if ($found.Count -ne 1) { throw "$($found.Count) copies of IPAbet in Installed Apps" }
           if ($found[0].Publisher -ne 'Brian Kim') { throw "publisher is $($found[0].Publisher)" }
 
+      # What every existing user does on release day. A fresh install proves
+      # nothing about it: the previous MSI is a different product code, and
+      # whether the new one replaces or joins it depends on the upgrade table.
+      - name: Upgrading over the last published release
+        shell: pwsh
+        run: |
+          $msi = "IPAbet-${{ matrix.arch }}.msi"
+          $url = "https://github.com/${{ github.repository }}/releases/latest/download/$msi"
+          # The newest release including prereleases, since that is what testers
+          # have installed. `latest` skips prereleases and would 404 today.
+          $tag = (gh api repos/${{ github.repository }}/releases --jq '.[0].tag_name')
+          $url = "https://github.com/${{ github.repository }}/releases/download/$tag/$msi"
+          Write-Host "upgrading from $tag"
+          try {
+            Invoke-WebRequest $url -OutFile old.msi
+          } catch {
+            Write-Host "no published $msi to upgrade from; nothing to check yet"
+            exit 0
+          }
+
+          $p = Start-Process msiexec -ArgumentList '/x',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn' -Wait -PassThru
+          $p = Start-Process msiexec -ArgumentList '/i','old.msi','/qn','/l*v','old-install.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content old-install.log -Tail 30; throw "the published MSI would not install: $($p.ExitCode)" }
+
+          $p = Start-Process msiexec -ArgumentList '/i',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','upgrade.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content upgrade.log -Tail 30; throw "the upgrade failed: $($p.ExitCode)" }
+
+          $roots = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+                   'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+          $found = @(Get-ChildItem $roots -ErrorAction SilentlyContinue |
+                     ForEach-Object { Get-ItemProperty $_.PSPath } |
+                     Where-Object { $_.DisplayName -eq 'IPAbet' })
+          if ($found.Count -ne 1) { throw "$($found.Count) copies of IPAbet after upgrading" }
+          .\windows\build\Release\profile-probe.exe assert-present
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Uninstall
         run: |
           $p = Start-Process msiexec -ArgumentList '/x',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','uninstall.log' -Wait -PassThru
@@ -137,4 +174,6 @@ jobs:
             windows/build/IPAbet-${{ matrix.arch }}.msi
             install.log
             reinstall.log
+            old-install.log
+            upgrade.log
             uninstall.log

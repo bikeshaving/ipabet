@@ -15,6 +15,32 @@ VERSION="$(sed -n 's/^project(ibus-ipabet VERSION \([0-9.]*\).*/\1/p' ibus/CMake
 rm -rf build
 mkdir -p build
 
+# What the built objects actually link, as dpkg dependency syntax.
+#
+# Without this the package declares only its framework and installs happily on a
+# system whose glibc or libibus is older than the one it was built against,
+# where it then fails to load. dpkg-shlibdeps reads the ELF headers and says so,
+# which turns a runtime mystery into apt refusing the package.
+#
+# dpkg-shlibdeps insists on a debian/control beside it, so it runs in a throwaway
+# tree that has one.
+shlib_depends() {
+    local root="$1"
+    local objects=()
+    while IFS= read -r f; do objects+=("$f"); done < <(
+        find "$PWD/$root" -type f \( -name '*.so' -o -perm -u+x \) ! -name '*.json' ! -name '*.conf'
+    )
+    [ ${#objects[@]} -gt 0 ] || return 0
+
+    local tmp
+    tmp="$(mktemp -d)"
+    mkdir -p "$tmp/debian"
+    printf 'Source: ipabet\n\nPackage: ipabet\nArchitecture: any\n' > "$tmp/debian/control"
+    (cd "$tmp" && dpkg-shlibdeps -O --ignore-missing-info "${objects[@]}" 2>/dev/null) |
+        sed 's/^shlibs:Depends=//'
+    rm -rf "$tmp"
+}
+
 # One binary package per framework. They install side by side: each ships its
 # spec where its own framework looks for it, so neither owns the other's files.
 package() {
@@ -30,6 +56,10 @@ package() {
         mkdir -p "$root/usr/bin"
         install -m 755 ipabet-register "$root/usr/bin/ipabet-register"
     fi
+
+    local linked
+    linked="$(shlib_depends "$root")"
+    if [ -n "$linked" ]; then depends="$depends, $linked"; fi
 
     cat > "$root/DEBIAN/control" <<EOF
 Package: $name
