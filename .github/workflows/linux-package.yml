@@ -28,6 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Cheap, and the only check that sees all four build systems at once.
+      - name: The four version strings agree
+        run: ./tools/check-version.sh
+
       - name: Dependencies
         run: |
           sudo apt-get update
