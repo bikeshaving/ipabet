@@ -1,143 +1,90 @@
-# IPAbet — macOS
+# IPAbet for macOS
 
-The macOS input method for IPAbet: a faceless InputMethodKit app, no Xcode
-required. The reference implementation of the notation; other platforms port
-against the [`js/`](../js) parity suite.
+A faceless InputMethodKit app, no Xcode required. The reference implementation
+of the notation; other platforms port against the [`js/`](../js) parity suite.
 
 ## Build
 
 ```sh
-./build.sh          # builds build/IPAbet.app
-./build.sh install  # builds + installs to ~/Library/Input Methods/
+./build.sh          # build/IPAbet.app
+./build.sh install  # + install to ~/Library/Input Methods/
 ```
 
-First install needs a logout (TIS registration). After that: `build.sh install`
-kills nothing by itself — follow with `pkill IPAbet`, then **quit and relaunch
-the app you're testing in** (or toggle the input source), since apps hold a
-session to the old process.
+First install needs a logout for TIS registration. After that: `pkill IPAbet`,
+then quit and relaunch the app under test — apps hold a session to the old
+process.
 
 **The dev loop and the pkg install to different prefixes.** `build.sh install`
-writes `~/Library/Input Methods/`; `package.sh` writes `/Library/Input Methods/`.
-macOS scans both, so once the pkg has been installed the system copy is the one
-that runs and every `build.sh install` lands somewhere the OS has stopped
-reading — silently, with a success message. Check `pgrep -lf IPAbet` for which
-one is live.
+writes `~/Library/Input Methods/`, `package.sh` writes `/Library/Input Methods/`.
+macOS scans both, so once the pkg is installed the system copy runs and every
+`build.sh install` lands where the OS has stopped reading — silently, reporting
+success. `pgrep -lf IPAbet` says which is live.
 
 ## Architecture
 
 The engine is **stateless**, mimicking Apple's Korean (2-Set) input method,
-whose client protocol we captured with `tools/probe.swift`: each keystroke
-inserts text at the cursor or rewrites the previous grapheme cluster in place
-via `insertText(_:replacementRange:)` — the call pattern every Mac app must
-support or Hangul typing would break. No composition session, no underline,
-nothing for a host to desync, and no per-host mode to get wrong. The only
-marked text is the dead-key *preview* of a pending prefix diacritic
-(`⌥e` → ´), committed by the next base.
+whose client protocol `tools/probe.swift` captured. Each keystroke inserts text
+at the cursor or rewrites the previous grapheme cluster through
+`insertText(_:replacementRange:)` — the call pattern every Mac app must support
+or Hangul typing breaks. No composition session, no underline, nothing to
+desync, no per-host mode. The only marked text is the dead-key preview of a
+pending prefix diacritic (`⌥e` → ´), committed by the next base.
 
-All previous-glyph rules (digraph transforms, doubled-mark upgrades, retroflex
-`⇧R`, spacing marks, backspace) operate on the **decomposed
-view** of the cluster — base glyph + combining marks split via NFD — and
-recompose to NFC on write, so NFC fusion (é is one codepoint, n̥ is two) never
-changes rule behavior. On any rule miss the keystroke falls through until
-something emits; no key ever dead-ends.
+Every previous-glyph rule operates on the **decomposed view** of the cluster —
+base plus combining marks, split via NFD — and recomposes to NFC on write, so
+NFC fusion (é is one codepoint, n̥ is two) never changes rule behavior. On a
+rule miss the keystroke falls through until something emits.
 
 Backspace on a marked cluster deletes the base and re-arms its marks as
-pending — marks are prefix keystrokes, so the base was typed last, and the fix
-for a wrong base is one key (ã ⌫ o → õ). A trailing tie is postfix and peels
-instead; a bare glyph is declined so the host deletes it natively — Korean's
-jamo-then-native pattern.
-
-## Files
-
-- `Sources/main.swift` — IMKServer boot + explicit `.accessory` activation
-  policy + the raw-lock-clears-on-arrival observer.
-- `Sources/InputController.swift` — the stateless engine described above,
-  plus the raw-US lock and secure-field handling. Loads `ipabet.json`.
-- `ipabet.json` — the mapping, copied from `spec/ipabet.json` at build time.
-- `Info.plist` — bundle ID must contain `.inputmethod.`; registers one
-  visible input mode (see the icon/name notes inline). See the macOS 15
-  rules below before touching the launch keys.
-- `tools/genmenupdf.swift` — regenerates `ipabet.pdf`, the input-source icon.
-- `tools/reregister.swift` — `TISRegisterInputSource` helper (run after
-  `build.sh install` so the source appears without a logout on reinstalls).
-- `tools/probe.swift` — instrumented test host: an AppKit `NSTextView` that
-  logs every NSTextInputClient call (strings, codepoints, ranges) plus a
-  `WKWebView` input that logs DOM composition events; both stream to the
-  window, stdout, and `/tmp/imeprobe.log`. Build:
-  `swiftc tools/probe.swift -o /tmp/imeprobe -framework Cocoa -framework WebKit`.
-  This is the ground truth for any input bug — beware terminal scrollback
-  from earlier runs; trust `/tmp/imeprobe.log` (truncated per launch).
-
-## Hard-won macOS 15 rules (probe- and crash-verified; do not relearn)
-
-macOS 15 runs a half-modernized IMK stack (`IMKClient_Modern` client,
-`_IMKServerLegacy` server, XPC in between). Empirically established with
-matched client/IME transcripts:
-
-1. **Never call `updateComposition()`/`composedString()`** — IMK passes
-   `composedString` a dangling sender and the process segfaults in the objc
-   bridge. Squirrel and vChewing also avoid it; the XIME project reimplements
-   `updateComposition` for the same reason.
-2. **Never `insertText` an empty string** — the transport silently drops it,
-   real `replacementRange` or not. Delete by replacing a range with shorter
-   text, or decline and let the host delete.
-3. **Bundle/launch config is load-bearing**: declare
-   `NSPrincipalClass = NSApplication`, `LSUIElement = true` (not
-   `LSBackgroundOnly = true`), and call
-   `NSApplication.shared.setActivationPolicy(.accessory)` before `run()`.
-   Misconfigured, the client *discards key events the IME declines* (backspace
-   returned `false` never reaches the app) once any marked text has been shown
-   in that window.
-4. The `IMKCFRunLoopWakeUpReliable` mach-port error in host apps is ubiquitous
-   Sequoia log noise (Electron, Python, JDK all emit it); Apple DTS calls it
-   non-actionable. Don't chase it.
-5. Reference implementations worth consulting before fighting a client quirk:
-   Squirrel and vChewing (per-client mitigation registries, WeChat/Office/
-   iTerm2 workarounds), macSKK (documented `setMarkedText` flush idiom from
-   AquaSKK), azooKey-Desktop (minimal modern Swift IME).
-
-## Key decoding
+pending: marks are prefix keystrokes, so the base was typed last, and fixing a
+wrong base is one key (ã ⌫ o → õ). A trailing tie is postfix and peels instead.
+A bare glyph is declined so the host deletes it natively.
 
 Keys are decoded from the physical `keyCode` through a fixed US layout
 (`UCKeyTranslate` against `com.apple.keylayout.US`), so the ASCII-keyed tables
-work regardless of the user's selected layout (Dvorak, a non-US QWERTY, …).
+hold under Dvorak or a non-US QWERTY.
 
-## Modifier layers
+## Files
 
-IPAbet is a **normal US keyboard** with IPA added on the shifted layers; a bare
-key is always its plain US self (letters, digits, punctuation — untouched, so
-tmux prefixes, vim counts, and shortcuts pass through natively).
+- `Sources/main.swift` — IMKServer boot, `.accessory` activation policy, the
+  raw-lock-clears-on-arrival observer.
+- `Sources/InputController.swift` — the engine, the raw-US lock, secure-field
+  handling. Loads `ipabet.json`.
+- `ipabet.json` — copied from `spec/ipabet.json` at build time.
+- `Info.plist` — the bundle ID must contain `.inputmethod.`. Registers one
+  visible input mode. Read the macOS 15 rules before touching the launch keys.
+- `tools/genmenupdf.swift` — regenerates `ipabet.pdf`, the input-source icon.
+- `tools/reregister.swift` — `TISRegisterInputSource`, so a reinstall appears
+  without a logout.
+- `tools/probe.swift` — instrumented test host: an `NSTextView` logging every
+  NSTextInputClient call and a `WKWebView` logging DOM composition events, to
+  the window, stdout and `/tmp/imeprobe.log`. Build with
+  `swiftc tools/probe.swift -o /tmp/imeprobe -framework Cocoa -framework WebKit`.
+  Ground truth for any input bug — trust the log, not terminal scrollback.
 
-- **bare** — plain US. IPA base letters that are Latin letters (a, s, t…) are
-  typed directly; digits and punctuation are native.
-- **Shift** — US shift, overridden where IPA needs it: a letter right after a
-  glyph → an IPA modifier transform (`t` `⇧H` → θ, `q` `⇧C` → ǃ). The **digit keys
-  are bases** too — a bare digit + a modifier gives an IPA glyph with no Latin home
-  (`5` `⇧H` → ə, `2` `⇧H` → ʔ). `⇧5` is also the centralize modifier — after a
-  bare e, o, or a it pulls the vowel toward the center (`e` `⇧5` → ɜ, `a` `⇧5` → ɐ).
-  Because the bases sit on the *unshifted* digit, ⇧2–7 stay their native
-  symbols (@ # $ % ^ &) — ⇧5 included, outside those three contexts.
-- **Option** — the diacritic layer. Combining marks are **prefix**, dead-key
-  style like the US layout's own é/ñ (`⌥e` `a` → á); spacing marks — length,
-  tone, stress — stay postfix (`a` `⌥;` → aː). `⌥z` / `⌥⇧z` raise and lower, and
-  are prefix too (`⌥z` `h` → ʰ), previewing as `⁻` / `₋`; a raised glyph still
-  transforms, so `⌥z` `s` `⇧H` → ᶴ. Chao tone letters on `⌥1`–`⌥5`. The tie bar is a postfix
-  **joiner** on `⌥j` (`t ⌥j s` → t͡s; `⌥⇧j` for the below-form t͜ɕ).
-- **Option-Shift** — a mark's second form (`⌥⇧n` → creaky, `⌥⇧j` → the tie's
-  below-form). No shifted digit is claimed, so there is no number-row raw-US
-  escape; `⌥⇧1` → ¡ is the one deliberate spend.
-- **Ctrl-Shift-letter** — the literal capital. `⇧<letter>` transforms the glyph
-  before it, so "GitHub" would come out "Giθub"; `⌃⇧H` commits a raw `H` and
-  bypasses every transform. Plain `⌃` chords stay leader keys (tmux `^b`).
-- **Capital digraphs** (`⇧A⇧E` → Æ, `⇧S⇧H` → Ʃ, `⇧5⇧H` → Ə) are an input-menu
-  option, **off by default**. They are keystroke-identical to holding shift and
-  yelling — SHIP, THE and THINK all open with a capital pair whose second letter
-  is a modifier — and nothing local tells the two apart. Off, held shift types
-  capitals.
-- **Caps Lock** — a lock, not a modifier: letters type literal capitals and never
-  transform (a locked `T` then `H` is "TH", not θ). Shift is still the modifier.
-- **⌥⇧Space** — the raw-US lock: toggles the whole IME transparent (for code,
-  camelCase, shifted symbols) until pressed again. Cleared on switching to
-  IPAbet; a Per-App Lock option (input menu) remembers it per app.
+## macOS 15 rules
 
-The full chart, every keystroke, and audio live at [ipabet.org](https://ipabet.org).
+Sequoia runs a half-modernized IMK stack (`IMKClient_Modern` client,
+`_IMKServerLegacy` server, XPC between). Probe- and crash-verified:
+
+1. **Never call `updateComposition()` / `composedString()`.** IMK passes
+   `composedString` a dangling sender and the process segfaults in the objc
+   bridge. Squirrel and vChewing avoid it; XIME reimplements it.
+2. **Never `insertText` an empty string.** The transport drops it,
+   `replacementRange` or not. Replace a range with shorter text, or decline and
+   let the host delete.
+3. **Bundle config is load-bearing.** `NSPrincipalClass = NSApplication`,
+   `LSUIElement = true` (not `LSBackgroundOnly`), and
+   `setActivationPolicy(.accessory)` before `run()`. Misconfigured, the client
+   discards key events the IME declines once any marked text has been shown in
+   that window.
+4. `IMKCFRunLoopWakeUpReliable` mach-port errors are Sequoia log noise —
+   Electron, Python and the JDK all emit them. Apple DTS calls it
+   non-actionable.
+5. Worth consulting on a client quirk: Squirrel and vChewing (per-client
+   mitigation registries), macSKK (the AquaSKK `setMarkedText` flush idiom),
+   azooKey-Desktop (minimal modern Swift IME).
+
+## Keystrokes
+
+The full chart, every keystroke, and audio: [ipabet.org](https://ipabet.org).

@@ -1,155 +1,102 @@
 # IPAbet for Windows
 
-Status: **W1 done** — the engine passes every parity vector on Windows, and the
-text service builds, registers, loads into a real application and types IPA
-into it. What remains is an installer and signing, and confirming behaviour in
-applications beyond Notepad.
+A TSF text service. It owns no phonetics: every keystroke decision comes from
+the Rust crate in `engine/` through the C ABI in `engine/include/ipabet_engine.h`,
+linked as a static library. `spec/ipabet.json` ships beside the DLL and is
+parsed at activation.
 
-## One engine, two shells
+## Build
 
-The keystroke logic is not ported to Windows. It is the same Rust crate in
-`engine/` that the fcitx5 addon links on Linux, exposed through the C ABI in
-`engine/include/ipabet_engine.h` and linked into the text service as a static
-library. `spec/ipabet.json` ships alongside as data and is parsed at startup —
-the tables are never transcribed into code.
+```powershell
+.\package.ps1          # builds the DLL and IPAbet-<arch>.msi
+```
 
-`.github/workflows/windows-parity.yml` builds the crate on a real Windows
-runner, replays `spec/parity-vectors.json` through it, and produces the
-`x86_64` and `aarch64` static libraries. PE has no fat-binary mechanism, so
-each architecture ships its own artifact rather than a slice of one file.
+Registration needs administrator rights, so every dev iteration is an elevation
+prompt.
 
-## Synthetic keystrokes work in CI
+## The diacritic layer
 
-`windows/tools/sendinput-type-test.ps1` injects scancodes through `SendInput`
-into a real focused text field on a hosted runner and reads the text back, and
-it passes. Windows has no equivalent of the consent wall that makes this
-impossible to automate on macOS, so the Windows port can be gated on real
-keystroke correctness — the layer the macOS gate documents as out of reach.
+AltGr, Ctrl+Alt and the right Alt key are one layer. Windows reports the right
+Alt key as Ctrl+Alt on a layout that defines AltGr, and as plain Alt on one that
+does not. Both are reserved, so the key works either way.
 
-x86_64 only. The ARM runners report themselves interactive and attached to
-`WinSta0`, but another window holds the foreground there and will not yield it
-— not to a `SetForegroundWindow` loop, not with the foreground lock timeout at
-zero, not through `AttachThreadInput`. Injected input goes wherever the
-foreground is, so that architecture cannot gate the keystroke layer. It still
-gates the engine natively.
+TSF never delivers modifier chords to a key sink — Shift arrives, Ctrl and Alt
+do not. Each chord is reserved by name with `ITfKeystrokeMgr::PreserveKey` and
+arrives through `OnPreservedKey`. `PreserveDiacriticKeys` loops every US key ×
+2 shift states × 2 modifier spellings.
 
-## Typing works, and is checked on every push
+A preserved key reaches the engine as Option, never Control. The engine tests
+control first and would pass on the key.
 
-`tools/notepad-type-test.ps1` types into Notepad through the registered text
-service and reads the result back off the clipboard — real keystrokes, a real
-application, no VM. `t` then ⇧H gives θ there.
+`KEYEVENTF_EXTENDEDKEY` is required to inject right Alt. It shares a scancode
+with left Alt.
 
-Two things about this platform are worth knowing before changing any of it,
-because both cost a day to find.
+## TSF facts
 
-**Anchors do not move.** `ShiftStart` back from the selection reports success
-and shifts nothing, so reading the document back returns an empty string
-however it is asked, and a replacement built on it inserts rather than
-replaces. The service therefore keeps its own record of the run as it wrote it
-and hands that to the engine as the lookback — the same thing the fcitx5 addon
-does for clients that cannot be read at all. The record ends when the run does.
+**Anchors do not move.** `ShiftStart` reports success and shifts nothing, so
+the document reads back empty and a replacement built on it inserts instead of
+replacing. The service keeps its own record of the run and hands that to the
+engine as lookback.
 
-**The run lives in a composition.** A composition is a range the service owns
-and can rewrite whole, which is how a glyph gets replaced without moving an
-anchor over the document, and it is what every Windows input method does.
-`StartComposition` requires a composition sink; it answers `E_INVALIDARG`
-without one. Composed text is not committed text — the client takes it when the
-run ends at a key IPAbet declines, or when focus moves.
+**The run lives in a composition** — a range the service rewrites whole, which
+replaces a glyph without anchor arithmetic. `StartComposition` returns
+`E_INVALIDARG` without an `ITfCompositionSink`. Composed text commits when the
+run ends or focus moves.
 
-## The diacritic layer is reserved key by key
-
-TSF hands a text service ordinary typing and keeps the modifier chords for
-itself: Shift arrives at the key sink, Ctrl and Alt never do. A service that
-wants one asks for it by name through `ITfKeystrokeMgr::PreserveKey`, and gets
-it back through `OnPreservedKey` instead of `OnKeyDown`. So the whole ⌥ layer
-is a loop at activation: every key on the US layout, in both shift states.
-
-It is reserved twice, because the key users press has two spellings that
-Windows reports differently:
-
-- **Ctrl+Alt** (`TF_MOD_CONTROL | TF_MOD_ALT`) — what a layout with an AltGr
-  reports when AltGr is pressed, and a chord that works on every layout.
-- **Right Alt alone** (`TF_MOD_RALT`) — the same physical key on a US keyboard,
-  where it is plain Alt and matches no Ctrl+Alt reservation.
-
-Without the second one, the key labeled Alt beside the spacebar does nothing on
-a US keyboard and the layer needs two hands. `windows-typing.yml` presses both,
-which is not redundant: they arrive as different keys, so one passing says
-nothing about the other. Injecting right Alt needs `KEYEVENTF_EXTENDEDKEY` —
-it shares a scancode with left Alt and the flag is the only thing that tells
-them apart.
-
-A preserved key reaches the engine as Option and never as Control, whatever
-Windows reported: the engine tests control first and would pass on the key.
-
-## What the text service has to do (W1)
-
-`ITfTextInputProcessor` for activation and `ITfKeyEventSink` for keystrokes;
-edits go through `RequestEditSession` → `ITfEditSession::DoEditSession`,
-walking an `ITfRange`. Two things about that mapping are worth knowing before
-starting:
-
-- Windows `wchar_t` is UTF-16 and the engine reports replacement lengths in
-  codepoints, so the two disagree on any glyph outside the BMP and on any
-  cluster carrying combining marks. Convert; do not assume they match.
-- TSF can read the document back through the range, which macOS also does. The
-  Linux addon cannot, and keeps the trailing run in its preedit instead — so
-  the Linux composition model is not the one to copy here.
+**Lengths disagree.** `wchar_t` is UTF-16, the engine counts codepoints.
+Convert.
 
 ## Registration
 
-COM registration under `HKEY_CLASSES_ROOT\CLSID\{clsid}` plus TSF's own keys
-under `HKLM\SOFTWARE\Microsoft\CTF\TIP\{clsid}`, written by the DLL's
-`DllRegisterServer` — so `regsvr32 ipabet.dll` is what `register.swift` is on
-macOS. Both need administrator rights, which makes every development iteration
-an elevation prompt.
+`DllRegisterServer` writes `HKLM\SOFTWARE\Classes\CLSID\{clsid}` and
+`HKLM\SOFTWARE\Microsoft\CTF\TIP\{clsid}`, then calls `RegisterProfile` and
+`RegisterCategory`. `HKLM\SOFTWARE\Classes`, not `HKEY_CLASSES_ROOT`: install
+and uninstall run as SYSTEM, and a write through the merged view lands in the
+caller's hive.
 
-`windows-registration.yml` runs the whole lifecycle on every push: absent,
-register, present, unregister, absent again. The last step earns its keep —
-`UnregisterProfile` reports success and leaves TSF's own key behind, which
-leaves the service registered after an uninstall that looked clean and makes a
-reinstall register a second copy of it.
+Uninstall deletes both keys directly and calls TSF afterward, best effort. TSF
+profile enumeration answers for the calling user, SYSTEM has no profiles, so an
+uninstall that only asks TSF removes nothing and reports success.
 
-Two habits worth keeping when touching any of this. The probe matches on the
-class id *and* the profile id, because matching the class alone passes on any
-profile the service happens to own. And `regsvr32` reports failure in a message
-box it cannot show under automation, so the gate calls `DllRegisterServer`
-directly and prints the HRESULT — otherwise a failure arrives as silence.
+The profile is registered under every installed input language. TSF has no
+neutral slot.
 
-## Two architectures, two installers
+`regsvr32` reports failure in a message box it cannot show under automation, so
+the gates call `DllRegisterServer` directly and print the HRESULT.
 
-`IPAbet-x64.msi` and `IPAbet-arm64.msi`. This is not a nicety. TSF loads the
-text service DLL **into every client process**, so an x64 build on an ARM
-machine cannot load into a native ARM application at all — and it does not get
-that far: the registration custom action fails and the install rolls back with
-a generic "a program run as part of the setup did not finish as expected".
+## Two architectures
 
-The engine was built for both architectures from the start; the installer was
-not, and CI could not notice because its Windows runner is x64 and the
-installer job only ever ran there. Both are gated now, on `windows-latest` and
-`windows-11-arm`.
+`IPAbet-x64.msi` and `IPAbet-arm64.msi`. TSF loads the DLL into every client
+process, so an x64 build on an ARM machine cannot load at all — the
+registration custom action fails and the install rolls back.
 
-## The installer
+## Gates
 
-`package.ps1` builds `IPAbet.msi` from `installer/Product.wxs`. Per-machine,
-because a text service's profile is machine-wide; registration runs through
-`ipabet-register.exe` rather than MSI self-registration, so there is one idea of
-what registering means rather than two. `windows-installer.yml` installs the
-result, checks the profile appears and the files land, uninstalls, and checks
-both are gone — an installer that builds is not an installer that works.
+| Workflow | Covers | Arches |
+| --- | --- | --- |
+| `windows-parity` | 3825 vectors through the engine | x64, arm64 |
+| `windows-build` | DLL builds, static CRT | x64, arm64 |
+| `windows-registration` | absent → register → present → unregister → absent | x64 |
+| `windows-installer` | install, profile present, files land, uninstall clean | x64, arm64 |
+| `windows-typing` | 60 vectors + 25 on Ctrl+Alt + 25 on right Alt, into Notepad | x64 |
 
-WiX is pinned to 5, which is MIT. From v6 the toolset requires accepting the
-Open Source Maintenance Fee EULA, which asks anyone earning over $10,000/yr to
-sponsor the project. That is a reasonable thing to ask and IPAbet would be
-exempt, but it is the owner's agreement to make and not a build script's — and
-nothing here needs v6. Do not bump the pin as housekeeping. If v5 ever stops
-working, NSIS is the fallback: its zlib licence asks nothing of anyone.
+Synthetic keystrokes work on x64 runners only. ARM runners are interactive and
+on `WinSta0`, but another window holds the foreground and will not yield it to
+a `SetForegroundWindow` loop, a zeroed foreground lock timeout, or
+`AttachThreadInput`.
+
+A hosted runner is not a clean machine. It ships Visual Studio, so the static
+CRT requirement never bit there, and it is x64, so the arch split never
+surfaced. Both needed a real ARM VM.
+
+## WiX
+
+Pinned to 5, the last MIT version. v6 requires accepting the Open Source
+Maintenance Fee EULA — the owner's agreement to make, not a build script's. Do
+not bump the pin as housekeeping. NSIS is the fallback.
 
 ## Signing
 
-SmartScreen is a reputation heuristic rather than a hard gate, but an unsigned
-installer from a project with no download history produces a warning users are
-right to distrust. An EV Authenticode certificate carries reputation from the
-first download; Azure Trusted Signing is the subscription alternative. Either
-one has identity-verification lead time that no amount of engineering
-compresses, so procurement starts before the installer does.
+Unsigned installers trip SmartScreen. An EV Authenticode certificate carries
+reputation from the first download; Azure Trusted Signing is the subscription
+alternative. Identity verification has lead time.

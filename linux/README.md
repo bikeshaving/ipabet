@@ -1,133 +1,87 @@
 # IPAbet for Linux
 
-Status: **done** — two shells over one engine, both gated on every push, and
-the whole user journey walked on a clean machine: the published package
-downloaded from the release, `apt install` pulling nothing else in because
-Ubuntu already ships IBus, **English (IPAbet)** appearing in Settings →
-Keyboard → Input Sources, and typing confirmed in GNOME Shell's search, the
-text editor, and Firefox. Also confirmed on KDE Plasma Wayland with Qt clients,
-on both shells.
+Two input-method shells over one engine. Neither owns any phonetics: each
+translates its framework's key events into the shape the Rust crate in
+`engine/` expects, and turns the edit that comes back into client text.
 
 ## Install
 
-```
+```sh
 sudo apt install ./ipabet-ibus_0.1.2_amd64.deb
 ```
 
-Log out, log back in, and pick IPAbet from the input menu already in your top
-bar. Three steps, the same as macOS and Windows.
+Log out, log back in, pick IPAbet from the input menu.
 
-**IBus is what ships**, because it is what GNOME, Ubuntu and Fedora already
-run — there is no framework to install or switch first. A second package,
-`ipabet-fcitx5`, is there for people already running fcitx5; the two install
-side by side and neither owns the other's files.
+**IBus is what ships** — GNOME, Ubuntu and Fedora already run it, so nothing
+has to be installed or switched first. `ipabet-fcitx5` is a second package for
+people already on fcitx5. The two install side by side and neither owns the
+other's files. fcitx5 needs one extra step: `./ipabet-register` adds IPAbet to
+the input-method group.
 
-A fcitx5 user needs one extra step an IBus user does not: run
-`./ipabet-register` to add IPAbet to the input-method group.
-
-**KDE Wayland asks for one more thing, whichever framework you use.** The
-compositor has to launch the input method for the Wayland input-method protocol
-to work, and KDE does not do it on its own — both IBus and fcitx5 pop up a
-notification saying so. System Settings → Virtual Keyboard → **IBus Wayland**
-or **Fcitx 5**, then log back in. Ignoring it is survivable: typing works in Qt
-and GTK applications either way, and what you lose is the panel indicator and
-the toggle key. GNOME launches IBus itself, so nothing there needs doing.
+**KDE Wayland needs the compositor to launch the input method**, whichever
+framework you use, and does not do it on its own. System Settings → Virtual
+Keyboard → IBus Wayland or Fcitx 5, then log back in. Skipping it costs the
+panel indicator and the toggle key; typing works either way. GNOME does it
+itself.
 
 ## Layout
 
-- `../engine/` — the Rust crate holding every keystroke decision, shared with
-  the Windows port and both Linux shells. It loads `spec/ipabet.json` as data at runtime, exactly as
-  the macOS IME loads the same file as a bundled resource; the tables are never
-  transcribed into code. `serde`/`serde_json` and `unicode-normalization` are
-  real crates.io dependencies, compiled once on the maintainer's machine — no
-  package manager is involved in what ships to users.
 - `ibus/src/engine.c` — the IBus engine, and what the shipped package installs.
-- `fcitx5/src/ipabet.cpp` — the fcitx5 addon. Neither shell owns any phonetics:
-  each translates its framework's key events into the engine's keystroke shape
-  and turns the edit that comes back into client text.
-- `common/uslayout.h` — X11 keycode to the US label of the physical key, shared
-  by both shells and plain C because one is C++ and the other is C.
-  IPAbet's tables are keyed by that label, not by what the user's layout
-  produces, which is how ⇧5 stays the centralize modifier on any layout.
-- `fcitx5/ipabet-addon.conf`, `fcitx5/ipabet-im.conf` — the manifests fcitx5
-  scans at startup, installed under `share/fcitx5/`.
+- `fcitx5/src/ipabet.cpp` — the fcitx5 addon.
+- `fcitx5/*.conf` — the manifests fcitx5 scans at startup, installed under
+  `share/fcitx5/`.
+- `common/uslayout.h` — X11 keycode → US label of the physical key. Plain C,
+  because one shell is C and the other C++. IPAbet's tables are keyed by that
+  label, not by what the user's layout produces, so ⇧5 stays the centralize
+  modifier on any layout.
 - `ipabet-register` — puts IPAbet in the user's input-method group.
 
 ## Composition model
 
-The trailing run lives in the preedit rather than being committed straight into
-the document. The engine looks back at most two grapheme clusters, so that is
-all the preedit ever holds — everything older is committed as soon as the
-engine can no longer reach it. Reading and rewriting already-committed text
-would need the surrounding-text capability, which many clients (terminals
-especially) do not offer; preedit is supported by every fcitx5 frontend.
+The trailing two clusters stay in the preedit, because a Linux client cannot be
+read back. `Edit::Pass` means the host inserts the key's own character; here the
+preedit is the only record of the run, so a passed printable key keeps composing
+with its native character appended. Dropping it loses the digit in `5` `⇧H`.
 
-One consequence worth knowing before touching the addon: the engine's `Pass`
-means "the host inserts the key's own character." On a platform that can read
-the document back, that is the end of it. Here the preedit buffer is the only
-record of the run, so a printable key the engine passes on still keeps
-composing, with its native character appended.
+`Edit::Replace.length` is a codepoint count.
 
-## Building
+## Build
 
-```
-./build.sh            # both shells, engine included; skips either if its
-                      # development headers are missing
-./build.sh install    # and install into /usr (needs sudo)
+```sh
+./build.sh            # both shells; skips either if its headers are missing
+./build.sh install    # into /usr (needs sudo)
 ./package.sh          # one .deb per shell
 ```
 
-`/usr`, not CMake's `/usr/local` default: fcitx5 only scans its own prefix for
-addon libraries and manifests, so an addon under `/usr/local` is invisible to a
-distro-packaged daemon no matter how correct it is.
+`/usr`, not CMake's `/usr/local`: fcitx5 only scans its own prefix, so an addon
+under `/usr/local` is invisible to a distro-packaged daemon.
 
-Run the engine's own tests — no fcitx5, no VM, sub-second — with:
+## Gate
 
-```
-cd ../engine && cargo test
-```
+`tools/e2e-test.sh` brings up Xvfb, openbox and the framework, drives
+`spec/parity-vectors.json` into a real text entry with `xdotool`, and reads the
+result back.
 
-Regenerate the fixture after any `js/test` change:
-
-```
-cd ../js && IPABET_DUMP_VECTORS=1 bun test
-```
-
-## The gate
-
-`tools/e2e-test.sh` brings up Xvfb, openbox and fcitx5, then drives
-`spec/parity-vectors.json` into a real text entry with `xdotool` and reads the
-result back out. It runs locally the same way it runs in CI:
-
-```
+```sh
 ./tools/e2e-test.sh 200        # a spread across the vectors
-./tools/e2e-test.sh 999 tricky # the labels that are not the key pressed
+./tools/e2e-test.sh 999 tricky # labels that are not the key pressed
 ```
 
-Both shells run the same vectors, one CI matrix leg each. That is not
-belt-and-braces: fcitx5 filters modifier keys before handing them over and IBus
-does not, so ⌥ pressed on its own ended the run and threw away an armed
-diacritic — a bug that existed only in the IBus shell and only showed up
-because the other one passed.
+Both shells run the same vectors, one CI matrix leg each. fcitx5 filters
+modifier keys before handing them over and IBus does not, so ⌥ pressed alone
+ended the run and threw away an armed diacritic — a bug in one shell only,
+found because the other passed.
 
-X11 has no consent wall in front of synthetic keystrokes, which is what makes
-this possible where the macOS gate documents it as out of reach. Wayland closes
-that same hole deliberately, so the gate cannot drive it and Wayland is checked
-by hand instead: both shells confirmed on Plasma Wayland in Qt clients on
-2026-08-12, IBus in the Plasma launcher itself.
+X11 has no consent wall in front of synthetic input. Wayland closes that hole,
+so the gate cannot drive it and Wayland is checked by hand. With
+`GTK_IM_MODULE=ibus` the client talks to IBus over D-Bus and the compositor is
+not in the protocol at all, so the engine sees the same evdev keycode either
+way.
 
-The gap that leaves is smaller than it looks. With `GTK_IM_MODULE=ibus` the
-client talks to IBus over D-Bus and the compositor is not in the input-method
-protocol at all, so the engine sees the same evdev keycode either way — what
-differs between X11 and Wayland is upstream of anything here.
+`wtype` cannot drive this: it synthesises a keymap and assigns keysyms to
+arbitrary keycodes, and IPAbet reads the physical keycode. `ydotool` injects
+through uinput and would carry real ones.
 
-`wtype` looks like the answer for driving Wayland and is not: it synthesises
-its own keymap and assigns keysyms to arbitrary keycodes, and IPAbet reads the
-physical keycode to know which key was pressed. Its keycodes mean nothing here.
-`ydotool` injects through uinput and would carry real ones, if this is ever
-worth automating.
-
-A vector names a key by the label the engine sees, which is not always the key
-a person presses — `|` is typed as ⇧\, `H` as ⇧h. The harness translates label
-back to physical keystroke, which is the same translation the addon performs in
-reverse, so those cases are worth keeping in the sample rather than skipping.
+A vector names a key by the label the engine sees, not the key a person presses
+— `|` is ⇧\, `H` is ⇧h. The harness does that translation in reverse of what
+the shells do, so those cases are worth sampling rather than skipping.
