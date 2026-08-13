@@ -3,6 +3,7 @@ import {Combo, Glyph} from "./components/ui.ts";
 import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
 import {posts} from "./content.ts";
 import {TypingDemo, pickDemos} from "./components/typing-demo.ts";
+import {Downloads} from "./components/download.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
 // against this map, passing attributes as `token` and contents as `children`.
@@ -38,21 +39,9 @@ export const components: Record<string, unknown> = {
 	// A lead paragraph: <Lede>…</Lede> → <p class="lede">.
 	Lede: ({children}: any) => jsx`<p class="lede">${children}</p>`,
 
-	// The three doors, as a button row: download, type, learn.
-	//
-	// The download label names macOS because the page is CDN-cached and the
-	// server cannot tell one visitor from the next. download-client.ts renames
-	// it, and fills the line underneath with the file and the other choices —
-	// which is where a Windows visitor learns their machine might want the
-	// other one, since no browser reliably reports the processor.
-	Callouts: () => jsx`<div class="doors">
-		<nav class="callouts">
-			<a class="main" href="/download" data-download>Download for macOS</a>
-			<a href="/type">Type in your browser</a>
-			<a href="/learn">Learn it in an afternoon</a>
-		</nav>
-		<p class="download-note" data-download-note></p>
-	</div>`,
+	// The three doors, as a button row: download, type, learn. Rendered with no
+	// target, hydrated by clients/download-client.ts with the real machine.
+	Callouts: () => jsx`<div id="download-root"><${Downloads} /></div>`,
 
 	// A centered call-to-action line under the title; `sub` is the smaller second line.
 	Cta: ({token, children}: any) => jsx`<p class=${"cta" + (token.sub ? " sub" : "")}>${children}</p>`,

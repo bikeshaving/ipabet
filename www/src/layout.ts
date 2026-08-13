@@ -3,6 +3,7 @@ import {type Element} from "@b9g/crank";
 import {renderer} from "@b9g/crank/html";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keycapsClient from "./clients/keycaps-client.ts" with {assetBase: "/assets/"};
+// @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import downloadClient from "./clients/download-client.ts" with {assetBase: "/assets/"};
 
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
