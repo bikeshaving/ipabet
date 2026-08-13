@@ -2,8 +2,10 @@
 // ported from macos/Sources/InputController.swift). Section comments mirror
 // the reference file so the two can be read side by side. Verified
 // byte-for-byte against every case in spec/parity-vectors.json (see
-// tests/parity.rs) — the same fixture the eventual Windows port replays
-// against too, since this crate is meant to be reused there directly.
+// tests/parity.rs), the fixture js/test writes and every port replays.
+//
+// Three shells link this crate through the C ABI in ffi.rs: the IBus engine,
+// the fcitx5 addon, and the Windows text service.
 //
 // spec/ipabet.json parses generically via serde (`spec.rs`) — no hand-written
 // parser. Composition uses unicode-normalization's nfc(), which correctly
@@ -298,15 +300,7 @@ impl Engine {
             let s: String = base.chars().chain(marks.iter().copied()).collect();
             return s.chars().nfc().collect();
         }
-        let mut best: Option<String> = None;
-        for perm in permutations(marks) {
-            let s: String = base.chars().chain(perm).collect();
-            let composed: String = s.chars().nfc().collect();
-            if best.as_ref().is_none_or(|b| composed.chars().count() < b.chars().count()) {
-                best = Some(composed);
-            }
-        }
-        best.unwrap_or_default()
+        fuse_marks(base, marks)
     }
 
     // ------------------------------------------------------------- marks
@@ -852,20 +846,36 @@ impl Engine {
 
 // --------------------------------------------------------------- helpers
 
-fn permutations(items: &[char]) -> Vec<Vec<char>> {
-    if items.len() <= 1 {
-        return vec![items.to_vec()];
-    }
-    let mut out = Vec::new();
-    for i in 0..items.len() {
-        let mut rest = items.to_vec();
-        let head = rest.remove(i);
-        for mut p in permutations(&rest) {
-            p.insert(0, head);
-            out.push(p);
+/// The arrangement of `marks` on `base` that fuses, as NFC would have done had
+/// they arrived in that order: Vietnamese ằ is a + breve + grave and no other
+/// order, though a hurried hand types the tone first.
+///
+/// Only a mark that composes with what is built so far is worth trying, and
+/// Unicode encodes no character carrying three combining marks, so the search
+/// stops almost immediately. Trying every arrangement instead costs n! — which
+/// is invisible at the two or three marks a transcription uses, and a hang at
+/// ten. Nothing stops a user from arming ten.
+fn fuse_marks(built: &str, rest: &[char]) -> String {
+    // Fusing nothing more is always an option, and the answer when none fuse.
+    let flat: String = built.chars().chain(rest.iter().copied()).collect();
+    let mut best: String = flat.chars().nfc().collect();
+    let built_len = built.chars().count();
+
+    for (i, mark) in rest.iter().enumerate() {
+        let attempt: String = built.chars().chain(std::iter::once(*mark)).collect();
+        let candidate: String = attempt.chars().nfc().collect();
+        // It fused if the mark added no codepoint of its own.
+        if candidate.chars().count() != built_len {
+            continue;
+        }
+        let mut without: Vec<char> = rest.to_vec();
+        without.remove(i);
+        let s = fuse_marks(&candidate, &without);
+        if s.chars().count() < best.chars().count() {
+            best = s;
         }
     }
-    out
+    best
 }
 
 // A contour tone is its level tones typed in order. Where Unicode encodes

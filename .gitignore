@@ -6,3 +6,4 @@ node_modules/
 # generated at build time by scripts/bake-content.ts
 www/src/gen/content.json
 target/
+*.ndjson

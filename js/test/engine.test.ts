@@ -988,6 +988,60 @@ describe("backspace re-arms the prefix stack", () => {
 		expect(typeKeys(seq("⌫", "i"), "caf\u{00E9}")).toBe(nfc("cafí")));
 	test("a trailing tie is postfix — it peels, the base stays: t͡ ⌫ → t", () =>
 		expect(typed("t", "~j", "⌫")).toBe("t"));
+
+	// The operators are not marks: they arm, and ⌫ disarms them without
+	// touching the document, the same as a mark that never landed.
+	test("an armed raise peels: ⌥z ⌫ h → h, not ʰ", () =>
+		expect(typed("~z", "⌫", "h")).toBe("h"));
+	test("an armed lower peels: ⌥⇧z ⌫ 2 → 2", () =>
+		expect(typed("+~z", "⌫", "2")).toBe("2"));
+	test("a landed raise is a glyph, so ⌫ takes the glyph: tʰ ⌫ → t", () =>
+		expect(typed("t", "~z", "h", "⌫")).toBe("t"));
+
+	// A glyph the engine fused into one codepoint has no marks to re-arm, so
+	// the host deletes it whole. ɚ is ə plus a hook and Unicode encodes it
+	// atomically.
+	test("a precomposed rhotic peels as one glyph: ɚ ⌫ → nothing", () =>
+		expect(typed("5", "+h", "~r", "⌫")).toBe(""));
+	test("a digraph result peels as one glyph: θ ⌫ → nothing", () =>
+		expect(typed("t", "+h", "⌫")).toBe(""));
+
+	// Depth. Three marks re-arm as three, in order, and land on the new base.
+	test("three marks re-arm together: ṍ̜ ⌫ o keeps all three", () =>
+		expect(typed("~n", "~e", "~w", "a", "⌫", "o")).toBe(typed("~n", "~e", "~w", "o")));
+	test("peeling twice unwinds one mark at a time", () => {
+		expect(typed("~n", "~e", "a", "⌫", "⌫", "o")).toBe(typed("~n", "o"));
+		expect(typed("~n", "~e", "a", "⌫", "⌫", "⌫", "o")).toBe("o");
+	});
+	test("a stack far past anything a transcription needs still peels", () => {
+		const marks = ["~n", "~e", "~w", "~h", "~v", "~b", "~k", "~t", "~m", "~g"];
+		expect(typed(...marks, "a", "⌫", "o")).toBe(typed(...marks, "o"));
+	});
+
+	// Text this engine did not type. A cluster arriving as NFC has to decompose
+	// before its marks can re-arm, and the marks may be more than one.
+	test("an external two-mark cluster re-arms both: ṍ ⌫ a → ã́", () =>
+		expect(typeKeys(seq("⌫", "a"), "\u{1E4D}")).toBe(nfc("a\u{0303}\u{0301}")));
+	test("an external cedilla re-arms onto a new base: ç ⌫ s → ş", () =>
+		expect(typeKeys(seq("⌫", "s"), "\u{00E7}")).toBe(nfc("\u{015F}")));
+	test("an astral character is one glyph to the host", () =>
+		expect(handleBackspace("\u{1F600}").edit).toEqual({type: "pass"}));
+	test("a lone combining mark with no base is the host's to delete", () =>
+		expect(handleBackspace("\u{0303}").edit).toEqual({type: "pass"}));
+	test("an empty document has nothing to peel", () =>
+		expect(handleBackspace("").edit).toEqual({type: "pass"}));
+
+	// Peeling and the terminators meet: ⌫ empties the stack, so the Space that
+	// follows has nothing to commit and is just a space.
+	test("⌫ then Space commits nothing: ⌥n ⌫ ␣ → a bare space", () =>
+		expect(typed("~n", "⌫", " ")).toBe(" "));
+	test("without the peel, Space commits the spacing form", () =>
+		expect(typed("~n", " ")).toBe("\u{02DC}"));
+
+	// A spacing mark is postfix: it is already document text, so ⌫ deletes it
+	// natively rather than re-arming anything.
+	test("a spacing length mark is text, not a pending mark: aː ⌫ → a", () =>
+		expect(typed("a", "~;", "⌫")).toBe("a"));
 });
 
 describe("daily-driver invariants", () => {

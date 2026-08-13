@@ -6,16 +6,17 @@
 // fixture both the Linux and Windows engine ports replay to verify against,
 // so neither port's test vectors can drift from what js/test actually checks.
 //
-// Flushed periodically, not once at the end: bun's test runner does not
-// reliably fire a module-scoped afterAll after every test FILE in a
-// multi-file run (empirically, only a subset of files' pushes survived to
-// the final file when flushing once at the end via afterAll), and
-// process.on("exit") never fires at all under bun test (verified directly).
-// A write on every single push is correct but too slow for a tight loop
-// (the word-bank test times out) — writing every FLUSH_EVERY pushes bounds
-// the worst case to losing only the last few entries, not the whole run.
+// Appended, one line per call, rather than rewritten: bun fires no end-of-run
+// hook this can trust. A module-scoped afterAll runs for only a subset of files
+// in a multi-file run, and neither process "exit" nor "beforeExit" fires at all
+// (all three verified directly). Anything that batches therefore loses whatever
+// is in the last batch, silently, and the vectors that go missing are whichever
+// file happened to finish last.
+//
+// Appending a single line costs nothing and cannot lose the tail. `bun run
+// vectors` clears the log, runs the suite, and assembles spec/parity-vectors.json
+// from it.
 
-import {afterAll} from "bun:test";
 import {
 	typeKeys as realTypeKeys,
 	setQuoteLocale as realSetQuoteLocale,
@@ -25,9 +26,9 @@ import {
 import spec from "../../spec/ipabet.json";
 
 const DUMP = process.env.IPABET_DUMP_VECTORS === "1";
-const OUT_PATH = (() => {
+const LOG_PATH = (() => {
 	const path = require("node:path");
-	return path.join(import.meta.dir, "../../spec/parity-vectors.json");
+	return path.join(import.meta.dir, "../../spec/parity-vectors.ndjson");
 })();
 
 interface Vector {
@@ -49,20 +50,20 @@ interface Vector {
 
 const QUOTE_LOCALES = spec.quotes as {default: string; locales: Record<string, unknown>};
 
-const vectors: Vector[] = [];
-const FLUSH_EVERY = 25;
 let activeLocale = QUOTE_LOCALES.default;
 let capitalDigraphsOn = false; // matches index.ts's own default
-
-function writeOut() {
-	require("node:fs").writeFileSync(OUT_PATH, JSON.stringify(vectors, null, 1) + "\n");
-}
 
 export function typeKeys(keys: Keystroke[], initial = ""): string {
 	const result = realTypeKeys(keys, initial);
 	if (DUMP) {
-		vectors.push({keys, initial, expected: result, locale: activeLocale, capital_digraphs: capitalDigraphsOn});
-		if (vectors.length % FLUSH_EVERY === 0) writeOut();
+		const vector: Vector = {
+			keys,
+			initial,
+			expected: result,
+			locale: activeLocale,
+			capital_digraphs: capitalDigraphsOn,
+		};
+		require("node:fs").appendFileSync(LOG_PATH, JSON.stringify(vector) + "\n");
 	}
 	return result;
 }
@@ -80,10 +81,4 @@ export function setQuoteLocale(locale: string): void {
 	// recorded afterward as locale "zz".
 	activeLocale = locale in QUOTE_LOCALES.locales ? locale : QUOTE_LOCALES.default;
 	realSetQuoteLocale(locale);
-}
-
-if (DUMP) {
-	// Best-effort final flush — not load-bearing (the periodic writes above
-	// already bound the loss), but catches the tail when this DOES fire.
-	afterAll(writeOut);
 }

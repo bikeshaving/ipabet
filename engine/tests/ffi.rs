@@ -176,6 +176,58 @@ fn a_buffer_too_small_truncates_between_codepoints() {
 }
 
 #[test]
+fn a_deep_stack_of_marks_survives_the_round_trip() {
+    // The engine stacks marks for as long as the user presses them, and the
+    // pending array is fixed. A stack that overflows it is truncated on the way
+    // out — which loses marks on Windows and Linux and keeps them on macOS,
+    // where nothing crosses this boundary.
+    let e = engine();
+    let before = CString::new("").unwrap();
+    let marks = ["n", "e", "w", "h", "v", "b", "k", "t", "m", "g", "f", "d"];
+
+    let mut pending = empty_pending();
+    for m in marks {
+        let k = key(m);
+        let step = unsafe {
+            ipabet_engine_handle_key(e, before.as_ptr(), stroke(&k, true, false), pending, false)
+        };
+        pending = step.pending;
+    }
+    assert_eq!(
+        pending.count as usize,
+        marks.len(),
+        "every armed mark has to fit: the array is what the ports carry"
+    );
+
+    // And what lands is exactly what the Rust API produces for the same input.
+    // Marks fuse, so counting codepoints proves nothing; agreeing with the
+    // engine that macOS uses is the invariant that matters.
+    let a = key("a");
+    let landed = unsafe {
+        ipabet_engine_handle_key(e, before.as_ptr(), stroke(&a, false, false), pending, false)
+    };
+    assert_eq!(landed.pending.count, 0);
+
+    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let mut native_pending: ipabet_engine::Pending = Vec::new();
+    for m in marks {
+        let k = ipabet_engine::Keystroke {
+            key: m.to_string(),
+            option: true,
+            ..Default::default()
+        };
+        native_pending = native.handle_key("", &k, &native_pending, false).pending;
+    }
+    let base = ipabet_engine::Keystroke { key: "a".into(), ..Default::default() };
+    let expected = match native.handle_key("", &base, &native_pending, false).edit {
+        ipabet_engine::Edit::Insert { text } | ipabet_engine::Edit::Replace { text, .. } => text,
+        other => panic!("the engine answered {other:?}"),
+    };
+    assert_eq!(text_of(&landed.edit), expected, "the boundary dropped marks");
+    unsafe { ipabet_engine_free(e) };
+}
+
+#[test]
 fn a_zero_capacity_buffer_is_left_alone() {
     let e = engine();
     let mut buf = [0x7f as c_char; 4];

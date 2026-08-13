@@ -264,26 +264,33 @@ function decompose(cluster: string): {base: string; marks: string[]} {
 }
 
 // Marks of the SAME combining class never reorder under NFC, so a tone typed
-// before its shape mark freezes as a permanent homoglyph of ế. So try every
-// arrangement (≤3 in practice) and keep the shortest NFC.
+// before its shape mark would freeze as a permanent homoglyph of ế. The fix is
+// to find the arrangement that fuses: Vietnamese ằ is a + breve + grave in that
+// order and no other, though a hurried hand types the tone first.
+//
+// A search over the marks that fuse, rather than over every arrangement. At each
+// step only a mark that composes with what is built so far is worth trying, and
+// Unicode encodes no character carrying three combining marks, so the branching
+// stops almost immediately. Trying every arrangement instead costs n! — which is
+// invisible at the two or three marks a transcription uses, and a hang at ten.
+// Nothing stops a user from arming ten.
 function recompose(base: string, marks: readonly string[]): string {
 	if (marks.length <= 1) return (base + marks.join("")).normalize("NFC");
-	let best: string | undefined;
-	for (const perm of permutations([...marks])) {
-		const s = (base + perm.join("")).normalize("NFC");
-		if (best === undefined || [...s].length < [...best].length) best = s;
-	}
-	return best!;
+	return fuseMarks(base, [...marks]);
 }
 
-function permutations<T>(items: T[]): T[][] {
-	if (items.length <= 1) return [items];
-	const out: T[][] = [];
-	for (let i = 0; i < items.length; i++) {
-		const rest = [...items.slice(0, i), ...items.slice(i + 1)];
-		for (const p of permutations(rest)) out.push([items[i], ...p]);
+function fuseMarks(built: string, rest: readonly string[]): string {
+	// Fusing nothing more is always an option, and the answer when none fuse.
+	let best = (built + rest.join("")).normalize("NFC");
+	for (let i = 0; i < rest.length; i++) {
+		const candidate = (built + rest[i]).normalize("NFC");
+		// It fused if the mark added no codepoint of its own.
+		if ([...candidate].length !== [...built].length) continue;
+		const without = [...rest.slice(0, i), ...rest.slice(i + 1)];
+		const s = fuseMarks(candidate, without);
+		if ([...s].length < [...best].length) best = s;
 	}
-	return out;
+	return best;
 }
 
 function replaceCluster(cluster: string, text: string): Edit {

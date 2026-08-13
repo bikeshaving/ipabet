@@ -1,16 +1,17 @@
 {
-  "name": "@b9g/ipabet",
-  "private": true,
-  "version": "0.1.0",
-  "description": "The IPAbet engine in TypeScript \u2014 the notation, everywhere JavaScript runs",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "test": "bun test"
-  },
-  "devDependencies": {
-    "@types/bun": "^1.3.14"
-  }
+	"name": "@b9g/ipabet",
+	"private": true,
+	"version": "0.1.0",
+	"description": "The IPAbet engine in TypeScript \u2014 the notation, everywhere JavaScript runs",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"test": "bun test",
+		"vectors": "rm -f ../spec/parity-vectors.ndjson && IPABET_DUMP_VECTORS=1 bun test && bun run scripts/build-vectors.ts"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.3.14"
+	}
 }

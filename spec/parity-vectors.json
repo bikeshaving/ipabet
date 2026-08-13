@@ -129216,6 +129216,688 @@
  {
   "keys": [
    {
+    "key": "z",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "h",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "2",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "2",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "z",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "t",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "r",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "w",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ṍ̜",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "w",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ṍ̜",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "õ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "õ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "o",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "w",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "v",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "b",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "k",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "t",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "m",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ǫ̜̙̪̞̃́̌̆̊",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "w",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "v",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "b",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "k",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "t",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "m",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "o",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ǫ̜̙̪̞̃́̌̆̊",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "ṍ",
+  "expected": "ã́",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "s",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "ç",
+  "expected": "ş",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": " ",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": " ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": " ",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "˜",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": ";",
+    "shift": false,
+    "option": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "⌫",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "a",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
     "key": "h",
     "shift": false,
     "option": false,
@@ -133953,6 +134635,25 @@
    },
    {
     "key": "e",
+    "option": true
+   },
+   {
+    "key": "a"
+   }
+  ],
+  "initial": "",
+  "expected": "ą́",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": "m",
     "option": true
    },
    {

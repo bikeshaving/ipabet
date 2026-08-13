@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define PENDING_MAX 8
+#define PENDING_MAX 16
 
 #define EDIT_TEXT_MAX 64
 

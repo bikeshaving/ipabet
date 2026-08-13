@@ -20,7 +20,11 @@ use std::ffi::CStr;
 use std::os::raw::c_char;
 
 // pub: cbindgen needs these to emit #defines for the array sizes below.
-pub const PENDING_MAX: usize = 8;
+// Sixteen, not eight: the engine will stack marks until the user stops pressing
+// them, and a stack that overflows this array is truncated on the way out —
+// silently, and only on the ports that cross this boundary. Sixteen is past any
+// stack a transcription produces, and tests/ffi.rs holds the line.
+pub const PENDING_MAX: usize = 16;
 pub const EDIT_TEXT_MAX: usize = 64; // bytes; a glyph plus a few marks in UTF-8 never gets close
 
 /// Never a real codepoint (always >= 0): the pending "raise" operator.
