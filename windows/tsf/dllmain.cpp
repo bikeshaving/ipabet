@@ -148,11 +148,14 @@ std::string TextService::LoadSpec() {
 HRESULT RegisterServer(HINSTANCE module) {
     g_dll = module;
     const std::wstring clsid = GuidToString(CLSID_IpabetTextService);
-    const std::wstring base = L"CLSID\\" + clsid;
+    // HKLM\SOFTWARE\Classes, not the merged HKEY_CLASSES_ROOT view: install and
+    // uninstall both run as SYSTEM, and a write through the merged view can land
+    // in the calling account's hive rather than the machine's.
+    const std::wstring base = L"SOFTWARE\\Classes\\CLSID\\" + clsid;
 
-    if (!WriteKey(HKEY_CLASSES_ROOT, base, nullptr, kDescription)) return E_FAIL;
-    if (!WriteKey(HKEY_CLASSES_ROOT, base + L"\\InprocServer32", nullptr, ModulePath())) return E_FAIL;
-    if (!WriteKey(HKEY_CLASSES_ROOT, base + L"\\InprocServer32", L"ThreadingModel", L"Apartment")) {
+    if (!WriteKey(HKEY_LOCAL_MACHINE, base, nullptr, kDescription)) return E_FAIL;
+    if (!WriteKey(HKEY_LOCAL_MACHINE, base + L"\\InprocServer32", nullptr, ModulePath())) return E_FAIL;
+    if (!WriteKey(HKEY_LOCAL_MACHINE, base + L"\\InprocServer32", L"ThreadingModel", L"Apartment")) {
         return E_FAIL;
     }
 
@@ -185,18 +188,39 @@ HRESULT RegisterServer(HINSTANCE module) {
 }
 
 HRESULT UnregisterServer() {
-    // Every failure here is reported. Swallowing them is what turns a botched
-    // uninstall into a profile that survives it, and a reinstall that registers
-    // a second copy alongside the first.
+    // The registry is the authoritative record, so it goes first and does not
+    // depend on anything else working.
+    //
+    // Uninstall runs this as SYSTEM — MSI defers the action and does not
+    // impersonate, because writing a machine-wide profile needs the elevated
+    // half of the install. TSF's profile enumeration answers for the *calling*
+    // user, and SYSTEM has no input profiles, so asking it which languages to
+    // unregister returned nothing and the service survived its own uninstall.
+    // Removing the keys outright does not care who is asking.
     HRESULT result = S_OK;
+    const std::wstring clsid = GuidToString(CLSID_IpabetTextService);
 
+    // HKLM\SOFTWARE\Classes rather than HKEY_CLASSES_ROOT: the latter is a
+    // merged view, and under SYSTEM a delete through it can land in SYSTEM's
+    // own hive instead of the machine's.
+    const std::wstring com = L"SOFTWARE\\Classes\\CLSID\\" + clsid;
+    LONG rc = RegDeleteTreeW(HKEY_LOCAL_MACHINE, com.c_str());
+    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND) result = HRESULT_FROM_WIN32(rc);
+
+    // What the profile enumeration actually reads.
+    const std::wstring tip = L"SOFTWARE\\Microsoft\\CTF\\TIP\\" + clsid;
+    rc = RegDeleteTreeW(HKEY_LOCAL_MACHINE, tip.c_str());
+    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
+        result = HRESULT_FROM_WIN32(rc);
+    }
+
+    // Then ask TSF to forget it too, best effort: this is what tells a running
+    // session, and it is expected to find nothing when the keys are already
+    // gone or when SYSTEM is asking.
     ITfInputProcessorProfileMgr *profiles = nullptr;
-    HRESULT hr = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr, CLSCTX_INPROC_SERVER,
-                                  IID_ITfInputProcessorProfileMgr, (void **)&profiles);
-    if (SUCCEEDED(hr)) {
-        // Which languages it went in under is whatever was installed at the
-        // time, so ask rather than assume: anything filed under this class is
-        // ours to take back out.
+    if (SUCCEEDED(CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr,
+                                   CLSCTX_INPROC_SERVER, IID_ITfInputProcessorProfileMgr,
+                                   (void **)&profiles))) {
         std::vector<LANGID> mine;
         IEnumTfInputProcessorProfiles *e = nullptr;
         if (SUCCEEDED(profiles->EnumProfiles(0, &e))) {
@@ -208,39 +232,19 @@ HRESULT UnregisterServer() {
             e->Release();
         }
         for (LANGID lang : mine) {
-            HRESULT one =
-                profiles->UnregisterProfile(CLSID_IpabetTextService, lang, GUID_IpabetProfile, 0);
-            if (FAILED(one)) hr = one;
+            profiles->UnregisterProfile(CLSID_IpabetTextService, lang, GUID_IpabetProfile, 0);
         }
         profiles->Release();
     }
-    if (FAILED(hr)) result = hr;
 
     ITfCategoryMgr *categories = nullptr;
-    hr = CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER, IID_ITfCategoryMgr,
-                          (void **)&categories);
-    if (SUCCEEDED(hr)) {
-        hr = categories->UnregisterCategory(CLSID_IpabetTextService, GUID_TFCAT_TIP_KEYBOARD,
-                                            CLSID_IpabetTextService);
+    if (SUCCEEDED(CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER,
+                                   IID_ITfCategoryMgr, (void **)&categories))) {
+        categories->UnregisterCategory(CLSID_IpabetTextService, GUID_TFCAT_TIP_KEYBOARD,
+                                       CLSID_IpabetTextService);
         categories->Release();
     }
-    if (FAILED(hr) && SUCCEEDED(result)) result = hr;
 
-    const std::wstring clsid = GuidToString(CLSID_IpabetTextService);
-    const std::wstring base = L"CLSID\\" + clsid;
-    LONG rc = RegDeleteTreeW(HKEY_CLASSES_ROOT, base.c_str());
-    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
-        result = HRESULT_FROM_WIN32(rc);
-    }
-
-    // The COM key is only where the class lives. What the profile enumeration
-    // reads is TSF's own key, and UnregisterProfile leaves it behind — so the
-    // service keeps turning up as registered after a clean-looking uninstall.
-    const std::wstring tip = L"SOFTWARE\\Microsoft\\CTF\\TIP\\" + clsid;
-    rc = RegDeleteTreeW(HKEY_LOCAL_MACHINE, tip.c_str());
-    if (rc != ERROR_SUCCESS && rc != ERROR_FILE_NOT_FOUND && SUCCEEDED(result)) {
-        result = HRESULT_FROM_WIN32(rc);
-    }
     return result;
 }
 
