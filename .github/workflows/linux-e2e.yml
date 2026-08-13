@@ -58,5 +58,22 @@ jobs:
       - name: Logs
         if: failure()
         run: |
-          tail -50 /tmp/fcitx5.log 2>/dev/null || true
-          tail -50 /tmp/ibus.log 2>/dev/null || true
+          for f in /tmp/fcitx5.log /tmp/ibus.log /tmp/entry.log /tmp/xvfb.log /tmp/openbox.log; do
+            echo "=== $f"
+            tail -50 "$f" 2>/dev/null || echo "(absent)"
+          done
+
+      # Printed logs get folded into whichever step the runner thinks is
+      # current, and a failure inside the harness leaves nothing readable.
+      - name: Keep the logs
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: e2e-logs-${{ matrix.framework }}
+          path: |
+            /tmp/fcitx5.log
+            /tmp/ibus.log
+            /tmp/entry.log
+            /tmp/xvfb.log
+            /tmp/openbox.log
+          if-no-files-found: ignore

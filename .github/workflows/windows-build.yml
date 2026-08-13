@@ -28,10 +28,8 @@ jobs:
       - name: The DLL carries its icon
         shell: pwsh
         run: |
-          Add-Type -Name Ico -Namespace W -MemberDefinition @'
-[DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-public static extern uint ExtractIconExW(string file, int index, IntPtr[] large, IntPtr[] small, uint count);
-'@
+          $sig = '[DllImport("shell32.dll", CharSet = CharSet.Unicode)] public static extern uint ExtractIconExW(string file, int index, IntPtr[] large, IntPtr[] small, uint count);'
+          Add-Type -Name Ico -Namespace W -MemberDefinition $sig
           $n = [W.Ico]::ExtractIconExW("$pwd\windows\build\Release\ipabet.dll", -1, $null, $null, 0)
           Write-Host "$n icon group(s) in ipabet.dll"
           if ($n -lt 1) { throw "no icon resource: the tray would show ENG and nothing else" }
