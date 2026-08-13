@@ -61,11 +61,13 @@ public static class Input {
     [DllImport("user32.dll")]
     static extern IntPtr GetProcessWindowStation();
 
+    const uint KEYEVENTF_EXTENDED = 0x0001;
     const uint KEYEVENTF_KEYUP = 0x0002;
     const uint KEYEVENTF_SCANCODE = 0x0008;
     const ushort VK_SHIFT = 0x10;
     const ushort VK_CONTROL = 0x11;
     const ushort VK_MENU = 0x12;
+    const ushort VK_RMENU = 0xA5;
 
     static INPUT Key(ushort vk, bool up) {
         var i = new INPUT();
@@ -76,6 +78,15 @@ public static class Input {
         return i;
     }
 
+    /// The right-hand twin of a key that has one. Right Alt shares its scancode
+    /// with left Alt and is told apart only by the extended-key flag, so sending
+    /// it without the flag sends the left one and tests nothing.
+    static INPUT KeyEx(ushort vk, bool up) {
+        var i = Key(vk, up);
+        i.ki.dwFlags |= KEYEVENTF_EXTENDED;
+        return i;
+    }
+
     static void Send(INPUT[] arr) {
         uint sent = SendInput((uint)arr.Length, arr, Marshal.SizeOf(typeof(INPUT)));
         if (sent != arr.Length) {
@@ -83,17 +94,39 @@ public static class Input {
         }
     }
 
-    /// One key, with AltGr held around it when asked. Windows reports AltGr as
-    /// Ctrl+Alt, and sending it that way is what stops the press being a system
-    /// key -- plain Alt goes to the menu bar and never reaches a text service.
     public static void PressWithAlt(ushort vk, bool shift, bool altGr) {
+        PressWithAlt(vk, shift, altGr, false);
+    }
+
+    /// One key, with the diacritic modifier held around it when asked.
+    ///
+    /// The layer answers to two different keys, so the tests have to press both.
+    /// Ctrl+Alt is how Windows reports AltGr, and works on every layout. Right
+    /// Alt on its own is the one-key form: AltGr where the layout defines one,
+    /// plain Alt on a US keyboard, which is why it has to be reserved by name
+    /// rather than arriving as an ordinary key.
+    public static void PressWithAlt(ushort vk, bool shift, bool altGr, bool rightAlt) {
         var seq = new System.Collections.Generic.List<INPUT>();
-        if (altGr) { seq.Add(Key(VK_CONTROL, false)); seq.Add(Key(VK_MENU, false)); }
+        if (altGr) {
+            if (rightAlt) {
+                seq.Add(KeyEx(VK_RMENU, false));
+            } else {
+                seq.Add(Key(VK_CONTROL, false));
+                seq.Add(Key(VK_MENU, false));
+            }
+        }
         if (shift) seq.Add(Key(VK_SHIFT, false));
         seq.Add(Key(vk, false));
         seq.Add(Key(vk, true));
         if (shift) seq.Add(Key(VK_SHIFT, true));
-        if (altGr) { seq.Add(Key(VK_MENU, true)); seq.Add(Key(VK_CONTROL, true)); }
+        if (altGr) {
+            if (rightAlt) {
+                seq.Add(KeyEx(VK_RMENU, true));
+            } else {
+                seq.Add(Key(VK_MENU, true));
+                seq.Add(Key(VK_CONTROL, true));
+            }
+        }
         Send(seq.ToArray());
         System.Threading.Thread.Sleep(110);
     }

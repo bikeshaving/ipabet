@@ -53,6 +53,14 @@ jobs:
         run: .\windows\tools\notepad-type-test.ps1 -Count 25 -Only option
         shell: pwsh
 
+      # The same layer through its other key. Ctrl+Alt passing says nothing about
+      # right Alt: Windows delivers them separately and each is reserved by name.
+      - name: The diacritic layer on right Alt alone
+        env:
+          IPABET_DEBUG_LOG: ${{ github.workspace }}\ipabet-debug.log
+        run: .\windows\tools\notepad-type-test.ps1 -Count 25 -Only option -RightAlt
+        shell: pwsh
+
       - name: What the text service saw
         if: always()
         run: |

@@ -14,7 +14,10 @@
 param(
     [int]$Count = 60,
     # "option" runs only the vectors that use the diacritic layer.
-    [string]$Only = ""
+    [string]$Only = "",
+    # Press the right Alt key alone instead of Ctrl+Alt. Both reach the diacritic
+    # layer and they are different keys to Windows, so both have to be proven.
+    [switch]$RightAlt
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,7 +86,7 @@ foreach ($v in $sample) {
         $r = Resolve-Key $k
         # The diacritic layer is AltGr here, which Windows reports as Ctrl+Alt —
         # plain Alt belongs to the menu bar and never reaches a text service.
-        [Input]::PressWithAlt($r.vk, $r.shift, [bool]$k.option)
+        [Input]::PressWithAlt($r.vk, $r.shift, [bool]$k.option, [bool]$RightAlt)
     }
     # Composed text is not committed text, and the clipboard only gets the
     # latter. Enter is a key IPAbet declines, so the client takes the run.

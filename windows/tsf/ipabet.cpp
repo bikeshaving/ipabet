@@ -208,31 +208,42 @@ void TextService::PreserveDiacriticKeys() {
     ITfKeystrokeMgr *keys = nullptr;
     if (FAILED(thread_->QueryInterface(IID_ITfKeystrokeMgr, (void **)&keys))) return;
 
-    // One reservation per key per shift state. The guid only has to be unique
-    // and stable within this service, so it is the class id with the last two
-    // bytes carrying the scancode and the shift state.
+    // One reservation per key per shift state per spelling of the modifier. The
+    // guid only has to be unique and stable within this service, so it is the
+    // class id with its last three bytes carrying those three things.
     for (unsigned scancode = 0; scancode < 0x60; scancode++) {
         const std::string label = usLayoutLabel(scancode);
         if (label.empty()) continue;
         const UINT vk = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK);
         if (!vk) continue;
 
-        for (int shift = 0; shift < 2; shift++) {
-            Preserved p{};
-            p.guid = CLSID_IpabetTextService;
-            p.guid.Data4[6] = (BYTE)scancode;
-            p.guid.Data4[7] = (BYTE)shift;
-            p.label = label;
-            p.shift = shift != 0;
+        // Two spellings of the same layer, because they are different keys to
+        // Windows. Ctrl+Alt is what AltGr reports as, and works on every layout.
+        // Right Alt on its own is AltGr on a layout that defines one and plain
+        // Alt where it does not — reserving it is what makes "the Alt key right
+        // of the spacebar" true on a US keyboard too, instead of a two-key chord.
+        const UINT variants[] = {TF_MOD_CONTROL | TF_MOD_ALT, TF_MOD_RALT};
 
-            TF_PRESERVEDKEY key{};
-            key.uVKey = vk;
-            key.uModifiers = TF_MOD_CONTROL | TF_MOD_ALT | (shift ? TF_MOD_SHIFT : 0);
+        for (int v = 0; v < 2; v++) {
+            for (int shift = 0; shift < 2; shift++) {
+                Preserved p{};
+                p.guid = CLSID_IpabetTextService;
+                p.guid.Data4[5] = (BYTE)v;
+                p.guid.Data4[6] = (BYTE)scancode;
+                p.guid.Data4[7] = (BYTE)shift;
+                p.label = label;
+                p.shift = shift != 0;
+                p.modifiers = variants[v] | (shift ? TF_MOD_SHIFT : 0);
 
-            const WCHAR desc[] = L"IPAbet diacritic";
-            if (SUCCEEDED(keys->PreserveKey(client_, p.guid, &key, desc,
-                                            (ULONG)wcslen(desc)))) {
-                preserved_.push_back(p);
+                TF_PRESERVEDKEY key{};
+                key.uVKey = vk;
+                key.uModifiers = p.modifiers;
+
+                const WCHAR desc[] = L"IPAbet diacritic";
+                if (SUCCEEDED(keys->PreserveKey(client_, p.guid, &key, desc,
+                                                (ULONG)wcslen(desc)))) {
+                    preserved_.push_back(p);
+                }
             }
         }
     }
@@ -247,7 +258,7 @@ void TextService::ReleaseDiacriticKeys() {
         for (const Preserved &p : preserved_) {
             TF_PRESERVEDKEY key{};
             key.uVKey = MapVirtualKeyW(p.guid.Data4[6], MAPVK_VSC_TO_VK);
-            key.uModifiers = TF_MOD_CONTROL | TF_MOD_ALT | (p.shift ? TF_MOD_SHIFT : 0);
+            key.uModifiers = p.modifiers;
             keys->UnpreserveKey(p.guid, &key);
         }
         keys->Release();

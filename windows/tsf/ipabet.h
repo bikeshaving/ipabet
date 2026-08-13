@@ -98,6 +98,7 @@ private:
         GUID guid;
         std::string label;
         bool shift;
+        UINT modifiers;
     };
     std::vector<Preserved> preserved_;
 
