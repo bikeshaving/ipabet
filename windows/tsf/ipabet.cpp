@@ -212,8 +212,8 @@ void TextService::PreserveDiacriticKeys() {
     // and stable within this service, so it is the class id with the last two
     // bytes carrying the scancode and the shift state.
     for (unsigned scancode = 0; scancode < 0x60; scancode++) {
-        const char *label = ipabet_us_layout_label((int)scancode);
-        if (!label[0]) continue;
+        const std::string label = usLayoutLabel(scancode);
+        if (label.empty()) continue;
         const UINT vk = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK);
         if (!vk) continue;
 
