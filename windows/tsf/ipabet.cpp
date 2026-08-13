@@ -314,7 +314,9 @@ STDMETHODIMP TextService::OnTestKeyDown(ITfContext *, WPARAM wp, LPARAM lp, BOOL
 }
 
 STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *eaten) {
-    Dbg("OnKeyDown vk=0x%02x scan=0x%02x", (unsigned)wp, (unsigned)((lp >> 16) & 0xFF));
+    Dbg("OnKeyDown vk=0x%02x scan=0x%02x ctrl=%d alt=%d ralt=%d shift=%d",
+        (unsigned)wp, (unsigned)((lp >> 16) & 0xFF), GetKeyState(VK_CONTROL) < 0,
+        GetKeyState(VK_MENU) < 0, GetKeyState(VK_RMENU) < 0, GetKeyState(VK_SHIFT) < 0);
     TrackShift(wp, true);
     if (wp == VK_SHIFT) {
         *eaten = FALSE;
@@ -457,6 +459,8 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
     Dbg("lookback %zu units", before.size());
     const std::string beforeUtf8 = ToUtf8(before);
 
+    Dbg("  engine: key='%s' option=%d control=%d shift=%d pending=%d", k.key ? k.key : "",
+        k.option, k.control, k.shift, pending_.count);
     CStep step;
     if (backspace) {
         step = k.control
@@ -466,6 +470,8 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         step = ipabet_engine_handle_key(engine_, beforeUtf8.c_str(), k, pending_, chainBroken_);
     }
 
+    Dbg("  step: edit=%d replace=%d pending=%d", (int)step.edit.edit_type,
+        step.edit.replace_length, step.pending.count);
     pending_ = step.pending;
     if (step.has_chain_broken) chainBroken_ = step.chain_broken;
 
