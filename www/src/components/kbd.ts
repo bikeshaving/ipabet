@@ -118,9 +118,23 @@ export function capBody(ch: string) {
 
 const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
 
-/** The reference board on /type: the full physical rectangle with the chrome
- *  GHOSTED, except ⌥ and ⇧, the keys the chords actually hold. */
-export function KeyboardRef() {
+/** The reference board: the full physical rectangle with the chrome GHOSTED,
+ *  except ⌥ and ⇧, the keys the chords actually hold.
+ *
+ *  `layer` is the one it opens on. /type opens on the base plane and lets the
+ *  reader hold a modifier; the Option-layer chart on /keys opens on ⌥, which is
+ *  the whole point of it being there. Either way every layer stays reachable —
+ *  it is the same board, not a picture of one. */
+export function KeyboardRef({
+	layer = "base",
+	chart = false,
+}: {
+	layer?: "base" | "opt" | "optshift" | "shift";
+	/** A chart rather than a control: the character caps type nothing on a page
+	 *  with no pad, so they stop inviting a click. The modifier caps stay live,
+	 *  since switching layer is the one thing this board still does. */
+	chart?: boolean;
+} = {}) {
 	// Chrome with MEANING renders as real caps (with the meaning in the
 	// tooltip); the rest is bare plate.
 	const CHROME_TITLES: Record<string, string> = {
@@ -151,7 +165,7 @@ export function KeyboardRef() {
 		] as PhysKey[],
 	];
 	return jsx`
-		<div class="kbd kbd--ref" id="kbdref">
+		<div class=${"kbd kbd--ref" + (chart ? " kbd--chart" : "")} id="kbdref">
 			<div class="plate">
 				${rows.map((row) => jsx`
 					<div class="krow">
@@ -162,10 +176,10 @@ export function KeyboardRef() {
 					</div>`)}
 			</div>
 			<div class="layers" hidden>
-				<input type="radio" name="klayer" id="klayer-base" checked />
-				<input type="radio" name="klayer" id="klayer-opt" />
-				<input type="radio" name="klayer" id="klayer-optshift" />
-				<input type="radio" name="klayer" id="klayer-shift" />
+				${["base", "opt", "optshift", "shift"].map(
+					(l) => jsx`<input type="radio" name="klayer" id=${"klayer-" + l}
+						checked=${l === layer ? true : undefined} />`,
+				)}
 			</div>
 			<div class="kcaption">
 				<span>hold — or click — <kbd>⌥</kbd> / <kbd>⌥⇧</kbd> / <kbd>⇧</kbd> to see each layer · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>

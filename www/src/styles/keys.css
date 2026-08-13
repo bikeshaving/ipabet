@@ -1,5 +1,9 @@
 :root { --bg:#fff; --fg:#111; --dim:#666; --line:#ddd; --k:#2555c4; }
-@media (prefers-color-scheme: dark){:root{--bg:#101012;--fg:#e8e8e6;--dim:#909090;--line:#2a2a2e;--k:#7aa2ff;}}
+/* The keyboard component styles itself from these; without them its plate is
+   the page background and the board disappears into it. */
+:root { --accent: var(--k); --kbd-bg:#f1f1ef; --kbd-line:#c9c9c4; --card:#f6f6f4; }
+@media (prefers-color-scheme: dark){:root{--bg:#101012;--fg:#e8e8e6;--dim:#909090;--line:#2a2a2e;--k:#7aa2ff;}
+  :root{--kbd-bg:#222226;--kbd-line:#3a3a40;--card:#1a1a1e;}}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
 main{max-width:52rem;margin:0 auto;padding:2rem 1.25rem 5rem}

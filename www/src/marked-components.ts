@@ -4,6 +4,7 @@ import {VowelApp, ConsonantApp} from "./components/chart-viz.ts";
 import {posts} from "./content.ts";
 import {TypingDemo, pickDemos} from "./components/typing-demo.ts";
 import {Downloads} from "./components/download.ts";
+import {KeyboardRef} from "./components/kbd.ts";
 
 // Components embeddable inline in Markdown. crankdown resolves PascalCase tags
 // against this map, passing attributes as `token` and contents as `children`.
@@ -42,6 +43,10 @@ export const components: Record<string, unknown> = {
 	// The three doors, as a button row: download, type, learn. Rendered with no
 	// target, hydrated by clients/download-client.ts with the real machine.
 	Callouts: () => jsx`<div id="download-root"><${Downloads} /></div>`,
+
+	// The Option layer on a keyboard rather than in a table: which physical key
+	// carries which mark is a spatial fact, and a table cannot show it.
+	OptionBoard: () => jsx`<${KeyboardRef} layer="opt" chart />`,
 
 	// A centered call-to-action line under the title; `sub` is the smaller second line.
 	Cta: ({token, children}: any) => jsx`<p class=${"cta" + (token.sub ? " sub" : "")}>${children}</p>`,

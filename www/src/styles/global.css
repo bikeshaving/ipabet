@@ -127,21 +127,62 @@ ol.install li { margin-bottom: 0.75rem; }
 .latestposts .d { display: block; color: var(--dim); font-size: 0.9rem; margin-top: 0.15rem; }
 .cta { text-align: center; margin-top: -1rem; }
 .cta.sub { margin-top: -0.5rem; font-size: 0.92rem; }
-.callouts { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin: 1.5rem 0 0.5rem; }
+/* The hero's actions: one download widget, then the two other doors. */
+.doors { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin: 1.75rem 0 0.5rem; }
+
+/* One bordered unit, so the file name and the platform list read as part of
+   the button rather than as loose text that happens to sit under it. */
+.download {
+	border: 1px solid var(--line); border-radius: 14px; background: var(--card);
+	padding: 1rem; width: min(24rem, 100%); text-align: center;
+}
+.download-get {
+	display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+	padding: 0.7rem 1.15rem; border-radius: 10px; text-decoration: none;
+	background: var(--accent); color: #fff; font-weight: 600; font-size: 1.05rem;
+}
+.download-get:hover { filter: brightness(1.08); }
+.download-file {
+	margin: 0.6rem 0 0; color: var(--dim); font-size: 0.85rem;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Which build, as two halves of one control rather than a question. */
+.download-arch {
+	display: inline-flex; margin-top: 0.6rem; border: 1px solid var(--line);
+	border-radius: 8px; overflow: hidden; background: var(--bg);
+}
+.download-arch a, .download-arch span {
+	padding: 0.25rem 0.7rem; font-size: 0.8rem; text-decoration: none; color: var(--dim);
+}
+.download-arch a + a { border-left: 1px solid var(--line); }
+.download-arch a:hover { color: var(--fg); }
+.download-arch [aria-current] { background: var(--kbd-bg); color: var(--fg); font-weight: 600; }
+
+/* Every platform one click away, the current one marked rather than hidden. */
+.download-all {
+	display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem;
+	list-style: none; margin: 0.85rem 0 0; padding: 0.85rem 0 0;
+	border-top: 1px solid var(--line);
+}
+.download-all a {
+	display: inline-flex; align-items: center; gap: 0.35rem;
+	padding: 0.3rem 0.6rem; border-radius: 8px; text-decoration: none;
+	color: var(--dim); font-size: 0.85rem;
+}
+.download-all a:hover { color: var(--fg); background: var(--kbd-bg); }
+.download-all a[aria-current] { color: var(--fg); font-weight: 600; }
+.download-releases { margin-left: auto; }
+@media (max-width: 30rem) { .download-releases { margin-left: 0; } }
+
+.os-icon { flex: none; display: block; }
+
+.callouts { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
 .callouts a {
 	display: inline-block; padding: 0.55rem 1.15rem; border: 1.5px solid var(--line);
 	border-radius: 10px; text-decoration: none; color: inherit; font-weight: 600;
 }
 .callouts a:hover { border-color: var(--accent); }
-.callouts a.main { background: var(--accent); border-color: var(--accent); color: #fff; }
-.callouts a.main:hover { filter: brightness(1.08); }
-.doors { display: flex; flex-direction: column; align-items: center; }
-/* Empty until the client knows the machine, and taking no space until then. */
-.download-note { margin: 0.6rem 0 0; color: var(--dim); font-size: 0.9rem; text-align: center; }
-.download-note:empty { display: none; }
-.download-note code { font-size: 0.95em; }
-.download-note a { color: var(--dim); text-decoration: none; border-bottom: 1px solid var(--line); }
-.download-note a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 h3.chart-title { margin: 1.5rem 0 0; font-size: 1rem; }
 footer {
 	margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--line);

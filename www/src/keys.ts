@@ -8,6 +8,10 @@ import {components} from "./marked-components.ts";
 import {docs} from "./content.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import keysCss from "./styles/keys.css" with {assetBase: "/assets/"};
+// The Option-layer board is the same component /type renders, so it needs the
+// same stylesheet.
+// @ts-ignore
+import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 
 // /keys — the complete mapping as machine-readable tables, generated from
 // spec/ipabet.json. Prose is content/keys.md.
@@ -91,7 +95,7 @@ const keysComponents = {
 
 export function Keys() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/keys" styles=${[keysCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/keys" styles=${[keysCss, kbdCss]}>
 			<main>
 				<h1>IPAbet keystroke reference <span style="font-size:.5em;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--k);border:1.5px solid var(--k);border-radius:999px;padding:.1em .55em;vertical-align:middle">beta</span></h1>
 				<${Marked} markdown=${doc.body} components=${keysComponents} />

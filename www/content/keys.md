@@ -48,6 +48,8 @@ Combining diacritics are _prefix_, dead-key style like é/ñ on the US keyboard:
 
 A few keys carry their own behavior: the rhotic hook (`⌥r`) is postfix and fuses `ə`/`ɜ` to precomposed `ɚ`/`ɝ`; the tie joiner (`⌥j` above, `⌥⇧j` below) attaches to the previous segment, or emits the spacing linker (`⁀`/`‿`) when pressed again on the tie it made; a doubled `⌥.` commits the interpunct `·` (Catalan `l·l`).
 
+<OptionBoard/>
+
 <MarkTable kind="ipa"/>
 
 Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in [`ipabet.json`](/ipabet.json).

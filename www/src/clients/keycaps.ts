@@ -4,7 +4,11 @@
 
 import {detectTarget} from "./platform.ts";
 
-export type KeyMode = "mac" | "pc";
+export type KeyMode = "mac" | "windows" | "linux";
+
+/** The cycle the pill walks. Three, not two: the ⌥ layer is AltGr on Windows
+ *  and a plain Alt on Linux, which are different keys to a reader. */
+export const KEY_MODES: KeyMode[] = ["mac", "windows", "linux"];
 
 /** Fired on window whenever the mode changes; islands re-render on it. */
 export const KEYMODE_EVENT = "ipabet:keymode";
@@ -12,17 +16,21 @@ export const KEYMODE_EVENT = "ipabet:keymode";
 const STORAGE = "ipabet:keymode";
 
 export function detectKeyMode(): KeyMode {
-	// Server renders the canonical mac spellings; a pc client patches at hydrate.
-	// Two spellings out of three platforms: anything that is not a Mac — and
-	// anything unrecognised, which is mostly PCs — reads the pc names.
+	// The server renders the canonical mac spellings and the client patches them
+	// at hydrate. Anything unrecognised reads the Windows names, which is what an
+	// unrecognised machine most often is.
 	if (typeof window === "undefined") return "mac";
-	return detectTarget()?.platform === "macos" ? "mac" : "pc";
+	const platform = detectTarget()?.platform;
+	if (platform === "macos") return "mac";
+	return platform === "linux" ? "linux" : "windows";
 }
 
 export function keyMode(): KeyMode {
 	try {
 		const v = localStorage.getItem(STORAGE);
-		if (v === "mac" || v === "pc") return v;
+		if (v === "mac" || v === "windows" || v === "linux") return v;
+		// "pc" is what this used to store, when Windows and Linux shared a name.
+		if (v === "pc") return "windows";
 	} catch {}
 	return detectKeyMode();
 }
@@ -34,17 +42,23 @@ export function setKeyMode(m: KeyMode): void {
 	window.dispatchEvent(new CustomEvent(KEYMODE_EVENT));
 }
 
-/** "⌥⇧w" → "Alt+Shift+w", "s ⇧H" → "s Shift+H", bare "⇧" → "Shift".
+/** What the ⌥ layer is called in a given mode.
  *
- *  Alt, because that is what the key says on the keyboard the reader is looking
- *  at. It is the Alt to the right of the spacebar, which a layout with an AltGr
- *  labels AltGr instead — the same physical key, and naming it AltGr would read
- *  as a key a US keyboard does not have.
+ *  AltGr on Windows: the layer answers to Ctrl+Alt and to the right Alt key,
+ *  and AltGr is the name Windows users already have for exactly that. Plain
+ *  "Alt" reads as the left one, which opens the menu bar and reaches no text
+ *  service. The Linux shells receive an ordinary Alt and decline AltGr, so
+ *  there the plain name is the true one. */
+export function optLabel(mode: KeyMode = keyMode()): string {
+	return mode === "linux" ? "Alt" : "AltGr";
+}
+
+/** "⌥⇧w" → "AltGr+Shift+w", "s ⇧H" → "s Shift+H", bare "⇧" → "Shift".
  *  Only modifier-led runs are touched, so prose around them survives. */
-export function pcKeys(label: string): string {
+export function pcKeys(label: string, opt: string = optLabel()): string {
 	return label.replace(/[⌥⇧⌃]+[^\s⌥⇧⌃]*/g, (tok) =>
 		tok
-			.replace(/⌥/g, "Alt+")
+			.replace(/⌥/g, opt + "+")
 			.replace(/⇧/g, "Shift+")
 			.replace(/⌃/g, "Ctrl+")
 			.replace(/\+$/, ""),
@@ -53,5 +67,5 @@ export function pcKeys(label: string): string {
 
 /** A label in the active (or given) mode — the one display entry point. */
 export function displayKeys(label: string, mode: KeyMode = keyMode()): string {
-	return mode === "pc" ? pcKeys(label) : label;
+	return mode === "mac" ? label : pcKeys(label, optLabel(mode));
 }
