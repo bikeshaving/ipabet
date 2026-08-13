@@ -45,6 +45,14 @@ jobs:
           ./build.sh
           sudo cmake --install ${{ matrix.framework }}/build
 
+      # fcitx5 reports "Found 0 input method(s) in addon ipabet" when the addon
+      # library loads and its input-method manifest does not, which are two
+      # different files in two different directories.
+      - name: Where the pieces landed
+        run: |
+          find /usr/share/fcitx5 /usr/share/ibus -name '*ipabet*' 2>/dev/null || true
+          find /usr/lib -name '*ipabet*' 2>/dev/null || true
+
       - name: Type
         run: |
           eval "$(dbus-launch --sh-syntax)"
