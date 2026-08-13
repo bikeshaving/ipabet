@@ -1,5 +1,6 @@
-IPAbet is a keyboard for the International Phonetic Alphabet. It is a preview
-release, so expect rough edges and please report them.
+IPAbet is a fast and memorable keyboard for typing the International Phonetic
+Alphabet. Report anything that goes wrong at
+https://github.com/bikeshaving/ipabet/issues.
 
 ## Which file do I download?
 

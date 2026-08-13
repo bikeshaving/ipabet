@@ -39,7 +39,7 @@ const Scaffold = () => jsx`<div id="learn-root"><${LearnApp} lessons=${LESSONS} 
 
 export function Learn() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, learnCss, kbdCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/learn" styles=${[globalCss, learnCss, kbdCss]}>
 			<main>
 				<header>
 					<h1><a href="/" style="text-decoration:none;color:inherit">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/learn</span></h1>

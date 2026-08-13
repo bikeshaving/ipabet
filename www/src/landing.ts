@@ -28,6 +28,7 @@ export function Landing() {
 		<${Layout}
 			title=${doc.attributes.title}
 			desc=${doc.attributes.description ?? ""}
+			path="/"
 			styles=${[globalCss]}
 		>
 			<main>

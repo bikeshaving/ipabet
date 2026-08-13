@@ -1,5 +1,5 @@
 ---
-title: "IPAbet — a fast and memorable keyboard for the International Phonetic Alphabet"
+title: "IPA keyboard for typing the International Phonetic Alphabet"
 description: "IPAbet is a fast and memorable keyboard for typing the International Phonetic Alphabet, directly in any app. Unshifted keys stay plain US. Free, open source, offline."
 ---
 

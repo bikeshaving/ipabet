@@ -91,7 +91,7 @@ const keysComponents = {
 
 export function Keys() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[keysCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/keys" styles=${[keysCss]}>
 			<main>
 				<h1>IPAbet keystroke reference <span style="font-size:.5em;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--k);border:1.5px solid var(--k);border-radius:999px;padding:.1em .55em;vertical-align:middle">beta</span></h1>
 				<${Marked} markdown=${doc.body} components=${keysComponents} />

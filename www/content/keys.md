@@ -1,5 +1,5 @@
 ---
-title: IPAbet — keystroke reference (machine-readable)
+title: "IPA keystroke reference — every symbol and the keys that type it"
 description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint. Raw JSON at /ipabet.json."
 ---
 

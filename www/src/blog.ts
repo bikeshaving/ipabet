@@ -33,7 +33,7 @@ function fmtDate(iso: string): string {
 
 export function BlogIndex() {
 	return jsx`
-		<${Layout} title="IPAbet blog" desc="Dated writing about IPAbet — design arguments, launch notes, and the archaeology the reference pages leave out." styles=${[globalCss, blogCss]}>
+		<${Layout} title="IPAbet blog" desc="Dated writing about IPAbet — design arguments, launch notes, and the archaeology the reference pages leave out." path="/blog" styles=${[globalCss, blogCss]}>
 			<main class="blog">
 				<h1>IPA<span class="ipa">bet</span> blog</h1>
 				<p class="bloglede">The reference pages state the design; this is where the arguments live. <a href="/feed.xml">Atom feed</a> · <a href="/">home</a>.</p>
@@ -52,7 +52,7 @@ export function BlogIndex() {
 
 export function BlogPost({post}: {post: Post}) {
 	return jsx`
-		<${Layout} title=${`${post.attributes.title} — IPAbet blog`} desc=${post.attributes.description ?? ""} styles=${[globalCss, blogCss, chartVizCss]}>
+		<${Layout} title=${`${post.attributes.title} — IPAbet blog`} desc=${post.attributes.description ?? ""} path=${`/blog/${post.slug}`} styles=${[globalCss, blogCss, chartVizCss]}>
 			<main class="blog post">
 				<p class="crumbs"><a href="/blog">← blog</a></p>
 				<h1>${post.attributes.title}</h1>

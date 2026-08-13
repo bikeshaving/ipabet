@@ -24,6 +24,7 @@ export function Design() {
 		<${Layout}
 			title=${doc.attributes.title}
 			desc=${doc.attributes.description ?? ""}
+			path="/design"
 			styles=${[globalCss, designCss, chartVizCss]}
 		>
 			<main>

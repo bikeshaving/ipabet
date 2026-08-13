@@ -25,7 +25,7 @@ const PadRoot = () => jsx`<div id="pad-root"><${Pad} /></div>`;
 
 export function Type() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} styles=${[globalCss, editorCss, kbdCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" styles=${[globalCss, editorCss, kbdCss]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>

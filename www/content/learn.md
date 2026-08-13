@@ -1,5 +1,5 @@
 ---
-title: Learn IPAbet — the typing tutor
+title: "Learn IPA — a typing tutor for the phonetic alphabet"
 description: "A touch-typing tutor for IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser — powered by the real IPAbet engine. No theory, no quizzes."
 ---
 

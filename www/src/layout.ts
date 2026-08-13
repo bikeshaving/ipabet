@@ -9,15 +9,43 @@ import downloadClient from "./clients/download-client.ts" with {assetBase: "/ass
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
 // page renders <${Layout}> around its own <main> and trailing islands.
 
+const SITE = "https://ipabet.org";
+
+/** The one description, everywhere. */
+const TAGLINE = "A fast and memorable keyboard for typing the International Phonetic Alphabet.";
+
 export interface LayoutProps {
 	title: string;
 	desc: string;
 	/** Hashed stylesheet URLs to <link> (the preferred path — real .css assets). */
 	styles?: string[];
+	/** This page's path, for the canonical URL and the social card. */
+	path?: string;
 	children?: unknown;
 }
 
-export function Layout({title, desc, styles = [], children}: LayoutProps) {
+export function Layout({title, desc, styles = [], path = "/", children}: LayoutProps) {
+	const url = SITE + (path === "/" ? "" : path);
+	// A search engine reads one page and has to place it: what this is, who
+	// made it, what it costs. The JSON-LD says so outright instead of leaving
+	// it to be inferred from prose.
+	const schema = JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		name: "IPAbet",
+		description: TAGLINE,
+		applicationCategory: "UtilitiesApplication",
+		applicationSubCategory: "Keyboard",
+		operatingSystem: "macOS, Windows, Linux",
+		url: SITE,
+		downloadUrl: SITE + "/download",
+		softwareVersion: "0.1.2",
+		license: "https://opensource.org/licenses/MIT",
+		isAccessibleForFree: true,
+		offers: {"@type": "Offer", price: "0", priceCurrency: "USD"},
+		author: {"@type": "Person", name: "Brian Kim"},
+	});
+
 	return jsx`
 		<html lang="en">
 			<head>
@@ -25,6 +53,18 @@ export function Layout({title, desc, styles = [], children}: LayoutProps) {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<title>${title}</title>
 				<meta name="description" content=${desc} />
+				<link rel="canonical" href=${url} />
+
+				<meta property="og:type" content="website" />
+				<meta property="og:site_name" content="IPAbet" />
+				<meta property="og:title" content=${title} />
+				<meta property="og:description" content=${desc} />
+				<meta property="og:url" content=${url} />
+				<meta name="twitter:card" content="summary" />
+				<meta name="twitter:title" content=${title} />
+				<meta name="twitter:description" content=${desc} />
+
+				<script type="application/ld+json">${schema}</script>
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
 			</head>
 			<body>

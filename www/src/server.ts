@@ -124,6 +124,36 @@ router.route("/download").get((request: Request) => {
 	});
 });
 
+// Nothing here was findable by a crawler that had not already been sent a link:
+// no sitemap, and no robots.txt to point at one.
+const PAGES = ["/", "/chart", "/type", "/learn", "/keys", "/design", "/blog"];
+
+router.route("/sitemap.xml").get(() => {
+	const urls = PAGES.map(
+		(path) => `  <url><loc>https://ipabet.org${path === "/" ? "" : path}</loc></url>`,
+	).join("\n");
+	return new Response(
+		`<?xml version="1.0" encoding="UTF-8"?>\n` +
+			`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
+		{
+			headers: {
+				"Content-Type": "application/xml; charset=utf-8",
+				"Cache-Control": "public, max-age=3600",
+			},
+		},
+	);
+});
+
+router.route("/robots.txt").get(
+	() =>
+		new Response("User-agent: *\nAllow: /\nSitemap: https://ipabet.org/sitemap.xml\n", {
+			headers: {
+				"Content-Type": "text/plain; charset=utf-8",
+				"Cache-Control": "public, max-age=3600",
+			},
+		}),
+);
+
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
 		headers: {

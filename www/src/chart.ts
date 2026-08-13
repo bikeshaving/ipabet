@@ -297,8 +297,9 @@ function Diacritics() {
 export function Chart() {
 	return jsx`
 		<${Layout}
-			title="The IPAbet chart — the IPA in keystrokes"
+			title="The IPA chart, with keystrokes and audio"
 			desc="The IPA chart with IPAbet keystrokes beside every symbol: one printable sheet covering pulmonic and non-pulmonic consonants, vowels, diacritics, suprasegmentals, and tones."
+			path="/chart"
 			styles=${[chartCss]}
 		>
 			<p class="webnav"><a href="/">← IPAbet</a> · <a href=${chartPdf} download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or ⌘P.</p>
