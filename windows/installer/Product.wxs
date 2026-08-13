@@ -10,13 +10,17 @@
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="IPAbet"
-           Manufacturer="Brian Kim"
+           Manufacturer="Bikeshaving"
            Version="$(var.Version)"
            UpgradeCode="8f3d5a21-6c74-4e90-9b12-3a7e5d0c4f88"
            Scope="perMachine"
            Compressed="yes">
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of IPAbet is already installed." />
+    <!-- AllowSameVersionUpgrades, because the product code is regenerated on
+         every build: without it, reinstalling the same version leaves the old
+         entry in Installed Apps and adds a second one beside it. -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of IPAbet is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
     <Icon Id="IpabetIcon" SourceFile="$(var.BinDir)\ipabet-register.exe" />

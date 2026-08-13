@@ -83,6 +83,23 @@ jobs:
           Get-ChildItem (Join-Path $env:ProgramFiles 'IPAbet') | Format-Table -AutoSize | Out-String
           .\windows\build\Release\profile-probe.exe assert-present
 
+      # Every build gets a new product code, so a reinstall is an upgrade only
+      # if the package says so. Without it Windows keeps both and the user
+      # uninstalls one copy and still has an input method.
+      - name: Reinstalling replaces rather than adds
+        run: |
+          $p = Start-Process msiexec -ArgumentList '/i',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','reinstall.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content reinstall.log -Tail 40; throw "msiexec exited $($p.ExitCode)" }
+
+          $roots = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+                   'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+          $found = @(Get-ChildItem $roots -ErrorAction SilentlyContinue |
+                     ForEach-Object { Get-ItemProperty $_.PSPath } |
+                     Where-Object { $_.DisplayName -eq 'IPAbet' })
+          $found | Format-Table DisplayName, DisplayVersion, Publisher | Out-String
+          if ($found.Count -ne 1) { throw "$($found.Count) copies of IPAbet in Installed Apps" }
+          if ($found[0].Publisher -ne 'Bikeshaving') { throw "publisher is $($found[0].Publisher)" }
+
       - name: Uninstall
         run: |
           $p = Start-Process msiexec -ArgumentList '/x',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','uninstall.log' -Wait -PassThru
@@ -119,4 +136,5 @@ jobs:
           path: |
             windows/build/IPAbet-${{ matrix.arch }}.msi
             install.log
+            reinstall.log
             uninstall.log
