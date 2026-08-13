@@ -245,7 +245,21 @@ bool TextService::Claims(WPARAM wp, LPARAM lp, CKeystroke *out) {
     if (GetKeyState(VK_LWIN) < 0 || GetKeyState(VK_RWIN) < 0) return false;
 
     const bool ctrl = GetKeyState(VK_CONTROL) < 0;
+    const bool alt = GetKeyState(VK_MENU) < 0;
     const unsigned scancode = (unsigned)((lp >> 16) & 0xFF);
+
+    // The diacritic layer lives on AltGr here, not on Alt as it does elsewhere.
+    // Alt belongs to the menu bar: Alt+E opens Edit, and Windows delivers it as
+    // a system key that never reaches a text service. AltGr does not have that
+    // problem — Windows suppresses the system-key path when Ctrl is held, which
+    // is exactly what AltGr is, and it is already what Windows users press for
+    // characters a keyboard does not have.
+    //
+    // Right Alt is AltGr wherever a layout defines one, and plain Alt where it
+    // does not, so it is accepted on its own too: one key that means the same
+    // thing on every layout.
+    const bool rightAlt = GetKeyState(VK_RMENU) < 0;
+    const bool altGr = (ctrl && alt) || rightAlt;
 
     std::string label;
     if (wp == VK_ESCAPE) {
@@ -258,7 +272,11 @@ bool TextService::Claims(WPARAM wp, LPARAM lp, CKeystroke *out) {
         // version of it.
         if (ctrl ? written_.empty() : pending_.count == 0) return false;
     } else {
-        if (ctrl) return false;
+        // A Control chord that is not AltGr is the application's.
+        if (ctrl && !altGr) return false;
+        // Plain left Alt is the menu bar's, and claiming it would not work
+        // anyway.
+        if (alt && !altGr) return false;
         label = usLayoutLabel(scancode);
         if (label.empty()) return false;
     }
@@ -266,8 +284,11 @@ bool TextService::Claims(WPARAM wp, LPARAM lp, CKeystroke *out) {
     if (out) {
         *out = CKeystroke{};
         out->shift = GetKeyState(VK_SHIFT) < 0;
-        out->option = GetKeyState(VK_MENU) < 0;
-        out->control = ctrl;
+        // AltGr reaches the engine looking exactly like macOS's Option. If it
+        // arrived with control set, the engine would take it for a Control
+        // chord and pass on it, and the layer would be just as dead.
+        out->option = altGr;
+        out->control = ctrl && !altGr;
         out->caps_lock = (GetKeyState(VK_CAPITAL) & 1) != 0;
         out->shift_broke = shiftBroke_;
     }

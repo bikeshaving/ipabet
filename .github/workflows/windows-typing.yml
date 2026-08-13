@@ -42,7 +42,15 @@ jobs:
       - name: Type into Notepad
         env:
           IPABET_DEBUG_LOG: ${{ github.workspace }}\ipabet-debug.log
-        run: .\windows\tools\notepad-type-test.ps1
+        run: .\windows\tools\notepad-type-test.ps1 -Count 60
+        shell: pwsh
+
+      # Nearly a quarter of the corpus uses the diacritic layer, and it had no
+      # coverage here at all until it turned out not to work.
+      - name: The diacritic layer specifically
+        env:
+          IPABET_DEBUG_LOG: ${{ github.workspace }}\ipabet-debug.log
+        run: .\windows\tools\notepad-type-test.ps1 -Count 25 -Only option
         shell: pwsh
 
       - name: What the text service saw

@@ -65,6 +65,7 @@ public static class Input {
     const uint KEYEVENTF_SCANCODE = 0x0008;
     const ushort VK_SHIFT = 0x10;
     const ushort VK_CONTROL = 0x11;
+    const ushort VK_MENU = 0x12;
 
     static INPUT Key(ushort vk, bool up) {
         var i = new INPUT();
@@ -80,6 +81,21 @@ public static class Input {
         if (sent != arr.Length) {
             throw new Exception("SendInput rejected input: " + Marshal.GetLastWin32Error());
         }
+    }
+
+    /// One key, with AltGr held around it when asked. Windows reports AltGr as
+    /// Ctrl+Alt, and sending it that way is what stops the press being a system
+    /// key -- plain Alt goes to the menu bar and never reaches a text service.
+    public static void PressWithAlt(ushort vk, bool shift, bool altGr) {
+        var seq = new System.Collections.Generic.List<INPUT>();
+        if (altGr) { seq.Add(Key(VK_CONTROL, false)); seq.Add(Key(VK_MENU, false)); }
+        if (shift) seq.Add(Key(VK_SHIFT, false));
+        seq.Add(Key(vk, false));
+        seq.Add(Key(vk, true));
+        if (shift) seq.Add(Key(VK_SHIFT, true));
+        if (altGr) { seq.Add(Key(VK_MENU, true)); seq.Add(Key(VK_CONTROL, true)); }
+        Send(seq.ToArray());
+        System.Threading.Thread.Sleep(110);
     }
 
     /// One key, with optional modifiers held around it.
