@@ -22,16 +22,14 @@ what Ubuntu, Debian, Fedora and every GNOME desktop already use.
 ## Windows
 
 1. Download the `.msi` file for your processor.
-2. Your browser will warn you that the file is not commonly downloaded. Choose
-   to keep it. This release is not signed with a certificate yet, so Windows has
-   no record of it.
-3. Open the file. Windows will show a blue screen saying it protected your PC.
-   Click **More info**, then **Run anyway**.
-4. **Sign out of Windows and sign back in.** Windows only loads a new keyboard
+2. Open it. Windows will warn you that it does not recognize the file, and may
+   warn more than once. This release is not signed with a certificate yet, so
+   there is nothing for Windows to recognize. Keep the file and run it anyway.
+3. **Sign out of Windows and sign back in.** Windows only loads a new keyboard
    when you sign in. If you skip this the keyboard will not appear.
-5. Press **Windows key + Space** to switch keyboards. Pick IPAbet. The letters
+4. Press **Windows key + Space** to switch keyboards. Pick IPAbet. The letters
    IPA appear in the tray at the bottom right.
-6. Try it in Notepad. Type `t` then `Shift+H` and you get θ. Hold the **Alt key
+5. Try it in Notepad. Type `t` then `Shift+H` and you get θ. Hold the **Alt key
    to the right of the spacebar**, press `n`, release, then press `a`, and you
    get ã. `Ctrl+Alt` does the same thing if you prefer it.
 
