@@ -107,6 +107,10 @@ private:
     /// keys the service claims — which ⇧ never is.
     void TrackShift(WPARAM wp, bool down);
 
+    /// The armed diacritic, as text to show while it waits for a base. Empty
+    /// when nothing is pending.
+    std::wstring Preview() const;
+
     /// The run being typed lives in a composition — a range this service owns
     /// and can rewrite whole. Replacing a glyph means putting different text in
     /// the composition, never moving an anchor backwards over the document,

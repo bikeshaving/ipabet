@@ -469,6 +469,13 @@ STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie, ITfComposition *
 }
 
 
+std::wstring TextService::Preview() const {
+    if (!engine_ || pending_.count == 0) return {};
+    char buf[EDIT_TEXT_MAX];
+    ipabet_preview_string(engine_, pending_, buf, sizeof(buf));
+    return ToUtf16(buf);
+}
+
 HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::wstring &text) {
     if (!composition_) {
         // The composition starts where the caret is. The selection range is the
@@ -518,6 +525,16 @@ HRESULT TextService::SetComposition(TfEditCookie ec, ITfContext *cx, const std::
 
 void TextService::EndComposition(TfEditCookie ec) {
     if (!composition_) return;
+    // Whatever the composition holds is about to become document text, and a
+    // preview is not text -- it is a mark waiting for a base that never came.
+    if (pending_.count > 0) {
+        ITfRange *range = nullptr;
+        if (SUCCEEDED(composition_->GetRange(&range))) {
+            range->SetText(ec, 0, written_.c_str(), (LONG)written_.size());
+            range->Release();
+        }
+        pending_ = CPending{};
+    }
     composition_->EndComposition(ec);
     composition_->Release();
     composition_ = nullptr;
@@ -534,11 +551,16 @@ HRESULT TextService::Trim(TfEditCookie ec, ITfContext *cx) {
 
     const std::wstring head = written_.substr(0, written_.size() - keep);
     const std::wstring tail = written_.substr(written_.size() - keep);
+    // The head commits without the preview on it, and the preview reappears on
+    // the fresh composition with the tail.
+    const CPending held = pending_;
+    pending_ = CPending{};
     HRESULT hr = SetComposition(ec, cx, head);
     if (FAILED(hr)) return hr;
     EndComposition(ec);
+    pending_ = held;
     written_ = tail;
-    return SetComposition(ec, cx, tail);
+    return SetComposition(ec, cx, tail + Preview());
 }
 
 HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const CKeystroke &k,
@@ -581,8 +603,11 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         text = ToUtf16(native);
         break;
     }
-    default: // Noop: only the pending composition moved
-        return S_OK;
+    default:
+        // Noop: no document text changed, but an armed mark is worth showing --
+        // the dead-key preview macOS puts in marked text and Linux in the
+        // preedit.
+        return SetComposition(ec, cx, written_ + Preview());
     }
     // Keep the record in step with what is composed. Two grapheme clusters is
     // the whole of the engine's lookback, so anything older is dead weight.
@@ -593,7 +618,7 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
     }
     written_ += text;
 
-    HRESULT hr = SetComposition(ec, cx, written_);
+    HRESULT hr = SetComposition(ec, cx, written_ + Preview());
     if (FAILED(hr)) return hr;
     return Trim(ec, cx);
 }
