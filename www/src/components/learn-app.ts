@@ -300,11 +300,13 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 	 *  already reached shown as visited. */
 	const LessonIndex = () => {
 		if (!indexOpen) return null;
-		const owned = lessons.slice(0, Math.max(reached, li) + 1).filter((l) => l.sound);
+		// Everything up to the furthest lesson reached, which is what has been
+		// put in front of the reader — not a claim about what they can do with it.
+		const seen = lessons.slice(0, Math.max(reached, li) + 1).filter((l) => l.sound);
 		return jsx`
-			${owned.length ? jsx`<div class="owned">
-				<span class="olabel">sounds you own · ${owned.length}</span>
-				${owned.map((l) => jsx`<button class="ochip ipa" title=${l.title} onclick=${() => play(l.audio)}>${l.sound}</button>`)}
+			${seen.length ? jsx`<div class="owned">
+				<span class="olabel">sounds you've seen · ${seen.length}</span>
+				${seen.map((l) => jsx`<button class="ochip ipa" title=${l.title} onclick=${() => play(l.audio)}>${l.sound}</button>`)}
 			</div>` : null}
 			<ol class="lessonlist">
 				${lessons.map((l, i) => {
