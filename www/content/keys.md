@@ -3,7 +3,7 @@ title: IPAbet — keystroke reference (machine-readable)
 description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint. Raw JSON at /ipabet.json."
 ---
 
-The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **AltGr** — the right Alt key — mapped 1:1, and `⌥⇧` is AltGr+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
+The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **Alt** — the key to the right of the spacebar, labeled AltGr on the layouts that have one — mapped 1:1, and `⌥⇧` is Alt+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
 
 ## Base letters (identity)
 

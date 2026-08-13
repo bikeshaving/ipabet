@@ -36,10 +36,10 @@ export function setKeyMode(m: KeyMode): void {
 
 /** "⌥⇧w" → "Alt+Shift+w", "s ⇧H" → "s Shift+H", bare "⇧" → "Shift".
  *
- *  Alt, never AltGr. Both PC ports read plain Alt for the diacritic layer and
- *  deliberately decline AltGr, which is how a layout that has one keeps @ and €
- *  on it while IPAbet is active — so naming AltGr here would send exactly those
- *  users to the one key that cannot work.
+ *  Alt, because that is what the key says on the keyboard the reader is looking
+ *  at. It is the Alt to the right of the spacebar, which a layout with an AltGr
+ *  labels AltGr instead — the same physical key, and naming it AltGr would read
+ *  as a key a US keyboard does not have.
  *  Only modifier-led runs are touched, so prose around them survives. */
 export function pcKeys(label: string): string {
 	return label.replace(/[⌥⇧⌃]+[^\s⌥⇧⌃]*/g, (tok) =>

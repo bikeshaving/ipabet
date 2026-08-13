@@ -30,9 +30,9 @@ function pill(): void {
 	if (document.getElementById("keymode-pill")) return;
 	const b = document.createElement("button");
 	b.id = "keymode-pill";
-	b.title = "Keystroke labels — switch between Mac (⌥⇧) and PC (AltGr+Shift) spellings";
+	b.title = "Keystroke labels — switch between Mac (⌥⇧) and PC (Alt+Shift) spellings";
 	const label = () => {
-		b.textContent = keyMode() === "mac" ? "keys: ⌥ mac" : "keys: AltGr pc";
+		b.textContent = keyMode() === "mac" ? "keys: ⌥ mac" : "keys: Alt pc";
 	};
 	b.addEventListener("click", () => setKeyMode(keyMode() === "mac" ? "pc" : "mac"));
 	label();

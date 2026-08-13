@@ -56,6 +56,32 @@ anchor over the document, and it is what every Windows input method does.
 without one. Composed text is not committed text — the client takes it when the
 run ends at a key IPAbet declines, or when focus moves.
 
+## The diacritic layer is reserved key by key
+
+TSF hands a text service ordinary typing and keeps the modifier chords for
+itself: Shift arrives at the key sink, Ctrl and Alt never do. A service that
+wants one asks for it by name through `ITfKeystrokeMgr::PreserveKey`, and gets
+it back through `OnPreservedKey` instead of `OnKeyDown`. So the whole ⌥ layer
+is a loop at activation: every key on the US layout, in both shift states.
+
+It is reserved twice, because the key users press has two spellings that
+Windows reports differently:
+
+- **Ctrl+Alt** (`TF_MOD_CONTROL | TF_MOD_ALT`) — what a layout with an AltGr
+  reports when AltGr is pressed, and a chord that works on every layout.
+- **Right Alt alone** (`TF_MOD_RALT`) — the same physical key on a US keyboard,
+  where it is plain Alt and matches no Ctrl+Alt reservation.
+
+Without the second one, the key labeled Alt beside the spacebar does nothing on
+a US keyboard and the layer needs two hands. `windows-typing.yml` presses both,
+which is not redundant: they arrive as different keys, so one passing says
+nothing about the other. Injecting right Alt needs `KEYEVENTF_EXTENDEDKEY` —
+it shares a scancode with left Alt and the flag is the only thing that tells
+them apart.
+
+A preserved key reaches the engine as Option and never as Control, whatever
+Windows reported: the engine tests control first and would pass on the key.
+
 ## What the text service has to do (W1)
 
 `ITfTextInputProcessor` for activation and `ITfKeyEventSink` for keystrokes;
