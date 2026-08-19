@@ -58,8 +58,14 @@ Uninstall deletes both keys directly and calls TSF afterward, best effort. TSF
 profile enumeration answers for the calling user, SYSTEM has no profiles, so an
 uninstall that only asks TSF removes nothing and reports success.
 
-The profile is registered under every installed input language. TSF has no
-neutral slot.
+Registration and enablement are separate. Registration is machine-wide and
+makes the profile available, filed under English (US) — TSF has no neutral
+slot. Enablement is per-user and is what puts IPAbet in a user's Win+Space
+list; a registered, never-enabled profile is invisible. `ipabet-register`
+does both; the MSI runs them as separate actions because they need different
+accounts — registration as SYSTEM, enablement impersonated as the installing
+user (`InstallLayoutOrTip`). Enabling the pair works whether or not the user
+has English (US) — enabling is what adds it.
 
 `regsvr32` reports failure in a message box it cannot show under automation, so
 the gates call `DllRegisterServer` directly and print the HRESULT.

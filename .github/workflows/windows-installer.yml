@@ -72,6 +72,15 @@ jobs:
           if ($LASTEXITCODE -eq 0) { throw "IPAbet was registered before installing" }
           exit 0
 
+      # Runners are English (US) machines, and IPAbet registers under English
+      # (US) — on a runner the two halves of installing are indistinguishable.
+      # A user without en-US only sees IPAbet because the installer enables the
+      # pair for them, so that user is who this job impersonates from here on.
+      - name: Remove English (US) from this user's languages
+        run: |
+          Set-WinUserLanguageList (New-WinUserLanguageList en-GB) -Force
+          Get-WinUserLanguageList | Format-Table LanguageTag, InputMethodTips | Out-String
+
       - name: Install
         run: |
           $p = Start-Process msiexec -ArgumentList '/i',"windows\build\IPAbet-${{ matrix.arch }}.msi",'/qn','/l*v','install.log' -Wait -PassThru
@@ -82,6 +91,21 @@ jobs:
         run: |
           Get-ChildItem (Join-Path $env:ProgramFiles 'IPAbet') | Format-Table -AutoSize | Out-String
           .\windows\build\Release\profile-probe.exe assert-present
+
+      # The half a user can see. This user has no English (US), so nothing but
+      # the installer's own enablement can put IPAbet in their keyboard list —
+      # registration alone leaves this failing, which is the 0.1.2 bug. The
+      # language list is the assertion because it is the user-visible store the
+      # enablement writes; the TSF flag is only reported, since a profile
+      # registered enabled-by-default can carry it without being in any list.
+      - name: In this user's keyboard list
+        run: |
+          .\windows\build\Release\profile-probe.exe assert-enabled
+          $tip = '0409:{6B2E1F0C-9A44-4C3B-B0D5-1E7A2C5D8F31}{C4D9A7E2-3F18-4B6A-9E52-7A0B4D6C8125}'
+          $langs = Get-WinUserLanguageList
+          $langs | Format-Table LanguageTag, InputMethodTips | Out-String
+          $hit = $langs | Where-Object { $_.InputMethodTips -contains $tip }
+          if (-not $hit) { throw "IPAbet is not in this user's language list" }
 
       # Every build gets a new product code, so a reinstall is an upgrade only
       # if the package says so. Without it Windows keeps both and the user
@@ -134,6 +158,12 @@ jobs:
                      Where-Object { $_.DisplayName -eq 'IPAbet' })
           if ($found.Count -ne 1) { throw "$($found.Count) copies of IPAbet after upgrading" }
           .\windows\build\Release\profile-probe.exe assert-present
+          if ($LASTEXITCODE -ne 0) { throw "not registered after upgrading" }
+          # An upgrade must also leave the keyboard visible — the published MSI
+          # never enabled it, so this proves the new one does it on upgrade too.
+          $tip = '0409:{6B2E1F0C-9A44-4C3B-B0D5-1E7A2C5D8F31}{C4D9A7E2-3F18-4B6A-9E52-7A0B4D6C8125}'
+          $hit = Get-WinUserLanguageList | Where-Object { $_.InputMethodTips -contains $tip }
+          if (-not $hit) { throw "not in the user's language list after upgrading" }
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -157,8 +187,12 @@ jobs:
             if (Test-Path $k) { $left += $k }
           }
           if (Test-Path (Join-Path $env:ProgramFiles 'IPAbet\ipabet.dll')) { $left += 'the files' }
+          $tip = '0409:{6B2E1F0C-9A44-4C3B-B0D5-1E7A2C5D8F31}{C4D9A7E2-3F18-4B6A-9E52-7A0B4D6C8125}'
+          if (Get-WinUserLanguageList | Where-Object { $_.InputMethodTips -contains $tip }) {
+            $left += "the user's language list"
+          }
           if ($left.Count) { throw "uninstall left behind: $($left -join ', ')" }
-          Write-Host "registry and files are clean"
+          Write-Host "registry, files and the language list are clean"
 
           .\windows\build\Release\profile-probe.exe assert-present
           if ($LASTEXITCODE -eq 0) {

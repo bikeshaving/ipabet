@@ -4,6 +4,10 @@
 //
 //   profile-probe list            every registered text service profile
 //   profile-probe assert-present  exit 0 if IPAbet is registered, 1 if not
+//   profile-probe assert-enabled  exit 0 if IPAbet is in the calling user's
+//                                 keyboard list — registration alone is not
+//                                 that, and the difference is the difference
+//                                 between installed and visible
 //   profile-probe enable-select   enable IPAbet and make it the active profile
 //   profile-probe register <dll>    call DllRegisterServer, report the HRESULT
 //   profile-probe unregister <dll>  call DllUnregisterServer, report the HRESULT
@@ -112,7 +116,8 @@ int CallRegistrationExport(const char *dll, const char *entry) {
 int main(int argc, char **argv) {
     if (argc < 2) {
         fprintf(stderr,
-                "usage: profile-probe list|assert-present|enable-select|register <dll>|"
+                "usage: profile-probe list|assert-present|assert-enabled|enable-select|"
+                "register <dll>|"
                 "unregister <dll>\n");
         return 2;
     }
@@ -157,6 +162,22 @@ int main(int argc, char **argv) {
             rc = 0;
         } else {
             fprintf(stderr, "IPAbet is NOT registered (%d profiles enumerated).\n", total);
+            rc = 1;
+        }
+    } else if (strcmp(cmd, "assert-enabled") == 0) {
+        // The enumeration answers for the calling user, which is the point:
+        // this asks whether *this* user would see IPAbet in Win+Space.
+        TF_INPUTPROCESSORPROFILE p{};
+        const int hits = Walk(mgr, false, &p, &total);
+        if (hits < 1) {
+            fprintf(stderr, "IPAbet is not registered (%d profiles enumerated).\n", total);
+            rc = 1;
+        } else if (p.dwFlags & TF_IPP_FLAG_ENABLED) {
+            printf("IPAbet is enabled for this user under language 0x%04x.\n", p.langid);
+            rc = 0;
+        } else {
+            fprintf(stderr, "IPAbet is registered but NOT in this user's keyboard list "
+                            "(flags 0x%lx).\n", (unsigned long)p.dwFlags);
             rc = 1;
         }
     } else if (strcmp(cmd, "enable-select") == 0) {

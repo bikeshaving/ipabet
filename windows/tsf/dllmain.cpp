@@ -11,7 +11,6 @@
 #include "ipabet.h"
 
 #include <shlwapi.h>
-#include <algorithm>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -28,32 +27,15 @@ HINSTANCE g_dll = nullptr;
 LONG g_locks = 0;
 
 const WCHAR kDescription[] = L"IPAbet";
-// The language a profile is filed under is not optional — TSF has no neutral
-// slot — so IPAbet is filed under all of them, which is as close as this
-// platform gets to what it means: a phonetic alphabet is not a language, and
-// belongs wherever the user already types. Falling back to en-US only if the
-// machine somehow reports no input languages at all.
-const LANGID kFallbackLangId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
-
-/// The input languages this machine has, taken from the keyboard layouts
-/// already registered with TSF. Read at registration time rather than baked in,
-/// so the service turns up under the languages actually in use.
-std::vector<LANGID> InstalledInputLanguages(ITfInputProcessorProfileMgr *mgr) {
-    std::vector<LANGID> langs;
-    IEnumTfInputProcessorProfiles *e = nullptr;
-    if (FAILED(mgr->EnumProfiles(0, &e))) return langs;
-
-    TF_INPUTPROCESSORPROFILE p{};
-    ULONG got = 0;
-    while (e->Next(1, &p, &got) == S_OK && got == 1) {
-        if (p.dwProfileType != TF_PROFILETYPE_KEYBOARDLAYOUT) continue;
-        if (std::find(langs.begin(), langs.end(), p.langid) == langs.end()) {
-            langs.push_back(p.langid);
-        }
-    }
-    e->Release();
-    return langs;
-}
+/// English (US), the one language IPAbet registers under. The tables are keyed
+/// to the physical US layout, and a TSF profile must hang off some language —
+/// there is no neutral slot. Registration only makes the profile *available*;
+/// what puts it in a user's Win+Space list is the per-user enablement in
+/// ipabet-register, which works whether or not that user has English (US).
+/// (Asking TSF which languages the machine has does not work here: the
+/// enumeration answers for the calling account, and the installer calls as
+/// SYSTEM, which has none.)
+const LANGID kLangId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
 std::wstring ModulePath() {
     WCHAR path[MAX_PATH]{};
@@ -164,15 +146,10 @@ HRESULT RegisterServer(HINSTANCE module) {
                                   IID_ITfInputProcessorProfileMgr, (void **)&profiles);
     if (FAILED(hr)) return hr;
 
-    std::vector<LANGID> langs = InstalledInputLanguages(profiles);
-    if (langs.empty()) langs.push_back(kFallbackLangId);
     const std::wstring path = ModulePath();
-    for (LANGID lang : langs) {
-        hr = profiles->RegisterProfile(CLSID_IpabetTextService, lang, GUID_IpabetProfile,
-                                       kDescription, (ULONG)wcslen(kDescription), path.c_str(),
-                                       (ULONG)path.size(), 0, nullptr, 0, TRUE, 0);
-        if (FAILED(hr)) break;
-    }
+    hr = profiles->RegisterProfile(CLSID_IpabetTextService, kLangId, GUID_IpabetProfile,
+                                   kDescription, (ULONG)wcslen(kDescription), path.c_str(),
+                                   (ULONG)path.size(), 0, nullptr, 0, TRUE, 0);
     profiles->Release();
     if (FAILED(hr)) return hr;
 

@@ -49,18 +49,33 @@
       <ComponentRef Id="Registrar" />
     </Feature>
 
-    <!-- Deferred and not impersonated: writing the profile needs the elevated
-         half of the install, not the user's token. -->
-    <CustomAction Id="RegisterTextService" FileRef="IpabetRegisterExe" ExeCommand=""
+    <!-- Registration and enablement are different accounts, so they are
+         different actions. The machine half writes the profile and needs the
+         elevated half of the install, not the user's token. The user half puts
+         IPAbet in the installing user's keyboard list, which only means
+         something under that user's token — as SYSTEM it would enable a
+         keyboard for an account nobody types on, and the visible result of the
+         install would be nothing. -->
+    <CustomAction Id="RegisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--register"
                   Execute="deferred" Impersonate="no" Return="check" />
-    <CustomAction Id="UnregisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--disable"
+    <CustomAction Id="EnableForUser" FileRef="IpabetRegisterExe" ExeCommand="--enable"
+                  Execute="deferred" Impersonate="yes" Return="check" />
+    <CustomAction Id="UnenableForUser" FileRef="IpabetRegisterExe" ExeCommand="--unenable"
+                  Execute="deferred" Impersonate="yes" Return="ignore" />
+    <CustomAction Id="UnregisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--unregister"
                   Execute="deferred" Impersonate="no" Return="ignore" />
 
     <InstallExecuteSequence>
-      <!-- Unregister before the files go, or there is nothing left to ask. -->
+      <!-- Coming out: the user half first, then unregister, all before the
+           files go or there is nothing left to ask. -->
+      <Custom Action="UnenableForUser" Before="UnregisterTextService"
+              Condition="REMOVE=&quot;ALL&quot;" />
       <Custom Action="UnregisterTextService" Before="RemoveFiles"
               Condition="REMOVE=&quot;ALL&quot;" />
+      <!-- Going in: the profile has to exist before it can join a list. -->
       <Custom Action="RegisterTextService" After="InstallFiles"
+              Condition="NOT REMOVE" />
+      <Custom Action="EnableForUser" After="RegisterTextService"
               Condition="NOT REMOVE" />
     </InstallExecuteSequence>
   </Package>
