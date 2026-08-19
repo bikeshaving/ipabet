@@ -2,6 +2,19 @@ IPAbet is a fast and memorable keyboard for typing the International Phonetic
 Alphabet. Report anything that goes wrong at
 https://github.com/bikeshaving/ipabet/issues.
 
+## Fixed in 0.1.3
+
+The Windows installer now adds IPAbet to your keyboard list. In 0.1.2 it only
+made the keyboard available, and it only appeared for you if English (US) was
+already in your language list — on a machine without English (US), the install
+finished and nothing showed up. Now it appears for the account that ran the
+installer, whatever languages you have.
+
+If 0.1.2 installed but IPAbet never appeared, install 0.1.3 over it. Nothing
+to uninstall first.
+
+Mac and Linux are unchanged.
+
 ## Which file do I download?
 
 | Your computer | File |
