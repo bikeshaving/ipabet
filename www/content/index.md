@@ -21,13 +21,13 @@ Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as
 
 ## The full reference
 
-[The chart](/chart) lists every symbol with its keystrokes and audio, on one printable page. [The keystroke reference](/keys) is the same mapping as plain tables, with the Option layer drawn on a keyboard. [/learn](/learn) is a guided course that drills them, real words from the first lesson.
+[The chart](/chart) lists every symbol with its keystrokes and audio, on one printable page. [The keystroke reference](/keys) is the same mapping as plain tables, with the Option layer drawn on a keyboard. [/learn](/learn) is a guided course that drills them, real words from the first lesson. And you can [try the online IPA keyboard](/type) right now — the same engine in your browser, nothing to install.
 
 ## Install
 
-1. [Download **IPAbet.pkg**](/download) and run the installer.
-2. **Log out and back in.** macOS registers new input methods at login.
-3. Pick **IPA** in the input menu, or add it under System Settings → Keyboard → Input Sources → <kbd>+</kbd> → English → **IPA**.
+1. [Download IPAbet](/download) — the build for the machine you're on (a .pkg on macOS, .msi on Windows, .deb on Linux).
+2. **Log out and back in.** Input methods register at login.
+3. Pick **IPAbet** from the input menu — on macOS it appears as **IPA** under System Settings → Keyboard → Input Sources → English.
 
 Or [build from source](https://github.com/bikeshaving/ipabet). Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
 
