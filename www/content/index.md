@@ -1,6 +1,6 @@
 ---
-title: "IPA keyboard for typing the International Phonetic Alphabet"
-description: "IPAbet is a fast and memorable keyboard for typing the International Phonetic Alphabet, directly in any app. Unshifted keys stay plain US. Free, open source, offline."
+title: "IPAbet | Native IPA Keyboard for macOS, Windows & Linux"
+description: "IPAbet is a native IPA keyboard for macOS, Windows, and Linux: type the International Phonetic Alphabet directly in any app. Unshifted keys stay plain US. Free, open source, offline."
 ---
 
 <Callouts/>
