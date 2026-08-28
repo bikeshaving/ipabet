@@ -1,8 +1,11 @@
 # IPAbet
 
-A fast and memorable keyboard for typing the International Phonetic Alphabet.
+**[ipabet.org](https://ipabet.org)**
 
-IPAbet is an extended US keyboard: unshifted keys type plain US letters, digits, punctuation, while IPA symbols are typed as at most two keystrokes, using a grammatical mnemonic system based on shifted modifiers.
+IPAbet is a native IPA keyboard for macOS, Windows, and Linux — fast and
+memorable, for typing the International Phonetic Alphabet in any app.
+
+It is an extended US keyboard: unshifted keys type plain US letters, digits, punctuation, while IPA symbols are typed as at most two keystrokes, using a grammatical mnemonic system based on shifted modifiers.
 
 ```
 s ⇧H i ⇧H p    → ʃɪp
