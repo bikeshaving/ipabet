@@ -1,6 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
-import {Layout} from "./layout.ts";
+import {Layout, SITE} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.ts";
 import {KeyboardRef} from "./components/kbd.ts";
@@ -23,9 +23,25 @@ const doc = docs.type;
 // component onto this container.
 const PadRoot = () => jsx`<div id="pad-root"><${Pad} /></div>`;
 
+// The browser scratchpad is its own thing to a search engine: a tool that runs
+// where you already are, not the download.
+const schema = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "IPAbet online IPA keyboard",
+	description: doc.attributes.description ?? "",
+	url: SITE + "/type",
+	applicationCategory: "UtilitiesApplication",
+	browserRequirements: "Requires JavaScript. Works in any modern browser.",
+	operatingSystem: "Any",
+	isAccessibleForFree: true,
+	offers: {"@type": "Offer", price: "0", priceCurrency: "USD"},
+	author: {"@type": "Person", name: "Brian Kim"},
+};
+
 export function Type() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" styles=${[globalCss, editorCss, kbdCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" schema=${schema} styles=${[globalCss, editorCss, kbdCss]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>

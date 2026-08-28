@@ -85,11 +85,11 @@ and `android/`.
 `main` is always releasable and a tag only comes off a green `main`. Every gate
 runs on every push, so there is no release branch and no freeze.
 
-The version lives in four files — `windows/CMakeLists.txt`,
-`linux/ibus/CMakeLists.txt`, `linux/fcitx5/CMakeLists.txt`, `macos/Info.plist`
-— and `tools/check-version.sh` fails if they disagree.
+The version lives in five files — `windows/CMakeLists.txt`,
+`linux/ibus/CMakeLists.txt`, `linux/fcitx5/CMakeLists.txt`, `macos/Info.plist`,
+`www/src/layout.ts` — and `tools/check-version.sh` fails if they disagree.
 
-1. Bump all four in one commit. Push. Wait for green.
+1. Bump all five in one commit. Push. Wait for green.
 2. Tag `v0.1.3`. A suffix (`v0.1.3-beta.1`) makes it a prerelease, which GitHub
    keeps out of `releases/latest`.
 3. CI builds both Windows installers and all four debs, attaches a provenance

@@ -9,7 +9,7 @@ import downloadClient from "./clients/download-client.ts" with {assetBase: "/ass
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
 // page renders <${Layout}> around its own <main> and trailing islands.
 
-const SITE = "https://ipabet.org";
+export const SITE = "https://ipabet.org";
 
 /** The one description, everywhere. */
 const TAGLINE = "A fast and memorable keyboard for typing the International Phonetic Alphabet.";
@@ -21,15 +21,17 @@ export interface LayoutProps {
 	styles?: string[];
 	/** This page's path, for the canonical URL and the social card. */
 	path?: string;
+	/** A page-specific JSON-LD object; without one, the SoftwareApplication. */
+	schema?: Record<string, unknown>;
 	children?: unknown;
 }
 
-export function Layout({title, desc, styles = [], path = "/", children}: LayoutProps) {
+export function Layout({title, desc, styles = [], path = "/", schema, children}: LayoutProps) {
 	const url = SITE + (path === "/" ? "" : path);
 	// A search engine reads one page and has to place it: what this is, who
 	// made it, what it costs. The JSON-LD says so outright instead of leaving
 	// it to be inferred from prose.
-	const schema = JSON.stringify({
+	const schemaJson = JSON.stringify(schema ?? {
 		"@context": "https://schema.org",
 		"@type": "SoftwareApplication",
 		name: "IPAbet",
@@ -39,7 +41,7 @@ export function Layout({title, desc, styles = [], path = "/", children}: LayoutP
 		operatingSystem: "macOS, Windows, Linux",
 		url: SITE,
 		downloadUrl: SITE + "/download",
-		softwareVersion: "0.1.2",
+		softwareVersion: "0.1.3",
 		license: "https://opensource.org/licenses/MIT",
 		isAccessibleForFree: true,
 		offers: {"@type": "Offer", price: "0", priceCurrency: "USD"},
@@ -67,7 +69,7 @@ export function Layout({title, desc, styles = [], path = "/", children}: LayoutP
 				<!-- Raw, because a script's contents are text to the HTML parser and
 				     never entity-decoded: escaped quotes would reach a crawler as
 				     literal &quot; and the JSON would not parse. -->
-				<script type="application/ld+json"><${Raw} value=${schema} /></script>
+				<script type="application/ld+json"><${Raw} value=${schemaJson} /></script>
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
 			</head>
 			<body>
