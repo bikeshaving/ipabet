@@ -8,6 +8,7 @@ import {Keys, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
 import {Design} from "./design.ts";
 import {Type} from "./editor.ts";
 import {page} from "./layout.ts";
+import {posts} from "./content.ts";
 import {assets} from "@b9g/assets/middleware";
 import {isHTTPError} from "@b9g/http-errors";
 
@@ -126,7 +127,10 @@ router.route("/download").get((request: Request) => {
 
 // Nothing here was findable by a crawler that had not already been sent a link:
 // no sitemap, and no robots.txt to point at one.
-const PAGES = ["/", "/chart", "/type", "/learn", "/keys", "/design", "/blog"];
+const PAGES = [
+	"/", "/chart", "/type", "/learn", "/keys", "/design", "/blog",
+	...posts.filter((p) => p.attributes.draft !== true).map((p) => `/blog/${p.slug}`),
+];
 
 router.route("/sitemap.xml").get(() => {
 	const urls = PAGES.map(
