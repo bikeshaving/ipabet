@@ -100,6 +100,9 @@ The version lives in five files — `windows/CMakeLists.txt`,
    because notarization needs the keychain: `cd macos && ./package.sh`, then
    `gh release upload <tag> macos/build/IPAbet.pkg`.
 4. Publish: `gh release edit <tag> --draft=false`.
+5. Refresh the apt repository: `tools/apt/build.sh` (signs with the local
+   Bike Shaving key, so a person runs it), then `cd tools/apt && npx wrangler
+   deploy`.
 
 The site deploys itself: every push to `main` that touches `www/`, `spec/` or
 `js/src/` runs `deploy-www.yml`, which tests, builds, and deploys to

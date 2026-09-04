@@ -1,0 +1,10 @@
+name = "bikeshaving-apt"
+account_id = "213569de5d2e678bf73cd00abf8afa13"
+compatibility_date = "2026-09-04"
+
+[assets]
+directory = "public"
+
+[[routes]]
+pattern = "apt.bikeshaving.org"
+custom_domain = true
