@@ -1,0 +1,51 @@
+name: deploy-www
+
+# Every push to main that touches the site deploys it. Safe to run ahead of a
+# release publish: the download buttons resolve through
+# releases/latest/download, which always points at the newest PUBLISHED
+# release, so a deploy never dangles.
+#
+# Needs one secret: CLOUDFLARE_API_TOKEN, scoped to Workers edits on this one
+# account. The account id lives in wrangler.toml because it is not a secret.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'spec/**'
+      - 'js/src/**'
+      - '.github/workflows/deploy-www.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time, oldest first. Never cancel a deploy mid-flight;
+# Cloudflare only switches traffic on a completed upload, but a cancelled run
+# would silently skip the commit it was carrying.
+concurrency:
+  group: deploy-www
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: www
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: npm ci
+
+      - name: The site's tests pass
+        run: bun test
+
+      # wrangler.toml's [build] hook runs `npm run build`, so deploy builds.
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler deploy

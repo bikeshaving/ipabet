@@ -100,9 +100,12 @@ The version lives in five files — `windows/CMakeLists.txt`,
    because notarization needs the keychain: `cd macos && ./package.sh`, then
    `gh release upload <tag> macos/build/IPAbet.pkg`.
 4. Publish: `gh release edit <tag> --draft=false`.
-5. **Then** deploy the site: `cd www && npm run deploy`. This order is not a
-   preference — the download buttons resolve through `releases/latest/download`,
-   so deploying first points them at a file that does not exist.
+
+The site deploys itself: every push to `main` that touches `www/`, `spec/` or
+`js/src/` runs `deploy-www.yml`, which tests, builds, and deploys to
+Cloudflare. The download buttons resolve through `releases/latest/download`,
+which always points at the newest published release, so a deploy ahead of the
+publish never dangles. `cd www && npm run deploy` still works by hand.
 
 Three things no gate covers, so a human checks them before a non-prerelease:
 Wayland (synthetic input is exactly what it closes), macOS typing (a runner
