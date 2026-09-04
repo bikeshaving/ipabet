@@ -63,14 +63,50 @@ jobs:
         run: .\windows\package.ps1
         shell: pwsh
 
+      - uses: actions/upload-artifact@v5
+        with:
+          name: unsigned-msi-${{ matrix.arch }}
+          path: windows/build/IPAbet-${{ matrix.arch }}.msi
+
+  # Both MSIs are signed here rather than where they are built: the signing
+  # action does not run on Windows ARM runners, and signtool does not care
+  # what architecture a file targets. Authentication is OIDC — the `release`
+  # environment is what the Entra app's federated credential trusts, so there
+  # is no signing secret anywhere in this repository. Attestation happens
+  # after signing because it must cover the bytes people download.
+  sign:
+    needs: windows
+    runs-on: windows-latest
+    environment: release
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: unsigned-msi-*
+          merge-multiple: true
+          path: msi
+
+      - uses: azure/login@v3
+        with:
+          client-id: 0b84766f-d18a-4561-8fde-36196249145f
+          tenant-id: 8db12798-4563-4dee-921a-568b6f566380
+          subscription-id: ec0bbf8e-85e3-44bc-9a7c-daa565921eff
+
+      - uses: azure/artifact-signing-action@v2
+        with:
+          endpoint: https://eus.codesigning.azure.net/
+          signing-account-name: bikeshaving
+          certificate-profile-name: public-trust
+          files-folder: ${{ github.workspace }}\msi
+          files-folder-filter: msi
+
       - uses: actions/attest-build-provenance@v2
         with:
-          subject-path: windows/build/IPAbet-${{ matrix.arch }}.msi
+          subject-path: msi/*.msi
 
       - uses: actions/upload-artifact@v5
         with:
-          name: msi-${{ matrix.arch }}
-          path: windows/build/IPAbet-${{ matrix.arch }}.msi
+          name: msi
+          path: msi/*.msi
 
   linux:
     strategy:
@@ -108,7 +144,7 @@ jobs:
           path: linux/build/*.deb
 
   draft:
-    needs: [windows, linux]
+    needs: [sign, linux]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
@@ -122,6 +158,8 @@ jobs:
           REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
+          # The unsigned MSIs also land in dist; only the signed ones ship.
+          find dist -path '*unsigned*' -delete
           find dist -type f | sort
           # Uploaded without the version in the name, like the MSI: the website
           # links to a fixed URL, and a URL carrying 0.1.2 breaks on release day.
