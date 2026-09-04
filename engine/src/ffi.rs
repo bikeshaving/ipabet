@@ -412,3 +412,21 @@ unsafe fn write_c_string(s: &str, out: *mut c_char, out_cap: usize) {
         *out.add(n) = 0;
     }
 }
+
+/// Installs a seccomp filter that denies the process network sockets
+/// (AF_INET, AF_INET6, AF_PACKET) with EPERM, irrevocably, while leaving
+/// unix domain sockets open. Returns whether the filter took. Only for
+/// shells that own their process — the IBus engine — and to be called
+/// before any input is handled. On non-Linux platforms it does nothing and
+/// returns false.
+#[unsafe(no_mangle)]
+pub extern "C" fn ipabet_lockdown_network() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        crate::lockdown::apply()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        false
+    }
+}

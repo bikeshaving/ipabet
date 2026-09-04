@@ -302,6 +302,15 @@ static char *read_spec(void) {
 }
 
 int main(int argc, char **argv) {
+    // Before anything else runs: give up network sockets for good. An input
+    // method sees every keystroke; "it cannot phone home" is enforced by the
+    // kernel from here on, not promised. Refusing to start without the
+    // filter is deliberate — a silent fallback would quietly void the claim.
+    if (!ipabet_lockdown_network()) {
+        g_printerr("ipabet: could not install the no-network seccomp filter\n");
+        return 1;
+    }
+
     ibus_init();
 
     char *spec = read_spec();
@@ -334,7 +343,7 @@ int main(int argc, char **argv) {
         ibus_bus_request_name(bus, "org.freedesktop.IBus.IPAbet", 0);
     } else {
         IBusComponent *component =
-            ibus_component_new("org.freedesktop.IBus.IPAbet", "IPAbet", "0.1.2", "MIT",
+            ibus_component_new("org.freedesktop.IBus.IPAbet", "IPAbet", IPABET_VERSION, "MIT",
                                "Brian Kim", "https://ipabet.org", "", "ipabet");
         IBusEngineDesc *desc = ibus_engine_desc_new(
             "ipabet", "IPAbet", "Type the International Phonetic Alphabet", "", "MIT", "Brian Kim",

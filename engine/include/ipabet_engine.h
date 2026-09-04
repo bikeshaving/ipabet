@@ -173,4 +173,20 @@ void ipabet_apply_edit(const char *text_before,
  */
  uintptr_t ipabet_last_cluster_byte_len(const char *text_before);
 
+/**
+ * Installs a seccomp filter that denies the process network sockets
+ * (AF_INET, AF_INET6, AF_PACKET) with EPERM, irrevocably, while leaving
+ * unix domain sockets open. Returns whether the filter took. Only for
+ * shells that own their process — the IBus engine — and to be called
+ * before any input is handled. On non-Linux platforms it does nothing and
+ * returns false.
+ */
+ bool ipabet_lockdown_network(void);
+
+extern int prctl(int option,
+                 unsigned long a2,
+                 unsigned long a3,
+                 unsigned long a4,
+                 unsigned long a5);
+
 #endif  /* IPABET_ENGINE_H */

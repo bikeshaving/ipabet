@@ -113,9 +113,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-latest
+          # The oldest supported release, same reasoning as linux-package.yml:
+          # glibc is forward compatible only, so a deb built on 24.04 refuses
+          # to install on 22.04 and Debian 12.
+          - runner: ubuntu-22.04
             arch: amd64
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-22.04-arm
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
