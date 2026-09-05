@@ -34,6 +34,22 @@ jobs:
           Write-Host "$n icon group(s) in ipabet.dll"
           if ($n -lt 1) { throw "no icon resource: the tray would show ENG and nothing else" }
 
+      # The offline claim, checked where Windows cannot enforce it. A text
+      # service loads into other people's processes, so no sandbox is ours to
+      # apply — but the import table is a property of the DLL itself: no
+      # networking library in it means the code has no static path to a
+      # socket. Weaker than the macOS entitlement or the Linux seccomp
+      # filter, and asserted on every build instead of promised.
+      - name: The DLL imports no networking API
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $dumpbin = & $vswhere -latest -find '**\dumpbin.exe' | Select-Object -First 1
+          $imports = & $dumpbin /imports windows\build\Release\ipabet.dll
+          $imports | Select-String -Pattern '^\s+\S+\.dll$' | ForEach-Object { $_.Line.Trim() } | Write-Host
+          $bad = $imports | Select-String -Pattern 'ws2_32|wsock32|wininet|winhttp|urlmon|winsock'
+          if ($bad) { throw "networking import found:`n$($bad -join "`n")" }
+
       - uses: actions/upload-artifact@v5
         with:
           name: ipabet-tsf-x86_64
