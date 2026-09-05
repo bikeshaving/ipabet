@@ -92,6 +92,11 @@ The version lives in five files — `windows/CMakeLists.txt`,
 `linux/ibus/CMakeLists.txt`, `linux/fcitx5/CMakeLists.txt`, `macos/Info.plist`,
 `www/src/layout.ts` — and `tools/check-version.sh` fails if they disagree.
 
+`tools/release.sh 0.1.4` runs steps 2–5 in one sitting — it preflights,
+tags, waits for CI's signed draft, builds and uploads the notarized Mac
+package, publishes, and refreshes the apt repository, prompting for the two
+local keys along the way. The steps, for when it needs doing by hand:
+
 1. Bump all five in one commit. Push. Wait for green.
 2. Tag `v0.1.3`. A suffix (`v0.1.3-beta.1`) makes it a prerelease, which GitHub
    keeps out of `releases/latest`.
