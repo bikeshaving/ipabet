@@ -93,6 +93,23 @@ gh release upload "$TAG" --repo "$REPO" macos/build/IPAbet.pkg
 echo "== Publish"
 gh release edit "$TAG" --repo "$REPO" --draft=false
 
+case "$TAG" in
+*-*) echo "== Homebrew cask: skipped for a prerelease" ;;
+*)
+    echo "== Homebrew cask"
+    pkg_sha=$(shasum -a 256 macos/build/IPAbet.pkg | cut -d' ' -f1)
+    tap=$(mktemp -d)
+    gh repo clone bikeshaving/homebrew-tap "$tap" -- -q
+    sed -i '' \
+        -e "s/version \"[^\"]*\"/version \"$VERSION\"/" \
+        -e "s/sha256 \"[^\"]*\"/sha256 \"$pkg_sha\"/" \
+        "$tap/Casks/ipabet.rb"
+    git -C "$tap" commit -aqm "ipabet $VERSION"
+    git -C "$tap" push -q
+    rm -rf "$tap"
+    ;;
+esac
+
 echo "== Apt repository (GPG passphrase)"
 ./tools/apt/build.sh
 (cd tools/apt && npx wrangler deploy)

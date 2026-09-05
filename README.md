@@ -23,8 +23,10 @@ Three steps everywhere: install, log out and back in, pick IPAbet from the
 input menu.
 
 **macOS** — [download **IPAbet.pkg**](https://ipabet.org/download), run it, then
-add **IPA** under System Settings → Keyboard → Input Sources. Uninstalling is
-`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`.
+add **IPA** under System Settings → Keyboard → Input Sources. Or
+`brew install --cask bikeshaving/tap/ipabet`. Uninstalling is
+`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`
+(or `brew uninstall ipabet`).
 
 **Windows** — download **IPAbet.msi** and run it, then pick IPAbet from the
 language bar. The installer is not signed yet, so Windows warns on first run.
@@ -94,8 +96,8 @@ The version lives in five files — `windows/CMakeLists.txt`,
 
 `tools/release.sh 0.1.4` runs steps 2–5 in one sitting — it preflights,
 tags, waits for CI's signed draft, builds and uploads the notarized Mac
-package, publishes, and refreshes the apt repository, prompting for the two
-local keys along the way. The steps, for when it needs doing by hand:
+package, publishes, bumps the Homebrew cask, and refreshes the apt
+repository, prompting for the two local keys along the way. The steps, for when it needs doing by hand:
 
 1. Bump all five in one commit. Push. Wait for green.
 2. Tag `v0.1.3`. A suffix (`v0.1.3-beta.1`) makes it a prerelease, which GitHub
