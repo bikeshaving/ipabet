@@ -47,6 +47,25 @@ jobs:
       - name: Build and package
         run: cd linux && ./build.sh && ./package.sh
 
+      # The counterpart of windows-build's import-table gate: an ELF binary
+      # lists every symbol the loader must resolve for it, and none of ours
+      # may reach for the network. The ibus engine also enforces this at
+      # runtime with seccomp; the fcitx5 addon loads into the fcitx5 daemon,
+      # whose process is not ours to sandbox, so this static check is the
+      # strongest claim it can make.
+      - name: The binaries reference no network symbols
+        run: |
+          fail=0
+          bins=$(find linux -path '*build*' -type f \( -name '*.so' -o -name 'ibus-engine-ipabet' \))
+          [ -n "$bins" ] || { echo "no binaries found to check"; exit 1; }
+          for bin in $bins; do
+            echo "=== $bin"
+            hits=$(nm -D --undefined-only "$bin" | awk '{print $NF}' | sed 's/@.*//' \
+              | grep -xE 'socket|connect|bind|listen|accept|accept4|sendto|recvfrom|sendmsg|recvmsg|getaddrinfo|gethostbyname' || true)
+            if [ -n "$hits" ]; then echo "network symbols: $hits"; fail=1; fi
+          done
+          exit $fail
+
       # The dependency line is the whole point of the packaging step, and an
       # empty one looks identical to a correct one until someone installs it.
       - name: The packages say what they link
