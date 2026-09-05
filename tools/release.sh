@@ -29,11 +29,28 @@ git fetch -q origin main
 
 sha=$(git rev-parse HEAD)
 echo "== CI at $sha"
+tries=0
 while true; do
     runs=$(gh run list --repo "$REPO" --commit "$sha" \
         --json status,conclusion,workflowName \
         --jq '.[] | "\(.status) \(.conclusion) \(.workflowName)"')
-    [ -n "$runs" ] || { echo "no CI runs for HEAD yet; waiting"; sleep 15; continue; }
+    if [ -z "$runs" ]; then
+        tries=$((tries + 1))
+        if [ "$tries" -ge 4 ]; then
+            # Every workflow has a paths filter, so a HEAD that touched only
+            # unwatched files (docs, tools) ran nothing. The green-main rule
+            # then rests on the runs before it — show them, ask.
+            echo "no CI ran for this commit. The latest runs on main:"
+            gh run list --repo "$REPO" --branch main --limit 8
+            printf "Is main green? [y/N] "
+            read -r ok
+            [ "$ok" = y ] || exit 1
+            break
+        fi
+        echo "no CI runs for HEAD yet; waiting"
+        sleep 15
+        continue
+    fi
     echo "$runs" | grep -v "^completed" || true
     if echo "$runs" | grep "^completed" | grep -qv "success"; then
         echo "a workflow failed on HEAD — a tag only comes off a green main"
