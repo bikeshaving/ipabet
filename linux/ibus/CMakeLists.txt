@@ -25,6 +25,10 @@ add_dependencies(ibus-engine-ipabet ipabet_engine_build_ibus)
 target_include_directories(ibus-engine-ipabet PRIVATE
     "${ENGINE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/../common")
 target_link_libraries(ibus-engine-ipabet PRIVATE PkgConfig::IBUS "${ENGINE_LIB}")
+# Same as the fcitx5 addon: drop Rust std's unreferenced net sections so the
+# binary carries no network symbol references (seccomp already blocks them at
+# runtime; the static check should agree).
+target_link_options(ibus-engine-ipabet PRIVATE "LINKER:--gc-sections")
 target_compile_definitions(ibus-engine-ipabet PRIVATE
     IPABET_SPEC_FALLBACK="${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.json"
     IPABET_VERSION="${PROJECT_VERSION}")

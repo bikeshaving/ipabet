@@ -29,6 +29,11 @@ add_dependencies(ipabet ipabet_engine_build)
 set_target_properties(ipabet PROPERTIES PREFIX "lib")
 target_include_directories(ipabet PRIVATE "${ENGINE_DIR}/include")
 target_link_libraries(ipabet PRIVATE Fcitx5::Core "${ENGINE_LIB}")
+# Rust's std ships net code the engine never calls. Keep the staticlib's
+# symbols out of the addon's dynamic exports and reap the unreferenced
+# sections, so the .so does not even reference socket/connect — the property
+# linux-package.yml asserts. MSVC's /OPT:REF does the same for the DLL.
+target_link_options(ipabet PRIVATE "LINKER:--exclude-libs,ALL" "LINKER:--gc-sections")
 
 # Where the addon finds spec/ipabet.json when it is not running from an
 # install tree — the build directory case, so a dev loop needs no install step.
