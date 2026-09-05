@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bike Shaving apt repository</title>
+<style>
+:root {
+	--bg: #fdfdfb;
+	--fg: #1e211e;
+	--muted: #5c635c;
+	--rule: #d8dcd6;
+	--code-bg: #eef1ec;
+	--accent: #2e6b4f;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #171a18;
+		--fg: #e4e7e2;
+		--muted: #9aa39a;
+		--rule: #333833;
+		--code-bg: #22261f;
+		--accent: #7fbf9e;
+	}
+}
+body {
+	margin: 0 auto;
+	max-width: 42rem;
+	padding: 3rem 1.25rem 4rem;
+	background: var(--bg);
+	color: var(--fg);
+	font: 16px/1.6 ui-sans-serif, system-ui, sans-serif;
+}
+h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.25rem; }
+.sub { color: var(--muted); margin: 0 0 2rem; }
+h2 { font-size: 1.1rem; margin: 2.25rem 0 0.5rem; }
+pre {
+	background: var(--code-bg);
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
+	overflow-x: auto;
+	font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+code { font: 0.9em ui-monospace, SFMono-Regular, Menlo, monospace; }
+a { color: var(--accent); }
+table { border-collapse: collapse; }
+td { padding: 0.15rem 1.25rem 0.15rem 0; vertical-align: top; }
+.fp { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+footer { margin-top: 3rem; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--rule); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<h1>Bike Shaving apt repository</h1>
+<p class="sub">Debian and Ubuntu packages, signed. Installing from here means
+<code>apt upgrade</code> keeps them current.</p>
+
+<h2>Install</h2>
+<pre>curl -fsSL https://apt.bikeshaving.org/bikeshaving.gpg | sudo tee /usr/share/keyrings/bikeshaving.gpg &gt; /dev/null
+echo "deb [signed-by=/usr/share/keyrings/bikeshaving.gpg] https://apt.bikeshaving.org stable main" | sudo tee /etc/apt/sources.list.d/bikeshaving.list
+sudo apt update</pre>
+
+<h2>Packages</h2>
+<table>
+<tr><td><code>ipabet-ibus</code></td><td><a href="https://ipabet.org">IPAbet</a>, the IPA keyboard, for IBus — what GNOME, Ubuntu, and Fedora already run</td></tr>
+<tr><td><code>ipabet-fcitx5</code></td><td>the same input method for fcitx5</td></tr>
+</table>
+<pre>sudo apt install ipabet-ibus</pre>
+<p>Then log out and back in, and pick IPAbet from the input menu.</p>
+
+<h2>Signing key</h2>
+<p>Every release index is signed by this key and apt verifies it on every
+<code>update</code>. Also available armored at
+<a href="/bikeshaving.asc">bikeshaving.asc</a>.</p>
+<pre class="fp">3019 CB51 FCD7 B73E 6D97  B9B2 6604 4CE7 9907 3D97
+Bike Shaving apt repository &lt;security@bikeshaving.org&gt;</pre>
+
+<footer>
+<a href="https://github.com/bikeshaving">github.com/bikeshaving</a> ·
+<a href="https://ipabet.org">ipabet.org</a>
+</footer>
+</body>
+</html>

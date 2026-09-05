@@ -14,6 +14,7 @@ ARCHES="amd64 arm64"
 
 rm -rf public tmp
 mkdir -p tmp public/pool/main
+cp index.html public/
 
 gh release download --repo "$GH_REPO" --pattern '*.deb' --dir tmp
 
