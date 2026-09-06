@@ -325,12 +325,14 @@ static gboolean lockdown_network(void) {
 }
 
 int main(int argc, char **argv) {
-    // First thing, before any input is handled. Refusing to start without
-    // the filter is deliberate — a silent fallback would quietly void the
-    // claim, and linux-e2e types through the filtered engine on every push.
+    // First thing, before any input is handled. A user keeps their keyboard
+    // even if the filter cannot install — losing input beats losing a
+    // guarantee — but the failure is never silent, and linux-e2e sets
+    // IPABET_REQUIRE_LOCKDOWN so a regression fails CI instead of shipping.
     if (!lockdown_network()) {
-        g_printerr("ipabet: could not install the no-network seccomp filter\n");
-        return 1;
+        g_warning("ipabet: could not install the no-network seccomp filter; "
+                  "running without it");
+        if (g_getenv("IPABET_REQUIRE_LOCKDOWN")) return 1;
     }
 
     ibus_init();

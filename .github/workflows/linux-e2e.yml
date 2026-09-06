@@ -27,6 +27,10 @@ jobs:
       matrix:
         framework: [ibus, fcitx5]
     runs-on: ubuntu-latest
+    # For users the seccomp filter failing is a warning, not a dead keyboard;
+    # here it must be a hard failure, or a lockdown regression ships silently.
+    env:
+      IPABET_REQUIRE_LOCKDOWN: 1
     steps:
       - uses: actions/checkout@v5
 
