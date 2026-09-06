@@ -12,7 +12,10 @@
 // back at most two grapheme clusters, so that is all the preedit ever holds —
 // everything older is committed as soon as the engine can no longer reach it.
 
+#include <errno.h>
 #include <ibus.h>
+#include <seccomp.h>
+#include <sys/socket.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -301,12 +304,31 @@ static char *read_spec(void) {
     return NULL;
 }
 
+// Give up network sockets for good, via libseccomp: socket() with an
+// internet family fails with EPERM for the rest of the process's life,
+// while the unix domain sockets ibus itself runs on stay open. An input
+// method sees every keystroke; "it cannot phone home" is enforced by the
+// kernel from here on, not promised.
+static gboolean lockdown_network(void) {
+    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_ALLOW);
+    if (!ctx) return FALSE;
+    gboolean ok =
+        seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(socket), 1,
+                         SCMP_A0(SCMP_CMP_EQ, AF_INET)) == 0 &&
+        seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(socket), 1,
+                         SCMP_A0(SCMP_CMP_EQ, AF_INET6)) == 0 &&
+        seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(socket), 1,
+                         SCMP_A0(SCMP_CMP_EQ, AF_PACKET)) == 0 &&
+        seccomp_load(ctx) == 0;
+    seccomp_release(ctx);
+    return ok;
+}
+
 int main(int argc, char **argv) {
-    // Before anything else runs: give up network sockets for good. An input
-    // method sees every keystroke; "it cannot phone home" is enforced by the
-    // kernel from here on, not promised. Refusing to start without the
-    // filter is deliberate — a silent fallback would quietly void the claim.
-    if (!ipabet_lockdown_network()) {
+    // First thing, before any input is handled. Refusing to start without
+    // the filter is deliberate — a silent fallback would quietly void the
+    // claim, and linux-e2e types through the filtered engine on every push.
+    if (!lockdown_network()) {
         g_printerr("ipabet: could not install the no-network seccomp filter\n");
         return 1;
     }

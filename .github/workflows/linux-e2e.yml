@@ -35,7 +35,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             fcitx5 fcitx5-frontend-gtk3 libfcitx5core-dev libfcitx5utils-dev \
-            libfcitx5config-dev ibus ibus-gtk3 libibus-1.0-dev \
+            libfcitx5config-dev ibus ibus-gtk3 libibus-1.0-dev libseccomp-dev \
             cmake build-essential pkg-config \
             xvfb xdotool x11-utils openbox dbus-x11 python3-gi gir1.2-gtk-3.0
 

@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(IBUS REQUIRED IMPORTED_TARGET ibus-1.0)
+pkg_check_modules(SECCOMP REQUIRED IMPORTED_TARGET libseccomp)
 
 # The engine is the Rust staticlib in engine/, the same crate the fcitx5 addon
 # and the Windows text service link.
@@ -24,7 +25,7 @@ add_executable(ibus-engine-ipabet src/engine.c)
 add_dependencies(ibus-engine-ipabet ipabet_engine_build_ibus)
 target_include_directories(ibus-engine-ipabet PRIVATE
     "${ENGINE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/../common")
-target_link_libraries(ibus-engine-ipabet PRIVATE PkgConfig::IBUS "${ENGINE_LIB}")
+target_link_libraries(ibus-engine-ipabet PRIVATE PkgConfig::IBUS PkgConfig::SECCOMP "${ENGINE_LIB}")
 # Same as the fcitx5 addon: drop Rust std's unreferenced net sections so the
 # binary carries no network symbol references (seccomp already blocks them at
 # runtime; the static check should agree).

@@ -17,8 +17,6 @@
 
 mod spec;
 pub mod ffi;
-#[cfg(target_os = "linux")]
-mod lockdown;
 
 use spec::Spec;
 use std::collections::HashMap;
