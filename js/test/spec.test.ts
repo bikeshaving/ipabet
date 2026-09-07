@@ -259,3 +259,50 @@ describe("spacing flags match Unicode", () => {
 		expect(bad).toEqual([]);
 	});
 });
+
+// The invariants both engine ports silently rely on. Where the Rust and JS
+// construction would treat a spec differently — Rust truncates a multi-scalar
+// mark field through first_char while JS keeps the whole string; Rust iterates
+// the raw letters vector while JS dedups into a Map first — the two agree only
+// because the spec never exercises the difference. These lock that in: a future
+// spec that broke one would fail here instead of shipping as a silent
+// per-platform divergence no parity vector would catch.
+describe("spec · the invariants both engine ports assume", () => {
+	const letters = spec.letters as {key: string; glyph: string}[];
+
+	test("no letter entry has an empty key or glyph", () => {
+		expect(letters.filter((e) => !e.key || !e.glyph)).toEqual([]);
+	});
+
+	test("letter keys are unique (Rust sees every row, JS dedups)", () => {
+		const seen = new Set<string>();
+		const dupes = letters.map((e) => e.key).filter((k) => seen.size === seen.add(k).size);
+		expect(dupes).toEqual([]);
+	});
+
+	const scalars = (s: string) => [...s].length;
+	test("every mark field is a single Unicode scalar (Rust keeps only the first)", () => {
+		const bad: string[] = [];
+		for (const m of marks as any[]) {
+			for (const field of ["mark", "double", "clone", "doubleClone"]) {
+				const v = m[field];
+				if (typeof v === "string" && scalars(v) !== 1) bad.push(`⌥${m.opt} ${field}=${JSON.stringify(v)}`);
+			}
+			for (const field of ["cycle", "doubleCycle"]) {
+				for (const v of (m[field] as string[] | undefined) ?? []) {
+					if (scalars(v) !== 1) bad.push(`⌥${m.opt} ${field} entry ${JSON.stringify(v)}`);
+				}
+			}
+		}
+		expect(bad).toEqual([]);
+	});
+
+	for (const table of ["superscripts", "subscripts"] as const) {
+		test(`${table} bases are unique (both ports build reverse maps from them)`, () => {
+			const rows = ((spec as any)[table].table as {base: string}[]);
+			const seen = new Set<string>();
+			const dupes = rows.map((r) => r.base).filter((b) => seen.size === seen.add(b).size);
+			expect(dupes).toEqual([]);
+		});
+	}
+});
