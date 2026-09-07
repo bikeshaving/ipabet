@@ -293,7 +293,23 @@ STDMETHODIMP TextService::Deactivate() {
 
 STDMETHODIMP TextService::OnSetFocus(BOOL) {
     // Focus moved: neither an armed diacritic nor what was typed before carries
-    // across documents.
+    // across documents. Hand over any open composition FIRST — clearing state
+    // while it stayed open left its text inside a live composition range, and
+    // the next keystroke's SetText overwrote the glyph already typed.
+    if (composition_) {
+        ITfRange *range = nullptr;
+        if (SUCCEEDED(composition_->GetRange(&range)) && range) {
+            ITfContext *cx = nullptr;
+            if (SUCCEEDED(range->GetContext(&cx)) && cx) {
+                CommitEditSession *commit = new CommitEditSession(this);
+                HRESULT chr = S_OK;
+                cx->RequestEditSession(client_, commit, TF_ES_READWRITE | TF_ES_SYNC, &chr);
+                commit->Release();
+                cx->Release();
+            }
+            range->Release();
+        }
+    }
     written_.clear();
     pending_ = CPending{};
     chainBroken_ = false;
@@ -413,7 +429,9 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
     Dbg("RequestEditSession req=0x%08lx session=0x%08lx", req, hr);
     session->Release();
 
-    *eaten = TRUE;
+    // A session that never ran changed nothing: pass the key to the host
+    // rather than silently swallowing it.
+    *eaten = SUCCEEDED(req) ? TRUE : FALSE;
     return S_OK;
 }
 
@@ -546,11 +564,22 @@ HRESULT TextService::Trim(TfEditCookie ec, ITfContext *cx) {
     // older can be committed, and committing it is what keeps the underline
     // short. Ending the composition commits whatever it holds, so the head goes
     // in first and a fresh composition picks the tail back up.
-    const size_t keep = 4;
-    if (written_.size() <= keep) return S_OK;
+    //
+    // The boundary comes from the engine's own segmentation, the same two
+    // calls the Linux shells make: a fixed unit count could cut a surrogate
+    // pair in half (the spec ships astral superscript letters) or orphan a
+    // combining mark from its base — committed forever as corrupt text.
+    const std::string utf8 = ToUtf8(written_);
+    size_t tailBytes = ipabet_last_cluster_byte_len(utf8.c_str());
+    if (tailBytes < utf8.size()) {
+        const std::string rest = utf8.substr(0, utf8.size() - tailBytes);
+        tailBytes += ipabet_last_cluster_byte_len(rest.c_str());
+    }
+    if (tailBytes >= utf8.size()) return S_OK;
 
-    const std::wstring head = written_.substr(0, written_.size() - keep);
-    const std::wstring tail = written_.substr(written_.size() - keep);
+    const std::wstring tail = ToUtf16(utf8.substr(utf8.size() - tailBytes).c_str());
+    if (written_.size() <= tail.size()) return S_OK;
+    const std::wstring head = written_.substr(0, written_.size() - tail.size());
     // The head commits without the preview on it, and the preview reappears on
     // the fresh composition with the tail.
     const CPending held = pending_;
