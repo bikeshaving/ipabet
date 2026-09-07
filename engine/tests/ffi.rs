@@ -56,7 +56,7 @@ fn a_digraph_comes_back_as_a_replacement() {
     let step = unsafe {
         ipabet_engine_handle_key(e, before.as_ptr(), stroke(&h, false, true), empty_pending(), false)
     };
-    assert!(step.edit.edit_type == CEditType::Replace);
+    assert!(step.edit.edit_type == CEditType::Replace as i32);
     assert_eq!(text_of(&step.edit), "θ");
     assert_eq!(step.edit.replace_length, 1);
     unsafe { ipabet_engine_free(e) };
@@ -119,12 +119,12 @@ fn a_null_engine_answers_rather_than_dereferencing() {
             false,
         )
     };
-    assert!(step.edit.edit_type == CEditType::Noop);
+    assert!(step.edit.edit_type == CEditType::Noop as i32);
 
     let back = unsafe {
         ipabet_engine_handle_backspace(std::ptr::null(), before.as_ptr(), empty_pending())
     };
-    assert!(back.edit.edit_type == CEditType::Noop);
+    assert!(back.edit.edit_type == CEditType::Noop as i32);
 
     // And a null spec is a packaging fault, not a crash.
     assert!(unsafe { ipabet_engine_new(std::ptr::null()) }.is_null());
@@ -139,7 +139,7 @@ fn a_null_text_reads_as_an_empty_document() {
     let step = unsafe {
         ipabet_engine_handle_key(e, std::ptr::null(), stroke(&h, false, true), empty_pending(), false)
     };
-    assert!(step.edit.edit_type != CEditType::Replace);
+    assert!(step.edit.edit_type != CEditType::Replace as i32);
     assert_eq!(unsafe { ipabet_last_cluster_byte_len(std::ptr::null()) }, 0);
     unsafe { ipabet_engine_free(e) };
 }
@@ -242,7 +242,7 @@ fn an_edit_whose_text_fills_its_array_is_read_to_the_end_and_no_further() {
     // A caller-built CEdit with no room for a terminator. Reading it as a C
     // string would run past the struct.
     let edit = CEdit {
-        edit_type: CEditType::Insert,
+        edit_type: CEditType::Insert as i32,
         text: [0x61 as c_char; EDIT_TEXT_MAX as usize],
         replace_length: 0,
     };
@@ -279,7 +279,7 @@ fn the_key_pointer_may_be_null() {
         control: false,
     };
     let step = unsafe { ipabet_engine_handle_key(e, before.as_ptr(), k, empty_pending(), false) };
-    assert!(step.edit.edit_type != CEditType::Replace);
+    assert!(step.edit.edit_type != CEditType::Replace as i32);
 
     let mut buf = [0 as c_char; 16];
     let k = CKeystroke {
@@ -291,5 +291,53 @@ fn the_key_pointer_may_be_null() {
         control: false,
     };
     unsafe { ipabet_native_char(k, buf.as_mut_ptr(), buf.len()) };
+    unsafe { ipabet_engine_free(e) };
+}
+
+#[test]
+fn a_stack_past_the_array_truncates_at_the_boundary_and_stays_coherent() {
+    // The documented half of the contract the test above leaves untested:
+    // past PENDING_MAX the C side drops marks silently. What must hold is
+    // that it drops exactly the ones past the array — the surviving prefix
+    // behaves like a native pending truncated to the same length.
+    let e = engine();
+    let before = CString::new("").unwrap();
+    let marks = [
+        "n", "e", "w", "h", "v", "b", "k", "t", "m", "g", "f", "d", "i", "a", "u", "c", "x", "o",
+    ];
+    assert!(marks.len() > PENDING_MAX);
+
+    let mut pending = empty_pending();
+    for m in marks {
+        let k = key(m);
+        let step = unsafe {
+            ipabet_engine_handle_key(e, before.as_ptr(), stroke(&k, true, false), pending, false)
+        };
+        pending = step.pending;
+    }
+    assert_eq!(pending.count as usize, PENDING_MAX, "truncation lands on the array bound");
+
+    let a = key("a");
+    let landed = unsafe {
+        ipabet_engine_handle_key(e, before.as_ptr(), stroke(&a, false, false), pending, false)
+    };
+
+    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let mut native_pending: ipabet_engine::Pending = Vec::new();
+    for m in marks {
+        let k = ipabet_engine::Keystroke {
+            key: m.to_string(),
+            option: true,
+            ..Default::default()
+        };
+        native_pending = native.handle_key("", &k, &native_pending, false).pending;
+    }
+    native_pending.truncate(PENDING_MAX);
+    let base = ipabet_engine::Keystroke { key: "a".into(), ..Default::default() };
+    let expected = match native.handle_key("", &base, &native_pending, false).edit {
+        ipabet_engine::Edit::Insert { text } | ipabet_engine::Edit::Replace { text, .. } => text,
+        other => panic!("the engine answered {other:?}"),
+    };
+    assert_eq!(text_of(&landed.edit), expected);
     unsafe { ipabet_engine_free(e) };
 }

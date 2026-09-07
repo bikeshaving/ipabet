@@ -24,17 +24,16 @@
  */
 #define PENDING_LOWER -2
 
-typedef enum CEditType {
-    Insert = 0,
-    Replace = 1,
-    Pass = 2,
-    Noop = 3,
-} CEditType;
-
 typedef struct Engine Engine;
 
 typedef struct CEdit {
-    enum CEditType edit_type;
+    /**
+     * One of the CEditType values. Typed as a plain int on the Rust side
+     * because this struct also arrives FROM C (ipabet_apply_edit), and a
+     * stale or garbage discriminant in a Rust enum field is undefined
+     * behavior before any code could check it.
+     */
+    int edit_type;
     /**
      * UTF-8, NUL-terminated. Truncated (never split mid-codepoint) if a
      * result somehow exceeded EDIT_TEXT_MAX — never happens in practice; a

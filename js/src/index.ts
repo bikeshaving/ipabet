@@ -240,8 +240,11 @@ const segmenter = new Intl.Segmenter();
 /** The last grapheme cluster of `text`, or undefined. */
 function lastCluster(text: string): string | undefined {
 	if (text.length === 0) return undefined;
-	// Segment only a small tail window, like the IME's 16-unit read.
-	const tail = text.slice(-32);
+	// Segment only a tail window so a long document stays O(1) per key. 64
+	// units holds any real cluster (a base plus 63 combining marks); the
+	// Rust engine scans exactly, so past that bound the two can differ on
+	// deliberately pathological mark stacks.
+	const tail = text.slice(-64);
 	let last: string | undefined;
 	for (const s of segmenter.segment(tail)) last = s.segment;
 	return last;

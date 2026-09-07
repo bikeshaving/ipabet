@@ -104,6 +104,20 @@ fn first_char(s: &str) -> char {
     s.chars().next().unwrap_or('\0')
 }
 
+/// General category L (Lu Ll Lt Lm Lo) — the \p{L} half of index.ts's
+/// segment test, deliberately narrower than char::is_alphabetic.
+fn is_letter(c: char) -> bool {
+    use unicode_general_category::{GeneralCategory, get_general_category};
+    matches!(
+        get_general_category(c),
+        GeneralCategory::UppercaseLetter
+            | GeneralCategory::LowercaseLetter
+            | GeneralCategory::TitlecaseLetter
+            | GeneralCategory::ModifierLetter
+            | GeneralCategory::OtherLetter
+    )
+}
+
 impl Engine {
     pub fn new(spec_json: &str) -> Result<Engine, serde_json::Error> {
         let spec: Spec = serde_json::from_str(spec_json)?;
@@ -217,6 +231,15 @@ impl Engine {
             }
         }
         let quote_default = spec.quotes.default.clone();
+        // A spec whose default locale is missing or malformed (dropped by
+        // the len==4 filter above) answers null from ipabet_engine_new, as
+        // the FFI contract promises — not a panic on the first ⌥[.
+        if !quote_locales.contains_key(&quote_default) {
+            use serde::de::Error;
+            return Err(serde_json::Error::custom(
+                "quotes.default names no well-formed entry in quotes.locales",
+            ));
+        }
 
         Ok(Engine {
             letters,
@@ -250,27 +273,31 @@ impl Engine {
     }
 
     fn quote_quad(&self) -> [char; 4] {
-        self.quote_locales[&self.quote_active]
+        // index.ts: locales[active] ?? locales[default]. The default's
+        // presence is validated at construction, so the final fallback is
+        // unreachable — it exists so no spec can make this panic across
+        // the C boundary, where a panic aborts the host IME.
+        self.quote_locales
+            .get(&self.quote_active)
+            .or_else(|| self.quote_locales.get(&self.quote_default))
+            .copied()
+            .unwrap_or(['\u{201C}', '\u{201D}', '\u{2018}', '\u{2019}'])
     }
 
     // ------------------------------------------------------------ unicode
 
-    /// The last "cluster" of `text` (a base codepoint plus any trailing
-    /// combining marks), as a suffix. `None` if `text` is empty.
+    /// The last grapheme cluster of `text`, as a suffix. `None` if `text`
+    /// is empty. Real UAX #29 segmentation, matching Intl.Segmenter in
+    /// index.ts — the mark-scanning approximation this replaces split
+    /// emoji ZWJ sequences, skin tones, flags, and decomposed Hangul, so a
+    /// backspace deleted half a grapheme.
     fn last_cluster(text: &str) -> Option<&str> {
         if text.is_empty() {
             return None;
         }
-        let mut boundary = text.len();
-        for (i, c) in text.char_indices().rev() {
-            if unicode_normalization::char::is_combining_mark(c) {
-                boundary = i;
-                continue;
-            }
-            boundary = i;
-            break;
-        }
-        Some(&text[boundary..])
+        let mut cursor = unicode_segmentation::GraphemeCursor::new(text.len(), text.len(), true);
+        let start = cursor.prev_boundary(text, 0).ok().flatten().unwrap_or(0);
+        Some(&text[start..])
     }
 
     /// Split a cluster into its base glyph and trailing combining marks
@@ -550,8 +577,12 @@ impl Engine {
         if low == '\u{0294}' {
             return Some('\u{0241}'); // ʔ → Ɂ
         }
-        let up = low.to_uppercase().next().unwrap_or(low);
-        if up != low && (up as u32) > 0x7f {
+        // A multi-codepoint uppercase (ß → "SS") is rejected outright,
+        // matching index.ts's [...up].length === 1 rather than silently
+        // taking the first codepoint.
+        let mut ups = low.to_uppercase();
+        let up = ups.next().unwrap_or(low);
+        if ups.next().is_none() && up != low && (up as u32) > 0x7f {
             Some(up)
         } else {
             None
@@ -702,8 +733,11 @@ impl Engine {
                 let p2 = Self::last_cluster(before);
                 let p2_segment = p2.is_some_and(|seg| {
                     seg.chars().any(|c| {
-                        (c as u32) > 127
-                            && (c.is_alphabetic() || unicode_normalization::char::is_combining_mark(c))
+                        // index.ts tests /[\p{L}\p{M}]/u — general category
+                        // L or M exactly. is_alphabetic() is the wider
+                        // Alphabetic property (adds Nl and friends), which
+                        // made a Roman numeral count as an IPA segment.
+                        (c as u32) > 127 && (is_letter(c) || unicode_normalization::char::is_combining_mark(c))
                     })
                 });
                 if p2_segment && chain_live {

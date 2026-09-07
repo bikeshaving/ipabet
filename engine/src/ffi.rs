@@ -17,7 +17,7 @@
 use crate::{apply_edit as rust_apply_edit, last_cluster_byte_len, native_char as rust_native_char};
 use crate::{Edit, Engine, Keystroke, Pending, PendingItem};
 use std::ffi::CStr;
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_int};
 
 // pub: cbindgen needs these to emit #defines for the array sizes below.
 // Sixteen, not eight: the engine will stack marks until the user stops pressing
@@ -50,7 +50,11 @@ pub enum CEditType {
 
 #[repr(C)]
 pub struct CEdit {
-    pub edit_type: CEditType,
+    /// One of the CEditType values. Typed as a plain int on the Rust side
+    /// because this struct also arrives FROM C (ipabet_apply_edit), and a
+    /// stale or garbage discriminant in a Rust enum field is undefined
+    /// behavior before any code could check it.
+    pub edit_type: c_int,
     /// UTF-8, NUL-terminated. Truncated (never split mid-codepoint) if a
     /// result somehow exceeded EDIT_TEXT_MAX — never happens in practice; a
     /// base plus its stacked marks is at most a handful of codepoints.
@@ -150,14 +154,14 @@ fn edit_to_c(e: &Edit) -> CEdit {
     let (edit_type, replace_length) = match e {
         Edit::Insert { text: t } => {
             str_into_buf(t, &mut text);
-            (CEditType::Insert, 0)
+            (CEditType::Insert as c_int, 0)
         }
         Edit::Replace { length, text: t } => {
             str_into_buf(t, &mut text);
-            (CEditType::Replace, *length as i32)
+            (CEditType::Replace as c_int, *length as i32)
         }
-        Edit::Pass => (CEditType::Pass, 0),
-        Edit::Noop => (CEditType::Noop, 0),
+        Edit::Pass => (CEditType::Pass as c_int, 0),
+        Edit::Noop => (CEditType::Noop as c_int, 0),
     };
     CEdit { edit_type, text, replace_length }
 }
@@ -369,11 +373,15 @@ pub unsafe extern "C" fn ipabet_apply_edit(
             std::slice::from_raw_parts(e.text.as_ptr() as *const u8, EDIT_TEXT_MAX);
         let end = raw.iter().position(|&b| b == 0).unwrap_or(EDIT_TEXT_MAX);
         let text_str = String::from_utf8_lossy(&raw[..end]);
+        // Unknown discriminants and negative lengths are hostile-caller
+        // territory: both collapse to "change nothing".
         let edit = match e.edit_type {
-            CEditType::Insert => Edit::Insert { text: text_str.into_owned() },
-            CEditType::Replace => Edit::Replace { length: e.replace_length as usize, text: text_str.into_owned() },
-            CEditType::Pass => Edit::Pass,
-            CEditType::Noop => Edit::Noop,
+            x if x == CEditType::Insert as c_int => Edit::Insert { text: text_str.into_owned() },
+            x if x == CEditType::Replace as c_int => {
+                Edit::Replace { length: e.replace_length.max(0) as usize, text: text_str.into_owned() }
+            }
+            x if x == CEditType::Pass as c_int => Edit::Pass,
+            _ => Edit::Noop,
         };
         let result = rust_apply_edit(&text, &edit, &native);
         write_c_string(&result, out, out_cap);
