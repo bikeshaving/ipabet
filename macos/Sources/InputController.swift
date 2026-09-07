@@ -73,6 +73,12 @@ private func editText(_ e: CEdit) -> String {
     }
 }
 
+// The runtime name Info.plist names (InputMethodServerControllerClass /
+// DelegateClass = "InputController"). build.sh compiles a plain executable with
+// no -module-name, so without this the Objective-C name is "main.InputController"
+// and IMKit's NSClassFromString("InputController") returns nil — the source
+// registers but every keystroke goes nowhere.
+@objc(InputController)
 class InputController: IMKInputController {
     // Secure/password fields. macOS normally routes keystrokes AROUND the
     // IME when a field enables secure event input, so we're simply never
@@ -133,6 +139,10 @@ class InputController: IMKInputController {
         applySettings(to: e)
         return e
     }()
+
+    deinit {
+        if let e = engine { ipabet_engine_free(e) }
+    }
 
     private func applySettings(to engine: OpaquePointer) {
         ipabet_engine_set_capital_digraphs(engine, capitalDigraphs)
@@ -221,6 +231,10 @@ class InputController: IMKInputController {
         shiftWasDown = false
         shiftReleased = false
         chainBroken = false
+        // Re-sync the engine's cached settings from UserDefaults: another
+        // controller instance may have changed them via its menu while this one
+        // was inactive, and each controller has its own engine.
+        if let e = engine { applySettings(to: e) }
         Dbg.refresh()
         Dbg.log("── activate app=\(clientBundleID()) ──")
         overrideViewerKeyboard(sender)
@@ -318,13 +332,13 @@ class InputController: IMKInputController {
                 }
                 return ipabet_engine_handle_key(engine, bp, k, pending, chainBroken)
             }
-            return apply(step, key: k, before: before, endsRun: backspace || label == "Escape" || control, client: client)
+            return apply(step, key: k, before: before, client: client)
         }
     }
 
     /// Apply one engine step to the document, then show the new pending as marked
     /// text. Returns whether the key was consumed.
-    private func apply(_ step: CStep, key k: CKeystroke, before: String, endsRun: Bool,
+    private func apply(_ step: CStep, key k: CKeystroke, before: String,
                        client: IMKTextInput) -> Bool {
         let type = editType(step.edit)
 
@@ -337,7 +351,6 @@ class InputController: IMKInputController {
             // engine only ever passes with a mark armed when the native
             // character is empty, so a host-typed character never collides with
             // the marked preview.
-            _ = endsRun
             pending = step.pending
             if step.has_chain_broken { chainBroken = step.chain_broken }
             updateMarked(client)
@@ -349,9 +362,14 @@ class InputController: IMKInputController {
 
         switch type {
         case Int32(Insert.rawValue):
-            replaceMarkedOrInsert(editText(step.edit), client)
+            insert(editText(step.edit), client)
         case Int32(Replace.rawValue):
-            applyReplace(Int(step.edit.replace_length), with: editText(step.edit), before: before, client: client)
+            // A backspace over the only cluster in the document can't be
+            // carried (no preceding cluster), so applyReplace declines; hand the
+            // key to the host for a native delete rather than swallow it.
+            if !applyReplace(Int(step.edit.replace_length), with: editText(step.edit), before: before, client: client) {
+                return false
+            }
         default: // Noop
             break
         }
@@ -367,40 +385,41 @@ class InputController: IMKInputController {
     /// carried by rewriting the untouched cluster before it. With no carrier
     /// (document start) it declines and the stack is not re-armed — the one
     /// deliberate divergence from the other shells.
-    private func applyReplace(_ length: Int, with text: String, before: String, client: IMKTextInput) {
+    /// Returns whether the replacement was applied. False means decline — the
+    /// caller hands the key to the host.
+    private func applyReplace(_ length: Int, with text: String, before: String, client: IMKTextInput) -> Bool {
         let sel = client.selectedRange()
         guard sel.location != NSNotFound, sel.length == 0, length > 0 else {
-            replaceMarkedOrInsert(text, client)
-            return
+            insert(text, client); return true
         }
         // The UTF-16 span of the last `length` codepoints of the committed text.
         let tailUnits = utf16Units(ofLast: length, in: before)
         let start = sel.location - tailUnits
-        guard start >= 0 else { replaceMarkedOrInsert(text, client); return }
+        guard start >= 0 else { insert(text, client); return true }
         let range = NSRange(location: start, length: tailUnits)
 
         if !text.isEmpty {
-            replace(range, with: text, client)
-            return
+            replace(range, with: text, client); return true
         }
-        // Net-empty: carry the deletion on the preceding cluster.
+        // Net-empty deletion (a backspace re-arming marks): a net-empty
+        // replacement is dropped by the macOS-15 transport, so carry the
+        // deletion on the untouched cluster before it.
         guard let (carrier, cr) = clusterBefore(range, client) else {
-            // Document start: decline, do not re-arm (documented macOS-15 divergence).
+            // Document start: no carrier. Decline so the host deletes natively,
+            // and do not re-arm — the one deliberate divergence from the other
+            // shells (documented macOS-15).
             pending = CPending()
-            return
+            return false
         }
         replace(NSRange(location: cr.location, length: cr.length + range.length),
                 with: String(carrier), client)
+        return true
     }
 
     private func utf16Units(ofLast codepoints: Int, in text: String) -> Int {
         let scalars = Array(text.unicodeScalars)
         let take = scalars.suffix(codepoints)
         return take.reduce(0) { $0 + String($1).utf16.count }
-    }
-
-    private func replaceMarkedOrInsert(_ text: String, _ client: IMKTextInput) {
-        insert(text, client)
     }
 
     private func insert(_ text: String, _ client: IMKTextInput) {
@@ -420,11 +439,18 @@ class InputController: IMKInputController {
             client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0), replacementRange: none)
             return
         }
-        let attrs: [NSAttributedString.Key: Any] = [
-            .underlineStyle: NSUnderlineStyle.single.rawValue,
-        ]
-        let a = NSAttributedString(string: s, attributes: attrs)
-        client.setMarkedText(a, selectionRange: NSRange(location: (s as NSString).length, length: 0),
+        // A dead-key preview, not a composition. IMK stamps a blue composition
+        // underline on a plain string by default; our own attributed string
+        // wins, so we set the yellow dead-key highlight (matching Apple's ⌥e
+        // layout dead key, captured with tools/probe.swift) and suppress the
+        // underline with .underlineStyle 0.
+        let len = (s as NSString).length
+        let a = NSMutableAttributedString(string: s, attributes: [
+            .backgroundColor: NSColor.systemYellow.withAlphaComponent(0.45),
+            .foregroundColor: NSColor.textColor,
+            .underlineStyle: 0,
+        ])
+        client.setMarkedText(a, selectionRange: NSRange(location: len, length: 0),
                              replacementRange: none)
     }
 
