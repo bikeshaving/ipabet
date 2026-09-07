@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v5
 
       # Cheap, and the only checks that see more than one port at once.
-      - name: The four version strings agree
+      - name: The five version strings agree
         run: ./tools/check-version.sh
 
       - name: The Windows and Linux key tables describe the same keyboard

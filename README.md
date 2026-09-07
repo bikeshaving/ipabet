@@ -28,10 +28,10 @@ add **IPA** under System Settings → Keyboard → Input Sources. Or
 `sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`
 (or `brew uninstall ipabet`).
 
-**Windows** — download **IPAbet.msi** and run it, then pick IPAbet from the
-language bar. The installer is not signed yet, so Windows warns on first run.
+**Windows** — download **IPAbet-x64.msi** (or **IPAbet-arm64.msi**) and run
+it, then pick IPAbet from the language bar.
 
-**Linux** — `sudo apt install ./ipabet-ibus_*.deb`, then pick IPAbet from the
+**Linux** — `sudo apt install ./ipabet-ibus-amd64.deb`, then pick IPAbet from the
 input menu. IBus is what GNOME, Ubuntu and Fedora already run, so there is no
 framework to install first; `ipabet-fcitx5` is there for people already running
 fcitx5.
@@ -45,7 +45,7 @@ Every download carries a build provenance attestation naming the commit and
 workflow that produced it:
 
 ```
-gh attestation verify IPAbet.msi --owner bikeshaving
+gh attestation verify IPAbet-x64.msi --owner bikeshaving
 ```
 
 ## How it works

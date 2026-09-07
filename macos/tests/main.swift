@@ -96,6 +96,10 @@ func nativeChar(_ k: RawKey) -> String {
     // ⌥⇧- is "_" (the shifted key), not "" (a bare Option chord).
     if k.shift { return USLayout.char(kc, shift: true) }
     if k.option { return "" }
+    // Caps Lock is deliberately NOT applied: this must mirror js/src/index.ts
+    // nativeChar, which the JS-computed `expected` used, and that ignores caps
+    // lock (the engine handles a caps-locked letter itself when it claims one;
+    // on a decline both sides fall back to the unshifted character).
     return USLayout.char(kc, shift: false)
 }
 

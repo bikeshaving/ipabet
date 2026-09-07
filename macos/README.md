@@ -54,8 +54,8 @@ hold under Dvorak or a non-US QWERTY.
 - `Info.plist` — the bundle ID must contain `.inputmethod.`. Registers one
   visible input mode. Read the macOS 15 rules before touching the launch keys.
 - `tools/genmenupdf.swift` — regenerates `ipabet.pdf`, the input-source icon.
-- `tools/reregister.swift` — `TISRegisterInputSource`, so a reinstall appears
-  without a logout.
+- `Helper/register.swift` — built as `ipabet-register`: `TISRegisterInputSource`
+  and enable/disable, so a reinstall appears without a logout.
 - `tools/probe.swift` — instrumented test host: an `NSTextView` logging every
   NSTextInputClient call and a `WKWebView` logging DOM composition events, to
   the window, stdout and `/tmp/imeprobe.log`. Build with

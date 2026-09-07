@@ -2,8 +2,8 @@
 # Drive parity vectors into a real text entry through the real IBus stack.
 #
 # Everything upstream of the client is under test: xdotool's synthetic X11
-# events, the GTK input-method module, the fcitx5 daemon, the addon, and the
-# engine. What the entry ends up holding is what a user would have got.
+# events, the GTK input-method module, the ibus daemon, and the engine. What
+# the entry ends up holding is what a user would have got.
 #
 # X11 only, and that is a real limit rather than a temporary one. Synthetic
 # input works here because X11 extends ambient trust to any client on the

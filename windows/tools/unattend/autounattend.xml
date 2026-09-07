@@ -135,7 +135,7 @@
         <SynchronousCommand wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
           <Order>1</Order>
           <Description>Install IPAbet</Description>
-          <CommandLine>powershell -ExecutionPolicy Bypass -NoProfile -Command "$u='https://github.com/bikeshaving/ipabet/releases/download/v0.1.2-beta.2/IPAbet.msi'; $f=\"$env:TEMP\IPAbet.msi\"; for($i=0;$i -lt 20;$i++){ try{ Invoke-WebRequest $u -OutFile $f -UseBasicParsing; break }catch{ Start-Sleep 15 } }; if(Test-Path $f){ Start-Process msiexec -ArgumentList '/i',$f,'/qn' -Wait }"</CommandLine>
+          <CommandLine>powershell -ExecutionPolicy Bypass -NoProfile -Command "$u='https://github.com/bikeshaving/ipabet/releases/latest/download/IPAbet-arm64.msi'; $f=\"$env:TEMP\IPAbet.msi\"; for($i=0;$i -lt 20;$i++){ try{ Invoke-WebRequest $u -OutFile $f -UseBasicParsing; break }catch{ Start-Sleep 15 } }; if(Test-Path $f){ Start-Process msiexec -ArgumentList '/i',$f,'/qn' -Wait }"</CommandLine>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
           <Order>2</Order>

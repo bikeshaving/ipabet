@@ -7,7 +7,7 @@ translates its framework's key events into the shape the Rust crate in
 ## Install
 
 ```sh
-sudo apt install ./ipabet-ibus_0.1.2_amd64.deb
+sudo apt install ./ipabet-ibus-amd64.deb
 ```
 
 Log out, log back in, pick IPAbet from the input menu.
