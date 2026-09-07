@@ -1,0 +1,13174 @@
+[
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "j",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   }
+  ],
+  "initial": "日本",
+  "expected": "日a4̓r̝Jsˌ(",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n"
+   },
+   {
+    "key": "\\",
+    "option": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "4",
+    "capsLock": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "z",
+    "control": true
+   },
+   {
+    "key": "j",
+    "shiftBroke": true
+   },
+   {
+    "key": "/"
+   }
+  ],
+  "initial": "",
+  "expected": "n⟨p4TX-rzj/",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "t"
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": " ",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shiftBroke": true
+   },
+   {
+    "key": "r",
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "t͡sθɪŋ日本",
+  "expected": "t͡sθɪŋ日本t`r7",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "ət͡sß",
+  "expected": "ət͡sßxyqx81ˌ$",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "8",
+    "option": true
+   }
+  ],
+  "initial": "é̂ ế",
+  "expected": "é̂ ế↓",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " "
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "5"
+   }
+  ],
+  "initial": "θɪŋé̂",
+  "expected": "θɪŋé̂ V/Cd5",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "f"
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃¨͢,Tf",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "o",
+    "shift": true
+   }
+  ],
+  "initial": "日本",
+  "expected": "日本][ˌ&KO",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "  ",
+  "expected": "  ̛22“]¡",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "6",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "y",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "1",
+    "option": true
+   },
+   {
+    "key": "0",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "ꜛ-'˝˩0",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "l",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   }
+  ],
+  "initial": "ⅠPATH",
+  "expected": "ⅠPATHF̼",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "",
+  "expected": "`",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "9",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "⌫",
+    "capsLock": true
+   }
+  ],
+  "initial": "",
+  "expected": "%8₍](̣ʹ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   }
+  ],
+  "initial": "𐞀é̂日本",
+  "expected": "𐞀é̂日本<Y",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r"
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "option": true
+   }
+  ],
+  "initial": "¿",
+  "expected": "¿r^vMʻ̣ʻ",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "the ",
+  "expected": "the M$",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "4",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": "+?4C,H",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "=",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "3",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "1"
+   }
+  ],
+  "initial": "æ̃𐞀",
+  "expected": "æ̃𐞀+Q>0]Bˍʿt1",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "🍕👍🏽",
+  "expected": "🍕👍🏽jo]ʹ;1",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "͢arU",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "¡g>",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "q"
+   }
+  ],
+  "initial": "",
+  "expected": "q",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "h"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": ",",
+    "option": true
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   }
+  ],
+  "initial": "ế한",
+  "expected": "ế한hku̢M̢̦",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x",
+    "shift": true
+   },
+   {
+    "key": "2",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "\\"
+   }
+  ],
+  "initial": "aːɡ˞",
+  "expected": "aːɡ˞X@!<B*¡5z˕/\\",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": ".",
+    "option": true
+   }
+  ],
+  "initial": "ʃɪp🇺🇸t͡s",
+  "expected": "ʃɪp🇺🇸t͡s“mWh’)˙",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "t͡sß",
+  "expected": "t͡sß 1Y",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "a",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "9",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "`",
+    "shift": true,
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "[",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "the ɡ˞",
+  "expected": "the ɡ˞Sa˕₍´₎[",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "4",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "p"
+   },
+   {
+    "key": ";",
+    "shiftBroke": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "l",
+    "shift": true
+   }
+  ],
+  "initial": "aː𐞀🍕",
+  "expected": "aː𐞀🍕p;dnl8.*L",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "6",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "t͡sʃɪp",
+  "expected": "t͡sʃɪp^Qaʻ˜`[`",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "N̓]$",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "`",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "-"
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕ˈ~-",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "option": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": "b",
+    "shiftBroke": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "4",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "🍕 ",
+  "expected": "🍕 qbf̹b17ʼ4",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "k",
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "0"
+   }
+  ],
+  "initial": "",
+  "expected": "Sk}2t0",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "4"
+   },
+   {
+    "key": "1",
+    "shift": true
+   },
+   {
+    "key": "3",
+    "option": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "w",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "w",
+    "shiftBroke": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "1",
+    "shift": true
+   }
+  ],
+  "initial": "🇺🇸PATH🇺🇸",
+  "expected": "🇺🇸PATH🇺🇸4!˧jw̜̪[!",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "option": true
+   },
+   {
+    "key": "n"
+   }
+  ],
+  "initial": "ʃɪp🍕👍🏽",
+  "expected": "ʃɪp🍕👍🏽˞n",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "i"
+   }
+  ],
+  "initial": "",
+  "expected": "i",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "u",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": " ",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "IF90",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "2",
+    "shift": true
+   },
+   {
+    "key": "4",
+    "option": true
+   },
+   {
+    "key": "s",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "z",
+    "capsLock": true
+   },
+   {
+    "key": "=",
+    "control": true
+   }
+  ],
+  "initial": "ʃɪpx̣̯́",
+  "expected": "ʃɪpx̣̯́U@˦N̩7Z=",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "p",
+    "shiftBroke": true
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "日本ã̃̃",
+  "expected": "日本ã̃̃jʘfp̈",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "shift": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "m",
+    "option": true
+   }
+  ],
+  "initial": "👍🏽",
+  "expected": "👍🏽Ul4aʻe5t˛",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "v",
+    "option": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "v",
+    "control": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸UM̌pvY",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "="
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "y",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "option": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": "=[Yh̠(x",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0"
+   },
+   {
+    "key": "o"
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃0o",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "b",
+    "option": true
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "d",
+    "shift": true
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞˘\\2D",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "q"
+   }
+  ],
+  "initial": "the é̂Ⅰ",
+  "expected": "the é̂ⅠᵤH” jq",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "w",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "aː🍕",
+  "expected": "aː🍕7adxw",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "1",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "˩",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "j",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ã̃̃",
+  "expected": "ã̃̃v̚xe<J",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "u",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "₍4ˈ[]wPʛ¨",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "d",
+    "option": true
+   },
+   {
+    "key": "-",
+    "shiftBroke": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "ə한한",
+  "expected": "ə한한̺-6p",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "y",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "t͡s",
+  "expected": "t͡Imyw.x",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x",
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "option": true
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "a"
+   }
+  ],
+  "initial": "",
+  "expected": "x↘T˞Zf>a",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "\\",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shiftBroke": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "|8̝̩P:(`S=1",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o"
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "m",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a",
+    "option": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "f",
+    "shift": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한o{7DMk̄F",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "g"
+   },
+   {
+    "key": "[",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "3"
+   }
+  ],
+  "initial": " 🇺🇸",
+  "expected": " 🇺🇸g[o3",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   }
+  ],
+  "initial": "ã̃̃¿日本",
+  "expected": "ã̃̃¿日本?xY̍",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "ã̃̃",
+  "expected": "ã̃̃“6`",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "w"
+   },
+   {
+    "key": "v",
+    "shiftBroke": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "m",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "aː",
+  "expected": "aːwv ̐",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "option": true
+   },
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "l"
+   }
+  ],
+  "initial": "",
+  "expected": "˞↘yw̴Fl",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "/",
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   }
+  ],
+  "initial": "𐞀Ⅰ",
+  "expected": "𐞀x̄/&",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "shift": true,
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "o",
+    "control": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "="
+   }
+  ],
+  "initial": "한👩‍👩‍👧",
+  "expected": "한👩‍👩‍👧H?~?o5˲=",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "l",
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "m",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "b",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "é̂ế",
+  "expected": "é̂ǿ̂ l 4̨B",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "option": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "x",
+    "shift": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": ";",
+    "shiftBroke": true
+   },
+   {
+    "key": "i",
+    "option": true
+   },
+   {
+    "key": "6"
+   }
+  ],
+  "initial": "한PATHɡ˞",
+  "expected": "한PATHɡ˞m̂Xl=;6̂",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "6",
+    "shift": true
+   },
+   {
+    "key": "j",
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ə",
+  "expected": "ə^j͈",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0"
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "x",
+    "option": true
+   }
+  ],
+  "initial": "ɡ˞the ",
+  "expected": "ɡ˞the 0͢6˟",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": ";",
+    "control": true
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "o",
+    "capsLock": true
+   },
+   {
+    "key": "Escape",
+    "shiftBroke": true
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "capsLock": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "🇺🇸 ",
+  "expected": "🇺🇸 jk̃;¡GO˕7:",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "shiftBroke": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   },
+   {
+    "key": "p",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "f"
+   }
+  ],
+  "initial": "əabcabc",
+  "expected": "əabcabcj.dQ’q7˜>Yʹf",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "control": true
+   },
+   {
+    "key": "a"
+   }
+  ],
+  "initial": "",
+  "expected": "ea",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z"
+   },
+   {
+    "key": "0",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "option": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "x̣̯́the ",
+  "expected": "x̣̯́the zC̚",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "option": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "4",
+    "shift": true
+   },
+   {
+    "key": "]"
+   }
+  ],
+  "initial": "Ⅰ",
+  "expected": "Ⅰ˦z8$]",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": ".",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "T˙",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "5"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "3",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "ßæ̃Ⅰ",
+  "expected": "ßæ̃Ⅰ5=˧&G}",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "\\"
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   }
+  ],
+  "initial": "ã̃̃ã̃̃👍🏽",
+  "expected": "ã̃̃ã̃̃👍🏽\\_ w,↓~",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "j",
+    "capsLock": true
+   }
+  ],
+  "initial": "𐞲ɡ˞é̂",
+  "expected": "𐞲ɡ˞é̂V^J",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "l"
+   },
+   {
+    "key": "l",
+    "shiftBroke": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "1",
+    "shift": true
+   },
+   {
+    "key": "c",
+    "shift": true
+   },
+   {
+    "key": "k",
+    "shift": true,
+    "option": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "3",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "\\",
+    "shiftBroke": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "="
+   }
+  ],
+  "initial": "PATHt͡saː",
+  "expected": "PATHt͡saːllP=!C˳#˝\\'=",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "m",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "r",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "6",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "]P3̨̩rb̜Ck^",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "c"
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "iL6Jc",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "1",
+    "option": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "m",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "👍🏽t͡s한",
+  "expected": "👍🏽t͡s한sA˩oMqt'27x",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   }
+  ],
+  "initial": "ß",
+  "expected": "ß]",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "2",
+    "control": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "u",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "k",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "2˙”Ü͇ⁿK",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "]",
+    "capsLock": true
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞ʼ]",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "m",
+    "option": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "t",
+    "control": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "`",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "",
+  "expected": " h̨=t `a(ɒ",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "7",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "]",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "y",
+    "option": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞K↘m>‚˕-↑",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": ";",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   }
+  ],
+  "initial": "🍕한",
+  "expected": "🍕한ʻk]>",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "/",
+    "option": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "{̉$",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "1",
+    "shift": true
+   }
+  ],
+  "initial": "日本",
+  "expected": "日本!",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   }
+  ],
+  "initial": "Ⅰ¿",
+  "expected": "Ⅰ¿Ḵ",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "3",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "i",
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "\\",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "x",
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸k ʹ#iWj|&",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "`",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": ",",
+    "capsLock": true
+   },
+   {
+    "key": ".",
+    "capsLock": true
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shiftBroke": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "a"
+   }
+  ],
+  "initial": "🍕æ̃",
+  "expected": "🍕æ̃,.HVt8(Va",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "c",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "̡",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "/"
+   }
+  ],
+  "initial": "",
+  "expected": "x./",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "capsLock": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "shift": true
+   }
+  ],
+  "initial": "ə",
+  "expected": "əʼeZT>dvN",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "7",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "c",
+    "option": true
+   },
+   {
+    "key": "-",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2"
+   }
+  ],
+  "initial": "日本🍕",
+  "expected": "日本🍕7¸_2",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "capsLock": true
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "⌫",
+    "control": true,
+    "capsLock": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "0Y6̪G",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "b"
+   },
+   {
+    "key": "d",
+    "capsLock": true
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "7",
+    "control": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "l",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "u"
+   }
+  ],
+  "initial": "",
+  "expected": "bD̤}7 u",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "7"
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "ß ",
+  "expected": "ß 7La̻",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3"
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "b",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "1",
+    "option": true
+   },
+   {
+    "key": "i",
+    "capsLock": true
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "⌫",
+    "capsLock": true
+   }
+  ],
+  "initial": "Ⅰ",
+  "expected": "Ⅰ3'4̮˩I5̜.̑",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "`"
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "6",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "u",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "4"
+   }
+  ],
+  "initial": "əʃɪp👩‍👩‍👧",
+  "expected": "əʃɪp👩‍👩‍👧`~36̈O4",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "v"
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕OxS͆)v",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "k"
+   }
+  ],
+  "initial": "👍🏽æ̃the ",
+  "expected": "👍🏽æ̃the Q=:k",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "c",
+    "option": true
+   },
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "/",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "¸97‖o5r?",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ","
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": ";"
+   }
+  ],
+  "initial": "ɡ˞🇺🇸æ̃",
+  "expected": "ɡ˞🇺🇸æ̃,]{;",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "8"
+   }
+  ],
+  "initial": "",
+  "expected": "8",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "l",
+    "option": true
+   },
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "c",
+    "option": true
+   },
+   {
+    "key": "q",
+    "control": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "z",
+    "option": true
+   }
+  ],
+  "initial": "θɪŋ한👩‍👩‍👧",
+  "expected": "θɪŋ한👩‍👩‍👧˜̼ʻqķ",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "0"
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": ";",
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   }
+  ],
+  "initial": "abc",
+  "expected": "abc05q;F",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "i",
+    "option": true
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ",",
+    "shiftBroke": true
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "x",
+    "control": true
+   },
+   {
+    "key": "c"
+   }
+  ],
+  "initial": "한𐞀",
+  "expected": "한𐞀z̹p/ˆ͈,Ja1xc",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "."
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": ",",
+    "shiftBroke": true
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "s",
+    "capsLock": true
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "",
+  "expected": ".E,ṪS",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "-"
+   },
+   {
+    "key": "t",
+    "control": true
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "Escape"
+   }
+  ],
+  "initial": "",
+  "expected": "-t8",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "control": true
+   },
+   {
+    "key": "s",
+    "option": true
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕4ˌ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "option": true,
+    "capsLock": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ʃɪp¿ə",
+  "expected": "ʃɪp¿",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   }
+  ],
+  "initial": "",
+  "expected": "x",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "ßé̂👍🏽",
+  "expected": "ßé̂👍🏽sPy1:`(U",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "["
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": ";",
+    "option": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "7"
+   }
+  ],
+  "initial": "",
+  "expected": "[ˑ!gaː7",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "i"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": ",",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": ",",
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "option": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "x",
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한idʻ,&ꜜsG̽ ",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v"
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": ";",
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": ";",
+    "shift": true
+   }
+  ],
+  "initial": "é̂👩‍👩‍👧",
+  "expected": "é̂👩‍👩‍👧vAn:N;̪%j:",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "c",
+    "control": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "👩‍👩‍👧🍕",
+  "expected": "👩‍👩‍👧🍕ck͆",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "`",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "5"
+   }
+  ],
+  "initial": "θɪŋ",
+  "expected": "θɪŋ``v5",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "b",
+    "shiftBroke": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "k̤b1",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "="
+   }
+  ],
+  "initial": "𐞀θɪŋ",
+  "expected": "𐞀θɪŋ=",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "d",
+    "shift": true
+   }
+  ],
+  "initial": "aː한𐞲",
+  "expected": "aː한𐞲f)maREeD",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   }
+  ],
+  "initial": "한🇺🇸ɡ˞",
+  "expected": "한🇺🇸ɡ˞k",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "c",
+    "control": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "¿",
+  "expected": "¿K̃c",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "`",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "θɪŋⅠ",
+  "expected": "θɪŋⅠ`a_₎",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "4",
+    "shift": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "k",
+    "shift": true
+   }
+  ],
+  "initial": "👩‍👩‍👧",
+  "expected": "👩‍👩‍👧Vi͓$1̙5aK",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "m",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "i",
+    "option": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한̐.yˆ|",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "p",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "θɪŋ👍🏽",
+  "expected": "θɪŋ👍🏽P",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "JT",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "\\",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "o",
+    "shiftBroke": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "j",
+    "option": true
+   },
+   {
+    "key": "j",
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": " m⟩Boii͡",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a"
+   },
+   {
+    "key": "g",
+    "control": true
+   },
+   {
+    "key": "[",
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "control": true
+   },
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "j",
+    "option": true
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "👍🏽🇺🇸日本",
+  "expected": "👍🏽🇺🇸日本ag[[ˈ͡{foX",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "G",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   }
+  ],
+  "initial": "한🇺🇸",
+  "expected": "한🇺🇸>%R",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "="
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸Z1̘sZn 5˓=",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "6",
+    "shift": true
+   }
+  ],
+  "initial": "the ",
+  "expected": "the ^",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "capsLock": true
+   },
+   {
+    "key": "4",
+    "option": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "e",
+    "shiftBroke": true
+   },
+   {
+    "key": "-",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "y",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "control": true
+   },
+   {
+    "key": "b",
+    "capsLock": true
+   },
+   {
+    "key": "3",
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "ß",
+  "expected": "ßS˦-we[ŧB",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o"
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "2",
+    "option": true
+   },
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "⌫",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "n"
+   }
+  ],
+  "initial": "",
+  "expected": "oy˨m̚*n",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "control": true
+   },
+   {
+    "key": "o",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "3",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "3oTo<3",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "o",
+    "option": true
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": " ",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "Rh̯̻ʺV↑$z ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ɡ˞¿𐞀",
+  "expected": "ɡ˞¿𐞀t",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "o",
+    "option": true
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "2",
+    "capsLock": true
+   },
+   {
+    "key": "2",
+    "control": true
+   },
+   {
+    "key": "h",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "˯˭r8-n2ʔ",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "0",
+    "shiftBroke": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "`",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "3"
+   }
+  ],
+  "initial": "ɡ˞æ̃",
+  "expected": "ɡ˞æ̃FE06:K̀ {h3",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " "
+   },
+   {
+    "key": "c",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "x̣̯́θɪŋ¿",
+  "expected": "x̣̯́θɪŋ¿ ̡ˬ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   },
+   {
+    "key": "1",
+    "capsLock": true
+   },
+   {
+    "key": "[",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "k1{",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q"
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "6",
+    "shift": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "]",
+    "capsLock": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "2",
+    "control": true
+   },
+   {
+    "key": ".",
+    "capsLock": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "𐞲",
+  "expected": "𐞲qL^7]{2.̓",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "3",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "2",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "ʹ_ʹ#LS",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "🇺🇸👍🏽👍🏽",
+  "expected": "🇺🇸👍🏽👍🏽¨|n",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "'",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "1",
+    "control": true
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "8",
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true
+   }
+  ],
+  "initial": "PATH𐞲x̣̯́",
+  "expected": "PATH𐞲x̣̯́\"x1}38S",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g"
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "c",
+    "control": true
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "\\",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a",
+    "capsLock": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸gVWc=`c⟩A",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "8"
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "control": true
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": " ",
+    "option": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한8k9͇̣͓A",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "capsLock": true
+   },
+   {
+    "key": "f"
+   }
+  ],
+  "initial": "",
+  "expected": "TTf",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "Escape"
+   }
+  ],
+  "initial": "ɡ˞x̣̯́",
+  "expected": "ɡ˞x̣̯́s?aZ ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "shiftBroke": true
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "'",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "v",
+    "shiftBroke": true
+   },
+   {
+    "key": "x",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "control": true
+   },
+   {
+    "key": "b",
+    "capsLock": true
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "s"
+   }
+  ],
+  "initial": "",
+  "expected": "eD003ˈvfB̽fs",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z"
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "𐞲",
+  "expected": "𐞲zu%o`",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5"
+   }
+  ],
+  "initial": "👍🏽𐞲",
+  "expected": "👍🏽𐞲5",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ";"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "0",
+    "control": true
+   }
+  ],
+  "initial": "🍕ʃɪp",
+  "expected": "🍕ʃɪp;nu}t.H020",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "shiftBroke": true
+   },
+   {
+    "key": "/",
+    "option": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한{‖w̉",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "control": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "5",
+    "shift": true
+   }
+  ],
+  "initial": "PATH ",
+  "expected": "PATH 5h%",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e"
+   },
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "k",
+    "option": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "/"
+   }
+  ],
+  "initial": "한",
+  "expected": "한e₍NLG↘5̊kr/",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "xE\"⟨H",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "`"
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "p",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "'",
+    "shift": true
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "capsLock": true
+   },
+   {
+    "key": "\\",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": ".",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "é̂",
+  "expected": "é̂`ll\"5K.<",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "k̑",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "w",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "option": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "s",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "option": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "capsLock": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한O˓˦Bˌ⟨1L̓*Z",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "b",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "'"
+   }
+  ],
+  "initial": "한👍🏽é̂",
+  "expected": "한👍🏽é̂?9f['",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "0",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "0",
+    "control": true
+   },
+   {
+    "key": "3",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸07̃̋`Id0#R",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ","
+   },
+   {
+    "key": "y",
+    "shiftBroke": true
+   },
+   {
+    "key": "2",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "["
+   }
+  ],
+  "initial": " t͡s",
+  "expected": " t͡s,y2STˌ>0F[",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "2",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "`",
+    "option": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "2",
+    "shift": true
+   },
+   {
+    "key": "6"
+   }
+  ],
+  "initial": "",
+  "expected": "↘@Qc̀@6",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "control": true
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "3",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "capsLock": true
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "θɪŋ¿",
+  "expected": "θɪŋ¿WfU1͆#N",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "a",
+    "option": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "u",
+    "shift": true
+   }
+  ],
+  "initial": "æ̃Ⅰt͡s",
+  "expected": "æ̃Ⅰt͡L]3̄c] U",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "j",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "PATH日本",
+  "expected": "PATH日本GJ̙SꜛA",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "𐞲👩‍👩‍👧日本",
+  "expected": "𐞲👩‍👩‍👧日本32I?",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "c",
+    "shift": true
+   },
+   {
+    "key": "3",
+    "shift": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "'"
+   }
+  ],
+  "initial": "",
+  "expected": "C#s3'",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "option": true
+   },
+   {
+    "key": "i",
+    "capsLock": true
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "c",
+    "capsLock": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "l",
+    "shiftBroke": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "𐞲日本🍕",
+  "expected": "𐞲日本🍕ᴵNtC̝ol3;>",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": ";",
+    "option": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "y",
+    "option": true
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": ";",
+    "control": true
+   },
+   {
+    "key": "g"
+   }
+  ],
+  "initial": "",
+  "expected": "Axː- ;g",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "j",
+    "option": true
+   },
+   {
+    "key": "`",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "x̣̯́",
+  "expected": "x̣̯́j͡l̻̣̀$",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "t",
+    "shiftBroke": true
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "\\"
+   }
+  ],
+  "initial": "ə𐞲",
+  "expected": "ə𐞲?t˜\\",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   },
+   {
+    "key": "2",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "0"
+   }
+  ],
+  "initial": "日本ã̃̃",
+  "expected": "日本ɑ̃̃̃|Y@<0",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "option": true
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "control": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "-",
+    "shift": true
+   }
+  ],
+  "initial": "aː",
+  "expected": "aː˧L8&_",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "control": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "é̂θɪŋ",
+  "expected": "é̂θɪnG",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "l",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "w",
+    "capsLock": true
+   }
+  ],
+  "initial": "",
+  "expected": "LHW",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "-",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "u"
+   }
+  ],
+  "initial": "x̣̯́",
+  "expected": "x̣̯́5ʻ1ju̜",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "option": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   }
+  ],
+  "initial": "θɪŋə👩‍👩‍👧",
+  "expected": "θɪŋə👩‍👩‍👧K̙",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "y",
+    "control": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "j",
+    "option": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "8"
+   }
+  ],
+  "initial": "🇺🇸🍕🍕",
+  "expected": "🇺🇸🍕🍕y &qJx͡3gm`8",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "w"
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "l",
+    "shift": true
+   }
+  ],
+  "initial": "æ̃🍕🇺🇸",
+  "expected": "æ̃🍕🇺🇸w1lA;[L",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "g",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "\\",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "PATH",
+  "expected": "PATH⟩Q̢5̪+",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "l"
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "9"
+   }
+  ],
+  "initial": "ɡ˞ã̃̃",
+  "expected": "ɡ˞ã̃̃l^vʼ9",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "l"
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "x",
+    "shiftBroke": true
+   },
+   {
+    "key": "y",
+    "control": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "6"
+   }
+  ],
+  "initial": "",
+  "expected": "l}ꜛx̘yd6",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "m",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "f",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "x̤̐.qF",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "c",
+    "shiftBroke": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": ";",
+    "option": true
+   },
+   {
+    "key": "b"
+   }
+  ],
+  "initial": "PATHPATH",
+  "expected": "PATHPATHcy˺ːb",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "aː한",
+  "expected": "aː한N",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ","
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "1",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "u",
+    "shift": true
+   }
+  ],
+  "initial": "한Ⅰ",
+  "expected": "한Ⅰ,51QjA^e̞U",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "control": true
+   },
+   {
+    "key": "6",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "d",
+    "shiftBroke": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "𐞲",
+  "expected": "𐞲[6.dyG;?",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "ế",
+  "expected": "ếp",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "the æ̃한",
+  "expected": "the æ̃한̛",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "y",
+    "shiftBroke": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "3",
+    "shift": true
+   },
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "h",
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "h",
+    "shiftBroke": true
+   },
+   {
+    "key": "v",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "yaF#¨↓{khThˇ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "l",
+    "shiftBroke": true
+   },
+   {
+    "key": "j",
+    "option": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "control": true
+   },
+   {
+    "key": "h",
+    "option": true
+   }
+  ],
+  "initial": "x̣̯́",
+  "expected": "x̣̯́R‘yPl͡ʹ_x˲",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "\\"
+   }
+  ],
+  "initial": "t͡s¿",
+  "expected": "t͡s¿\\",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "6",
+    "control": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "o",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "q",
+    "option": true
+   }
+  ],
+  "initial": "æ̃x̣̯́the ",
+  "expected": "æ̃x̣̯́the 26zg̯̟ʻ",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "h"
+   }
+  ],
+  "initial": " ",
+  "expected": " ‖2̓]Bah",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "d",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "t͡s한",
+  "expected": "t͡s한?Djʺ5͈",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "1"
+   },
+   {
+    "key": "x",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "option": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "shiftBroke": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "a",
+    "shiftBroke": true
+   },
+   {
+    "key": "x",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "n",
+    "shiftBroke": true
+   }
+  ],
+  "initial": " ɡ˞æ̃",
+  "expected": " ɡ˞æ̃1XQ̀6'aF̽ʹn",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "option": true
+   },
+   {
+    "key": "c",
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": "˚¸$f%y",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t"
+   },
+   {
+    "key": "0",
+    "control": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": ";",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "v",
+    "option": true
+   },
+   {
+    "key": "x"
+   }
+  ],
+  "initial": "æ̃ ",
+  "expected": "æ̃ t0”rrː7.‘ax̌",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "=",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "1",
+    "shift": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": ",",
+    "option": true
+   },
+   {
+    "key": "v",
+    "option": true
+   }
+  ],
+  "initial": "𐞀abc",
+  "expected": "𐞀abc+r=IA!-uʻˇ",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "2"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "⌫",
+    "option": true,
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "l"
+   }
+  ],
+  "initial": "",
+  "expected": "2↓nl",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "g"
+   },
+   {
+    "key": "7",
+    "control": true
+   },
+   {
+    "key": "j",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "r"
+   }
+  ],
+  "initial": "한",
+  "expected": "한g7͜gr",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "1",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "-",
+    "control": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "əʃɪp𐞲",
+  "expected": "əʃɪp𐞲₍H˩W-s{l)'ˬ",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "d",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "̺",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "/"
+   },
+   {
+    "key": "Escape",
+    "option": true
+   }
+  ],
+  "initial": " ế",
+  "expected": " ế/",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "-"
+   }
+  ],
+  "initial": "aː",
+  "expected": "aː: s-",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "8",
+    "capsLock": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "3",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "xV‘s*8 k˧",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "s",
+    "control": true
+   },
+   {
+    "key": "r",
+    "control": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "x",
+    "option": true
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "한日本한",
+  "expected": "한日本한X̋˭↗srm˟͓",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "𐞀abc",
+  "expected": "𐞀abc$",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x"
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "2",
+    "shift": true
+   }
+  ],
+  "initial": "ə👩‍👩‍👧",
+  "expected": "ə👩‍👩‍👧xJS͆=\"Y)@",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "3",
+    "shiftBroke": true
+   },
+   {
+    "key": ",",
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2",
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "option": true
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "ʃɪpabc한",
+  "expected": "ʃɪpabc한_ʼ3,K̹h}¡2⟨͈",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "r",
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   },
+   {
+    "key": "5"
+   }
+  ],
+  "initial": "ʃɪpabc",
+  "expected": "ʃɪpabcj&+KV(r$5",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "control": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "l"
+   }
+  ],
+  "initial": "t͡s",
+  "expected": "t͡sn3l",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   }
+  ],
+  "initial": "",
+  "expected": "k",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "d",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "]",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "5",
+    "option": true
+   }
+  ],
+  "initial": "ếthe 👍🏽",
+  "expected": "ếthe 👍🏽zb↓V˥",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "v"
+   }
+  ],
+  "initial": "¿한",
+  "expected": "¿한{QWR`S|JRv",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "l",
+    "capsLock": true
+   },
+   {
+    "key": "o",
+    "option": true
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "4",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "L˯)$",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "2",
+    "shift": true
+   }
+  ],
+  "initial": "日本PATH한",
+  "expected": "日本PATH한Q`@",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "'",
+    "shift": true
+   },
+   {
+    "key": "w"
+   }
+  ],
+  "initial": "日本日本 ",
+  "expected": "日本日本 \"w",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "Escape",
+    "option": true
+   }
+  ],
+  "initial": "ɡ˞¿é̂",
+  "expected": "ɡ˞¿é̂",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "shift": true
+   },
+   {
+    "key": "w"
+   }
+  ],
+  "initial": "",
+  "expected": "$w",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "x",
+    "capsLock": true
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "7",
+    "shiftBroke": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "2",
+    "option": true
+   },
+   {
+    "key": "2",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": ";"
+   }
+  ],
+  "initial": "👩‍👩‍👧ã̃̃",
+  "expected": "👩‍👩‍👧ã̃̃XAk7??'˨@Zg;",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "7"
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "7"
+   }
+  ],
+  "initial": "𐞲t͡s",
+  "expected": "𐞲t͡s7[v̞7",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "m",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "¿æ̃t͡s",
+  "expected": "¿æ̃t͡sF˓˛",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "d",
+    "shift": true
+   },
+   {
+    "key": "l"
+   }
+  ],
+  "initial": "abcß",
+  "expected": "abcßDl",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "h",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ɡ˞ế",
+  "expected": "ɡ˞ếh",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "control": true
+   },
+   {
+    "key": "d",
+    "option": true
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "u",
+    "shift": true
+   }
+  ],
+  "initial": "👍🏽",
+  "expected": "👍🏽gf̺}9 8͆U",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e"
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "i",
+    "shiftBroke": true
+   },
+   {
+    "key": "s"
+   }
+  ],
+  "initial": " ",
+  "expected": " eN̈is",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f",
+    "capsLock": true
+   },
+   {
+    "key": "`",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   }
+  ],
+  "initial": "ʃɪp",
+  "expected": "ʃɪpF˵;0U˲?P",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "="
+   }
+  ],
+  "initial": " ã̃̃ã̃̃",
+  "expected": " ã̃̃ã̃̃↘?bN=",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "θɪŋaː🇺🇸",
+  "expected": "θɪŋaː🇺🇸E`",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "b",
+    "option": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "[",
+    "shift": true
+   }
+  ],
+  "initial": "x̣̯́",
+  "expected": "x̣̯́ŏ{",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "`"
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "-",
+    "control": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "]",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "b",
+    "option": true
+   }
+  ],
+  "initial": "日本日本Ⅰ",
+  "expected": "日本日本Ⅰ`h-F6]a˘",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ʃɪp",
+  "expected": "ʃɪpW",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "b"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "m",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "'",
+    "shiftBroke": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "n",
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "'",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "👍🏽x̣̯́ɡ˞",
+  "expected": "👍🏽x̣̯́ɡ˞br;m'~nn'",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "b",
+    "option": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "b",
+    "option": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "c",
+    "control": true
+   }
+  ],
+  "initial": "PATHthe ",
+  "expected": "PATHthe ʹqq̆drp̆c",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ".",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "option": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "2",
+    "option": true
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕ṿ˺'ea˨",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "y",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "u",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한日本",
+  "expected": "한日本YȔ0tqtg\"N̉",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o"
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "Ⅰ𐞲",
+  "expected": "Ⅰ𐞲oH̑",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "/"
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "-",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "/)_B",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "3",
+    "control": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃3Q̟̂",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "y"
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "control": true
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한Ⅰ",
+  "expected": "한ⅠyX?awˬ",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "control": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "control": true,
+    "capsLock": true
+   }
+  ],
+  "initial": " 日本한",
+  "expected": " 日本한|yg5eJz",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "Q̹ p4o˔",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "aːⅠế",
+  "expected": "aːⅠếK",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "u",
+    "control": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "p",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한uỷ<₍ˣp",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "\\"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "6",
+    "capsLock": true
+   }
+  ],
+  "initial": "PATHé̂ə",
+  "expected": "PATHé̂ə\\o*a6",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ",",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5",
+    "option": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "j",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "ß",
+  "expected": "ßʻ~q̟dQ˥9͜",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "option": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "o",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "/",
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": "Z?z̨o*0B̹7n/",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "u",
+    "shift": true
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "d",
+    "option": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "option": true
+   }
+  ],
+  "initial": "日本t͡s",
+  "expected": "日本t͡sImUb9̺+:˗",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "]",
+    "shiftBroke": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "/",
+    "option": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "r"
+   }
+  ],
+  "initial": "ế👩‍👩‍👧",
+  "expected": "ế👩‍👩‍👧sˈKh]B.1ỏr",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "y",
+    "control": true
+   },
+   {
+    "key": ";"
+   }
+  ],
+  "initial": "t͡s",
+  "expected": "t͡sUy;",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "e",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "p",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "PATHɡ˞ɡ˞",
+  "expected": "PATHɡ˞ɡ˞GlP&kNq",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "q",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "q",
+    "shiftBroke": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "t",
+    "option": true
+   }
+  ],
+  "initial": "🇺🇸日本",
+  "expected": "🇺🇸日本Q̃q`̪",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "g"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": ";",
+    "option": true
+   },
+   {
+    "key": "y",
+    "control": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "x",
+    "option": true
+   },
+   {
+    "key": "3",
+    "option": true
+   },
+   {
+    "key": "5"
+   }
+  ],
+  "initial": "PATH 𐞀",
+  "expected": "PATH 𐞀gd'mːy‹˟˧5",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "o",
+    "option": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "d"
+   }
+  ],
+  "initial": "the æ̃",
+  "expected": "the æ̃˯?td",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "shift": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "9",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "",
+  "expected": "#.G̑+p",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "x̣̯́𐞲t͡s",
+  "expected": "x̣̯́𐞲t͡s¯",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "`"
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "u",
+    "option": true
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞`-↓¨",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "i"
+   },
+   {
+    "key": ","
+   }
+  ],
+  "initial": "",
+  "expected": "i,",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5"
+   },
+   {
+    "key": "h"
+   }
+  ],
+  "initial": "ʃɪp",
+  "expected": "ʃɪp5h",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "shiftBroke": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": ";",
+    "control": true
+   },
+   {
+    "key": ".",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "i",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "Escape"
+   }
+  ],
+  "initial": "日本é̂PATH",
+  "expected": "日本é̂PATH3ʹ6E;>I",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "="
+   },
+   {
+    "key": "b",
+    "shiftBroke": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "1",
+    "shift": true
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "ế한ə",
+  "expected": "ế한ə=b2ꜛ!:}MN",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "c"
+   }
+  ],
+  "initial": "¿𐞲",
+  "expected": "¿𐞲RIAgc̱wv↑o7c",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "o",
+    "option": true
+   },
+   {
+    "key": "y",
+    "option": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "u",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "Escape",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "˓&%]j̵̯",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "control": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "y",
+    "capsLock": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "𐞲",
+  "expected": "𐞲5(",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "q",
+    "shift": true
+   }
+  ],
+  "initial": "👍🏽日本日本",
+  "expected": "👍🏽日本日本kBivQ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "'",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "s",
+    "shiftBroke": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "n",
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "g"
+   }
+  ],
+  "initial": "日本",
+  "expected": "日本ˌa-sGO\\nFg",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ";"
+   },
+   {
+    "key": "3",
+    "control": true
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "f"
+   }
+  ],
+  "initial": "abct͡s",
+  "expected": "abct͡s;3↓f",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "d",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "o"
+   }
+  ],
+  "initial": "the 한👍🏽",
+  "expected": "the 한👍🏽̺↓o",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": "-",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "m",
+    "shiftBroke": true
+   },
+   {
+    "key": ","
+   }
+  ],
+  "initial": " ",
+  "expected": " &RQ){_lV̇cm,",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "option": true,
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "b",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "c"
+   }
+  ],
+  "initial": "",
+  "expected": "0`ʌ̩Bc",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a"
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "i",
+    "shiftBroke": true
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": ";",
+    "option": true
+   },
+   {
+    "key": ".",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "w",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ";",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]"
+   }
+  ],
+  "initial": "",
+  "expected": "a/inːṖg˓ː]",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "h"
+   }
+  ],
+  "initial": "🍕한",
+  "expected": "🍕한S͆`’&Oth͓̘",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "e"
+   }
+  ],
+  "initial": "👍🏽",
+  "expected": "👍🏽e",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "2",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "g"
+   }
+  ],
+  "initial": "ə🍕PATH",
+  "expected": "ə🍕PATH˨~J̛g",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "l"
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "1",
+    "option": true
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "Escape",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "b",
+    "shift": true
+   }
+  ],
+  "initial": "PATHʃɪp",
+  "expected": "PATHʃɪpllW5x˩LjB",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "d",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2",
+    "shift": true
+   },
+   {
+    "key": "m",
+    "option": true
+   }
+  ],
+  "initial": "👍🏽",
+  "expected": "👍🏽R%2F̰̺´‖@˛",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "p"
+   },
+   {
+    "key": "l",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "y",
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "option": true
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2",
+    "shift": true
+   },
+   {
+    "key": "k",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "¿aː",
+  "expected": "¿aːpy|͉&|h‘@K1",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x",
+    "capsLock": true
+   },
+   {
+    "key": "p",
+    "control": true
+   },
+   {
+    "key": "2"
+   }
+  ],
+  "initial": "the ",
+  "expected": "the Xp2",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f"
+   },
+   {
+    "key": ";",
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "k",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "i"
+   }
+  ],
+  "initial": "t͡s👍🏽θɪŋ",
+  "expected": "t͡s👍🏽θɪŋf;w̪bi̥",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": " ",
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "shiftBroke": true
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "Ⅰß",
+  "expected": "ⅠßZ w",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "8",
+    "option": true,
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": " l˝",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "k",
+    "shiftBroke": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "]"
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞(z͆(ck92͇̑/]",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ".",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "e",
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "shiftBroke": true
+   },
+   {
+    "key": "2",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "",
+  "expected": "e[ʾ+",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t"
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "j",
+    "shift": true
+   }
+  ],
+  "initial": "the 𐞀",
+  "expected": "the 𐞀ts2J",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ";",
+    "capsLock": true
+   },
+   {
+    "key": "0",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "z"
+   }
+  ],
+  "initial": "t͡sx̣̯́",
+  "expected": "t͡sx̣̯́ʼg͢;͢0̑˭Mz",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e",
+    "control": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "j",
+    "shiftBroke": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "w"
+   }
+  ],
+  "initial": "",
+  "expected": "e(+j9w",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "b",
+    "shift": true
+   },
+   {
+    "key": "Escape",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "[",
+    "shift": true
+   }
+  ],
+  "initial": "한the 🇺🇸",
+  "expected": "한the 🇺🇸]|`BMK+y{",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "0",
+    "control": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "한ế",
+  "expected": "한ếc̙̚0",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "u"
+   },
+   {
+    "key": "g",
+    "option": true
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "c",
+    "shiftBroke": true
+   },
+   {
+    "key": "s",
+    "shift": true
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "o",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "2"
+   }
+  ],
+  "initial": "",
+  "expected": "u˕˭cS>_32̯",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "1",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "-"
+   }
+  ],
+  "initial": "θɪŋ한",
+  "expected": "θɪŋ한˩RGy‖“-",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v",
+    "shift": true
+   }
+  ],
+  "initial": "Ⅰ",
+  "expected": "ⅠV",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ".",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "shift": true
+   }
+  ],
+  "initial": "한Ⅰ",
+  "expected": "한Ⅰ-_X",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "1",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "capsLock": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "z",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ß¿",
+  "expected": "ß¿¡f̝W?‘z",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "a"
+   },
+   {
+    "key": ".",
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "="
+   }
+  ],
+  "initial": "👩‍👩‍👧𐞀",
+  "expected": "👩‍👩‍👧𐞀a.5?=",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "p"
+   },
+   {
+    "key": "-",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "-",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "]",
+    "capsLock": true
+   },
+   {
+    "key": "i",
+    "option": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "8",
+    "option": true
+   }
+  ],
+  "initial": "한👍🏽",
+  "expected": "한👍🏽p__5]ˆ`=↓",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "-"
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "s",
+    "control": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "5",
+    "option": true
+   },
+   {
+    "key": "w",
+    "shift": true
+   }
+  ],
+  "initial": "t͡sß",
+  "expected": "t͡sß-xs^u̻˥W",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "control": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "w"
+   }
+  ],
+  "initial": "ß",
+  "expected": "ßz̪w",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v"
+   },
+   {
+    "key": "Escape",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "v",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "["
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "r",
+    "shiftBroke": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "\\",
+    "capsLock": true
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕[₎[;r?̢+\\",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "9"
+   },
+   {
+    "key": "e",
+    "shift": true
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "c",
+    "shift": true
+   }
+  ],
+  "initial": "ɡ˞",
+  "expected": "ɡ˞9E_˒↘C",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "[",
+    "shift": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "8"
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "o",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "v",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "6",
+    "shift": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "👍🏽",
+  "expected": "👍🏽]I˟~l{ 8\"Oˇ^",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "Escape",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "T",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "N",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "d",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "9"
+   }
+  ],
+  "initial": "",
+  "expected": "7̜̺̇g̬y9",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "k",
+    "capsLock": true
+   },
+   {
+    "key": "t",
+    "shiftBroke": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "4",
+    "shift": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "ếʃɪp",
+  "expected": "ếʃɪp?MxK?-Kt9$",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r"
+   },
+   {
+    "key": "u",
+    "option": true
+   },
+   {
+    "key": "."
+   }
+  ],
+  "initial": "",
+  "expected": "r¨.",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "=",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "capsLock": true
+   },
+   {
+    "key": "h",
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "k"
+   }
+  ],
+  "initial": "aː",
+  "expected": "aːp͆I˖](k",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "h"
+   }
+  ],
+  "initial": "Ⅰ",
+  "expected": "ⅠOkh",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "q",
+    "option": true
+   }
+  ],
+  "initial": "t͡s ",
+  "expected": "t͡s Kʻ",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "q",
+    "option": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "i"
+   }
+  ],
+  "initial": "ã̃̃t͡s",
+  "expected": "ã̃̃t͡sʻoi",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "d",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "b",
+    "option": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "v",
+    "option": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "n",
+    "capsLock": true
+   },
+   {
+    "key": "]",
+    "control": true
+   }
+  ],
+  "initial": "θɪŋθɪŋʃɪp",
+  "expected": "θɪŋθɪŋʃɪpDḏ̆cǐN]",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "shiftBroke": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "1",
+    "shiftBroke": true
+   },
+   {
+    "key": "h",
+    "control": true
+   },
+   {
+    "key": "8"
+   }
+  ],
+  "initial": "ə",
+  "expected": "ə3P1h8",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "]",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "u",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "[",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "aːt͡s",
+  "expected": "aːt͡ssral.]”",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a"
+   },
+   {
+    "key": "\\",
+    "shift": true
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": " "
+   },
+   {
+    "key": "6"
+   }
+  ],
+  "initial": "ʃɪp",
+  "expected": "ʃɪpa|I↑˜6",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "o"
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "7",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": ".",
+    "option": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "5",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "o5↗?´%",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "",
+  "expected": "",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v",
+    "option": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "2",
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "r",
+    "option": true
+   }
+  ],
+  "initial": "👍🏽🇺🇸Ⅰ",
+  "expected": "👍🏽🇺🇸Ⅰľ˨x˞",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "."
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "/",
+    "shift": true
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "6",
+    "shift": true
+   }
+  ],
+  "initial": "aːx̣̯́𐞀",
+  "expected": "aːx̣̯́𐞀.v+G-o?F3^",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "=",
+    "shift": true
+   },
+   {
+    "key": "m",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "d",
+    "shift": true
+   },
+   {
+    "key": "4"
+   }
+  ],
+  "initial": "æ̃日本ə",
+  "expected": "æ̃日本əK+MoKD4",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "r",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "q",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "8",
+    "option": true
+   }
+  ],
+  "initial": "日本𐞀Ⅰ",
+  "expected": "日本𐞀ⅠRt(k↓",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "p"
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한p;kTI˓̓",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "b"
+   }
+  ],
+  "initial": "Ⅰ👍🏽",
+  "expected": "Ⅰ👍🏽b",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a"
+   }
+  ],
+  "initial": "",
+  "expected": "jq2sˑa̱",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "1"
+   },
+   {
+    "key": "8",
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "capsLock": true
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "\\",
+    "option": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "θɪŋ",
+  "expected": "θɪŋ18⟨",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "'"
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "t",
+    "capsLock": true
+   },
+   {
+    "key": "-",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "'5T",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "\\"
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "m",
+    "option": true
+   },
+   {
+    "key": "9"
+   },
+   {
+    "key": "Escape",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "control": true
+   }
+  ],
+  "initial": "əthe ",
+  "expected": "əthe \\9̨̹V",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "'",
+    "shift": true
+   },
+   {
+    "key": "y"
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "y",
+    "shift": true
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "é̂ x̣̯́",
+  "expected": "é̂ x̣̯́“S͓\"y3↓Y",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "3",
+    "control": true
+   },
+   {
+    "key": "/",
+    "option": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "",
+  "expected": "3̉]p",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "e"
+   },
+   {
+    "key": "2",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "control": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "abcæ̃ ",
+  "expected": "abcæ̃ e@P",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫",
+    "shiftBroke": true
+   },
+   {
+    "key": "3",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   }
+  ],
+  "initial": "𐞀ʃɪp",
+  "expected": "𐞀ʃɪ3",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "["
+   },
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "4",
+    "capsLock": true
+   },
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "",
+  "expected": "[ˈp",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "9"
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "0",
+    "shift": true
+   },
+   {
+    "key": "9"
+   }
+  ],
+  "initial": "PATH",
+  "expected": "PATH9okn5[m .)9",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z"
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": "l",
+    "option": true
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "y",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "'",
+    "control": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "`",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "z̼↓y'ˈ`",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "1"
+   },
+   {
+    "key": ";",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "[",
+    "shiftBroke": true
+   },
+   {
+    "key": "r"
+   },
+   {
+    "key": "u",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "n",
+    "shiftBroke": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "0"
+   }
+  ],
+  "initial": "ß",
+  "expected": "ß1:`[rUne0",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "t"
+   },
+   {
+    "key": "m",
+    "shift": true
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": "Escape"
+   },
+   {
+    "key": "="
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "8",
+    "shift": true
+   }
+  ],
+  "initial": "ɡ˞¿ã̃̃",
+  "expected": "ɡ˞¿ã̃̃tMZpf=Vo*",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "'",
+    "shiftBroke": true
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "y"
+   }
+  ],
+  "initial": "🍕",
+  "expected": "🍕'f2y",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "c",
+    "capsLock": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": "o",
+    "capsLock": true
+   },
+   {
+    "key": "7",
+    "option": true
+   },
+   {
+    "key": "w"
+   },
+   {
+    "key": " ",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "'",
+    "control": true
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "👍🏽θɪŋ",
+  "expected": "👍🏽θɪŋAC[Ó↘w '‖",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "shiftBroke": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "\\",
+    "shift": true
+   }
+  ],
+  "initial": "æ̃əß",
+  "expected": "æ̃əß `-|",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": " ",
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "option": true
+   },
+   {
+    "key": "u",
+    "shift": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "t",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "v",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "8"
+   }
+  ],
+  "initial": "é̂é̂𐞲",
+  "expected": "é̂é̂𐞲UoTAxIpVg8",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": " "
+   },
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "`",
+    "option": true
+   },
+   {
+    "key": "e",
+    "shift": true
+   }
+  ],
+  "initial": "Ⅰx̣̯́é̂",
+  "expected": "Ⅰx̣̯́é̂ ₍È",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "j"
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "1",
+    "shift": true,
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "8",
+    "capsLock": true
+   },
+   {
+    "key": ".",
+    "option": true
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃jbu!Qd8˙",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "f",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "͈",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "9"
+   },
+   {
+    "key": "⌫",
+    "option": true
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "¿ʃɪpaː",
+  "expected": "¿ʃɪpaːJqL",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "-",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "s",
+    "shift": true,
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "i"
+   },
+   {
+    "key": "-",
+    "shift": true
+   },
+   {
+    "key": "q"
+   }
+  ],
+  "initial": "",
+  "expected": "_SFi_q",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "8",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "ã̃̃",
+  "expected": "ã̃̃↑",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": ","
+   },
+   {
+    "key": "z",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "w",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "c",
+    "shift": true
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "日本한",
+  "expected": "日本한,ZʼW,4\\Cp",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "z",
+    "option": true
+   },
+   {
+    "key": "k",
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "˚",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n",
+    "shift": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "k",
+    "shift": true
+   },
+   {
+    "key": "\\",
+    "option": true
+   },
+   {
+    "key": "Escape",
+    "shift": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "1",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "o",
+    "shift": true
+   }
+  ],
+  "initial": "¿",
+  "expected": "¿N.K⟨gG̪cO",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "k",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "`"
+   },
+   {
+    "key": "q"
+   }
+  ],
+  "initial": "日本",
+  "expected": "日本VdK̝}`q",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "7"
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "9",
+    "option": true
+   },
+   {
+    "key": "9",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "u",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "7>₍₎;-\\kU",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "`",
+    "shiftBroke": true
+   },
+   {
+    "key": "b"
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "u"
+   }
+  ],
+  "initial": "👍🏽👍🏽",
+  "expected": "👍🏽👍🏽`b1j<u",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "-"
+   }
+  ],
+  "initial": " ",
+  "expected": " -",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]"
+   },
+   {
+    "key": "d",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "⌫",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a",
+    "option": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": "s",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "👩‍👩‍👧ʃɪp",
+  "expected": "👩‍👩‍👧ʃɪp]q̄s",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "-",
+    "option": true
+   },
+   {
+    "key": "2",
+    "option": true
+   }
+  ],
+  "initial": "한abcaː",
+  "expected": "한abcaː˨",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shiftBroke": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "9"
+   }
+  ],
+  "initial": "",
+  "expected": "ge9",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ";",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "8"
+   }
+  ],
+  "initial": "θɪŋ ",
+  "expected": "θɪŋ ˑ8",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": ".",
+    "shift": true
+   }
+  ],
+  "initial": "θɪŋ",
+  "expected": "θɪŋ>",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "h"
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "b",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "p",
+    "shiftBroke": true
+   },
+   {
+    "key": ";",
+    "option": true
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "⌫",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   }
+  ],
+  "initial": "ã̃̃🍕",
+  "expected": "ã̃̃🍕a͓ɦ↓p̮ː↑",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "option": true
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "n",
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "h",
+    "option": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   }
+  ],
+  "initial": "the 👍🏽",
+  "expected": "the 👍🏽G̴̃̚RP̙",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "k",
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "4"
+   },
+   {
+    "key": "n"
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "7"
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "1"
+   },
+   {
+    "key": "y",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "k",
+    "shiftBroke": true
+   },
+   {
+    "key": "`"
+   }
+  ],
+  "initial": "한ə",
+  "expected": "한əA4nħ̩.1k̴`",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "0",
+    "option": true,
+    "control": true
+   },
+   {
+    "key": "q",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": ";"
+   }
+  ],
+  "initial": "t͡s",
+  "expected": "t͡sʼ;",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "θɪŋⅠ",
+  "expected": "θɪŋⅠ˕",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "control": true
+   },
+   {
+    "key": "]"
+   },
+   {
+    "key": "Escape",
+    "option": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "p"
+   }
+  ],
+  "initial": "Ⅰ 🍕",
+  "expected": "Ⅰ 🍕5]GOp",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w"
+   },
+   {
+    "key": "⌫"
+   },
+   {
+    "key": ",",
+    "shift": true
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "2",
+    "shiftBroke": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "7",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "abcthe 👍🏽",
+  "expected": "abcthe 👍🏽<d2̛z↘",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "c"
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "`",
+    "option": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "d"
+   },
+   {
+    "key": "⌫",
+    "shiftBroke": true
+   },
+   {
+    "key": "q"
+   },
+   {
+    "key": ".",
+    "shift": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "]",
+    "shift": true,
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "9",
+    "control": true,
+    "capsLock": true
+   },
+   {
+    "key": "x"
+   }
+  ],
+  "initial": "aːⅠ",
+  "expected": "aːⅠcIj̀q>j}9x",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "`",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "e",
+    "option": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "⌫"
+   }
+  ],
+  "initial": "Ⅰɡ˞x̣̯́",
+  "expected": "Ⅰɡ˞x̣̯́~ˍ´",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "a",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "2"
+   },
+   {
+    "key": "["
+   }
+  ],
+  "initial": "",
+  "expected": "2̄[",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "shift": true,
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "."
+   },
+   {
+    "key": "x",
+    "shift": true
+   },
+   {
+    "key": "t",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shiftBroke": true
+   },
+   {
+    "key": "[",
+    "option": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "x",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "5",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "{.X̪`“~˟N5",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "["
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": "d"
+   }
+  ],
+  "initial": "x̣̯́",
+  "expected": "x̣̯́[0-d",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k",
+    "control": true
+   },
+   {
+    "key": "t"
+   }
+  ],
+  "initial": "",
+  "expected": "kt",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "l"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": " ",
+    "shift": true
+   },
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": "l",
+    "shift": true
+   },
+   {
+    "key": "0",
+    "capsLock": true
+   },
+   {
+    "key": "p"
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "f",
+    "shiftBroke": true
+   },
+   {
+    "key": "8",
+    "shift": true
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃la˭ L̩0pf̋*",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "'",
+    "option": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "shiftBroke": true
+   },
+   {
+    "key": "j"
+   },
+   {
+    "key": "."
+   }
+  ],
+  "initial": "한t͡s",
+  "expected": "한t͡s?ˈPnj.",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": "m"
+   },
+   {
+    "key": "w",
+    "shift": true
+   },
+   {
+    "key": "d",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "0"
+   },
+   {
+    "key": "a"
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "7",
+    "shift": true
+   }
+  ],
+  "initial": "한ʃɪpt͡s",
+  "expected": "한ʃɪpt͡s%mW6̺0a,&",
+  "locale": "de",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "w"
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "["
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "2",
+    "option": true
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃w~[?˨",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s"
+   },
+   {
+    "key": "x",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "e"
+   },
+   {
+    "key": "/"
+   },
+   {
+    "key": "4",
+    "option": true
+   },
+   {
+    "key": "p",
+    "option": true
+   },
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "k"
+   }
+  ],
+  "initial": " Ⅰaː",
+  "expected": " Ⅰaːse͓/˦ʹ‘k",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "6"
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "8",
+    "option": true
+   },
+   {
+    "key": "e",
+    "option": true,
+    "capsLock": true
+   },
+   {
+    "key": "l",
+    "option": true
+   },
+   {
+    "key": ",",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "d"
+   }
+  ],
+  "initial": "",
+  "expected": "63↓d̼́̓",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "n"
+   }
+  ],
+  "initial": "x̣̯́the ",
+  "expected": "x̣̯́the n",
+  "locale": "fr",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "⌫"
+   },
+   {
+    "key": "j",
+    "shift": true
+   },
+   {
+    "key": "g"
+   },
+   {
+    "key": ","
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "3",
+    "shiftBroke": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "c",
+    "option": true,
+    "shiftBroke": true
+   }
+  ],
+  "initial": "Ⅰß",
+  "expected": "ⅠJg,~z3k¸",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "k"
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": "q",
+    "shiftBroke": true
+   },
+   {
+    "key": "5"
+   },
+   {
+    "key": "o",
+    "shift": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "m",
+    "shiftBroke": true
+   },
+   {
+    "key": "f"
+   },
+   {
+    "key": "i",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "",
+  "expected": "k3q5ONmfi",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "option": true
+   },
+   {
+    "key": " ",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "5",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "z"
+   }
+  ],
+  "initial": "æ̃",
+  "expected": "æ̃ˌ˥z",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "r",
+    "shift": true
+   },
+   {
+    "key": "g",
+    "shift": true
+   },
+   {
+    "key": "6",
+    "option": true
+   }
+  ],
+  "initial": "Ⅰß🍕",
+  "expected": "Ⅰß🍕FƦꜜ",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]",
+    "option": true
+   },
+   {
+    "key": "6",
+    "option": true
+   },
+   {
+    "key": "\\"
+   },
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "e",
+    "option": true
+   }
+  ],
+  "initial": "ß¿",
+  "expected": "ß¿‘ꜜ\\*&´",
+  "locale": "nosuchlocale",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "o"
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "r",
+    "option": true
+   },
+   {
+    "key": "x"
+   },
+   {
+    "key": "x"
+   }
+  ],
+  "initial": "aː𐞀",
+  "expected": "aː𐞀o;˞xx",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "5"
+   },
+   {
+    "key": "w",
+    "option": true
+   },
+   {
+    "key": "m",
+    "shiftBroke": true
+   }
+  ],
+  "initial": "ếθɪŋPATH",
+  "expected": "ếθɪŋPATH5m̜",
+  "locale": "de",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "2"
+   },
+   {
+    "key": "z",
+    "shift": true,
+    "control": true
+   },
+   {
+    "key": "i",
+    "shift": true
+   },
+   {
+    "key": "v"
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "m",
+    "option": true
+   },
+   {
+    "key": "-"
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "l",
+    "option": true
+   },
+   {
+    "key": "q",
+    "shiftBroke": true
+   },
+   {
+    "key": "\\",
+    "option": true
+   }
+  ],
+  "initial": "🇺🇸",
+  "expected": "🇺🇸2ZIvz˛-;kq̼⟨",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "b"
+   },
+   {
+    "key": "'"
+   },
+   {
+    "key": "6",
+    "shift": true
+   },
+   {
+    "key": "\\",
+    "shiftBroke": true
+   },
+   {
+    "key": "c"
+   },
+   {
+    "key": "l",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t"
+   },
+   {
+    "key": "z"
+   },
+   {
+    "key": "t"
+   }
+  ],
+  "initial": "",
+  "expected": "b'^\\ct̼zt",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "[",
+    "shiftBroke": true
+   },
+   {
+    "key": "6"
+   },
+   {
+    "key": "8",
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "a",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "[6↓A",
+  "locale": "fr",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "8",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "capsLock": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "k"
+   },
+   {
+    "key": "⌫",
+    "shiftBroke": true
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "¿t͡s👍🏽",
+  "expected": "¿t͡s👍🏽*A˷",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "\\",
+    "shiftBroke": true
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "l"
+   },
+   {
+    "key": "\\",
+    "shiftBroke": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   }
+  ],
+  "initial": "",
+  "expected": "\\ˌl",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "control": true
+   }
+  ],
+  "initial": "한",
+  "expected": "한u",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "g",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "x",
+    "control": true
+   },
+   {
+    "key": "f",
+    "shift": true
+   },
+   {
+    "key": "5",
+    "shift": true
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "option": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "h",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "`",
+    "shift": true
+   },
+   {
+    "key": "q",
+    "shift": true
+   },
+   {
+    "key": "p",
+    "shift": true
+   },
+   {
+    "key": "6"
+   }
+  ],
+  "initial": "🇺🇸t͡s",
+  "expected": "🇺🇸t͡sxF̝%ˑH~~QP6",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "capsLock": true
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "]",
+    "shift": true
+   },
+   {
+    "key": "v",
+    "shift": true
+   },
+   {
+    "key": ";"
+   },
+   {
+    "key": ";",
+    "option": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "9",
+    "shift": true
+   },
+   {
+    "key": "'",
+    "shift": true,
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "t",
+    "capsLock": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "]",
+    "shift": true
+   }
+  ],
+  "initial": "👩‍👩‍👧",
+  "expected": "👩‍👩‍👧4%}V;(\"Ts}",
+  "locale": "nosuchlocale",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "]",
+    "shift": true,
+    "capsLock": true
+   },
+   {
+    "key": "⌫",
+    "shift": true
+   },
+   {
+    "key": "3"
+   },
+   {
+    "key": ";",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "PATH",
+  "expected": "PATH3ˑ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "d"
+   },
+   {
+    "key": "6",
+    "shift": true
+   },
+   {
+    "key": "s"
+   },
+   {
+    "key": "7",
+    "shift": true
+   },
+   {
+    "key": "a",
+    "shift": true
+   },
+   {
+    "key": "/",
+    "control": true,
+    "shiftBroke": true
+   },
+   {
+    "key": "o"
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": true
+   },
+   {
+    "key": "u"
+   },
+   {
+    "key": "/",
+    "shift": true,
+    "option": true
+   }
+  ],
+  "initial": "",
+  "expected": "d^s&A/ouu͆?",
+  "locale": "en",
+  "capital_digraphs": false
+ }
+]

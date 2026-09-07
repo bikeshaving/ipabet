@@ -13,6 +13,9 @@ extern "C" {
 
 namespace ipabet {
 
+// Count of live TextService objects, for DllCanUnloadNow.
+LONG ObjectCount();
+
 // Keystroke logging exists only in debug builds. A release build has no logging
 // capability at all — an input method sees everything typed, so the ability to
 // record it is not something to ship and leave switched off.
@@ -137,7 +140,13 @@ private:
     // what stops an acronym from rebasing into IPA.
     bool shiftDown_ = false;
     bool shiftBroke_ = false;
-};
+
+    /// Set by HandleKeyInSession: whether the engine actually consumed the
+    /// key. An unassigned Option/AltGr chord (the engine passes, and its
+    /// native character is empty) must fall through to the host so a European
+    /// layout's AltGr symbols — @ € on German — still type. The key handlers
+    /// read this to decide *eaten.
+    bool keyConsumed_ = false;
 
 } // namespace ipabet
 

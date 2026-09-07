@@ -242,7 +242,12 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void **ppv) {
     return ipabet::g_factory.QueryInterface(riid, ppv);
 }
 
-STDAPI DllCanUnloadNow() { return ipabet::g_locks == 0 ? S_OK : S_FALSE; }
+// Both must be zero: no server lock AND no live text service. g_objects is the
+// one that actually moves — a host calling CoFreeUnusedLibraries while a
+// TextService is live would otherwise unload the DLL under its own vtable.
+STDAPI DllCanUnloadNow() {
+    return (ipabet::g_locks == 0 && ipabet::ObjectCount() == 0) ? S_OK : S_FALSE;
+}
 
 STDAPI DllRegisterServer() { return ipabet::RegisterServer(ipabet::g_dll); }
 

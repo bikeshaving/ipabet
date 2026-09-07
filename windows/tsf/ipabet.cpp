@@ -29,10 +29,15 @@ const CLSID CLSID_IpabetTextService = {
 const GUID GUID_IpabetProfile = {
     0xc4d9a7e2, 0x3f18, 0x4b6a, {0x9e, 0x52, 0x7a, 0x0b, 0x4d, 0x6c, 0x81, 0x25}};
 
+// Live TextService instances, so DllCanUnloadNow (in dllmain.cpp) refuses to
+// unload the DLL out from under an active text service — LockServer is
+// essentially never called, so g_locks alone always reads zero.
+LONG g_objects = 0;
+LONG ObjectCount() { return g_objects; }
+
 namespace {
 
 HINSTANCE g_module = nullptr;
-LONG g_objects = 0;
 
 std::string ToUtf8(const std::wstring &w) {
     if (w.empty()) return {};
@@ -113,7 +118,20 @@ private:
 /// key IPAbet declines is exactly when the run has to be handed over.
 class CommitEditSession : public ITfEditSession {
 public:
+    // Two modes. Without a snapshot it commits the service's CURRENT
+    // composition through EndComposition — used from a synchronous key
+    // session, where member state is still valid. WITH a snapshot (an owned
+    // composition and the exact text to leave behind) it finalizes that and
+    // reads no member state — used from OnSetFocus, whose session may run
+    // asynchronously, after the service has already moved on.
     CommitEditSession(TextService *ts) : ts_(ts) {}
+    CommitEditSession(ITfComposition *comp, std::wstring text)
+        : ts_(nullptr), comp_(comp), text_(std::move(text)), snapshot_(true) {
+        if (comp_) comp_->AddRef();
+    }
+    ~CommitEditSession() {
+        if (comp_) comp_->Release();
+    }
 
     STDMETHODIMP QueryInterface(REFIID riid, void **ppv) override {
         if (!ppv) return E_INVALIDARG;
@@ -133,13 +151,30 @@ public:
     }
 
     STDMETHODIMP DoEditSession(TfEditCookie ec) override {
-        ts_->EndComposition(ec);
+        if (snapshot_) {
+            // Leave exactly the snapshot text (the composition without its
+            // preview mark), then end — no member state consulted, so it is
+            // correct whenever this runs.
+            if (comp_) {
+                ITfRange *range = nullptr;
+                if (SUCCEEDED(comp_->GetRange(&range)) && range) {
+                    range->SetText(ec, 0, text_.c_str(), (LONG)text_.size());
+                    range->Release();
+                }
+                comp_->EndComposition(ec);
+            }
+        } else {
+            ts_->EndComposition(ec);
+        }
         return S_OK;
     }
 
 private:
     LONG refs_ = 1;
     TextService *ts_;
+    ITfComposition *comp_ = nullptr;
+    std::wstring text_;
+    bool snapshot_ = false;
 };
 
 } // namespace
@@ -301,13 +336,12 @@ STDMETHODIMP TextService::OnSetFocus(BOOL) {
         if (SUCCEEDED(composition_->GetRange(&range)) && range) {
             ITfContext *cx = nullptr;
             if (SUCCEEDED(range->GetContext(&cx)) && cx) {
-                CommitEditSession *commit = new CommitEditSession(this);
+                // The session owns the composition and the text to leave (the
+                // record WITHOUT its preview mark), so it commits correctly no
+                // matter when it runs — a sync readwrite lock is only
+                // guaranteed inside keystroke handling, and this may run async.
+                CommitEditSession *commit = new CommitEditSession(composition_, written_);
                 HRESULT chr = S_OK;
-                // ASYNCDONTCARE: a sync readwrite lock is only guaranteed
-                // inside keystroke handling, and a denied request here would
-                // leave the composition open over state cleared below. A late
-                // async commit is safe — it only ends the composition, and
-                // ending one commits what it holds.
                 cx->RequestEditSession(client_, commit,
                                        TF_ES_READWRITE | TF_ES_ASYNCDONTCARE, &chr);
                 commit->Release();
@@ -316,6 +350,10 @@ STDMETHODIMP TextService::OnSetFocus(BOOL) {
             range->Release();
         }
     }
+    // The composition now belongs to that session (it AddRef'd it), so members
+    // clear immediately: the next context sees no stale composition pointer,
+    // and nothing reads this focus's state after the fact.
+    composition_ = nullptr;
     written_.clear();
     pending_ = CPending{};
     chainBroken_ = false;
@@ -437,7 +475,7 @@ STDMETHODIMP TextService::OnKeyDown(ITfContext *cx, WPARAM wp, LPARAM lp, BOOL *
 
     // A session that never ran changed nothing: pass the key to the host
     // rather than silently swallowing it.
-    *eaten = SUCCEEDED(req) ? TRUE : FALSE;
+    *eaten = (SUCCEEDED(req) && keyConsumed_) ? TRUE : FALSE;
     return S_OK;
 }
 
@@ -478,7 +516,7 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *cx, REFGUID rguid, BOOL *ea
 
         // Same as OnKeyDown: a session that never ran changed nothing, so the
         // chord falls through to the host instead of vanishing.
-        *eaten = SUCCEEDED(req) ? TRUE : FALSE;
+        *eaten = (SUCCEEDED(req) && keyConsumed_) ? TRUE : FALSE;
         return S_OK;
     }
     return S_OK;
@@ -490,6 +528,10 @@ STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie, ITfComposition *
         composition_->Release();
         composition_ = nullptr;
         written_.clear();
+        // The armed mark and the chain go with it — left behind, the mark
+        // lands on the next unrelated vowel typed anywhere (señõr).
+        pending_ = CPending{};
+        chainBroken_ = false;
     }
     return S_OK;
 }
@@ -602,6 +644,7 @@ HRESULT TextService::Trim(TfEditCookie ec, ITfContext *cx) {
 
 HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const CKeystroke &k,
                                         bool backspace) {
+    keyConsumed_ = true; // the empty-Pass path below is the one exception
     const std::wstring &before = written_;
     Dbg("lookback %zu units", before.size());
     const std::string beforeUtf8 = ToUtf8(before);
@@ -638,6 +681,15 @@ HRESULT TextService::HandleKeyInSession(TfEditCookie ec, ITfContext *cx, const C
         char native[EDIT_TEXT_MAX];
         ipabet_native_char(k, native, sizeof(native));
         text = ToUtf16(native);
+        // Nothing of its own to insert (an unassigned Option/AltGr chord):
+        // commit whatever is composed and hand the key back to the host, so a
+        // European layout's AltGr symbols survive — the parity of macOS's
+        // "flush then decline". keyConsumed_ tells the key handler to not eat.
+        if (text.empty()) {
+            EndComposition(ec);
+            keyConsumed_ = false;
+            return S_OK;
+        }
         break;
     }
     default:

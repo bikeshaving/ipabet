@@ -149,16 +149,16 @@ export function bindIPAInput(
 	function applyAtCaret(edit: Edit, native: string) {
 		const start = caret();
 		const end = el.selectionEnd ?? start;
-		const before = el.value.slice(0, start);
-		const after = el.value.slice(end);
-		let head: string;
-		switch (edit.type) {
-			case "insert": head = before + edit.text; break;
-			case "replace": head = before.slice(0, before.length - edit.length) + edit.text; break;
-			default: head = before + native; break; // "pass"
-		}
-		el.value = head + after;
-		el.selectionStart = el.selectionEnd = head.length;
+		// setRangeText mutates only the edited span, not the whole value — O(edit)
+		// instead of O(document) per keystroke, and it leaves the textarea's
+		// native undo stack intact where reassigning .value wipes it. A "replace"
+		// reaches back edit.length UTF-16 units before the caret (the same units
+		// the engine counted, against this same string).
+		const from = edit.type === "replace" ? start - edit.length : start;
+		const text = edit.type === "insert" ? edit.text
+			: edit.type === "replace" ? edit.text
+			: native; // "pass"
+		el.setRangeText(text, from, end, "end");
 	}
 
 	function sendKeystroke(k: Keystroke) {
@@ -201,7 +201,13 @@ export function bindIPAInput(
 		// ⌃⌫ is the unconvert chord (the Japanese IMEs' Ctrl+Backspace) — the one
 		// ⌃ chord besides ⌃⇧<letter> the engine claims.
 		if (e.ctrlKey && e.key === "Backspace") { consumed = true; engineUnconvert(e); return; }
-		if (e.ctrlKey && !(e.shiftKey && /^Key[A-Z]$/.test(e.code))) return;
+		// AltGr reports as Ctrl+Alt on Windows, and it is the diacritic layer,
+		// not a Ctrl chord — without this exemption every AltGr keystroke bails
+		// here before keyFromEvent ever runs.
+		const altgr =
+			(typeof e.getModifierState === "function" && e.getModifierState("AltGraph")) ||
+			(e.ctrlKey && e.altKey);
+		if (e.ctrlKey && !altgr && !(e.shiftKey && /^Key[A-Z]$/.test(e.code))) return;
 		if (mediatedByIME(e)) return;
 		// Escape terminates a pending composition (commits the clones, like the
 		// US dead keys). With nothing pending it stays the page's key.
@@ -247,11 +253,15 @@ export function bindIPAInput(
 			return;
 		}
 		if (ie.inputType === "deleteContentBackward") { engineBackspace(e); return; }
-		if (ie.inputType.startsWith("insert") && ie.data) {
+		// Only insertText is both ours to claim and cancelable. A real IME's
+		// composition arrives as insertCompositionText — non-cancelable, so a
+		// preventDefault here would be a no-op while sendKeystroke still landed
+		// a second copy (a pinyin/romaji ASCII stage duplicating text and
+		// wrecking the session); it belongs to the composition path instead.
+		if (ie.inputType === "insertText" && ie.data) {
 			// Unconsumed non-ASCII arriving means something else is composing
 			// text into the field — an IME. Stand down and let it through.
-			if (ie.inputType === "insertText" && !optionHeld
-				&& [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
+			if (!optionHeld && [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
 				standDown();
 				return;
 			}
@@ -261,7 +271,13 @@ export function bindIPAInput(
 			const keys = [...ie.data].map(keyFromChar);
 			if (keys.some((k) => k === null)) return; // space, emoji, pasted text — leave it native
 			e.preventDefault();
-			for (const k of keys) sendKeystroke(k!);
+			for (const k of keys) {
+				// A soft keyboard cannot hold Shift across keys, so a capital
+				// here is a fresh one, not a chain continuation — break the
+				// chain so IPA typed earlier does not rebase an all-caps word.
+				if (k!.shift) chainBroken = true;
+				sendKeystroke(k!);
+			}
 		}
 	});
 
@@ -286,9 +302,7 @@ export function bindIPAInput(
 				if (at > 0) {
 					const before = el.value.slice(0, at);
 					const cluster = [...new Intl.Segmenter().segment(before)].pop()?.segment ?? "";
-					el.value = before.slice(0, before.length - cluster.length) + el.value.slice(at);
-					const pos = at - cluster.length;
-					el.setSelectionRange(pos, pos);
+					el.setRangeText("", at - cluster.length, at, "end");
 				}
 				fire(); return;
 			}

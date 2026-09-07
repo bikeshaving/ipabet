@@ -298,6 +298,11 @@ class InputController: IMKInputController {
 
     override func activateServer(_ sender: Any!) {
         pending = []
+        // Shift state too: a release while another app was focused is an
+        // event this controller never saw, so whatever was tracked is stale.
+        shiftWasDown = false
+        shiftReleased = false
+        chainBroken = false
         Dbg.refresh()   // pick up tools/debug.sh on/off without a reinstall — FIRST, so the lines below log
         Dbg.log("── activate app=\(clientBundleID()) ──")
         overrideViewerKeyboard(sender)
@@ -353,6 +358,8 @@ class InputController: IMKInputController {
     private var shiftWasDown = false
     private var shiftReleased = false
     private var chainBroken = false
+    // insert/replace re-arm the chain except while a backspace is running.
+    private var inBackspace = false
 
         // flagsChanged too, not just keyDown — that is how a shift release between
         // two keystrokes is seen.
@@ -375,11 +382,11 @@ class InputController: IMKInputController {
               let client = sender as? IMKTextInput else { return false }
         let t = Tables.shared
         let flags = event.modifierFlags
-        Dbg.log("↓ kc=\(event.keyCode) ch=\(Dbg.str(event.characters)) mods=\(Dbg.mods(flags)) app=\(client.bundleIdentifier() ?? "?")")
         // Secure input (password fields): the OS already bypasses IMEs here, but
-        // decline explicitly in case a host leaks events — never transform, and
-        // never run the escape below, into a password.
+        // decline explicitly in case a host leaks events — never transform, never
+        // run the escape below, and never LOG a leaked keystroke, into a password.
         if inSecureContext(client.bundleIdentifier() ?? "") { return false }
+        Dbg.log("↓ kc=\(event.keyCode) ch=\(Dbg.str(event.characters)) mods=\(Dbg.mods(flags)) app=\(client.bundleIdentifier() ?? "?")")
         // Command chords always pass, and Control chords are leader keys — with one
         // exception: ⌃⇧<letter> is the escape to a literal capital.
         if flags.contains(.command) { Dbg.log("  → pass (cmd chord)"); flush(client); return false }
@@ -406,8 +413,9 @@ class InputController: IMKInputController {
                 flush(client)   // declining with an open cluster would desync it
                 return false
             }
-            Dbg.log("  → pass (ctrl chord — leader keys land here)")
-            flush(client)
+            // The engines Pass with pending intact (lib.rs / index.ts): the
+            // chord executes, and the armed mark still absorbs the next base.
+            Dbg.log("  → pass (ctrl chord — leader keys land here; pending kept)")
             return false
         }
 
@@ -554,7 +562,7 @@ class InputController: IMKInputController {
             }
             // The shifted digit is the digit's capital plane (⇧5⇧H → Ə), gated on the
             // live chain.
-            if capitalDigraphs, chainLive, !flags.contains(.capsLock),
+            if capitalDigraphs, chainLive, shift, !flags.contains(.capsLock),
                let digit = ["!": "1", "@": "2", "#": "3", "$": "4", "%": "5",
                             "^": "6", "&": "7", "*": "8", "(": "9", ")": "0"][base],
                let low = t.transforms[digit + s],
@@ -834,8 +842,10 @@ class InputController: IMKInputController {
                 rewrite(site, with: String(String.UnicodeScalarView(scalars)), client)
                 return
             }
-            // Nothing to attach to (start of line, or after whitespace) → the spacing tie.
-            if last == nil || CharacterSet.whitespaces.contains(last!) {
+            // Nothing to attach to (start of line, after whitespace, or after a
+            // newline — whitespacesAndNewlines, matching \s in the engines) →
+            // the spacing tie.
+            if last == nil || CharacterSet.whitespacesAndNewlines.contains(last!) {
                 insert(String(spacing), client)
                 return
             }
@@ -923,6 +933,10 @@ class InputController: IMKInputController {
     /// after their base, so a trailing tie peels instead. A bare glyph is
     /// declined so the host deletes it natively.
     private func handleBackspace(_ client: IMKTextInput) -> Bool {
+        // The engines never touch chain_broken from backspace; the writes
+        // below go through insert/replace, whose re-arm must not fire here.
+        inBackspace = true
+        defer { inBackspace = false }
         guard let (p, r) = lastCluster(client) else { return false }
         let (base, marks) = decompose(p)
         guard !marks.isEmpty else { return false }   // bare glyph: native delete
@@ -956,12 +970,19 @@ class InputController: IMKInputController {
             Dbg.log("  lastCluster → nil (sel loc=\(sel.location) len=\(sel.length))")
             return nil
         }
-        let start = max(0, sel.location - 16)
+        // 64 units matches the TS engine's tail window; 16 could cut a tall
+        // mark stack mid-cluster and hand back a base-less fragment.
+        let start = max(0, sel.location - 64)
         var actual = NSRange()
         guard let s = client.string(from: NSRange(location: start, length: sel.location - start),
                                     actualRange: &actual),
+              // A client may answer a DIFFERENT range than asked — that is
+              // what actualRange is for. Unless the returned text ends at the
+              // caret, the arithmetic below points a rewrite at the wrong
+              // span of committed text; declining is the safe answer.
+              actual.length == 0 || actual.location + actual.length == sel.location,
               let last = s.last else {
-            Dbg.log("  lastCluster → nil (no string; client won't read)")
+            Dbg.log("  lastCluster → nil (no string, or the client answered a different range)")
             return nil
         }
         Dbg.log("  lastCluster → '\(Dbg.str(String(last)))'")
@@ -991,20 +1012,29 @@ class InputController: IMKInputController {
     private func clusterBefore(_ range: NSRange, _ client: IMKTextInput) -> (Character, NSRange)? {
         let end = range.location
         guard end > 0 else { return nil }
-        let start = max(0, end - 16)
+        let start = max(0, end - 64)
         var actual = NSRange()
-        guard let last = client.string(from: NSRange(location: start, length: end - start),
-                                       actualRange: &actual)?.last else { return nil }
+        guard let s = client.string(from: NSRange(location: start, length: end - start),
+                                    actualRange: &actual),
+              actual.length == 0 || actual.location + actual.length == end,
+              let last = s.last else { return nil }
         let len = (String(last) as NSString).length
         return (last, NSRange(location: end - len, length: len))
     }
 
     private func insert(_ text: String, _ client: IMKTextInput) {
         client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
+        // The engines re-arm the chain on any non-ASCII Insert (handle_key's
+        // seg rule); backspace threads the flag through untouched.
+        if !inBackspace, text.unicodeScalars.contains(where: { $0.value > 127 }) {
+            chainBroken = false
+        }
     }
 
     private func replace(_ range: NSRange, with new: String, _ client: IMKTextInput) {
         client.insertText(new, replacementRange: range)
+        // Every Replace re-arms, per the same rule.
+        if !inBackspace { chainBroken = false }
     }
 
     /// A cluster's canonical decomposition: base glyph plus trailing combining
