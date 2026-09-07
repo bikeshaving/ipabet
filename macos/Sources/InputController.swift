@@ -1022,33 +1022,37 @@ class InputController: IMKInputController {
     }
 
     // Marks of the SAME combining class never reorder under NFC, so a tone typed
-    // before its shape mark freezes as a permanent homoglyph of ế. So try every
-    // arrangement and keep the shortest NFC.
+    // before its shape mark freezes as a permanent homoglyph of ế. Mirrors
+    // fuse_marks in engine/src/lib.rs: a search that only recurses when a mark
+    // actually fused (added no codepoint), so it stays near-linear on real
+    // input — full permutation enumeration was factorial in the pending count,
+    // and a dozen idly stacked ⌥-marks froze the whole input method.
     private func recompose<S: Sequence>(_ base: String, _ marks: S) -> String
     where S.Element == Unicode.Scalar {
         let list = Array(marks)
-        func fold(_ order: [Unicode.Scalar]) -> String {
-            var s = base
+        func fold(_ order: [Unicode.Scalar], onto built: String) -> String {
+            var s = built
             s.unicodeScalars.append(contentsOf: order)
             return s.precomposedStringWithCanonicalMapping
         }
-        if list.count <= 1 { return fold(list) }
-        func permutations(_ items: [Unicode.Scalar]) -> [[Unicode.Scalar]] {
-            if items.count <= 1 { return [items] }
-            var out: [[Unicode.Scalar]] = []
-            for i in items.indices {
-                var rest = items
-                rest.remove(at: i)
-                for p in permutations(rest) { out.append([items[i]] + p) }
+        if list.count <= 1 { return fold(list, onto: base) }
+        func fuse(_ built: String, _ rest: [Unicode.Scalar]) -> String {
+            // Fusing nothing more is always an option, and the answer when
+            // none fuse.
+            var best = fold(rest, onto: built)
+            let builtLen = built.unicodeScalars.count
+            for (i, mark) in rest.enumerated() {
+                let candidate = fold([mark], onto: built)
+                // It fused if the mark added no codepoint of its own.
+                if candidate.unicodeScalars.count != builtLen { continue }
+                var without = rest
+                without.remove(at: i)
+                let s = fuse(candidate, without)
+                if s.unicodeScalars.count < best.unicodeScalars.count { best = s }
             }
-            return out
+            return best
         }
-        var best: String?
-        for perm in permutations(list) {
-            let s = fold(perm)
-            if best == nil || s.unicodeScalars.count < best!.unicodeScalars.count { best = s }
-        }
-        return best!
+        return fuse(base, list)
     }
 
 // A capital digraph capitalizes its result; a plain-ASCII result is excluded
