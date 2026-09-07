@@ -33,13 +33,17 @@ function pill(): void {
 	b.title = "Keystroke labels — Mac (⌥), Windows (AltGr), Linux (Alt)";
 	const NAMES: Record<KeyMode, string> = {mac: "mac", windows: "windows", linux: "linux"};
 	const label = () => {
+		// The pad sets this when a native IME has taken the field; that
+		// truth-telling outranks the keymode label until the page reloads.
+		if (b.dataset.standdown) return;
 		const mode = keyMode();
 		const key = mode === "mac" ? "⌥" : optLabel(mode);
 		b.textContent = `keys: ${key} ${NAMES[mode]}`;
 	};
-	b.addEventListener("click", () =>
-		setKeyMode(KEY_MODES[(KEY_MODES.indexOf(keyMode()) + 1) % KEY_MODES.length]),
-	);
+	b.addEventListener("click", () => {
+		if (b.dataset.standdown) return;
+		setKeyMode(KEY_MODES[(KEY_MODES.indexOf(keyMode()) + 1) % KEY_MODES.length]);
+	});
 	label();
 	window.addEventListener(KEYMODE_EVENT, () => {
 		label();

@@ -46,7 +46,9 @@ export function Layout({title, desc, styles = [], path = "/", schema, children}:
 		isAccessibleForFree: true,
 		offers: {"@type": "Offer", price: "0", priceCurrency: "USD"},
 		author: {"@type": "Person", name: "Brian Kim"},
-	});
+		// < keeps any "</script>" inside a string from terminating the
+		// element — valid JSON either way, same trick as SerializeScript.
+	}).replace(/</g, "\\u003c");
 
 	return jsx`
 		<html lang="en">

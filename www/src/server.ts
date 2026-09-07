@@ -97,13 +97,16 @@ for (const [path, url] of Object.entries(DOWNLOADS)) {
 // The sniff lives on the redirect and not in the HTML on purpose: pages are
 // CDN-cached, and varying a cached page on User-Agent hands someone else's
 // platform to whoever asks second.
-function downloadFor(userAgent: string): string {
+function downloadFor(userAgent: string, chArch: string | null): string {
 	if (/Windows NT/i.test(userAgent)) {
-		// Windows on ARM says so in the UA; an x64 build there installs and then
-		// cannot load into a native application.
-		return /ARM64|aarch64/i.test(userAgent)
-			? DOWNLOADS["/download/windows/arm64"]
-			: DOWNLOADS["/download/windows"];
+		// Chromium's frozen UA claims x64 even on ARM, so the architecture
+		// only arrives in the Sec-CH-UA-Arch client hint (requested via
+		// Critical-CH below, which makes Chromium retry with it before this
+		// answer is used). The UA regex stays as the fallback for browsers
+		// without client hints. An x64 build on ARM installs and then cannot
+		// load into a native application.
+		const arm = chArch !== null ? /arm/i.test(chArch) : /ARM64|aarch64/i.test(userAgent);
+		return arm ? DOWNLOADS["/download/windows/arm64"] : DOWNLOADS["/download/windows"];
 	}
 	// Android reports Linux too, and there is nothing here to install on it.
 	if (/Linux/i.test(userAgent) && !/Android/i.test(userAgent)) {
@@ -117,11 +120,23 @@ function downloadFor(userAgent: string): string {
 }
 
 router.route("/download").get((request: Request) => {
-	const target = downloadFor(request.headers.get("user-agent") ?? "");
-	// Never cached: the answer depends on who is asking.
+	const target = downloadFor(
+		request.headers.get("user-agent") ?? "",
+		request.headers.get("sec-ch-ua-arch"),
+	);
+	// Never cached: the answer depends on who is asking. Critical-CH makes
+	// Chromium restart the request carrying the architecture hint the first
+	// time, so Windows-on-ARM machines get the arm64 build despite the
+	// frozen UA; other browsers ignore these headers and take the UA path.
 	return new Response(null, {
 		status: 302,
-		headers: {Location: target, "Cache-Control": "no-store"},
+		headers: {
+			Location: target,
+			"Cache-Control": "no-store",
+			"Accept-CH": "Sec-CH-UA-Arch",
+			"Critical-CH": "Sec-CH-UA-Arch",
+			Vary: "Sec-CH-UA-Arch, User-Agent",
+		},
 	});
 });
 

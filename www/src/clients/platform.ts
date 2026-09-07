@@ -49,6 +49,29 @@ export function detectTarget(): Target | null {
 	});
 }
 
+/**
+ * The sync answer lies on Windows-on-ARM: Chromium's frozen UA claims x64,
+ * and the architecture only comes from the async high-entropy client hint.
+ * Resolves to the corrected target (or the input unchanged) so callers can
+ * re-render; macOS and Linux answers pass through untouched.
+ */
+export async function refineTarget(target: Target | null): Promise<Target | null> {
+	if (!target || target.platform !== "windows" || target.arm) return target;
+	const data = (
+		navigator as {
+			userAgentData?: {getHighEntropyValues?: (h: string[]) => Promise<{architecture?: string}>};
+		}
+	).userAgentData;
+	if (!data?.getHighEntropyValues) return target;
+	try {
+		const {architecture} = await data.getHighEntropyValues(["architecture"]);
+		if (architecture && /arm/i.test(architecture)) return {...target, arm: true};
+	} catch {
+		// The hint being refused is the same as it not existing.
+	}
+	return target;
+}
+
 /** Where a given machine's build lives, matching the routes in server.ts. */
 export function downloadPath(target: Target): string {
 	switch (target.platform) {

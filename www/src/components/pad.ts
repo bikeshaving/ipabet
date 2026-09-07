@@ -60,6 +60,9 @@ export function* Pad(
 				// trace is the keys pill quietly telling the truth.
 				const pill = document.getElementById("keymode-pill");
 				if (pill !== null) {
+					// The standdown flag keeps the keymode relabeler from
+					// erasing this — the pill is its element, borrowed here.
+					pill.dataset.standdown = "1";
 					pill.textContent = "keys: native IME";
 					pill.title = "The IPAbet input method is active — this page’s own engine is off";
 				}

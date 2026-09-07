@@ -52,7 +52,8 @@ while true; do
         continue
     fi
     echo "$runs" | grep -v "^completed" || true
-    if echo "$runs" | grep "^completed" | grep -qv "success"; then
+    # "skipped" is a workflow whose paths or if: opted out — not a failure.
+    if echo "$runs" | grep "^completed" | grep -qvE "success|skipped"; then
         echo "a workflow failed on HEAD — a tag only comes off a green main"
         exit 1
     fi
@@ -73,9 +74,18 @@ case "$TAG" in
     ;;
 esac
 
+# Every step from the tag on is idempotent, so a failure anywhere — CI red
+# on the tag, notarization hiccup, a push race on the tap — is fixed by
+# fixing the cause and running the same command again.
 echo "== Tag $TAG"
-git tag "$TAG"
-git push origin "$TAG"
+if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+    [ "$(git rev-parse "refs/tags/$TAG^{commit}")" = "$sha" ] \
+        || { echo "$TAG exists and points elsewhere — resolve by hand"; exit 1; }
+    echo "$TAG already exists here; resuming"
+else
+    git tag "$TAG"
+fi
+git push origin "$TAG" 2>/dev/null || echo "$TAG already on origin; resuming"
 
 echo "== Waiting for CI to build and sign the draft"
 run_id=""
@@ -88,13 +98,13 @@ gh run watch "$run_id" --repo "$REPO" --exit-status
 
 echo "== Mac package (keychain + notarization)"
 (cd macos && ./package.sh)
-gh release upload "$TAG" --repo "$REPO" macos/build/IPAbet.pkg
+gh release upload "$TAG" --repo "$REPO" --clobber macos/build/IPAbet.pkg
 
 echo "== Publish"
 gh release edit "$TAG" --repo "$REPO" --draft=false
 
 case "$TAG" in
-*-*) echo "== Homebrew cask: skipped for a prerelease" ;;
+*-*) echo "== Homebrew cask and apt repository: skipped for a prerelease" ;;
 *)
     echo "== Homebrew cask"
     pkg_sha=$(shasum -a 256 macos/build/IPAbet.pkg | cut -d' ' -f1)
@@ -104,15 +114,22 @@ case "$TAG" in
         -e "s/version \"[^\"]*\"/version \"$VERSION\"/" \
         -e "s/sha256 \"[^\"]*\"/sha256 \"$pkg_sha\"/" \
         "$tap/Casks/ipabet.rb"
-    git -C "$tap" commit -aqm "ipabet $VERSION"
-    git -C "$tap" push -q
+    if git -C "$tap" diff --quiet; then
+        echo "cask already at $VERSION"
+    else
+        git -C "$tap" commit -aqm "ipabet $VERSION"
+        git -C "$tap" push -q
+    fi
     rm -rf "$tap"
+
+    # Prereleases stop here: the apt repo serves the latest PUBLISHED
+    # release, which excludes prereleases, so rebuilding it would just
+    # re-sign and redeploy the previous stable.
+    echo "== Apt repository (GPG passphrase)"
+    ./tools/apt/build.sh
+    (cd tools/apt && npx wrangler deploy)
     ;;
 esac
-
-echo "== Apt repository (GPG passphrase)"
-./tools/apt/build.sh
-(cd tools/apt && npx wrangler deploy)
 
 echo
 echo "$TAG is out. The site deploys itself on push; check a download:"
