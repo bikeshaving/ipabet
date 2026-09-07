@@ -1,17 +1,16 @@
 import Cocoa
 import InputMethodKit
 
-// Drives the real InputController — the macOS reference implementation — through
-// a mock IMKTextInput, replaying the shared parity + fuzz vector corpus the Rust
-// and JS engines replay in their own suites. Until this existed the Swift logic
-// had zero automated coverage, which is how a hand review found the Control-chord
-// and newline-tie divergences; now every push checks the reference against the
-// same oracle as the ports.
+// Drives the real InputController — now a shell over the Rust core — through a
+// mock IMKTextInput, replaying the shared parity + fuzz vector corpus the Rust
+// and JS engines replay in their own suites. This checks the whole macOS path
+// (event translation, the core call, applying the edit) against the same oracle
+// as the ports, on every push.
 //
-// The one thing it cannot express is a shift RELEASE mid-sequence: macOS learns
-// that from a flagsChanged event, and handle() only takes keyDown. Vectors that
-// carry shiftBroke are skipped and left to the shared engine tests and the
-// on-device gate.
+// A shift RELEASE mid-sequence is reproduced by synthesizing the flagsChanged
+// event the controller learns it from (see flagsChanged below), so shiftBroke
+// vectors run rather than being skipped. Only backspace is skipped, for the
+// documented macOS-15 net-empty divergence, and left to the on-device gate.
 //
 //   swiftc tests/main.swift Sources/InputController.swift Sources/Debug.swift \
 //     -framework Cocoa -framework InputMethodKit -framework Carbon -framework IOKit

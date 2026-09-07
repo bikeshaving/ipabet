@@ -1,17 +1,15 @@
 import Cocoa
 import InputMethodKit
 
-// The strongest net for re-shelling InputController onto the Rust core: drive
-// BOTH through the same keystrokes in lockstep and assert they agree after every
-// key — on committed text AND on the marked-text preview. If the core is a
-// step-for-step match for the current reference implementation, replacing the
-// Swift logic with it is provably behavior-preserving, including the preview and
-// pending state the committed-text harnesses never see.
-//
-// The mock models marked text (main.swift's leaves it a no-op), so the preview
-// is observable here. Documented macOS-only divergences are skipped, same as the
-// InputController harness: backspace re-arm at document start (the macOS-15
-// net-empty-replacement decline) and ⌥Escape.
+// Drives InputController and the Rust core through the same keystrokes in
+// lockstep and asserts they agree after every key — on committed text AND the
+// marked-text preview (the mock models marked text, which main.swift's leaves a
+// no-op). This was the acceptance test for the re-shell; now that InputController
+// IS a shell over the core it is largely a tautology, kept as a guard against the
+// shell's own layer (lookback reads, edit application) drifting from a direct
+// core call. The one real divergence that remains is backspace re-arm at
+// document start — the controller declines (macOS-15 net-empty transport), the
+// core re-arms — so backspace is skipped.
 
 final class MockClient: NSObject, IMKTextInput {
     var buf = ""
@@ -132,14 +130,10 @@ guard let engine = spec.withCString({ ipabet_engine_new($0) }) else { fatalError
 var agree = 0, skip = 0
 var failures: [String] = []
 for v in vectors {
-    // Same documented divergences the InputController harness skips.
-    if v.keys.contains(where: { $0.key == "⌫" || ($0.key == "Escape" && $0.option) }) { skip += 1; continue }
-    // ⌥z / ⌥⇧z (raise/lower operators): the current Swift InputController
-    // disagrees with the core here — e.g. ⌥z g ⇧G gives ᶢG in Swift but ᶢ in
-    // the core (which matches the JS oracle). It is a real macOS-only bug in the
-    // operator+shift path, and re-shelling onto the core deletes it; skip it
-    // until then, when this can be removed and the two will agree.
-    if v.keys.contains(where: { $0.key == "z" && $0.option }) { skip += 1; continue }
+    // Backspace re-arm at document start is the one remaining divergence (see
+    // the header). ⌥Escape and the ⌥z operators used to be skipped for the old
+    // Swift engine's bugs; the re-shell onto the core fixed both, so they run.
+    if v.keys.contains(where: { $0.key == "⌫" }) { skip += 1; continue }
 
     v.locale.withCString { ipabet_engine_set_quote_locale(engine, $0) }
     ipabet_engine_set_capital_digraphs(engine, v.capital_digraphs)
