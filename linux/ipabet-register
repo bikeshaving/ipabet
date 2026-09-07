@@ -90,13 +90,29 @@ edit_profile() {
     [ -f "$PROFILE" ] || die "no fcitx5 profile at $PROFILE (run fcitx5 once first)"
     tmp=$(mktemp)
     # Items are numbered sections, so dropping or adding one means renumbering
-    # the rest — collect the names, edit the list, write it back out.
-    names=$(awk -F= '/^\[/ {section=$0} /^Name=/ && section ~ /Items/ {print $2}' "$PROFILE" \
-        | grep -vx "$IM" || true)
-    [ "$DISABLE" = no ] && names="$names $IM"
-    names=$(echo $names)
+    # the rest. Only GROUP 0's items are collected and rewritten — other
+    # groups keep their own sections untouched — and each item's Layout rides
+    # along, because a user's per-item layout choice is not ours to reset.
+    pairs=$(awk -F= '
+        /^\[Groups\/0\/Items\/[0-9]+\]/ { flush(); in0 = 1; next }
+        /^\[/ { flush(); in0 = 0 }
+        in0 && /^Name=/ { name = $2 }
+        in0 && /^Layout=/ { layout = $2 }
+        END { flush() }
+        function flush() {
+            if (in0 && name != "") printf "%s\t%s\n", name, layout
+            name = ""; layout = ""
+        }
+    ' "$PROFILE" | awk -F'\t' -v im="$IM" '$1 != im')
+    if [ "$DISABLE" = no ]; then
+        pairs=$(printf '%s\n%s\t\n' "$pairs" "$IM")
+    fi
+    # awk -v cannot carry a literal newline everywhere, so the pair list
+    # rides in on ASCII record separators.
+    pairs=$(printf '%s' "$pairs" | tr '\n' '\036')
 
-    awk -v names="$names" '
+    awk -v pairs="$pairs" '
+        BEGIN { n = split(pairs, lines, "\036") }
         /^\[Groups\/0\/Items\// { initems = 1 }
         /^\[/ && !/^\[Groups\/0\/Items\// {
             if (initems && !written) { printitems(); written = 1 }
@@ -104,13 +120,14 @@ edit_profile() {
         }
         !initems { print }
         END { if (initems && !written) printitems() }
-        function printitems(   n, i, a) {
-            n = split(names, a, " ")
+        function printitems(   i, kv, m) {
+            m = 0
             for (i = 1; i <= n; i++) {
-                if (a[i] == "") continue
-                printf "[Groups/0/Items/%d]\n", i - 1
-                printf "Name=%s\n", a[i]
-                printf "Layout=\n\n"
+                if (lines[i] == "") continue
+                split(lines[i], kv, "\t")
+                printf "[Groups/0/Items/%d]\n", m++
+                printf "Name=%s\n", kv[1]
+                printf "Layout=%s\n\n", kv[2]
             }
         }
     ' "$PROFILE" > "$tmp"

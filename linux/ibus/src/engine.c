@@ -297,7 +297,11 @@ static void ipabet_ibus_engine_class_init(IpabetIBusEngineClass *klass) {
 static char *read_spec(void) {
     char *contents = NULL;
     gsize len = 0;
-    const char *paths[] = {"/usr/share/ipabet/ipabet.json", IPABET_SPEC_FALLBACK};
+    // The prefix this build installs to first (a plain `cmake --install`
+    // defaults to /usr/local, where a hardcoded /usr found nothing), then
+    // the packaged location, then the source tree for the dev loop.
+    const char *paths[] = {IPABET_SPEC_INSTALLED, "/usr/share/ipabet/ipabet.json",
+                           IPABET_SPEC_FALLBACK};
     for (guint i = 0; i < G_N_ELEMENTS(paths); i++) {
         if (g_file_get_contents(paths[i], &contents, &len, NULL)) return contents;
     }
@@ -319,6 +323,10 @@ static gboolean lockdown_network(void) {
                          SCMP_A0(SCMP_CMP_EQ, AF_INET6)) == 0 &&
         seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(socket), 1,
                          SCMP_A0(SCMP_CMP_EQ, AF_PACKET)) == 0 &&
+        // io_uring can mint an inet socket without ever calling socket()
+        // (IORING_OP_SOCKET, kernels >= 5.19). Nothing in an ibus engine
+        // needs io_uring, so the whole door closes.
+        seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(io_uring_setup), 0) == 0 &&
         seccomp_load(ctx) == 0;
     seccomp_release(ctx);
     return ok;
