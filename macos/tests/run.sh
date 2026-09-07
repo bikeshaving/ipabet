@@ -37,4 +37,15 @@ build_and_run "InputController vs corpus" tests/main.swift Sources/InputControll
 build_and_run "Rust core vs corpus" tests/rustcore.swift
 build_and_run "InputController vs core, step by step" tests/differential.swift Sources/InputController.swift Sources/Debug.swift
 
+# One test per ultrareview finding, each written to fail on the pre-fix re-shell:
+# the @objc runtime name, the dead-key marked-text styling, the lone-cluster
+# backspace decline, and the activateServer settings re-sync. Self-contained
+# (no vector corpus), so run once.
+echo "== regression tests (ultrareview findings)"
+regd="$(mktemp -d)"; cp tests/regressions.swift "$regd/main.swift"
+# shellcheck disable=SC2086
+swiftc -O -import-objc-header "$HDR" $LIB "$regd/main.swift" Sources/InputController.swift Sources/Debug.swift $FRAMEWORKS -o "$regd/bin"
+cp ../spec/ipabet.json "$regd/ipabet.json"
+"$regd/bin" || fail=1
+
 exit $fail
