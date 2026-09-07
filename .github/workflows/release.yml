@@ -22,13 +22,14 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
-permissions:
-  contents: write
-  id-token: write
-  attestations: write
+# Jobs carry their own permissions: build jobs get read-only, signing and
+# attestation powers exist only where used, and only draft can touch releases.
+permissions: {}
 
 jobs:
   windows:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -46,12 +47,15 @@ jobs:
       # copy of the version. v0.1.2-beta.1 carries version 0.1.2: installer
       # versions are numeric, so the prerelease lives in the tag and nowhere
       # else.
+      # The tag reaches the shell through env, never by interpolation: a git
+      # tag may legally contain $() and friends.
       - name: The tag and all four versions agree
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          tag="${{ github.ref_name }}"
-          tag="${tag#v}"
+          tag="${TAG#v}"
           ./tools/check-version.sh "${tag%%-*}"
 
       - name: Build
@@ -76,8 +80,15 @@ jobs:
   # after signing because it must cover the bytes people download.
   sign:
     needs: windows
+    # Tags only: a workflow_dispatch from a branch builds but never signs, so
+    # the signing identity is reachable solely through the release path.
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-latest
     environment: release
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/download-artifact@v5
         with:
@@ -85,19 +96,31 @@ jobs:
           merge-multiple: true
           path: msi
 
-      - uses: azure/login@v3
+      # Third-party actions in this job are pinned by commit, not tag: this
+      # is the job that can ask Azure for signatures.
+      - uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3
         with:
           client-id: 0b84766f-d18a-4561-8fde-36196249145f
           tenant-id: 8db12798-4563-4dee-921a-568b6f566380
           subscription-id: ec0bbf8e-85e3-44bc-9a7c-daa565921eff
 
-      - uses: azure/artifact-signing-action@v2
+      - uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2
         with:
           endpoint: https://eus.codesigning.azure.net/
           signing-account-name: bikeshaving
           certificate-profile-name: public-trust
           files-folder: ${{ github.workspace }}\msi
           files-folder-filter: msi
+
+      # "Only signed ships" is checked, not assumed: a filter mismatch or a
+      # changed action that passed files through unsigned would otherwise be
+      # attested and drafted as the real thing.
+      - name: Every MSI carries a valid signature
+        shell: pwsh
+        run: |
+          $sigs = Get-ChildItem msi\*.msi | Get-AuthenticodeSignature
+          $sigs | ForEach-Object { Write-Host "$($_.Path): $($_.Status) — $($_.SignerCertificate.Subject)" }
+          if (($sigs | Where-Object Status -ne 'Valid').Count -gt 0) { throw "an MSI is unsigned or its signature is invalid" }
 
       - uses: actions/attest-build-provenance@v2
         with:
@@ -121,6 +144,10 @@ jobs:
           - runner: ubuntu-22.04-arm
             arch: arm64
     runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v5
 
@@ -150,6 +177,8 @@ jobs:
     needs: [sign, linux]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
@@ -178,7 +207,8 @@ jobs:
           ls stable
           # A tag with a suffix is a prerelease: v0.1.2-beta.1, not v0.1.2.
           case "$TAG" in *-*) PRERELEASE=--prerelease ;; *) PRERELEASE= ;; esac
+          mapfile -t assets < <(find dist stable -type f)
           gh release create "$TAG" --repo "$REPO" --draft $PRERELEASE \
             --title "IPAbet $TAG" \
             --notes-file .github/release-notes.md \
-            $(find dist -type f) $(find stable -type f)
+            "${assets[@]}"

@@ -18,6 +18,14 @@ cp index.html public/
 
 gh release download --repo "$GH_REPO" --pattern '*.deb' --dir tmp
 
+# The GPG signature below launders whatever is signed into something every
+# apt client trusts, so first prove each deb is the byte-exact output of
+# this repository's CI — the attestation release.yml attached to it.
+for f in tmp/*.deb; do
+	gh attestation verify "$f" --repo "$GH_REPO" >/dev/null
+	echo "attestation verified: $(basename "$f")"
+done
+
 # Release assets carry version-less names for stable URLs; the pool restores
 # the name_version_arch convention from each deb's own control fields.
 for f in tmp/*.deb; do

@@ -58,8 +58,12 @@
          install would be nothing. -->
     <CustomAction Id="RegisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--register"
                   Execute="deferred" Impersonate="no" Return="check" />
+    <!-- Return="ignore": a per-user nicety must never roll back the whole
+         install. Under SYSTEM-context deployment (Intune, msiexec /qn from a
+         service) there is no interactive user to enable for, and failing
+         here would fail the deployment. -->
     <CustomAction Id="EnableForUser" FileRef="IpabetRegisterExe" ExeCommand="--enable"
-                  Execute="deferred" Impersonate="yes" Return="check" />
+                  Execute="deferred" Impersonate="yes" Return="ignore" />
     <CustomAction Id="UnenableForUser" FileRef="IpabetRegisterExe" ExeCommand="--unenable"
                   Execute="deferred" Impersonate="yes" Return="ignore" />
     <CustomAction Id="UnregisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--unregister"
