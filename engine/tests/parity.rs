@@ -134,8 +134,10 @@ fn fuzz_vectors() {
     replay_vector_file(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/fuzz-vectors.json"));
 }
 
-/// CI regenerates a fresh-seed corpus every run and points this at it, so
-/// coverage grows beyond the committed seed without flaking local runs.
+/// The engine workflow (.github/workflows/engine.yml) generates a fresh-seed
+/// corpus each run and points IPABET_FUZZ_VECTORS at it, so JS↔Rust agreement
+/// is checked past the frozen seed. Unset elsewhere (a bare `cargo test`, a
+/// local run), where it no-ops rather than flaking.
 #[test]
 fn fuzz_vectors_fresh() {
     match std::env::var("IPABET_FUZZ_VECTORS") {

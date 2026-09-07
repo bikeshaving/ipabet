@@ -99,6 +99,16 @@ func nativeChar(_ k: RawKey) -> String {
     return USLayout.char(kc, shift: false)
 }
 
+// A shift press-then-release, so the controller's flagsChanged path sets
+// shiftReleased — exactly what a physical shift tap between two keys does.
+// This is how a vector's shiftBroke is reproduced faithfully rather than skipped.
+func flagsChanged(_ shift: Bool) -> NSEvent {
+    NSEvent.keyEvent(with: .flagsChanged, location: .zero,
+        modifierFlags: shift ? [.shift] : [], timestamp: 0, windowNumber: 0,
+        context: nil, characters: "", charactersIgnoringModifiers: "",
+        isARepeat: false, keyCode: 56)!
+}
+
 func event(_ k: RawKey) -> NSEvent? {
     let kc: UInt16
     if k.key == "⌫" { kc = BACKSPACE }
@@ -125,22 +135,21 @@ guard let data = FileManager.default.contents(atPath: path),
 var pass = 0, skip = 0
 var failures: [String] = []
 for v in vectors {
-    // A shift release mid-sequence is a flagsChanged event handle() never sees.
-    if v.keys.contains(where: { $0.shiftBroke }) { skip += 1; continue }
     // Backspace over an armed mark re-arms it — but at document start macOS
     // deliberately declines rather than re-arm (the macOS-15 net-empty-
-    // replacement transport bug; the carrier it needs is absent). These
-    // vectors mostly start empty, so they hit that documented divergence; the
-    // engines cover backspace, and the on-device gate covers it mid-document.
-    // ⌥Escape is a corner (option+Escape flushes here, passes in the engine)
-    // no one reaches mid-diacritic.
+    // replacement transport bug; the carrier it needs is absent). Most vectors
+    // start empty, so they hit that documented divergence, and the mock's
+    // insertText applies a net-empty replace cleanly — MORE forgiving than the
+    // real transport — so it could not prove the workaround anyway. Backspace
+    // stays with the engine tests and the on-device gate.
+    // ⌥Escape is a corner (option+Escape flushes here, passes in the engine).
     if v.keys.contains(where: { $0.key == "⌫" || ($0.key == "Escape" && $0.option) }) {
         skip += 1; continue
     }
     // The raise/lower operators (⌥z, ⌥⇧z) preview through marked text before
     // they land, and this mock's setMarkedText is a no-op — so their
     // in-progress state is not observable here. Covered by the engines and the
-    // on-device gate.
+    // on-device gate. (This harness asserts committed text, never the preview.)
     if v.keys.contains(where: { $0.key == "z" && $0.option }) { skip += 1; continue }
     UserDefaults.standard.set(v.capital_digraphs, forKey: "capitalDigraphs")
     UserDefaults.standard.set(v.locale, forKey: "quoteLocale")
@@ -149,6 +158,10 @@ for v in vectors {
     mock.buf = v.initial
     var unmapped = false
     for k in v.keys {
+        // A shiftBroke key means shift was tapped since the last one — drive
+        // the controller's flagsChanged path so the chain breaks exactly as it
+        // would on device, rather than skipping the vector.
+        if k.shiftBroke { _ = c.handle(flagsChanged(true), client: mock); _ = c.handle(flagsChanged(false), client: mock) }
         guard let ev = event(k) else { unmapped = true; break }
         // handle() == false is a decline: the OS then does what it would with
         // any key the input method passed on — insert its character, or for
@@ -172,5 +185,13 @@ for v in vectors {
 }
 
 for f in failures { FileHandle.standardError.write("FAIL \(f)\n".data(using: .utf8)!) }
-print("\(pass) pass, \(failures.count) fail, \(skip) skipped (shiftBroke or unmapped key)")
+print("\(pass) pass, \(failures.count) fail, \(skip) skipped (backspace, ⌥Escape, ⌥z, or unmapped key)")
+// A floor, so an empty corpus or a future all-skipping change fails loudly
+// rather than passing having checked nothing. Half the corpus is a wide margin
+// below what actually runs (~90%+) and well above any legitimate skip rate.
+let ran = pass + failures.count
+if ran * 2 < vectors.count {
+    FileHandle.standardError.write("only \(ran) of \(vectors.count) vectors ran — the harness is asserting almost nothing\n".data(using: .utf8)!)
+    exit(3)
+}
 exit(failures.isEmpty ? 0 : 1)

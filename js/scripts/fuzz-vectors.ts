@@ -5,9 +5,13 @@
 // The recorded parity vectors prove the engines agree on what the tests
 // type — which is IPA, and only IPA. The review that motivated this found
 // the engines disagreeing on backspace over an emoji: an input no test had
-// ever typed. This generator types the hostile things on purpose: emoji
-// with skin tones, ZWJ families, flags, decomposed Hangul, astral
-// superscripts, mark stacks, NBSP, Roman numerals, ß.
+// ever seen. So this SEEDS the document (the `initial` each sequence starts
+// from) with the hostile things — emoji with skin tones, ZWJ families, flags,
+// decomposed Hangul, astral superscripts, mark stacks, NBSP, Roman numerals,
+// ß — then types random keystrokes over them. The keystrokes themselves are
+// the ASCII plane the engine actually reads; the hostility is in the
+// document they operate on, which is exactly where the emoji-backspace bug
+// lived.
 //
 //   bun run js/scripts/fuzz-vectors.ts [seed] [count] [outfile]
 //

@@ -1,0 +1,46 @@
+name: engine
+
+# The engine crate's own tests on Linux — parity, the FFI contract, the
+# grapheme cases, and the differential fuzz. windows-parity runs the same suite
+# on both Windows architectures; this adds Linux and, unlike a Windows runner,
+# has the JS toolchain to regenerate a FRESH fuzz corpus every run.
+#
+# The committed spec/fuzz-vectors.json pins one seed so failures are
+# reproducible; the fresh corpus below is a different seed each push, printed so
+# any failure can be replayed with `bun run js/scripts/fuzz-vectors.ts <seed>`.
+# Between them the JS↔Rust agreement is checked well past the frozen corpus.
+
+on:
+  push:
+    paths: ['engine/**', 'js/src/**', 'spec/**', '.github/workflows/engine.yml']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Rust toolchain
+        run: |
+          if ! command -v cargo >/dev/null; then
+            curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+      - name: A fresh fuzz corpus, seed printed for replay
+        run: |
+          seed=$(( RANDOM * RANDOM % 2000000000 + 1 ))
+          echo "fuzz seed: $seed"
+          bun run js/scripts/fuzz-vectors.ts "$seed" 800 /tmp/fresh-fuzz.json
+          echo "IPABET_FUZZ_VECTORS=/tmp/fresh-fuzz.json" >> "$GITHUB_ENV"
+
+      - name: Engine tests, including the fresh corpus
+        working-directory: engine
+        run: cargo test --release
