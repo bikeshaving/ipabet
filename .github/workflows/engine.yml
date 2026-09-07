@@ -11,8 +11,10 @@ name: engine
 # Between them the JS↔Rust agreement is checked well past the frozen corpus.
 
 on:
+    # js/scripts/** is here because this workflow runs the fuzz generator from
+    # it — a change to how vectors are produced must trigger the check.
   push:
-    paths: ['engine/**', 'js/src/**', 'spec/**', '.github/workflows/engine.yml']
+    paths: ['engine/**', 'js/src/**', 'js/scripts/**', 'spec/**', '.github/workflows/engine.yml']
   pull_request:
   workflow_dispatch:
 

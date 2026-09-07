@@ -7,6 +7,13 @@ APP=build/IPAbet.app
 rm -rf build
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
+# A private temp dir for the per-arch slices and the keylayout generator.
+# Fixed /tmp names are a symlink/TOCTOU hole on a multi-user Mac — another
+# user could pre-create the path and have swiftc clobber it or swap the binary
+# that gets lipo'd and shipped.
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
 # DEBUG=1 compiles the keystroke logger in (Dbg — see Sources/Debug.swift).
 # Release builds have NO logging capability; debug builds ship only as
 # GitHub prereleases, never as /download.
@@ -18,19 +25,19 @@ DBGFLAGS="${DEBUG:+-D IPABET_DEBUG}"
 for arch in arm64 x86_64; do
   swiftc Sources/*.swift \
     -target "$arch-apple-macos13.0" \
-    -o "/tmp/ipabet-main-$arch" \
+    -o "$TMP/ipabet-main-$arch" \
     -framework Cocoa -framework InputMethodKit \
     -O $DBGFLAGS
 done
-lipo -create -output "$APP/Contents/MacOS/IPAbet" /tmp/ipabet-main-arm64 /tmp/ipabet-main-x86_64
+lipo -create -output "$APP/Contents/MacOS/IPAbet" $TMP/ipabet-main-arm64 $TMP/ipabet-main-x86_64
 
 # The registration helper: the one UNSANDBOXED binary (TIS enablement writes
 # HIToolbox prefs, which the sandbox would silently redirect into the container).
 for arch in arm64 x86_64; do
   swiftc Helper/register.swift -target "$arch-apple-macos13.0" \
-    -o "/tmp/ipabet-register-$arch" -framework Carbon -O
+    -o "$TMP/ipabet-register-$arch" -framework Carbon -O
 done
-lipo -create -output "$APP/Contents/MacOS/ipabet-register" /tmp/ipabet-register-arm64 /tmp/ipabet-register-x86_64
+lipo -create -output "$APP/Contents/MacOS/ipabet-register" $TMP/ipabet-register-arm64 $TMP/ipabet-register-x86_64
 
 # compile app icon if iconset present and iconutil available
 if [ -d IPAbet.iconset ] && command -v iconutil >/dev/null; then
@@ -44,8 +51,8 @@ cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input me
 # US option layer while IPAbet is active — wrong on-screen documentation. The
 # override that uses it is guarded (see InputController): if registration
 # didn't take, the layout is simply absent and typing is untouched.
-swiftc tools/genkeylayout.swift -o /tmp/ipabet-genkl -framework Carbon -framework Cocoa
-( cd "$(dirname "$0")" && /tmp/ipabet-genkl )
+swiftc tools/genkeylayout.swift -o $TMP/ipabet-genkl -framework Carbon -framework Cocoa
+( cd "$(dirname "$0")" && $TMP/ipabet-genkl )
 cp IPAbet.keylayout "$APP/Contents/Resources/IPAbet.keylayout"
 install -m 755 uninstall.sh "$APP/Contents/Resources/uninstall.sh"
 mkdir -p "$APP/Contents/Resources/en.lproj"
