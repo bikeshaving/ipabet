@@ -83,7 +83,7 @@ const escapeXml = (s: string) =>
 export function atomFeed(): string {
 	const updated = published.length > 0 ? `${published[0].attributes.date}T00:00:00Z` : "2026-07-17T00:00:00Z";
 	const entries = published.map((p) => {
-		const url = `${SITE}/blog/${p.slug}`;
+		const url = escapeXml(`${SITE}/blog/${p.slug}`);
 		return (
 			`\t<entry>\n` +
 			`\t\t<title>${escapeXml(p.attributes.title)}</title>\n` +

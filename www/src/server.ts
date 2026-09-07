@@ -148,8 +148,10 @@ const PAGES = [
 ];
 
 router.route("/sitemap.xml").get(() => {
+	const xmlEscape = (s: string) =>
+		s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 	const urls = PAGES.map(
-		(path) => `  <url><loc>https://ipabet.org${path === "/" ? "" : path}</loc></url>`,
+		(path) => `  <url><loc>${xmlEscape(`https://ipabet.org${path === "/" ? "" : path}`)}</loc></url>`,
 	).join("\n");
 	return new Response(
 		`<?xml version="1.0" encoding="UTF-8"?>\n` +

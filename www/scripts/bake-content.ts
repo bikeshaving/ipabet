@@ -43,6 +43,13 @@ if (existsSync(blogDir)) {
 		if (!file.endsWith(".md")) continue;
 		const slug = file.replace(/\.md$/, "");
 		const {attributes, body} = fm(readFileSync(join(blogDir, file), "utf8")) as unknown as Post;
+		// A missing or malformed date bakes fine but then renders "Invalid Date"
+		// and emits a non-RFC-3339 <updated> that feed readers reject — a silent,
+		// downstream break. Fail the build here instead.
+		if (!/^\d{4}-\d{2}-\d{2}$/.test(String(attributes.date ?? ""))) {
+			throw new Error(`blog/${file}: front-matter needs a date: YYYY-MM-DD (got ${JSON.stringify(attributes.date)})`);
+		}
+		if (!attributes.title) throw new Error(`blog/${file}: front-matter needs a title`);
 		posts.push({slug, attributes, body});
 	}
 	posts.sort((a, b) => (a.attributes.date < b.attributes.date ? 1 : -1));
@@ -54,7 +61,7 @@ const next = JSON.stringify({docs, posts}, null, "\t") + "\n";
 // file watcher (the baked JSON lives under src/), causing an infinite rebuild loop.
 if (!existsSync(out) || readFileSync(out, "utf8") !== next) {
 	writeFileSync(out, next);
-	console.log(`baked ${Object.keys(docs).length} doc(s) + ${posts.length} post(s) → src/content.gen.ts`);
+	console.log(`baked ${Object.keys(docs).length} doc(s) + ${posts.length} post(s) → ${out}`);
 } else {
 	console.log(`content unchanged (${Object.keys(docs).length} doc(s), ${posts.length} post(s))`);
 }

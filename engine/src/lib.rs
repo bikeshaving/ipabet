@@ -124,6 +124,14 @@ impl Engine {
 
         let mut letters = HashMap::new();
         for e in &spec.letters {
+            // An empty key or glyph is a malformed spec that would later panic
+            // on a `.chars().next().unwrap()` in the transform lookups —
+            // fatal across the C boundary. Reject it here, as the FFI contract
+            // promises (null from ipabet_engine_new), not on the hot path.
+            if e.key.is_empty() || e.glyph.is_empty() {
+                use serde::de::Error;
+                return Err(serde_json::Error::custom("a letter entry has an empty key or glyph"));
+            }
             letters.insert(e.key.clone(), e.glyph.clone());
         }
 

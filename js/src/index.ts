@@ -174,7 +174,11 @@ export function setQuoteLocale(locale: string): void {
 	quoteLocale = locale in QUOTE_LOCALES.locales ? locale : QUOTE_LOCALES.default;
 }
 function quoteQuad(): string[] {
-	return QUOTE_LOCALES.locales[quoteLocale] ?? QUOTE_LOCALES.locales[QUOTE_LOCALES.default];
+	// Length-guarded like the Rust side: a malformed locale array falls back to
+	// the default (and a hard default) rather than inserting the literal
+	// "undefined" from an out-of-range index.
+	const q = QUOTE_LOCALES.locales[quoteLocale] ?? QUOTE_LOCALES.locales[QUOTE_LOCALES.default];
+	return q?.length === 4 ? q : ["“", "”", "‘", "’"];
 }
 
 // ⌥⇧<digit> slots spent on a character rather than the raw-US escape.
