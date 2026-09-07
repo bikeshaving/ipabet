@@ -164,7 +164,10 @@ jobs:
           ./build.sh
           ./package.sh
 
+      # Tags only, like the sign job: a branch dispatch must not be able to
+      # mint the attestation the apt repository trusts.
       - uses: actions/attest-build-provenance@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           subject-path: linux/build/*.deb
 

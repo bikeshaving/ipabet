@@ -119,7 +119,10 @@ edit_profile() {
             initems = 0
         }
         !initems { print }
-        END { if (initems && !written) printitems() }
+        # A profile whose group 0 has no item sections at all (disabling the
+        # only method leaves one behind) still gets the list — appended at
+        # the end, where the path-carrying section names place it correctly.
+        END { if (!written) printitems() }
         function printitems(   i, kv, m) {
             m = 0
             for (i = 1; i <= n; i++) {

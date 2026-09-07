@@ -21,8 +21,13 @@ gh release download --repo "$GH_REPO" --pattern '*.deb' --dir tmp
 # The GPG signature below launders whatever is signed into something every
 # apt client trusts, so first prove each deb is the byte-exact output of
 # this repository's CI — the attestation release.yml attached to it.
+# The identity regex pins the attestation to the release workflow on a
+# version tag — an attestation minted by any other workflow or ref of the
+# same repository does not count.
 for f in tmp/*.deb; do
-	gh attestation verify "$f" --repo "$GH_REPO" >/dev/null
+	gh attestation verify "$f" --repo "$GH_REPO" \
+		--cert-identity-regex "^https://github\.com/$GH_REPO/\.github/workflows/release\.yml@refs/tags/v" \
+		>/dev/null
 	echo "attestation verified: $(basename "$f")"
 done
 

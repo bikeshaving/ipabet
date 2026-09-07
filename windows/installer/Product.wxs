@@ -58,11 +58,14 @@
          install would be nothing. -->
     <CustomAction Id="RegisterTextService" FileRef="IpabetRegisterExe" ExeCommand="--register"
                   Execute="deferred" Impersonate="no" Return="check" />
-    <!-- Return="ignore": a per-user nicety must never roll back the whole
-         install. Under SYSTEM-context deployment (Intune, msiexec /qn from a
-         service) there is no interactive user to enable for, and failing
-         here would fail the deployment. -->
+    <!-- Two rows for one step: interactively a failed enable should fail
+         loudly (Return="check"), but under quiet SYSTEM-context deployment
+         (Intune, msiexec /qn from a service) there is no interactive user to
+         enable for, and a per-user nicety must never roll back the whole
+         install (Return="ignore"). UILevel picks the row at scheduling time. -->
     <CustomAction Id="EnableForUser" FileRef="IpabetRegisterExe" ExeCommand="--enable"
+                  Execute="deferred" Impersonate="yes" Return="check" />
+    <CustomAction Id="EnableForUserQuiet" FileRef="IpabetRegisterExe" ExeCommand="--enable"
                   Execute="deferred" Impersonate="yes" Return="ignore" />
     <CustomAction Id="UnenableForUser" FileRef="IpabetRegisterExe" ExeCommand="--unenable"
                   Execute="deferred" Impersonate="yes" Return="ignore" />
@@ -80,7 +83,9 @@
       <Custom Action="RegisterTextService" After="InstallFiles"
               Condition="NOT REMOVE" />
       <Custom Action="EnableForUser" After="RegisterTextService"
-              Condition="NOT REMOVE" />
+              Condition="NOT REMOVE AND UILevel &gt;= 4" />
+      <Custom Action="EnableForUserQuiet" After="RegisterTextService"
+              Condition="NOT REMOVE AND UILevel &lt; 4" />
     </InstallExecuteSequence>
   </Package>
 </Wix>

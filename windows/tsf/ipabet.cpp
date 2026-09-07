@@ -303,7 +303,13 @@ STDMETHODIMP TextService::OnSetFocus(BOOL) {
             if (SUCCEEDED(range->GetContext(&cx)) && cx) {
                 CommitEditSession *commit = new CommitEditSession(this);
                 HRESULT chr = S_OK;
-                cx->RequestEditSession(client_, commit, TF_ES_READWRITE | TF_ES_SYNC, &chr);
+                // ASYNCDONTCARE: a sync readwrite lock is only guaranteed
+                // inside keystroke handling, and a denied request here would
+                // leave the composition open over state cleared below. A late
+                // async commit is safe — it only ends the composition, and
+                // ending one commits what it holds.
+                cx->RequestEditSession(client_, commit,
+                                       TF_ES_READWRITE | TF_ES_ASYNCDONTCARE, &chr);
                 commit->Release();
                 cx->Release();
             }
@@ -467,10 +473,12 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext *cx, REFGUID rguid, BOOL *ea
 
         KeyEditSession *session = new KeyEditSession(this, cx, k, false);
         HRESULT hr = S_OK;
-        cx->RequestEditSession(client_, session, TF_ES_READWRITE | TF_ES_SYNC, &hr);
+        HRESULT req = cx->RequestEditSession(client_, session, TF_ES_READWRITE | TF_ES_SYNC, &hr);
         session->Release();
 
-        *eaten = TRUE;
+        // Same as OnKeyDown: a session that never ran changed nothing, so the
+        // chord falls through to the host instead of vanishing.
+        *eaten = SUCCEEDED(req) ? TRUE : FALSE;
         return S_OK;
     }
     return S_OK;
