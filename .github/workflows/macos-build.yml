@@ -29,6 +29,14 @@ jobs:
       - name: Build
         run: cd macos && ./build.sh
 
+      # The reference implementation's decision logic, replayed against the
+      # shared vector corpus through a mock IMKTextInput — the macOS analogue
+      # of windows-parity and the JS suite. Until this existed the Swift had
+      # only a build check, which is how a hand review found the Control-chord
+      # and newline-tie divergences.
+      - name: The engine logic matches the vectors
+        run: cd macos && ./tests/run.sh
+
       # An arm64-only input method on an Intel Mac registers from its plist and
       # can never launch: the input source appears and typing is dead. That has
       # bitten this project before, and it is invisible without checking.
