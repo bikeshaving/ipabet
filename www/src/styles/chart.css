@@ -79,7 +79,7 @@ svg text.axis { font-size: 9px; fill: var(--dim); }
 .attrib { font-size: 6.5pt; color: var(--dim); margin-top: 0.14in; text-align: center; }
 .attrib a { color: var(--dim); }
 [data-audio] { cursor: pointer; }
-[data-audio]:hover .g, svg text.v[data-audio]:hover { fill: var(--key); color: var(--key); }
+[data-audio]:hover .ipa, svg text.v[data-audio]:hover { fill: var(--key); color: var(--key); }
 .webnav { text-align: center; font-family: -apple-system, sans-serif; font-size: 0.85rem; padding: 0.75rem; }
 @media print {
 	html { background: #fff; }

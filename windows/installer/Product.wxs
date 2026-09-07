@@ -23,8 +23,10 @@
                   DowngradeErrorMessage="A newer version of IPAbet is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-    <Icon Id="IpabetIcon" SourceFile="$(var.BinDir)\ipabet-register.exe" />
-    <Property Id="ARPPRODUCTICON" Value="IpabetIcon" />
+    <!-- The Id must carry the source's extension or Windows Installer extracts
+         no icon and Installed Apps shows the generic MSI icon. -->
+    <Icon Id="IpabetIcon.exe" SourceFile="$(var.BinDir)\ipabet-register.exe" />
+    <Property Id="ARPPRODUCTICON" Value="IpabetIcon.exe" />
     <Property Id="ARPURLINFOABOUT" Value="https://ipabet.org" />
 
     <StandardDirectory Id="ProgramFiles64Folder">

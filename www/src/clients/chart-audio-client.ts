@@ -7,5 +7,7 @@ document.addEventListener("click", (e) => {
 	if (!el) return;
 	if (cur) cur.pause();
 	cur = new Audio(el.dataset.audio);
-	cur.play();
+	// A broken URL or a blocked autoplay rejects; swallow it like the chart and
+	// drill players do, rather than logging an unhandled rejection on a click.
+	cur.play().catch(() => {});
 });

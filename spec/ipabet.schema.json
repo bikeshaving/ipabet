@@ -52,6 +52,10 @@
      },
      "name": {
       "type": "string"
+     },
+     "ipa": {
+      "description": "Present only as false: an orthographic extra, not on the IPA chart (ß, þ, ı, ƙ, ƴ, ƒ).",
+      "const": false
      }
     }
    }

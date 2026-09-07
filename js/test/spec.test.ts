@@ -195,8 +195,10 @@ describe("spec · encoding lints", () => {
 
 // spec/ipabet.schema.json documents the file for outside consumers. A schema
 // nobody runs is just more prose, and adding a validator dependency to ship one
-// assertion is not worth it — so enforce its structural claims about `marks`
-// directly. Full Draft 2020-12 validation still passes; this keeps it true.
+// assertion is not worth it — so enforce its structural claims directly. This
+// checks marks AND letters against the schema's own additionalProperties:false
+// closed sets; a letters entry with an undeclared field (the ipa:false that
+// once escaped) fails here rather than only in an outside validator.
 describe("spec · matches its published schema", () => {
 	const markSchema = (schema as any).$defs.mark;
 	const allowed = new Set(Object.keys(markSchema.properties));
@@ -206,6 +208,15 @@ describe("spec · matches its published schema", () => {
 	test("no mark carries a field the schema doesn't declare", () => {
 		for (const m of marks as unknown as Record<string, unknown>[]) {
 			for (const k of Object.keys(m)) expect(allowed, `⌥${m.opt}.${k}`).toContain(k);
+		}
+	});
+
+	test("no letter carries a field the schema doesn't declare", () => {
+		const letterProps = new Set(
+			Object.keys((schema as any).properties.letters.items.properties),
+		);
+		for (const l of spec.letters as Record<string, unknown>[]) {
+			for (const k of Object.keys(l)) expect(letterProps, `${l.glyph}.${k}`).toContain(k);
 		}
 	});
 

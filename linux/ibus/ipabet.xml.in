@@ -8,7 +8,7 @@
     <name>org.freedesktop.IBus.IPAbet</name>
     <description>Type the International Phonetic Alphabet</description>
     <exec>@LIBEXECDIR@/ibus-engine-ipabet --ibus</exec>
-    <version>@VERSION@</version>
+    <version>@PROJECT_VERSION@</version>
     <author>Brian Kim</author>
     <license>MIT</license>
     <homepage>https://ipabet.org</homepage>
