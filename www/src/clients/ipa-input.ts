@@ -158,7 +158,19 @@ export function bindIPAInput(
 		const text = edit.type === "insert" ? edit.text
 			: edit.type === "replace" ? edit.text
 			: native; // "pass"
-		el.setRangeText(text, from, end, "end");
+		spliceField(from, end, text);
+	}
+
+	// setRangeText where the platform has it (real browsers): O(edit) and the
+	// native undo stack survives. The value-splice fallback keeps the headless
+	// test DOM — which has no setRangeText — working.
+	function spliceField(from: number, to: number, text: string) {
+		if (typeof el.setRangeText === "function") {
+			el.setRangeText(text, from, to, "end");
+		} else {
+			el.value = el.value.slice(0, from) + text + el.value.slice(to);
+			el.selectionStart = el.selectionEnd = from + text.length;
+		}
 	}
 
 	function sendKeystroke(k: Keystroke) {
@@ -302,7 +314,7 @@ export function bindIPAInput(
 				if (at > 0) {
 					const before = el.value.slice(0, at);
 					const cluster = [...new Intl.Segmenter().segment(before)].pop()?.segment ?? "";
-					el.setRangeText("", at - cluster.length, at, "end");
+					spliceField(at - cluster.length, at, "");
 				}
 				fire(); return;
 			}

@@ -147,6 +147,7 @@ private:
     /// layout's AltGr symbols — @ € on German — still type. The key handlers
     /// read this to decide *eaten.
     bool keyConsumed_ = false;
+};
 
 } // namespace ipabet
 
