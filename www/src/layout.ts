@@ -41,7 +41,7 @@ export function Layout({title, desc, styles = [], path = "/", schema, children}:
 		operatingSystem: "macOS, Windows, Linux",
 		url: SITE,
 		downloadUrl: SITE + "/download",
-		softwareVersion: "0.1.3",
+		softwareVersion: "0.1.4",
 		license: "https://opensource.org/licenses/MIT",
 		isAccessibleForFree: true,
 		offers: {"@type": "Offer", price: "0", priceCurrency: "USD"},
