@@ -24,6 +24,13 @@
  */
 #define PENDING_LOWER -2
 
+typedef enum CEditType {
+    Insert = 0,
+    Replace = 1,
+    Pass = 2,
+    Noop = 3,
+} CEditType;
+
 typedef struct Engine Engine;
 
 typedef struct CEdit {

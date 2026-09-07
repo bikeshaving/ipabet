@@ -85,7 +85,15 @@ if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
 else
     git tag "$TAG"
 fi
-git push origin "$TAG" 2>/dev/null || echo "$TAG already on origin; resuming"
+# A rejected push is only a resume if the remote tag is THIS commit —
+# anything else (a tag from an older attempt, auth trouble) must stop the
+# release before artifacts from two shas could mix.
+if ! git push origin "$TAG" 2>/dev/null; then
+    remote=$(git ls-remote origin "refs/tags/$TAG" | cut -f1)
+    [ "$remote" = "$sha" ] \
+        || { echo "pushing $TAG failed (origin has ${remote:-no such tag}) — resolve by hand"; exit 1; }
+    echo "$TAG already on origin; resuming"
+fi
 
 echo "== Waiting for CI to build and sign the draft"
 run_id=""
@@ -114,6 +122,11 @@ case "$TAG" in
         -e "s/version \"[^\"]*\"/version \"$VERSION\"/" \
         -e "s/sha256 \"[^\"]*\"/sha256 \"$pkg_sha\"/" \
         "$tap/Casks/ipabet.rb"
+    # An empty diff is only success if the cask actually says what it
+    # should — a sed that matched nothing also diffs empty.
+    grep -q "version \"$VERSION\"" "$tap/Casks/ipabet.rb" \
+        && grep -q "sha256 \"$pkg_sha\"" "$tap/Casks/ipabet.rb" \
+        || { echo "the cask edit did not take — Casks/ipabet.rb changed shape?"; exit 1; }
     if git -C "$tap" diff --quiet; then
         echo "cask already at $VERSION"
     else

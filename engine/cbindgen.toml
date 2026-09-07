@@ -8,6 +8,11 @@ documentation = true
 
 [export]
 prefix = ""
+# CEdit.edit_type is a plain int on the Rust side (an invalid enum value
+# arriving from C would be undefined behavior), so nothing in the exported
+# signatures references CEditType any more — but the shells still name its
+# values, so it is exported by force.
+include = ["CEditType"]
 
 [fn]
 prefix = ""
