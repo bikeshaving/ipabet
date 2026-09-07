@@ -26,6 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # The app links the Rust engine as a universal static lib; the arm64
+      # runner needs the x86_64 slice's target to build it.
+      - name: The x86_64 Rust target for the universal lib
+        run: rustup target add x86_64-apple-darwin
+
       - name: Build
         run: cd macos && ./build.sh
 
@@ -86,6 +91,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
+
+      # The app links the Rust engine as a universal static lib; the arm64
+      # runner needs the x86_64 slice's target to build it.
+      - name: The x86_64 Rust target for the universal lib
+        run: rustup target add x86_64-apple-darwin
 
       - name: Build
         run: cd macos && ./build.sh
