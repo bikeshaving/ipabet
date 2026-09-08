@@ -31,8 +31,8 @@ target_link_libraries(ibus-engine-ipabet PRIVATE PkgConfig::IBUS PkgConfig::SECC
 # runtime; the static check should agree).
 target_link_options(ibus-engine-ipabet PRIVATE "LINKER:--gc-sections")
 target_compile_definitions(ibus-engine-ipabet PRIVATE
-    IPABET_SPEC_INSTALLED="${CMAKE_INSTALL_PREFIX}/share/ipabet/ipabet.json"
-    IPABET_SPEC_FALLBACK="${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.json"
+    IPABET_SPEC_INSTALLED="${CMAKE_INSTALL_PREFIX}/share/ipabet/ipabet.xml"
+    IPABET_SPEC_FALLBACK="${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.xml"
     IPABET_VERSION="${PROJECT_VERSION}")
 
 set(LIBEXECDIR "${CMAKE_INSTALL_PREFIX}/libexec")
@@ -41,5 +41,5 @@ configure_file(ipabet.xml.in "${CMAKE_CURRENT_BINARY_DIR}/ipabet.xml" @ONLY)
 install(TARGETS ibus-engine-ipabet DESTINATION libexec)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ipabet.xml"
         DESTINATION share/ibus/component)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.json"
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.xml"
         DESTINATION share/ipabet)

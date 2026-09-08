@@ -54,7 +54,7 @@ if [ -d IPAbet.iconset ] && command -v iconutil >/dev/null; then
   iconutil -c icns IPAbet.iconset -o "$APP/Contents/Resources/IPAbet.icns"
 fi
 cp Info.plist "$APP/Contents/"
-cp ../spec/ipabet.json "$APP/Contents/Resources/ipabet.json"
+cp ../spec/ipabet.xml "$APP/Contents/Resources/ipabet.xml"
 cp ipabet.pdf "$APP/Contents/Resources/"
 cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input menu's cheat sheet
 # The cosmetic layout for Keyboard Viewer: without it the Viewer documents the

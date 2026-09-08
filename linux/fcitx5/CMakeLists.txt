@@ -35,10 +35,10 @@ target_link_libraries(ipabet PRIVATE Fcitx5::Core "${ENGINE_LIB}")
 # linux-package.yml asserts. MSVC's /OPT:REF does the same for the DLL.
 target_link_options(ipabet PRIVATE "LINKER:--exclude-libs,ALL" "LINKER:--gc-sections")
 
-# Where the addon finds spec/ipabet.json when it is not running from an
+# Where the addon finds spec/ipabet.xml when it is not running from an
 # install tree — the build directory case, so a dev loop needs no install step.
 target_compile_definitions(ipabet PRIVATE
-    IPABET_SPEC_FALLBACK="${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.json")
+    IPABET_SPEC_FALLBACK="${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.xml")
 
 install(TARGETS ipabet DESTINATION "${FCITX_INSTALL_ADDONDIR}")
 install(FILES ipabet-addon.conf
@@ -47,5 +47,5 @@ install(FILES ipabet-addon.conf
 install(FILES ipabet-im.conf
         RENAME ipabet.conf
         DESTINATION "${FCITX_INSTALL_PKGDATADIR}/inputmethod")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.json"
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../../spec/ipabet.xml"
         DESTINATION "${FCITX_INSTALL_PKGDATADIR}/ipabet")

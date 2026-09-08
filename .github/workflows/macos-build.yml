@@ -67,7 +67,7 @@ jobs:
       - name: The bundle carries what it needs
         run: |
           app="macos/build/IPAbet.app"
-          for f in Contents/Info.plist Contents/Resources/ipabet.json; do
+          for f in Contents/Info.plist Contents/Resources/ipabet.xml; do
             [ -s "$app/$f" ] || { echo "missing $f"; exit 1; }
           done
           /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist"

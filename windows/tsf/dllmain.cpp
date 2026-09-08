@@ -118,7 +118,7 @@ std::string TextService::LoadSpec() {
     std::wstring path = ModulePath();
     size_t slash = path.find_last_of(L'\\');
     if (slash != std::wstring::npos) path.resize(slash + 1);
-    path += L"ipabet.json";
+    path += L"ipabet.xml";
 
     std::ifstream in(path.c_str(), std::ios::binary);
     if (!in) return {};
