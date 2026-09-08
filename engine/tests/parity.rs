@@ -77,11 +77,18 @@ fn replay(engine: &Engine, keys: Vec<RawKeystroke>, initial: &str) -> String {
     text
 }
 
+/// The spec to build the engine from: spec/ipabet.json, or an alternate named by
+/// IPABET_SPEC (used to prove the LDML-derived spec drives the engine identically).
+fn load_spec() -> String {
+    match std::env::var("IPABET_SPEC") {
+        Ok(p) => std::fs::read_to_string(&p).expect("read IPABET_SPEC"),
+        Err(_) => std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"))
+            .expect("read spec/ipabet.json"),
+    }
+}
+
 fn replay_vector_file(path: &str) {
-    let spec_json = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"),
-    )
-    .expect("read spec/ipabet.json");
+    let spec_json = load_spec();
     let mut engine = Engine::new(&spec_json).expect("parse spec");
 
     let vectors_json = std::fs::read_to_string(path).expect("read vector file");
@@ -158,8 +165,7 @@ fn fuzz_vectors_fresh() {
 fn ffi_buffer_bounds() {
     const EDIT_TEXT_MAX: usize = 64; // must match ffi.rs's EDIT_TEXT_MAX
 
-    let spec_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"))
-        .expect("read spec/ipabet.json");
+    let spec_json = load_spec();
     let mut engine = Engine::new(&spec_json).expect("parse spec");
 
     let vectors_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"))

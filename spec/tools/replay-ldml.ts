@@ -85,7 +85,7 @@ const compiled = rawT.map(([from, to]) => {
 });
 
 // ---- keystroke -> LDML key output --------------------------------------
-const rows = ['1234567890-=', 'qwertyuiop[]\\', "asdfghjkl;'", 'zxcvbnm,./'];
+const rows = ['`1234567890-=', 'qwertyuiop[]\\', "asdfghjkl;'", 'zxcvbnm,./'];
 const grid = {};
 rows.forEach((r, ri) => [...r].forEach((c, ci) => (grid[c] = [ri, ci])));
 const shiftOf = { '`': '~', 1: '!', 2: '@', 3: '#', 4: '$', 5: '%', 6: '^', 7: '&', 8: '*', 9: '(', 0: ')', '-': '_', '=': '+', '[': '{', ']': '}', '\\': '|', ';': ':', "'": '"', ',': '<', '.': '>', '/': '?' };

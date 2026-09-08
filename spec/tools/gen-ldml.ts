@@ -45,7 +45,7 @@ const mname = c => MARKER_NAME[hex(c)] || IPA_NAME[hex(c)] || 'm' + hex(c);
 const PUNCT = { '-': 'hyphen', '=': 'equal', '[': 'lbracket', ']': 'rbracket', '\\': 'backslash', ';': 'semicolon', "'": 'apostrophe', ',': 'comma', '.': 'period', '/': 'slash', '`': 'backquote' };
 const kid = c => /[a-z0-9]/i.test(c) ? c : (PUNCT[c] || 'k' + hex(c));
 // hardware scan codes (PC set 1) for the four rows, so <layers formId> resolves
-const SCAN = ['02 03 04 05 06 07 08 09 0A 0B 0C 0D', '10 11 12 13 14 15 16 17 18 19 1A 1B 2B', '1E 1F 20 21 22 23 24 25 26 27 28', '2C 2D 2E 2F 30 31 32 33 34 35'];
+const SCAN = ['29 02 03 04 05 06 07 08 09 0A 0B 0C 0D', '10 11 12 13 14 15 16 17 18 19 1A 1B 2B', '1E 1F 20 21 22 23 24 25 26 27 28', '2C 2D 2E 2F 30 31 32 33 34 35'];
 const opLabel = op => op === '%' ? '⇧5' : `⇧${op}`;
 
 const glyphOf = {};
@@ -92,7 +92,10 @@ for (const [seq, atom] of CONTOURS) push([...seq].map(c => `\\m{${mname(c)}}`).j
 // 4) dead keys — an Option mark, then the next base absorbs it (NFC composes)
 section('dead keys — ⌥<mark>, then the next base absorbs it (NFC composes)');
 const deadkeyChars = new Set();
-for (const m of spec.marks) { if (m.type !== 'combining') continue; deadkeyChars.add(m.mark); if (m.double && !m.doubleSpacing) deadkeyChars.add(m.double); }
+for (const m of spec.marks) {
+  if (m.type === 'combining') deadkeyChars.add(m.mark);
+  if (m.double && !m.doubleSpacing) deadkeyChars.add(m.double);   // a non-spacing double is combining, whatever the primary
+}
 for (const [, atom] of CONTOURS) deadkeyChars.add(atom);
 // cycle-only marks (denasal, whistled …) are reached by re-pressing, never on a
 // key, but a base must still absorb them — so they need dead-key rules too.
@@ -111,7 +114,7 @@ push(`\\m{lower}($[sub_in])`, `$[1:sub_out]`);
 
 // 6) rhotic hook (⌥r) fuses onto ə/ɜ
 section('rhotic hook — ⌥r fuses onto ə/ɜ');
-push(`ə\\m{rhotic}`, 'ɚ'); push(`ɜ\\m{rhotic}`, 'ɝ');
+push(`ə(\\p{M}*)˞`, 'ɚ$1'); push(`ɜ(\\p{M}*)˞`, 'ɝ$1');
 
 // clone forms -> <displays>: what a pending mark shows before a base absorbs it
 const displays: [string, string][] = [];
@@ -145,18 +148,20 @@ for (const m of spec.marks) {
     if (m.double) { const id = (m.doubleSpacing ? 'sp_' : 'mk_') + mname(m.double); addKey(id, m.doubleSpacing ? m.double : `\\m{${mname(m.double)}}`); optShiftLayer[c] = id; }
   } else {
     addKey('sp_' + mname(m.mark), m.mark); optLayer[c] = 'sp_' + mname(m.mark);
-    if (m.double) { const id = 'sp_' + mname(m.double); addKey(id, m.double); optShiftLayer[c] = id; }
+    // a double is spacing only when doubleSpacing says so — a spacing primary can
+    // still have a combining double (˞→̢, ˦→͇), which must be a marker.
+    if (m.double) { const id = (m.doubleSpacing ? 'sp_' : 'mk_') + mname(m.double); addKey(id, m.doubleSpacing ? m.double : `\\m{${mname(m.double)}}`); optShiftLayer[c] = id; }
   }
 }
 addKey('op_raise', '\\m{raise}'); optLayer['z'] = 'op_raise';
 addKey('op_lower', '\\m{lower}'); optShiftLayer['z'] = 'op_lower';
-addKey('op_rhotic', '\\m{rhotic}'); optLayer['r'] = 'op_rhotic';
+// ⌥r is the ˞ spacing mark (placed by the marks loop above); ə/ɜ fuse to ɚ/ɝ.
 const q = spec.quotes.locales[spec.quotes.default];
 addKey('q_open_primary', q[0]); addKey('q_open_secondary', q[2]); optLayer['['] = 'q_open_primary'; optLayer[']'] = 'q_open_secondary';
 addKey('q_close_primary', q[1]); addKey('q_close_secondary', q[3]); optShiftLayer['['] = 'q_close_primary'; optShiftLayer[']'] = 'q_close_secondary';
 for (const [d, ch] of Object.entries(spec.optShift)) { if (d === 'about') continue; addKey('os_' + d, ch); optShiftLayer[d] = 'os_' + d; }
 
-const rows = ['1234567890-=', 'qwertyuiop[]\\', "asdfghjkl;'", 'zxcvbnm,./'];
+const rows = ['`1234567890-=', 'qwertyuiop[]\\', "asdfghjkl;'", 'zxcvbnm,./'];
 const shiftOf = { '`': '~', 1: '!', 2: '@', 3: '#', 4: '$', 5: '%', 6: '^', 7: '&', 8: '*', 9: '(', 0: ')', '-': '_', '=': '+', '[': '{', ']': '}', '\\': '|', ';': ':', "'": '"', ',': '<', '.': '>', '/': '?' };
 for (const r of rows) for (const c of r) if (!keyEls.some(k => k.includes(`id="b_${kid(c)}"`))) addKey('b_' + kid(c), c);
 const shiftIds = rows.map(r => [...r].map(c => { const id = 'sh_' + kid(c); addKey(id, shiftOf[c] || c.toUpperCase()); return id; }));
