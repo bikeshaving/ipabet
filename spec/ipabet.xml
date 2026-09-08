@@ -399,65 +399,65 @@
       <transform from="\m{acute}\m{macron}" to="\m{acute-macron}"/>
       <transform from="\m{acute}\m{grave}\m{acute}" to="\m{acute-grave-acute}"/>
       <!-- dead keys — ⌥<mark>, then the next base absorbs it (NFC composes) -->
-      <transform from="\m{acute}(.)" to="$1\u{0301}"/>
-      <transform from="\m{double-acute}(.)" to="$1\u{030B}"/>
-      <transform from="\m{grave}(.)" to="$1\u{0300}"/>
-      <transform from="\m{double-grave}(.)" to="$1\u{030F}"/>
-      <transform from="\m{circumflex}(.)" to="$1\u{0302}"/>
-      <transform from="\m{horn}(.)" to="$1\u{031B}"/>
-      <transform from="\m{caron}(.)" to="$1\u{030C}"/>
-      <transform from="\m{caron-below}(.)" to="$1\u{032C}"/>
-      <transform from="\m{macron}(.)" to="$1\u{0304}"/>
-      <transform from="\m{macron-below}(.)" to="$1\u{0331}"/>
-      <transform from="\m{tilde}(.)" to="$1\u{0303}"/>
-      <transform from="\m{tilde-below}(.)" to="$1\u{0330}"/>
-      <transform from="\m{diaeresis}(.)" to="$1\u{0308}"/>
-      <transform from="\m{diaeresis-below}(.)" to="$1\u{0324}"/>
-      <transform from="\m{breve}(.)" to="$1\u{0306}"/>
-      <transform from="\m{breve-below}(.)" to="$1\u{032E}"/>
-      <transform from="\m{ring-above}(.)" to="$1\u{030A}"/>
-      <transform from="\m{ring-below}(.)" to="$1\u{0325}"/>
-      <transform from="\m{cedilla}(.)" to="$1\u{0327}"/>
-      <transform from="\m{palatal-hook-below}(.)" to="$1\u{0321}"/>
-      <transform from="\m{comma-below}(.)" to="$1\u{0326}"/>
-      <transform from="\m{comma-above}(.)" to="$1\u{0313}"/>
-      <transform from="\m{ogonek}(.)" to="$1\u{0328}"/>
-      <transform from="\m{candrabindu}(.)" to="$1\u{0310}"/>
-      <transform from="\m{bridge-below}(.)" to="$1\u{032A}"/>
-      <transform from="\m{bridge-above}(.)" to="$1\u{0346}"/>
-      <transform from="\m{inverted-bridge-below}(.)" to="$1\u{033A}"/>
-      <transform from="\m{square-below}(.)" to="$1\u{033B}"/>
-      <transform from="\m{minus-below}(.)" to="$1\u{0320}"/>
-      <transform from="\m{plus-below}(.)" to="$1\u{031F}"/>
-      <transform from="\m{stroke-overlay}(.)" to="$1\u{0335}"/>
-      <transform from="\m{tilde-overlay}(.)" to="$1\u{0334}"/>
-      <transform from="\m{down-tack-below}(.)" to="$1\u{031E}"/>
-      <transform from="\m{up-tack-below}(.)" to="$1\u{031D}"/>
-      <transform from="\m{left-half-ring-below}(.)" to="$1\u{031C}"/>
-      <transform from="\m{right-half-ring-below}(.)" to="$1\u{0339}"/>
-      <transform from="\m{vertical-line-below}(.)" to="$1\u{0329}"/>
-      <transform from="\m{vertical-line-above}(.)" to="$1\u{030D}"/>
-      <transform from="\m{left-angle-below}(.)" to="$1\u{0349}"/>
-      <transform from="\m{double-vertical-line-below}(.)" to="$1\u{0348}"/>
-      <transform from="\m{seagull-below}(.)" to="$1\u{033C}"/>
-      <transform from="\m{tie-above}(.)" to="$1\u{0361}"/>
-      <transform from="\m{tie-below}(.)" to="$1\u{035C}"/>
-      <transform from="\m{x-above}(.)" to="$1\u{033D}"/>
-      <transform from="\m{x-below}(.)" to="$1\u{0353}"/>
-      <transform from="\m{left-angle-above}(.)" to="$1\u{031A}"/>
-      <transform from="\m{right-tack-below}(.)" to="$1\u{0319}"/>
-      <transform from="\m{left-tack-below}(.)" to="$1\u{0318}"/>
-      <transform from="\m{dot-above}(.)" to="$1\u{0307}"/>
-      <transform from="\m{dot-below}(.)" to="$1\u{0323}"/>
-      <transform from="\m{hook-above}(.)" to="$1\u{0309}"/>
-      <transform from="\m{inverted-breve-below}(.)" to="$1\u{032F}"/>
-      <transform from="\m{inverted-breve}(.)" to="$1\u{0311}"/>
-      <transform from="\m{macron-acute}(.)" to="$1\u{1DC4}"/>
-      <transform from="\m{grave-macron}(.)" to="$1\u{1DC5}"/>
-      <transform from="\m{grave-acute-grave}(.)" to="$1\u{1DC8}"/>
-      <transform from="\m{macron-grave}(.)" to="$1\u{1DC6}"/>
-      <transform from="\m{acute-macron}(.)" to="$1\u{1DC7}"/>
-      <transform from="\m{acute-grave-acute}(.)" to="$1\u{1DC9}"/>
+      <transform from="\m{acute}(.)" to="$1\u{0301}"/>  <!-- ◌́ -->
+      <transform from="\m{double-acute}(.)" to="$1\u{030B}"/>  <!-- ◌̋ -->
+      <transform from="\m{grave}(.)" to="$1\u{0300}"/>  <!-- ◌̀ -->
+      <transform from="\m{double-grave}(.)" to="$1\u{030F}"/>  <!-- ◌̏ -->
+      <transform from="\m{circumflex}(.)" to="$1\u{0302}"/>  <!-- ◌̂ -->
+      <transform from="\m{horn}(.)" to="$1\u{031B}"/>  <!-- ◌̛ -->
+      <transform from="\m{caron}(.)" to="$1\u{030C}"/>  <!-- ◌̌ -->
+      <transform from="\m{caron-below}(.)" to="$1\u{032C}"/>  <!-- ◌̬ -->
+      <transform from="\m{macron}(.)" to="$1\u{0304}"/>  <!-- ◌̄ -->
+      <transform from="\m{macron-below}(.)" to="$1\u{0331}"/>  <!-- ◌̱ -->
+      <transform from="\m{tilde}(.)" to="$1\u{0303}"/>  <!-- ◌̃ -->
+      <transform from="\m{tilde-below}(.)" to="$1\u{0330}"/>  <!-- ◌̰ -->
+      <transform from="\m{diaeresis}(.)" to="$1\u{0308}"/>  <!-- ◌̈ -->
+      <transform from="\m{diaeresis-below}(.)" to="$1\u{0324}"/>  <!-- ◌̤ -->
+      <transform from="\m{breve}(.)" to="$1\u{0306}"/>  <!-- ◌̆ -->
+      <transform from="\m{breve-below}(.)" to="$1\u{032E}"/>  <!-- ◌̮ -->
+      <transform from="\m{ring-above}(.)" to="$1\u{030A}"/>  <!-- ◌̊ -->
+      <transform from="\m{ring-below}(.)" to="$1\u{0325}"/>  <!-- ◌̥ -->
+      <transform from="\m{cedilla}(.)" to="$1\u{0327}"/>  <!-- ◌̧ -->
+      <transform from="\m{palatal-hook-below}(.)" to="$1\u{0321}"/>  <!-- ◌̡ -->
+      <transform from="\m{comma-below}(.)" to="$1\u{0326}"/>  <!-- ◌̦ -->
+      <transform from="\m{comma-above}(.)" to="$1\u{0313}"/>  <!-- ◌̓ -->
+      <transform from="\m{ogonek}(.)" to="$1\u{0328}"/>  <!-- ◌̨ -->
+      <transform from="\m{candrabindu}(.)" to="$1\u{0310}"/>  <!-- ◌̐ -->
+      <transform from="\m{bridge-below}(.)" to="$1\u{032A}"/>  <!-- ◌̪ -->
+      <transform from="\m{bridge-above}(.)" to="$1\u{0346}"/>  <!-- ◌͆ -->
+      <transform from="\m{inverted-bridge-below}(.)" to="$1\u{033A}"/>  <!-- ◌̺ -->
+      <transform from="\m{square-below}(.)" to="$1\u{033B}"/>  <!-- ◌̻ -->
+      <transform from="\m{minus-below}(.)" to="$1\u{0320}"/>  <!-- ◌̠ -->
+      <transform from="\m{plus-below}(.)" to="$1\u{031F}"/>  <!-- ◌̟ -->
+      <transform from="\m{stroke-overlay}(.)" to="$1\u{0335}"/>  <!-- ◌̵ -->
+      <transform from="\m{tilde-overlay}(.)" to="$1\u{0334}"/>  <!-- ◌̴ -->
+      <transform from="\m{down-tack-below}(.)" to="$1\u{031E}"/>  <!-- ◌̞ -->
+      <transform from="\m{up-tack-below}(.)" to="$1\u{031D}"/>  <!-- ◌̝ -->
+      <transform from="\m{left-half-ring-below}(.)" to="$1\u{031C}"/>  <!-- ◌̜ -->
+      <transform from="\m{right-half-ring-below}(.)" to="$1\u{0339}"/>  <!-- ◌̹ -->
+      <transform from="\m{vertical-line-below}(.)" to="$1\u{0329}"/>  <!-- ◌̩ -->
+      <transform from="\m{vertical-line-above}(.)" to="$1\u{030D}"/>  <!-- ◌̍ -->
+      <transform from="\m{left-angle-below}(.)" to="$1\u{0349}"/>  <!-- ◌͉ -->
+      <transform from="\m{double-vertical-line-below}(.)" to="$1\u{0348}"/>  <!-- ◌͈ -->
+      <transform from="\m{seagull-below}(.)" to="$1\u{033C}"/>  <!-- ◌̼ -->
+      <transform from="\m{tie-above}(.)" to="$1\u{0361}"/>  <!-- ◌͡ -->
+      <transform from="\m{tie-below}(.)" to="$1\u{035C}"/>  <!-- ◌͜ -->
+      <transform from="\m{x-above}(.)" to="$1\u{033D}"/>  <!-- ◌̽ -->
+      <transform from="\m{x-below}(.)" to="$1\u{0353}"/>  <!-- ◌͓ -->
+      <transform from="\m{left-angle-above}(.)" to="$1\u{031A}"/>  <!-- ◌̚ -->
+      <transform from="\m{right-tack-below}(.)" to="$1\u{0319}"/>  <!-- ◌̙ -->
+      <transform from="\m{left-tack-below}(.)" to="$1\u{0318}"/>  <!-- ◌̘ -->
+      <transform from="\m{dot-above}(.)" to="$1\u{0307}"/>  <!-- ◌̇ -->
+      <transform from="\m{dot-below}(.)" to="$1\u{0323}"/>  <!-- ◌̣ -->
+      <transform from="\m{hook-above}(.)" to="$1\u{0309}"/>  <!-- ◌̉ -->
+      <transform from="\m{inverted-breve-below}(.)" to="$1\u{032F}"/>  <!-- ◌̯ -->
+      <transform from="\m{inverted-breve}(.)" to="$1\u{0311}"/>  <!-- ◌̑ -->
+      <transform from="\m{macron-acute}(.)" to="$1\u{1DC4}"/>  <!-- ◌᷄ -->
+      <transform from="\m{grave-macron}(.)" to="$1\u{1DC5}"/>  <!-- ◌᷅ -->
+      <transform from="\m{grave-acute-grave}(.)" to="$1\u{1DC8}"/>  <!-- ◌᷈ -->
+      <transform from="\m{macron-grave}(.)" to="$1\u{1DC6}"/>  <!-- ◌᷆ -->
+      <transform from="\m{acute-macron}(.)" to="$1\u{1DC7}"/>  <!-- ◌᷇ -->
+      <transform from="\m{acute-grave-acute}(.)" to="$1\u{1DC9}"/>  <!-- ◌᷉ -->
       <!-- superscripts — ⌥z arms the raise, then a base -->
       <transform from="\m{raise}($[sup_in])" to="$[1:sup_out]"/>
       <!-- subscripts — ⌥⇧z arms the lower, then a base -->

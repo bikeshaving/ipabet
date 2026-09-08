@@ -39,7 +39,7 @@ const sets = [];        // {id, value[], note?}  — super/subscripts only
 const T = [];           // [from, to]
 const comments = {};    // index in T -> [comment line, ...]
 const addSet = (id, arr, note) => sets.push({ id, value: arr, note });
-const push = (from, to) => T.push([from, to]);
+const push = (from, to, tail) => T.push([from, to, tail]);   // tail: an inline trailing comment
 const section = txt => (comments[T.length] = (comments[T.length] || []).concat(txt));
 const combo = (label, pairs, cap = 8) => `${label}:  ${pairs.slice(0, cap).map(([i, o]) => `${i}→${o}`).join('  ')}${pairs.length > cap ? '  …' : ''}`;
 
@@ -78,7 +78,7 @@ section('dead keys — ⌥<mark>, then the next base absorbs it (NFC composes)')
 const deadkeyChars = new Set();
 for (const m of spec.marks) { if (m.type !== 'combining') continue; deadkeyChars.add(m.mark); if (m.double && !m.doubleSpacing) deadkeyChars.add(m.double); }
 for (const [, atom] of CONTOURS) deadkeyChars.add(atom);
-for (const mk of deadkeyChars) push(`\\m{${mname(mk)}}(.)`, `$1${U(mk)}`);
+for (const mk of deadkeyChars) push(`\\m{${mname(mk)}}(.)`, `$1${U(mk)}`, `◌${mk}`);   // ◌ = U+25CC, so the mark shows without hanging off the comment
 
 // 5) super/subscripts — parallel <set>s (large, mechanical)
 section('superscripts — ⌥z arms the raise, then a base');
@@ -150,9 +150,9 @@ o.push('  </layers>');
 o.push('');
 o.push('  <transforms type="simple">');
 o.push('    <transformGroup>');
-T.forEach(([from, to], i) => {
+T.forEach(([from, to, tail], i) => {
   if (comments[i]) for (const c of comments[i]) o.push(`      <!-- ${cmt(c)} -->`);
-  o.push(`      <transform from="${X(from)}" to="${X(to)}"/>`);
+  o.push(`      <transform from="${X(from)}" to="${X(to)}"/>${tail ? `  <!-- ${cmt(tail)} -->` : ''}`);
 });
 o.push('    </transformGroup>');
 o.push('  </transforms>');
