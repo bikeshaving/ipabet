@@ -6,76 +6,76 @@
   <settings normalization="NFC"/>
 
   <variables>
-    <!-- central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ, aY→ä); Welsh y, Russian ы -->
+    <!-- ⇧Y:  i→ɨ  e→ɘ  u→ʉ  a→ä  o→ɵ  y→ƴ -->
     <set id="Y_in" value="i e u a o y"/>
     <set id="Y_out" value="ɨ ɘ ʉ ä ɵ ƴ"/>
-    <!-- the h-digraph — plosives spirantize (tH→θ, pH→ɸ), sibilants hush (sH→ʃ), vowels lax (iH→ɪ, uH→ʊ); for a, back (aH→ɑ) -->
+    <!-- ⇧H:  2→ʔ  3→ʕ  4→ɾ  5→ə  a→ɑ  7→ħ  b→β  c→ç  d→ð  e→ɛ  g→ɣ  h→ɦ  i→ɪ  o→ɔ  p→ɸ  q→χ  x→ɧ  r→ɹ  s→ʃ  t→θ  u→ʊ  v→ʋ  w→ʍ  y→ʏ  z→ʒ -->
     <set id="H_in" value="2 3 4 5 a 7 b c d e g h i o p q x r s t u v w y z"/>
     <set id="H_out" value="ʔ ʕ ɾ ə ɑ ħ β ç ð ɛ ɣ ɦ ɪ ɔ ɸ χ ɧ ɹ ʃ θ ʊ ʋ ʍ ʏ ʒ"/>
-    <!-- guttural — uvular-pharyngeal-epiglottal throat region -->
+    <!-- ⇧Q:  2→ʡ  3→ʢ  7→ʜ  g→ɢ  n→ɴ  r→ʁ  l→ɫ -->
     <set id="Q_in" value="2 3 7 g n r l"/>
     <set id="Q_out" value="ʡ ʢ ʜ ɢ ɴ ʁ ɫ"/>
-    <!-- lateralize -->
+    <!-- ⇧L:  4→ɺ  s→ɬ  z→ɮ -->
     <set id="L_in" value="4 s z"/>
     <set id="L_out" value="ɺ ɬ ɮ"/>
-    <!-- retroflex (coronals) -->
+    <!-- ⇧R:  4→ɽ  d→ɖ  l→ɭ  n→ɳ  r→ɻ  s→ʂ  t→ʈ  z→ʐ -->
     <set id="R_in" value="4 d l n r s t z"/>
     <set id="R_out" value="ɽ ɖ ɭ ɳ ɻ ʂ ʈ ʐ"/>
-    <!-- labiodental -->
+    <!-- ⇧V:  4→ⱱ  m→ɱ -->
     <set id="V_in" value="4 m"/>
     <set id="V_out" value="ⱱ ɱ"/>
-    <!-- centralize — a cardinal vowel toward schwa (e%→ɜ, o%→ɞ, a%→ɐ) -->
+    <!-- ⇧5:  e→ɜ  o→ɞ  a→ɐ -->
     <set id="center_in" value="e o a"/>
     <set id="center_out" value="ɜ ɞ ɐ"/>
-    <!-- ligature with e -->
+    <!-- ⇧E:  a→æ  o→œ -->
     <set id="E_in" value="a o"/>
     <set id="E_out" value="æ œ"/>
-    <!-- drag toward a (vowels: oA→ɒ, uA→ʌ) -->
+    <!-- ⇧A:  u→ʌ  o→ɒ -->
     <set id="A_in" value="u o"/>
     <set id="A_out" value="ʌ ɒ"/>
-    <!-- labialize / round-flip -->
+    <!-- ⇧W:  a→ɶ  e→ø  o→ɤ  u→ɯ  w→ɰ -->
     <set id="W_in" value="a e o u w"/>
     <set id="W_out" value="ɶ ø ɤ ɯ ɰ"/>
-    <!-- implosive (voiced glottalic ingressive) -->
+    <!-- ⇧P:  b→ɓ  d→ɗ  g→ɠ  j→ʄ  q→ʛ -->
     <set id="P_in" value="b d g j q"/>
     <set id="P_out" value="ɓ ɗ ɠ ʄ ʛ"/>
-    <!-- palatalize (consonants only) -->
+    <!-- ⇧J:  d→ɟ  g→ʝ  l→ʎ  n→ɲ  s→ɕ  w→ɥ  z→ʑ -->
     <set id="J_in" value="d g l n s w z"/>
     <set id="J_out" value="ɟ ʝ ʎ ɲ ɕ ɥ ʑ"/>
-    <!-- dorsal deepening — velar/uvular place -->
+    <!-- ⇧G:  g→ɡ  l→ʟ  n→ŋ  r→ʀ -->
     <set id="G_in" value="g l n r"/>
     <set id="G_out" value="ɡ ʟ ŋ ʀ"/>
-    <!-- bilabial place -->
+    <!-- ⇧B:  r→ʙ -->
     <set id="B_in" value="r"/>
     <set id="B_out" value="ʙ"/>
-    <!-- click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral) -->
+    <!-- ⇧C:  p→ʘ  t→ǀ  q→ǃ  c→ǂ  l→ǁ -->
     <set id="C_in" value="p t q c l"/>
     <set id="C_out" value="ʘ ǀ ǃ ǂ ǁ"/>
-    <!-- extra letter — a base doubled with its own shift (orthographic, non-IPA) -->
+    <!-- ⇧S:  s→ß -->
     <set id="S_in" value="s"/>
     <set id="S_out" value="ß"/>
-    <!-- extra letter — a base doubled with its own shift (orthographic, non-IPA) -->
+    <!-- ⇧T:  t→þ -->
     <set id="T_in" value="t"/>
     <set id="T_out" value="þ"/>
-    <!-- extra letter — a base doubled with its own shift (orthographic, non-IPA) -->
+    <!-- ⇧I:  i→ı -->
     <set id="I_in" value="i"/>
     <set id="I_out" value="ı"/>
-    <!-- extra letter — a base doubled with its own shift (orthographic, non-IPA) -->
+    <!-- ⇧K:  k→ƙ -->
     <set id="K_in" value="k"/>
     <set id="K_out" value="ƙ"/>
-    <!-- extra letter — a base doubled with its own shift (orthographic, non-IPA) -->
+    <!-- ⇧F:  f→ƒ -->
     <set id="F_in" value="f"/>
     <set id="F_out" value="ƒ"/>
-    <!-- stroke overlay (⌥y): base → its precomposed stroked letter -->
+    <!-- ⌥y:  2→ƻ  l→ł  L→Ł  d→đ  D→Đ  t→ŧ  T→Ŧ  g→ǥ  G→Ǥ  h→ħ  H→Ħ  b→ƀ  B→Ƀ  z→ƶ  Z→Ƶ  i→ɨ  I→Ɨ  u→ʉ  U→Ʉ  o→ɵ  O→Ɵ  j→ɟ  r→ɍ  R→Ɍ  y→ɏ  Y→Ɏ  c→ȼ  C→Ȼ  p→ᵽ  P→Ᵽ  k→ꝁ  K→Ꝁ -->
     <set id="stroke_in" value="2 l L d D t T g G h H b B z Z i I u U o O j r R y Y c C p P k K"/>
     <set id="stroke_out" value="ƻ ł Ł đ Đ ŧ Ŧ ǥ Ǥ ħ Ħ ƀ Ƀ ƶ Ƶ ɨ Ɨ ʉ Ʉ ɵ Ɵ ɟ ɍ Ɍ ɏ Ɏ ȼ Ȼ ᵽ Ᵽ ꝁ Ꝁ"/>
-    <!-- middle-tilde overlay (⌥⇧y): base → its precomposed letter -->
+    <!-- ⌥⇧y:  l→ɫ  L→Ɫ  b→ᵬ  d→ᵭ  f→ᵮ  m→ᵯ  n→ᵰ  p→ᵱ  r→ᵲ  s→ᵴ  t→ᵵ  z→ᵶ -->
     <set id="tilde_in" value="l L b d f m n p r s t z"/>
     <set id="tilde_out" value="ɫ Ɫ ᵬ ᵭ ᵮ ᵯ ᵰ ᵱ ᵲ ᵴ ᵵ ᵶ"/>
-    <!-- superscript forms (⌥z arms the raise) -->
+    <!-- ⌥z:  0→⁰  1→¹  2→²  3→³  4→⁴  5→⁵  6→⁶  7→⁷  … -->
     <set id="sup_in" value="0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p r s t u v w x y z ð ŋ œ ɐ ɑ ɒ ɔ ɕ ə ɛ ɜ ɟ ɡ ɣ ɥ ɦ ɨ ɪ ɭ ɯ ɰ ɱ ɲ ɳ ɴ ɵ ɸ ɹ ɻ ʁ ʂ ʃ ʉ ʊ ʋ ʌ ʍ ʐ ʑ ʒ ʔ ʕ ʝ ʟ β θ χ ნ A Æ B D E Ǝ G H I J K L M N O Ȣ P R T U W ᴂ ᴖ ᴗ ᴝ ᴥ γ δ φ н ɩ ᵻ ᶅ ƫ ᴜ + − = ( ) V ⵡ 一 二 三 四 上 中 下 甲 乙 丙 丁 天 地 人 ъ ь ꝯ C F Q Ħ ꜧ ꬷ ɫ ꭒ ː ˑ æ ʙ ɓ ʣ ꭦ ʥ ʤ ɖ ɗ ᶑ ɘ ɞ ʩ ɤ ɢ ɠ ʛ ħ ʜ ɧ ʄ ʪ ʫ ɬ 𝼄 ꞎ ɮ 𝼅 ʎ 𝼆 ø ɶ ɷ q ɺ 𝼈 ɽ ɾ ʀ ʨ ʦ ꭧ ʧ ʈ ⱱ ʏ ʡ ʢ ʘ ǀ ǁ ǂ 𝼊 𝼞 а б в г д е ж з и к л м о п р с т у ф х ц ч ш ы э ю ꚉ ә і ј ө ү ӏ ҫ ꙑ ұ Ƀ ᴎ ᴉ ꜳ"/>
     <set id="sup_out" value="⁰ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ᵃ ᵇ ᶜ ᵈ ᵉ ᶠ ᶢ ʰ ⁱ ʲ ᵏ ˡ ᵐ ⁿ ᵒ ᵖ ʳ ˢ ᵗ ᵘ ᵛ ʷ ˣ ʸ ᶻ ᶞ ᵑ ꟹ ᵄ ᵅ ᶛ ᵓ ᶝ ᵊ ᵋ ᵌ ᶡ ᶢ ˠ ᶣ ʱ ᶤ ᶦ ᶩ ᵚ ᶭ ᶬ ᶮ ᶯ ᶰ ᶱ ᶲ ʴ ʵ ʶ ᶳ ᶴ ᶶ ᶷ ᶹ ᶺ ꭩ ᶼ ᶽ ᶾ ˀ ˤ ᶨ ᶫ ᵝ ᶿ ᵡ ჼ ᴬ ᴭ ᴮ ᴰ ᴱ ᴲ ᴳ ᴴ ᴵ ᴶ ᴷ ᴸ ᴹ ᴺ ᴼ ᴽ ᴾ ᴿ ᵀ ᵁ ᵂ ᵆ ᵔ ᵕ ᵙ ᵜ ᵞ ᵟ ᵠ ᵸ ᶥ ᶧ ᶪ ᶵ ᶸ ⁺ ⁻ ⁼ ⁽ ⁾ ⱽ ⵯ ㆒ ㆓ ㆔ ㆕ ㆖ ㆗ ㆘ ㆙ ㆚ ㆛ ㆜ ㆝ ㆞ ㆟ ꚜ ꚝ ꝰ ꟲ ꟳ ꟴ ꟸ ꭜ ꭝ ꭞ ꭟ 𐞁 𐞂 𐞃 𐞄 𐞅 𐞇 𐞈 𐞉 𐞊 𐞋 𐞌 𐞍 𐞎 𐞏 𐞐 𐞑 𐞒 𐞓 𐞔 𐞕 𐞖 𐞗 𐞘 𐞙 𐞚 𐞛 𐞜 𐞝 𐞞 𐞟 𐞠 𐞡 𐞢 𐞣 𐞤 𐞥 𐞦 𐞧 𐞨 𐞩 𐞪 𐞫 𐞬 𐞭 𐞮 𐞯 𐞰 𐞲 𐞳 𐞴 𐞵 𐞶 𐞷 𐞸 𐞹 𐞺 𞀰 𞀱 𞀲 𞀳 𞀴 𞀵 𞀶 𞀷 𞀸 𞀹 𞀺 𞀻 𞀼 𞀽 𞀾 𞀿 𞁀 𞁁 𞁂 𞁃 𞁄 𞁅 𞁆 𞁇 𞁈 𞁉 𞁊 𞁋 𞁌 𞁍 𞁎 𞁏 𞁐 𞁫 𞁬 𞁭 ᴯ ᴻ ᵎ 𐞀"/>
-    <!-- subscript forms (⌥⇧z arms the lower) -->
+    <!-- ⌥⇧z:  0→₀  1→₁  2→₂  3→₃  4→₄  5→₅  6→₆  7→₇  … -->
     <set id="sub_in" value="0 1 2 3 4 5 6 7 8 9 a e h i j k l m n o p r s t u v x ə β χ γ ρ φ + − = ( ) а б в г д е ж з и к л о п с у ф х ц ч ш ъ ы ґ і ѕ џ"/>
     <set id="sub_out" value="₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₐ ₑ ₕ ᵢ ⱼ ₖ ₗ ₘ ₙ ₒ ₚ ᵣ ₛ ₜ ᵤ ᵥ ₓ ₔ ᵦ ᵪ ᵧ ᵨ ᵩ ₊ ₋ ₌ ₍ ₎ 𞁑 𞁒 𞁓 𞁔 𞁕 𞁖 𞁗 𞁘 𞁙 𞁚 𞁛 𞁜 𞁝 𞁞 𞁟 𞁠 𞁡 𞁢 𞁣 𞁤 𞁥 𞁦 𞁧 𞁨 𞁩 𞁪"/>
   </variables>
