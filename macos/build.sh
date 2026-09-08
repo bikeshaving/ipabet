@@ -61,8 +61,7 @@ cp ../www/src/gen/chart.pdf "$APP/Contents/Resources/chart.pdf"   # the input me
 # US option layer while IPAbet is active — wrong on-screen documentation. The
 # override that uses it is guarded (see InputController): if registration
 # didn't take, the layout is simply absent and typing is untouched.
-swiftc tools/genkeylayout.swift -o $TMP/ipabet-genkl -framework Carbon -framework Cocoa
-( cd "$(dirname "$0")" && $TMP/ipabet-genkl )
+# Checked in; regenerate with tools/genkeylayout.swift when the layout changes.
 cp IPAbet.keylayout "$APP/Contents/Resources/IPAbet.keylayout"
 install -m 755 uninstall.sh "$APP/Contents/Resources/uninstall.sh"
 mkdir -p "$APP/Contents/Resources/en.lproj"

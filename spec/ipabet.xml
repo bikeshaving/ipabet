@@ -635,6 +635,167 @@
         <ipabet:mark cp="032f" group="Syllabicity" shiftSense="twin"/>
       </ipabet:annotations>
       <ipabet:nonipa glyphs="ß þ ı ƙ ƴ ƒ"/>
+      <ipabet:names>
+        <ipabet:name cp="0268" text="LATIN SMALL LETTER I WITH STROKE"/>
+        <ipabet:name cp="0294" text="LATIN LETTER GLOTTAL STOP"/>
+        <ipabet:name cp="0295" text="LATIN LETTER PHARYNGEAL VOICED FRICATIVE"/>
+        <ipabet:name cp="027e" text="LATIN SMALL LETTER R WITH FISHHOOK"/>
+        <ipabet:name cp="0259" text="LATIN SMALL LETTER SCHWA"/>
+        <ipabet:name cp="0251" text="LATIN SMALL LETTER ALPHA"/>
+        <ipabet:name cp="0127" text="LATIN SMALL LETTER H WITH STROKE"/>
+        <ipabet:name cp="0061" text="LATIN SMALL LETTER A"/>
+        <ipabet:name cp="0062" text="LATIN SMALL LETTER B"/>
+        <ipabet:name cp="0063" text="LATIN SMALL LETTER C"/>
+        <ipabet:name cp="0064" text="LATIN SMALL LETTER D"/>
+        <ipabet:name cp="0065" text="LATIN SMALL LETTER E"/>
+        <ipabet:name cp="0066" text="LATIN SMALL LETTER F"/>
+        <ipabet:name cp="0067" text="LATIN SMALL LETTER G"/>
+        <ipabet:name cp="0068" text="LATIN SMALL LETTER H"/>
+        <ipabet:name cp="0069" text="LATIN SMALL LETTER I"/>
+        <ipabet:name cp="006a" text="LATIN SMALL LETTER J"/>
+        <ipabet:name cp="006b" text="LATIN SMALL LETTER K"/>
+        <ipabet:name cp="006c" text="LATIN SMALL LETTER L"/>
+        <ipabet:name cp="006d" text="LATIN SMALL LETTER M"/>
+        <ipabet:name cp="006e" text="LATIN SMALL LETTER N"/>
+        <ipabet:name cp="006f" text="LATIN SMALL LETTER O"/>
+        <ipabet:name cp="0070" text="LATIN SMALL LETTER P"/>
+        <ipabet:name cp="0071" text="LATIN SMALL LETTER Q"/>
+        <ipabet:name cp="0072" text="LATIN SMALL LETTER R"/>
+        <ipabet:name cp="0073" text="LATIN SMALL LETTER S"/>
+        <ipabet:name cp="0074" text="LATIN SMALL LETTER T"/>
+        <ipabet:name cp="0075" text="LATIN SMALL LETTER U"/>
+        <ipabet:name cp="0076" text="LATIN SMALL LETTER V"/>
+        <ipabet:name cp="0077" text="LATIN SMALL LETTER W"/>
+        <ipabet:name cp="0078" text="LATIN SMALL LETTER X"/>
+        <ipabet:name cp="0079" text="LATIN SMALL LETTER Y"/>
+        <ipabet:name cp="007a" text="LATIN SMALL LETTER Z"/>
+        <ipabet:name cp="0258" text="LATIN SMALL LETTER REVERSED E"/>
+        <ipabet:name cp="0289" text="LATIN SMALL LETTER U BAR"/>
+        <ipabet:name cp="02a1" text="LATIN LETTER GLOTTAL STOP WITH STROKE"/>
+        <ipabet:name cp="02a2" text="LATIN LETTER REVERSED GLOTTAL STOP WITH STROKE"/>
+        <ipabet:name cp="027a" text="LATIN SMALL LETTER TURNED R WITH LONG LEG"/>
+        <ipabet:name cp="027d" text="LATIN SMALL LETTER R WITH TAIL"/>
+        <ipabet:name cp="2c71" text="LATIN SMALL LETTER V WITH RIGHT HOOK"/>
+        <ipabet:name cp="025c" text="LATIN SMALL LETTER REVERSED OPEN E"/>
+        <ipabet:name cp="025e" text="LATIN SMALL LETTER CLOSED REVERSED OPEN E"/>
+        <ipabet:name cp="029c" text="LATIN LETTER SMALL CAPITAL H"/>
+        <ipabet:name cp="00e6" text="LATIN SMALL LETTER AE"/>
+        <ipabet:name cp="028c" text="LATIN SMALL LETTER TURNED V"/>
+        <ipabet:name cp="0250" text="LATIN SMALL LETTER TURNED A"/>
+        <ipabet:name cp="0276" text="LATIN LETTER SMALL CAPITAL OE"/>
+        <ipabet:name cp="00e4" text="LATIN SMALL LETTER A WITH DIAERESIS"/>
+        <ipabet:name cp="0253" text="LATIN SMALL LETTER B WITH HOOK"/>
+        <ipabet:name cp="03b2" text="GREEK SMALL LETTER BETA"/>
+        <ipabet:name cp="00e7" text="LATIN SMALL LETTER C WITH CEDILLA"/>
+        <ipabet:name cp="0257" text="LATIN SMALL LETTER D WITH HOOK"/>
+        <ipabet:name cp="00f0" text="LATIN SMALL LETTER ETH"/>
+        <ipabet:name cp="025f" text="LATIN SMALL LETTER DOTLESS J WITH STROKE"/>
+        <ipabet:name cp="0256" text="LATIN SMALL LETTER D WITH TAIL"/>
+        <ipabet:name cp="025b" text="LATIN SMALL LETTER OPEN E"/>
+        <ipabet:name cp="00f8" text="LATIN SMALL LETTER O WITH STROKE"/>
+        <ipabet:name cp="0260" text="LATIN SMALL LETTER G WITH HOOK"/>
+        <ipabet:name cp="0263" text="LATIN SMALL LETTER GAMMA"/>
+        <ipabet:name cp="029d" text="LATIN SMALL LETTER J WITH CROSSED-TAIL"/>
+        <ipabet:name cp="0262" text="LATIN LETTER SMALL CAPITAL G"/>
+        <ipabet:name cp="0261" text="LATIN SMALL LETTER SCRIPT G (the chart's single-story ɡ, exact codepoint)"/>
+        <ipabet:name cp="0266" text="LATIN SMALL LETTER H WITH HOOK"/>
+        <ipabet:name cp="026a" text="LATIN LETTER SMALL CAPITAL I"/>
+        <ipabet:name cp="0284" text="LATIN SMALL LETTER DOTLESS J WITH STROKE AND HOOK"/>
+        <ipabet:name cp="029f" text="LATIN LETTER SMALL CAPITAL L"/>
+        <ipabet:name cp="028e" text="LATIN SMALL LETTER TURNED Y"/>
+        <ipabet:name cp="026d" text="LATIN SMALL LETTER L WITH RETROFLEX HOOK"/>
+        <ipabet:name cp="0271" text="LATIN SMALL LETTER M WITH HOOK"/>
+        <ipabet:name cp="014b" text="LATIN SMALL LETTER ENG"/>
+        <ipabet:name cp="0272" text="LATIN SMALL LETTER N WITH LEFT HOOK"/>
+        <ipabet:name cp="0274" text="LATIN LETTER SMALL CAPITAL N"/>
+        <ipabet:name cp="0273" text="LATIN SMALL LETTER N WITH RETROFLEX HOOK"/>
+        <ipabet:name cp="0252" text="LATIN SMALL LETTER TURNED ALPHA"/>
+        <ipabet:name cp="0153" text="LATIN SMALL LIGATURE OE"/>
+        <ipabet:name cp="0254" text="LATIN SMALL LETTER OPEN O"/>
+        <ipabet:name cp="0275" text="LATIN SMALL LETTER BARRED O"/>
+        <ipabet:name cp="0264" text="LATIN SMALL LETTER RAMS HORN"/>
+        <ipabet:name cp="0278" text="LATIN SMALL LETTER PHI"/>
+        <ipabet:name cp="03c7" text="GREEK SMALL LETTER CHI"/>
+        <ipabet:name cp="0267" text="LATIN SMALL LETTER HENG WITH HOOK"/>
+        <ipabet:name cp="0299" text="LATIN LETTER SMALL CAPITAL B"/>
+        <ipabet:name cp="0280" text="LATIN LETTER SMALL CAPITAL R"/>
+        <ipabet:name cp="0279" text="LATIN SMALL LETTER TURNED R"/>
+        <ipabet:name cp="0281" text="LATIN LETTER SMALL CAPITAL INVERTED R"/>
+        <ipabet:name cp="027b" text="LATIN SMALL LETTER TURNED R WITH HOOK"/>
+        <ipabet:name cp="0283" text="LATIN SMALL LETTER ESH"/>
+        <ipabet:name cp="0255" text="LATIN SMALL LETTER C WITH CURL"/>
+        <ipabet:name cp="026c" text="LATIN SMALL LETTER L WITH BELT"/>
+        <ipabet:name cp="0282" text="LATIN SMALL LETTER S WITH HOOK"/>
+        <ipabet:name cp="03b8" text="GREEK SMALL LETTER THETA"/>
+        <ipabet:name cp="0288" text="LATIN SMALL LETTER T WITH RETROFLEX HOOK"/>
+        <ipabet:name cp="028a" text="LATIN SMALL LETTER UPSILON"/>
+        <ipabet:name cp="026f" text="LATIN SMALL LETTER TURNED M"/>
+        <ipabet:name cp="028b" text="LATIN SMALL LETTER V WITH HOOK"/>
+        <ipabet:name cp="028d" text="LATIN SMALL LETTER TURNED W"/>
+        <ipabet:name cp="0265" text="LATIN SMALL LETTER TURNED H"/>
+        <ipabet:name cp="0270" text="LATIN SMALL LETTER TURNED M WITH LONG LEG"/>
+        <ipabet:name cp="028f" text="LATIN LETTER SMALL CAPITAL Y"/>
+        <ipabet:name cp="0292" text="LATIN SMALL LETTER EZH"/>
+        <ipabet:name cp="0291" text="LATIN SMALL LETTER Z WITH CURL"/>
+        <ipabet:name cp="026e" text="LATIN SMALL LETTER LEZH"/>
+        <ipabet:name cp="0290" text="LATIN SMALL LETTER Z WITH RETROFLEX HOOK"/>
+        <ipabet:name cp="0298" text="LATIN LETTER BILABIAL CLICK"/>
+        <ipabet:name cp="01c0" text="LATIN LETTER DENTAL CLICK"/>
+        <ipabet:name cp="01c3" text="LATIN LETTER RETROFLEX CLICK"/>
+        <ipabet:name cp="01c2" text="LATIN LETTER ALVEOLAR CLICK"/>
+        <ipabet:name cp="01c1" text="LATIN LETTER LATERAL CLICK"/>
+        <ipabet:name cp="029b" text="LATIN LETTER SMALL CAPITAL G WITH HOOK"/>
+        <ipabet:name cp="00df" text="LATIN SMALL LETTER SHARP S"/>
+        <ipabet:name cp="026b" text="LATIN SMALL LETTER L WITH MIDDLE TILDE"/>
+        <ipabet:name cp="00fe" text="LATIN SMALL LETTER THORN (Icelandic)"/>
+        <ipabet:name cp="0131" text="LATIN SMALL LETTER DOTLESS I (Turkish, Azeri, Kazakh)"/>
+        <ipabet:name cp="0199" text="LATIN SMALL LETTER K WITH HOOK (Hausa)"/>
+        <ipabet:name cp="01b4" text="LATIN SMALL LETTER Y WITH HOOK (Fula)"/>
+        <ipabet:name cp="0192" text="LATIN SMALL LETTER F WITH HOOK (Ewe)"/>
+        <ipabet:name cp="0301" text="COMBINING ACUTE ACCENT"/>
+        <ipabet:name cp="0300" text="COMBINING GRAVE ACCENT"/>
+        <ipabet:name cp="0302" text="COMBINING CIRCUMFLEX ACCENT"/>
+        <ipabet:name cp="030c" text="COMBINING CARON"/>
+        <ipabet:name cp="0304" text="COMBINING MACRON"/>
+        <ipabet:name cp="0303" text="COMBINING TILDE (nasalized; press again: ͊ denasal → ͋ nasal escape → ͌ velopharyngeal friction — the nasal-port dimension)"/>
+        <ipabet:name cp="0308" text="COMBINING DIAERESIS"/>
+        <ipabet:name cp="0306" text="COMBINING BREVE (extra-short; ⇧ → ̮ breve below — DIN Arabic ḫ)"/>
+        <ipabet:name cp="030a" text="COMBINING RING ABOVE"/>
+        <ipabet:name cp="0327" text="COMBINING CEDILLA (⇧ → ̡ palatalized hook — the cedilla's sibling curl; the palatal hook on the palatal letter, Slavicist t̡ d̡)"/>
+        <ipabet:name cp="0326" text="COMBINING COMMA BELOW"/>
+        <ipabet:name cp="0328" text="COMBINING OGONEK (the Polish nasal hook; ⇧ → ̐ candrabindu, Indic nasalization — the nasal tenants on the nasal letter)"/>
+        <ipabet:name cp="032a" text="COMBINING BRIDGE BELOW"/>
+        <ipabet:name cp="033a" text="COMBINING INVERTED BRIDGE BELOW"/>
+        <ipabet:name cp="0320" text="COMBINING MINUS SIGN BELOW"/>
+        <ipabet:name cp="0335" text="COMBINING SHORT STROKE OVERLAY (⇧ → ̴ tilde overlay, velarized-or-pharyngealized; ¥ — y is the world's best-known stroked letter — is a memory hook, not a claim)"/>
+        <ipabet:name cp="031e" text="COMBINING DOWN TACK BELOW"/>
+        <ipabet:name cp="031c" text="COMBINING LEFT HALF RING BELOW (less rounded; press again: ͍ labial spreading — the un-rounding ladder. ⇧ → ̹ more rounded; press again: ͎ whistled — rounding taken to its endpoint)"/>
+        <ipabet:name cp="0329" text="COMBINING VERTICAL LINE BELOW"/>
+        <ipabet:name cp="0349" text="COMBINING LEFT ANGLE BELOW (weak articulation; ⇧ → ͈ strong/fortis, the Korean tense mark — F for force)"/>
+        <ipabet:name cp="033c" text="COMBINING SEAGULL BELOW (linguolabial — tongue to lips; ⇧ → ‖ the major intonation-group double bar, its single-bar partner | the native ⇧\ key)"/>
+        <ipabet:name cp="0361" text="COMBINING DOUBLE INVERTED BREVE"/>
+        <ipabet:name cp="033d" text="COMBINING X ABOVE"/>
+        <ipabet:name cp="02c8" text="MODIFIER LETTER VERTICAL LINE"/>
+        <ipabet:name cp="02d0" text="MODIFIER LETTER TRIANGULAR COLON"/>
+        <ipabet:name cp="02bb" text="MODIFIER LETTER TURNED COMMA (ʻokina — Hawaiian, Uzbek oʻ; ⇧ → ʼ ejective. Opening form unshifted, as on every quote key)"/>
+        <ipabet:name cp="02de" text="MODIFIER LETTER RHOTIC HOOK"/>
+        <ipabet:name cp="2198" text="SOUTH EAST ARROW"/>
+        <ipabet:name cp="2193" text="DOWNWARDS ARROW (ingressive airflow, extIPA; ⇧ → ↑ egressive — the digits' arrow run: step 6, contour 7, airflow 8)"/>
+        <ipabet:name cp="a71c" text="MODIFIER LETTER RAISED DOWN ARROW"/>
+        <ipabet:name cp="02e9" text="MODIFIER LETTER EXTRA-LOW TONE BAR"/>
+        <ipabet:name cp="02e8" text="MODIFIER LETTER LOW TONE BAR"/>
+        <ipabet:name cp="02e7" text="MODIFIER LETTER MID TONE BAR"/>
+        <ipabet:name cp="02e6" text="MODIFIER LETTER HIGH TONE BAR (⇧ → ͇ alveolar, extIPA — the alveolar mark on the alveolar-tap digit)"/>
+        <ipabet:name cp="02e5" text="MODIFIER LETTER EXTRA-HIGH TONE BAR"/>
+        <ipabet:name cp="031a" text="COMBINING LEFT ANGLE ABOVE (no audible release; ⇧ → ͢ the sliding-articulation tie, extIPA)"/>
+        <ipabet:name cp="0319" text="COMBINING RIGHT TACK BELOW"/>
+        <ipabet:name cp="0307" text="COMBINING DOT ABOVE (pressed again on its own pending dot it commits · — the interpunct, Catalan's punt volat: l ⌥. ⌥. l → l·l)"/>
+        <ipabet:name cp="0309" text="COMBINING HOOK ABOVE (hỏi)"/>
+        <ipabet:name cp="208d" text="SUBSCRIPT LEFT PARENTHESIS (pre-voicing; ⇧ → ₎ post-voicing)"/>
+        <ipabet:name cp="02b9" text="MODIFIER LETTER PRIME (Cyrillic romanization's soft sign — Gorʹkij; ⇧ → ʺ double prime, the hard sign)"/>
+        <ipabet:name cp="27e8" text="MATHEMATICAL LEFT ANGLE BRACKET (the grapheme brackets — /phoneme/ [phone] ⟨grapheme⟩; opening unshifted, per the quote law. « » are the French locale's primary quotes)"/>
+        <ipabet:name cp="032f" text="COMBINING INVERTED BREVE BELOW (non-syllabic — the diphthong glide, a vowel mark on the vowel key; ⇧ → ̑ the Slavic long-falling accent)"/>
+      </ipabet:names>
     </ipabet:engine>
   </special>
 </keyboard3>
