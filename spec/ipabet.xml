@@ -507,6 +507,11 @@
       <transform from="\m{macron-grave}(.)" to="$1\u{1DC6}"/>  <!-- ◌᷆ -->
       <transform from="\m{acute-macron}(.)" to="$1\u{1DC7}"/>  <!-- ◌᷇ -->
       <transform from="\m{acute-grave-acute}(.)" to="$1\u{1DC9}"/>  <!-- ◌᷉ -->
+      <transform from="\m{denasal}(.)" to="$1\u{034A}"/>  <!-- ◌͊ -->
+      <transform from="\m{nasal-escape}(.)" to="$1\u{034B}"/>  <!-- ◌͋ -->
+      <transform from="\m{velopharyngeal}(.)" to="$1\u{034C}"/>  <!-- ◌͌ -->
+      <transform from="\m{labial-spreading}(.)" to="$1\u{034D}"/>  <!-- ◌͍ -->
+      <transform from="\m{whistled}(.)" to="$1\u{034E}"/>  <!-- ◌͎ -->
       <!-- superscripts — ⌥z arms the raise, then a base -->
       <transform from="\m{raise}($[sup_in])" to="$[1:sup_out]"/>
       <!-- subscripts — ⌥⇧z arms the lower, then a base -->
@@ -516,4 +521,37 @@
       <transform from="ɜ\m{rhotic}" to="ɝ"/>
     </transformGroup>
   </transforms>
+
+  <!-- Engine data standard LDML has no slot for. Vendor namespace: the DTD -->
+  <!-- cannot see it (extensions never validate against a DTD), the loader reads it. -->
+  <special>
+    <ipabet:engine xmlns:ipabet="https://ipabet.org/ldml">
+      <ipabet:cycles>
+        <ipabet:cycle marker="tilde" family="tilde denasal nasal-escape velopharyngeal"/>
+        <ipabet:cycle marker="left-half-ring-below" family="left-half-ring-below labial-spreading"/>
+        <ipabet:cycle marker="right-half-ring-below" family="right-half-ring-below whistled"/>
+      </ipabet:cycles>
+      <ipabet:exclusive>
+        <ipabet:pair a="acute" b="double-acute"/>
+        <ipabet:pair a="grave" b="double-grave"/>
+        <ipabet:pair a="ring-above" b="ring-below"/>
+        <ipabet:pair a="inverted-bridge-below" b="square-below"/>
+        <ipabet:pair a="minus-below" b="plus-below"/>
+        <ipabet:pair a="down-tack-below" b="up-tack-below"/>
+        <ipabet:pair a="left-half-ring-below" b="right-half-ring-below"/>
+        <ipabet:pair a="vertical-line-below" b="vertical-line-above"/>
+        <ipabet:pair a="left-angle-below" b="double-vertical-line-below"/>
+        <ipabet:pair a="right-tack-below" b="left-tack-below"/>
+      </ipabet:exclusive>
+      <ipabet:quotes default="en">
+        <ipabet:locale id="en" open1="“" close1="”" open2="‘" close2="’"/>
+        <ipabet:locale id="de" open1="„" close1="“" open2="‚" close2="‘"/>
+        <ipabet:locale id="fr" open1="«" close1="»" open2="‹" close2="›"/>
+        <ipabet:locale id="ch" open1="»" close1="«" open2="›" close2="‹"/>
+        <ipabet:locale id="pl" open1="„" close1="”" open2="«" close2="»"/>
+        <ipabet:locale id="ru" open1="«" close1="»" open2="„" close2="“"/>
+        <ipabet:locale id="sv" open1="”" close1="”" open2="’" close2="’"/>
+      </ipabet:quotes>
+    </ipabet:engine>
+  </special>
 </keyboard3>

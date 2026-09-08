@@ -27,6 +27,7 @@ const MARKER_NAME = {
   '0353': 'x-below', '031a': 'no-audible-release', '0362': 'double-arrow-below',
   '0319': 'right-tack-below', '0318': 'left-tack-below', '0307': 'dot-above', '0323': 'dot-below', '0309': 'hook-above',
   '032f': 'inverted-breve-below', '0311': 'inverted-breve',
+  '034a': 'denasal', '034b': 'nasal-escape', '034c': 'velopharyngeal', '034d': 'labial-spreading', '034e': 'whistled',
   '1dc4': 'macron-acute', '1dc5': 'grave-macron', '1dc8': 'grave-acute-grave', '1dc6': 'macron-grave', '1dc7': 'acute-macron', '1dc9': 'acute-grave-acute',
 };
 // IPA function names for the spacing marks (they output a literal char, never a
@@ -93,6 +94,9 @@ section('dead keys — ⌥<mark>, then the next base absorbs it (NFC composes)')
 const deadkeyChars = new Set();
 for (const m of spec.marks) { if (m.type !== 'combining') continue; deadkeyChars.add(m.mark); if (m.double && !m.doubleSpacing) deadkeyChars.add(m.double); }
 for (const [, atom] of CONTOURS) deadkeyChars.add(atom);
+// cycle-only marks (denasal, whistled …) are reached by re-pressing, never on a
+// key, but a base must still absorb them — so they need dead-key rules too.
+for (const m of spec.marks) { for (const c of (m.cycle || [])) deadkeyChars.add(c); for (const c of (m.doubleCycle || [])) deadkeyChars.add(c); }
 for (const mk of deadkeyChars) push(`\\m{${mname(mk)}}(.)`, `$1${U(mk)}`, `◌${mk}`);   // ◌ = U+25CC, so the mark shows without hanging off the comment
 
 // 5) super/subscripts — parallel <set>s (large, mechanical)
@@ -117,6 +121,17 @@ for (const m of spec.marks) {
   if (m.double && !m.doubleSpacing && m.doubleClone) displays.push([mname(m.double), m.doubleClone]);
 }
 displays.push(['raise', '⁻'], ['lower', '₋']);
+
+// The three pieces standard LDML can't hold — cycles, exclusive twins, and the
+// non-default quote locales — carried as vendor <special> data the engine loader
+// reads. (The engine keeps its proven cycle/exclusive/quote code; this is only data.)
+const cycles: [string, string[]][] = [];
+for (const m of spec.marks) {
+  if (m.cycle?.length) cycles.push([mname(m.mark), [m.mark, ...m.cycle].map(mname)]);
+  if (m.doubleCycle?.length) cycles.push([mname(m.double), [m.double, ...m.doubleCycle].map(mname)]);
+}
+const exclusive: [string, string][] = [];
+for (const m of spec.marks) if (m.exclusive && m.double) exclusive.push([mname(m.mark), mname(m.double)]);
 
 // ---- keys + option layers ----------------------------------------------
 const keyEls = [];
@@ -191,6 +206,22 @@ T.forEach(([from, to, tail], i) => {
 });
 o.push('    </transformGroup>');
 o.push('  </transforms>');
+o.push('');
+o.push('  <!-- Engine data standard LDML has no slot for. Vendor namespace: the DTD -->');
+o.push('  <!-- cannot see it (extensions never validate against a DTD), the loader reads it. -->');
+o.push('  <special>');
+o.push('    <ipabet:engine xmlns:ipabet="https://ipabet.org/ldml">');
+o.push('      <ipabet:cycles>');
+for (const [marker, family] of cycles) o.push(`        <ipabet:cycle marker="${marker}" family="${family.join(' ')}"/>`);
+o.push('      </ipabet:cycles>');
+o.push('      <ipabet:exclusive>');
+for (const [a, b] of exclusive) o.push(`        <ipabet:pair a="${a}" b="${b}"/>`);
+o.push('      </ipabet:exclusive>');
+o.push(`      <ipabet:quotes default="${spec.quotes.default}">`);
+for (const [loc, q] of Object.entries(spec.quotes.locales)) o.push(`        <ipabet:locale id="${loc}" open1="${X(q[0])}" close1="${X(q[1])}" open2="${X(q[2])}" close2="${X(q[3])}"/>`);
+o.push('      </ipabet:quotes>');
+o.push('    </ipabet:engine>');
+o.push('  </special>');
 o.push('</keyboard3>');
 o.push('');
 fs.writeFileSync(new URL('../ipabet.xml', import.meta.url), o.join('\n'));
