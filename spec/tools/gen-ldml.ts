@@ -40,6 +40,11 @@ const IPA_NAME = {
   '02b9': 'prime', '02ba': 'double-prime', '27e8': 'grapheme-open', '27e9': 'grapheme-close',
 };
 const mname = c => MARKER_NAME[hex(c)] || IPA_NAME[hex(c)] || 'm' + hex(c);
+// key ids must be NMTOKENs — punctuation gets a name; letters/digits pass through
+const PUNCT = { '-': 'hyphen', '=': 'equal', '[': 'lbracket', ']': 'rbracket', '\\': 'backslash', ';': 'semicolon', "'": 'apostrophe', ',': 'comma', '.': 'period', '/': 'slash', '`': 'backquote' };
+const kid = c => /[a-z0-9]/i.test(c) ? c : (PUNCT[c] || 'k' + hex(c));
+// hardware scan codes (PC set 1) for the four rows, so <layers formId> resolves
+const SCAN = ['02 03 04 05 06 07 08 09 0A 0B 0C 0D', '10 11 12 13 14 15 16 17 18 19 1A 1B 2B', '1E 1F 20 21 22 23 24 25 26 27 28', '2C 2D 2E 2F 30 31 32 33 34 35'];
 const opLabel = op => op === '%' ? '⇧5' : `⇧${op}`;
 
 const glyphOf = {};
@@ -108,7 +113,7 @@ push(`ə\\m{rhotic}`, 'ɚ'); push(`ɜ\\m{rhotic}`, 'ɝ');
 const keyEls = [];
 const optLayer = {}, optShiftLayer = {};
 const addKey = (id, output) => keyEls.push(`    <key id="${id}" output="${X(output)}"/>`);
-for (const e of spec.letters) if ([...e.key].length === 1) addKey('b_' + e.key, e.glyph);
+for (const e of spec.letters) if ([...e.key].length === 1) addKey('b_' + kid(e.key), e.glyph);
 for (const m of spec.marks) {
   const c = m.opt;
   if (m.type === 'combining') {
@@ -129,8 +134,8 @@ for (const [d, ch] of Object.entries(spec.optShift)) { if (d === 'about') contin
 
 const rows = ['1234567890-=', 'qwertyuiop[]\\', "asdfghjkl;'", 'zxcvbnm,./'];
 const shiftOf = { '`': '~', 1: '!', 2: '@', 3: '#', 4: '$', 5: '%', 6: '^', 7: '&', 8: '*', 9: '(', 0: ')', '-': '_', '=': '+', '[': '{', ']': '}', '\\': '|', ';': ':', "'": '"', ',': '<', '.': '>', '/': '?' };
-for (const r of rows) for (const c of r) if (!keyEls.some(k => k.includes(`id="b_${c}"`))) addKey('b_' + c, c);
-const shiftIds = rows.map(r => [...r].map(c => { const id = 'sh_' + c; addKey(id, shiftOf[c] || c.toUpperCase()); return id; }));
+for (const r of rows) for (const c of r) if (!keyEls.some(k => k.includes(`id="b_${kid(c)}"`))) addKey('b_' + kid(c), c);
+const shiftIds = rows.map(r => [...r].map(c => { const id = 'sh_' + kid(c); addKey(id, shiftOf[c] || c.toUpperCase()); return id; }));
 addKey('gap', '');
 const rowKeys = (r, map) => [...r].map(c => map[c] || 'gap').join(' ');
 
@@ -141,22 +146,28 @@ o.push('<!-- IPAbet keyboard — CLDR LDML (UTS #35 part 7). The layout spec.');
 o.push('     Seeded from spec/ipabet.json; hand-edited from here. -->');
 o.push('<keyboard3 xmlns="https://schemas.unicode.org/cldr/45/keyboard3" locale="und" conformsTo="45">');
 o.push('  <info name="IPAbet" indicator="IPA"/>');
-o.push('  <settings normalization="NFC"/>');
-o.push('');
-o.push('  <variables>');
-for (const s of sets) { if (s.note) o.push(`    <!-- ${cmt(s.note)} -->`); o.push(`    <set id="${s.id}" value="${X(s.value.join(' '))}"/>`); }
-o.push('  </variables>');
+o.push('  <!-- output is NFC by default; a <settings normalization="disabled"> would opt out -->');
 o.push('');
 o.push('  <keys>');
 o.push(keyEls.join('\n'));
 o.push('  </keys>');
 o.push('');
-o.push('  <layers form="hardware">');
-o.push('    <layer modifiers="none">'); for (const r of rows) o.push(`      <row keys="${[...r].map(c => 'b_' + c).join(' ')}"/>`); o.push('    </layer>');
+o.push('  <forms>');
+o.push('    <form id="us">');
+for (const codes of SCAN) o.push(`      <scanCodes codes="${codes}"/>`);
+o.push('    </form>');
+o.push('  </forms>');
+o.push('');
+o.push('  <layers formId="us">');
+o.push('    <layer modifiers="none">'); for (const r of rows) o.push(`      <row keys="${[...r].map(c => 'b_' + kid(c)).join(' ')}"/>`); o.push('    </layer>');
 o.push('    <layer modifiers="shift">'); rows.forEach((r, i) => o.push(`      <row keys="${shiftIds[i].join(' ')}"/>`)); o.push('    </layer>');
 o.push('    <layer modifiers="altR">'); for (const r of rows) o.push(`      <row keys="${rowKeys(r, optLayer)}"/>`); o.push('    </layer>');
 o.push('    <layer modifiers="altR shift">'); for (const r of rows) o.push(`      <row keys="${rowKeys(r, optShiftLayer)}"/>`); o.push('    </layer>');
 o.push('  </layers>');
+o.push('');
+o.push('  <variables>');
+for (const s of sets) { if (s.note) o.push(`    <!-- ${cmt(s.note)} -->`); o.push(`    <set id="${s.id}" value="${X(s.value.join(' '))}"/>`); }
+o.push('  </variables>');
 o.push('');
 o.push('  <transforms type="simple">');
 o.push('    <transformGroup>');
