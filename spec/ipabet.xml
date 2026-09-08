@@ -5,6 +5,46 @@
   <info name="IPAbet" indicator="IPA"/>
   <!-- output is NFC by default; a <settings normalization="disabled"> would opt out -->
 
+  <!-- dead-key preview: the spacing form a pending mark shows before a base absorbs it -->
+  <displays>
+    <display output="\m{acute}" display="´"/>
+    <display output="\m{double-acute}" display="˝"/>
+    <display output="\m{grave}" display="`"/>
+    <display output="\m{double-grave}" display="˵"/>
+    <display output="\m{circumflex}" display="ˆ"/>
+    <display output="\m{caron}" display="ˇ"/>
+    <display output="\m{caron-below}" display="ˬ"/>
+    <display output="\m{macron}" display="¯"/>
+    <display output="\m{macron-below}" display="ˍ"/>
+    <display output="\m{tilde}" display="˜"/>
+    <display output="\m{tilde-below}" display="˷"/>
+    <display output="\m{diaeresis}" display="¨"/>
+    <display output="\m{breve}" display="˘"/>
+    <display output="\m{ring-above}" display="˚"/>
+    <display output="\m{ring-below}" display="˳"/>
+    <display output="\m{cedilla}" display="¸"/>
+    <display output="\m{comma-below}" display="ʻ"/>
+    <display output="\m{ogonek}" display="˛"/>
+    <display output="\m{minus-below}" display="˗"/>
+    <display output="\m{plus-below}" display="˖"/>
+    <display output="\m{stroke-overlay}" display="-"/>
+    <display output="\m{tilde-overlay}" display="˜"/>
+    <display output="\m{down-tack-below}" display="˕"/>
+    <display output="\m{up-tack-below}" display="˔"/>
+    <display output="\m{left-half-ring-below}" display="˓"/>
+    <display output="\m{right-half-ring-below}" display="˒"/>
+    <display output="\m{vertical-line-below}" display="ˌ"/>
+    <display output="\m{vertical-line-above}" display="ˈ"/>
+    <display output="\m{x-above}" display="˟"/>
+    <display output="\m{no-audible-release}" display="˺"/>
+    <display output="\m{right-tack-below}" display="˲"/>
+    <display output="\m{left-tack-below}" display="˱"/>
+    <display output="\m{dot-above}" display="˙"/>
+    <display output="\m{inverted-breve-below}" display="˯"/>
+    <display output="\m{raise}" display="⁻"/>
+    <display output="\m{lower}" display="₋"/>
+  </displays>
+
   <keys>
     <key id="b_a" output="a"/>
     <key id="b_b" output="b"/>

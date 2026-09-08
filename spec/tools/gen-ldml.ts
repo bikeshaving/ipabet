@@ -109,6 +109,15 @@ push(`\\m{lower}($[sub_in])`, `$[1:sub_out]`);
 section('rhotic hook — ⌥r fuses onto ə/ɜ');
 push(`ə\\m{rhotic}`, 'ɚ'); push(`ɜ\\m{rhotic}`, 'ɝ');
 
+// clone forms -> <displays>: what a pending mark shows before a base absorbs it
+const displays: [string, string][] = [];
+for (const m of spec.marks) {
+  if (m.type !== 'combining') continue;
+  if (m.clone) displays.push([mname(m.mark), m.clone]);
+  if (m.double && !m.doubleSpacing && m.doubleClone) displays.push([mname(m.double), m.doubleClone]);
+}
+displays.push(['raise', '⁻'], ['lower', '₋']);
+
 // ---- keys + option layers ----------------------------------------------
 const keyEls = [];
 const optLayer = {}, optShiftLayer = {};
@@ -147,6 +156,11 @@ o.push('     Seeded from spec/ipabet.json; hand-edited from here. -->');
 o.push('<keyboard3 xmlns="https://schemas.unicode.org/cldr/45/keyboard3" locale="und" conformsTo="45">');
 o.push('  <info name="IPAbet" indicator="IPA"/>');
 o.push('  <!-- output is NFC by default; a <settings normalization="disabled"> would opt out -->');
+o.push('');
+o.push('  <!-- dead-key preview: the spacing form a pending mark shows before a base absorbs it -->');
+o.push('  <displays>');
+for (const [name, disp] of displays) o.push(`    <display output="\\m{${name}}" display="${X(disp)}"/>`);
+o.push('  </displays>');
 o.push('');
 o.push('  <keys>');
 o.push(keyEls.join('\n'));
