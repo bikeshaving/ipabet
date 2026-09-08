@@ -88,9 +88,11 @@ fn load_spec() -> String {
 }
 
 fn replay_vector_file(path: &str) {
-    let spec_json = load_spec();
-    let mut engine = Engine::new(&spec_json).expect("parse spec");
+    let mut engine = Engine::new(&load_spec()).expect("parse spec");
+    replay_all(&mut engine, path);
+}
 
+fn replay_all(engine: &mut Engine, path: &str) {
     let vectors_json = std::fs::read_to_string(path).expect("read vector file");
     let vectors: Vec<Vector> = serde_json::from_str(&vectors_json).expect("parse vectors");
 
@@ -104,7 +106,7 @@ fn replay_vector_file(path: &str) {
             .iter()
             .map(|k| format!("{}{}{}{}", k.key, if k.shift { "+shift" } else { "" }, if k.option { "+opt" } else { "" }, if k.control { "+ctrl" } else { "" }))
             .collect();
-        let got = replay(&engine, v.keys, &v.initial);
+        let got = replay(engine, v.keys, &v.initial);
         if got == v.expected {
             pass += 1;
         } else {
@@ -128,6 +130,16 @@ fn replay_vector_file(path: &str) {
 #[test]
 fn parity_vectors() {
     replay_vector_file(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"));
+}
+
+/// The same corpus, but with the engine built from the LDML source via the Rust
+/// loader — proving spec::parse_ldml reconstructs the spec faithfully.
+#[test]
+fn parity_vectors_from_ldml() {
+    let xml = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.xml"))
+        .expect("read spec/ipabet.xml");
+    let mut engine = Engine::from_ldml(&xml).expect("parse ldml");
+    replay_all(&mut engine, concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"));
 }
 
 /// The fuzzed vectors: seeded-random documents (emoji, Hangul, astral

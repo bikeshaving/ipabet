@@ -120,8 +120,15 @@ fn is_letter(c: char) -> bool {
 
 impl Engine {
     pub fn new(spec_json: &str) -> Result<Engine, serde_json::Error> {
-        let spec: Spec = serde_json::from_str(spec_json)?;
+        Engine::from_spec(serde_json::from_str(spec_json)?)
+    }
 
+    /// Build from the LDML source (spec/ipabet.xml) instead of the bespoke JSON.
+    pub fn from_ldml(xml: &str) -> Result<Engine, String> {
+        Engine::from_spec(spec::parse_ldml(xml)?).map_err(|e| e.to_string())
+    }
+
+    fn from_spec(spec: Spec) -> Result<Engine, serde_json::Error> {
         let mut letters = HashMap::new();
         for e in &spec.letters {
             // An empty key or glyph is a malformed spec that would later panic
