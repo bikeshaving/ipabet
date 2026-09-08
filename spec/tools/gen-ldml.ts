@@ -225,6 +225,25 @@ o.push('      </ipabet:exclusive>');
 o.push(`      <ipabet:quotes default="${spec.quotes.default}">`);
 for (const [loc, q] of Object.entries(spec.quotes.locales)) o.push(`        <ipabet:locale id="${loc}" open1="${X(q[0])}" close1="${X(q[1])}" open2="${X(q[2])}" close2="${X(q[3])}"/>`);
 o.push('      </ipabet:quotes>');
+// Editorial data the /keys page renders — not layout, not UCD-derivable.
+o.push('      <ipabet:modifiers>');
+for (const [k, v] of Object.entries(spec.modifiers)) o.push(`        <ipabet:modifier key="${X(k)}" meaning="${X(v)}"/>`);
+o.push('      </ipabet:modifiers>');
+o.push('      <ipabet:vocabulary>');
+const emitVocab = (cat, obj) => { for (const [id, v] of Object.entries(obj)) typeof v === 'string' ? o.push(`        <ipabet:term cat="${X(cat)}" id="${X(id)}" note="${X(v)}"/>`) : emitVocab(id, v); };
+emitVocab('classes', spec.classes);
+o.push('      </ipabet:vocabulary>');
+o.push('      <ipabet:annotations>');
+for (const m of spec.marks) {
+  const a = [`cp="${hex(m.mark)}"`, `group="${X(m.group)}"`];
+  if (m.shiftSense) a.push(`shiftSense="${X(m.shiftSense)}"`);
+  if (m.ipa === false) a.push('ipa="false"');
+  if (m.beyond) a.push(`beyond="${X(m.beyond)}"`);
+  if (m.arbitraryKey) a.push('arbitraryKey="true"');
+  o.push(`        <ipabet:mark ${a.join(' ')}/>`);
+}
+o.push('      </ipabet:annotations>');
+o.push(`      <ipabet:nonipa glyphs="${X(spec.letters.filter(e => e.ipa === false).map(e => e.glyph).join(' '))}"/>`);
 o.push('    </ipabet:engine>');
 o.push('  </special>');
 o.push('</keyboard3>');

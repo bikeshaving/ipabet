@@ -555,6 +555,86 @@
         <ipabet:locale id="ru" open1="«" close1="»" open2="„" close2="“"/>
         <ipabet:locale id="sv" open1="”" close1="”" open2="’" close2="’"/>
       </ipabet:quotes>
+      <ipabet:modifiers>
+        <ipabet:modifier key="5" meaning="pull toward the center — the ə-neighborhood (e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ); ə itself is the 5 base's default, 5⇧H"/>
+        <ipabet:modifier key="H" meaning="the h-digraph — plosives spirantize (tH→θ, pH→ɸ), sibilants hush (sH→ʃ), vowels lax (iH→ɪ, uH→ʊ); for a, back (aH→ɑ)"/>
+        <ipabet:modifier key="R" meaning="retroflex (coronals)"/>
+        <ipabet:modifier key="J" meaning="palatalize (consonants only)"/>
+        <ipabet:modifier key="W" meaning="labialize / round-flip"/>
+        <ipabet:modifier key="L" meaning="lateralize"/>
+        <ipabet:modifier key="G" meaning="dorsal deepening — velar/uvular place"/>
+        <ipabet:modifier key="Q" meaning="guttural — uvular-pharyngeal-epiglottal throat region"/>
+        <ipabet:modifier key="V" meaning="labiodental"/>
+        <ipabet:modifier key="B" meaning="bilabial place"/>
+        <ipabet:modifier key="A" meaning="drag toward a (vowels: oA→ɒ, uA→ʌ)"/>
+        <ipabet:modifier key="Y" meaning="central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ, aY→ä); Welsh y, Russian ы"/>
+        <ipabet:modifier key="E" meaning="ligature with e"/>
+        <ipabet:modifier key="C" meaning="click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)"/>
+        <ipabet:modifier key="P" meaning="implosive (voiced glottalic ingressive)"/>
+      </ipabet:modifiers>
+      <ipabet:vocabulary>
+        <ipabet:term cat="classes" id="about" note="Vocabulary for the flags on each mark. Membership lives on the mark, not here."/>
+        <ipabet:term cat="classes" id="ipa" note="Absent or true: on the official IPA chart. false: not, and `beyond` names the tradition."/>
+        <ipabet:term cat="beyond" id="tenant" note="Not IPA. Carried so the layout can write real orthographies and romanizations."/>
+        <ipabet:term cat="beyond" id="tradition" note="Standard within a phonological tradition but absent from the IPA chart."/>
+        <ipabet:term cat="beyond" id="extIPA" note="Extensions to the IPA, for disordered speech (the 2015 chart)."/>
+        <ipabet:term cat="classes" id="arbitraryKey" note="The key claims the mark by neither phonetics, shape, nor convention."/>
+        <ipabet:term cat="shiftSense" id="about" note="What ⌥⇧ means for a mark that has a `double`. Six senses; orthogonal to `exclusive`."/>
+        <ipabet:term cat="shiftSense" id="greater" note="⌥⇧ is the greater pole of one dimension: advanced, raised, more rounded, ATR, upstep."/>
+        <ipabet:term cat="shiftSense" id="extreme" note="⌥⇧ is the more extreme value on a scale: extra-high, extra-low."/>
+        <ipabet:term cat="shiftSense" id="lesser" note="⌥⇧ is the diminished value: secondary stress, half-long."/>
+        <ipabet:term cat="shiftSense" id="below" note="⌥⇧ is a different diacritic sharing this shape, sitting below the base."/>
+        <ipabet:term cat="shiftSense" id="twin" note="The two forms are independent — a shape or kin relation, no polarity. They stack."/>
+        <ipabet:term cat="shiftSense" id="arbitrary" note="An unpolarized dual: one dimension, neither value greater."/>
+        <ipabet:term cat="shiftSense" id="placement" note="⌥⇧ is the same mark on the other side of the base."/>
+        <ipabet:term cat="classes" id="exclusive" note="The two forms are values of one dimension, so ⌥⇧ replaces rather than stacks."/>
+      </ipabet:vocabulary>
+      <ipabet:annotations>
+        <ipabet:mark cp="0301" group="Tone" shiftSense="extreme"/>
+        <ipabet:mark cp="0300" group="Tone" shiftSense="extreme"/>
+        <ipabet:mark cp="0302" group="Tone" shiftSense="twin"/>
+        <ipabet:mark cp="030c" group="Tone" shiftSense="below"/>
+        <ipabet:mark cp="0304" group="Tone" shiftSense="below"/>
+        <ipabet:mark cp="0303" group="Nasalization" shiftSense="below"/>
+        <ipabet:mark cp="0308" group="Articulation" shiftSense="below"/>
+        <ipabet:mark cp="0306" group="Syllabicity" shiftSense="below"/>
+        <ipabet:mark cp="030a" group="Phonation" shiftSense="placement"/>
+        <ipabet:mark cp="0327" group="Transliteration" shiftSense="twin" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="0326" group="Transliteration" shiftSense="twin" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="0328" group="Transliteration" shiftSense="twin" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="032a" group="Articulation" shiftSense="placement"/>
+        <ipabet:mark cp="033a" group="Articulation" shiftSense="arbitrary"/>
+        <ipabet:mark cp="0320" group="Articulation" shiftSense="greater"/>
+        <ipabet:mark cp="0335" group="Transliteration" shiftSense="twin" arbitraryKey="true"/>
+        <ipabet:mark cp="031e" group="Articulation" shiftSense="greater"/>
+        <ipabet:mark cp="031c" group="Articulation" shiftSense="greater"/>
+        <ipabet:mark cp="0329" group="Syllabicity" shiftSense="placement"/>
+        <ipabet:mark cp="0349" group="Phonation" shiftSense="greater" ipa="false" beyond="extIPA"/>
+        <ipabet:mark cp="033c" group="Prosody" shiftSense="twin"/>
+        <ipabet:mark cp="0361" group="Prosody" shiftSense="placement"/>
+        <ipabet:mark cp="033d" group="Articulation" shiftSense="placement"/>
+        <ipabet:mark cp="02c8" group="Prosody" shiftSense="lesser"/>
+        <ipabet:mark cp="02d0" group="Length" shiftSense="lesser"/>
+        <ipabet:mark cp="02bb" group="Phonation" shiftSense="twin"/>
+        <ipabet:mark cp="02de" group="Articulation" shiftSense="twin"/>
+        <ipabet:mark cp="2198" group="Tone" shiftSense="greater"/>
+        <ipabet:mark cp="2193" group="Phonation" shiftSense="greater" ipa="false" beyond="extIPA"/>
+        <ipabet:mark cp="a71c" group="Tone" shiftSense="greater"/>
+        <ipabet:mark cp="02e9" group="Tone"/>
+        <ipabet:mark cp="02e8" group="Tone"/>
+        <ipabet:mark cp="02e7" group="Tone"/>
+        <ipabet:mark cp="02e6" group="Tone" shiftSense="twin"/>
+        <ipabet:mark cp="02e5" group="Tone"/>
+        <ipabet:mark cp="031a" group="Articulation" shiftSense="twin"/>
+        <ipabet:mark cp="0319" group="Articulation" shiftSense="greater"/>
+        <ipabet:mark cp="0307" group="Transliteration" shiftSense="below" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="0309" group="Transliteration" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="208d" group="Phonation" shiftSense="twin" ipa="false" beyond="extIPA"/>
+        <ipabet:mark cp="02b9" group="Transliteration" shiftSense="greater" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="27e8" group="Transliteration" shiftSense="twin" ipa="false" beyond="tenant"/>
+        <ipabet:mark cp="032f" group="Syllabicity" shiftSense="twin"/>
+      </ipabet:annotations>
+      <ipabet:nonipa glyphs="ß þ ı ƙ ƴ ƒ"/>
     </ipabet:engine>
   </special>
 </keyboard3>
