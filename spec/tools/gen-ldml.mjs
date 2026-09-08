@@ -52,9 +52,11 @@ for (const e of spec.letters) {
   if (prev === undefined) continue;
   (byOp.get(k1) || byOp.set(k1, []).get(k1)).push([prev, e.glyph]);
 }
+const EXTRA = 'extra letter — a base doubled with its own shift (orthographic, non-IPA)';
+const opNote = op => spec.modifiers[op] || (op === '%' ? 'centralize — a cardinal vowel toward schwa (e%→ɜ, o%→ɞ, a%→ɐ)' : EXTRA);
 for (const [op, pairs] of byOp) {
   const id = opId(op);
-  addSet(`${id}_in`, pairs.map(p => p[0])); addSet(`${id}_out`, pairs.map(p => p[1]));
+  addSet(`${id}_in`, pairs.map(p => p[0]), opNote(op)); addSet(`${id}_out`, pairs.map(p => p[1]));
   push(`($[${id}_in])(\\p{M}*)${op}`, `$[1:${id}_out]$2`);
 }
 
@@ -62,8 +64,9 @@ for (const [op, pairs] of byOp) {
 section('overlays: no NFC composition exists, so base→precomposed-letter is listed');
 const STROKE = { l: 'ł', L: 'Ł', d: 'đ', D: 'Đ', t: 'ŧ', T: 'Ŧ', g: 'ǥ', G: 'Ǥ', h: 'ħ', H: 'Ħ', b: 'ƀ', B: 'Ƀ', z: 'ƶ', Z: 'Ƶ', i: 'ɨ', I: 'Ɨ', u: 'ʉ', U: 'Ʉ', o: 'ɵ', O: 'Ɵ', j: 'ɟ', r: 'ɍ', R: 'Ɍ', y: 'ɏ', Y: 'Ɏ', c: 'ȼ', C: 'Ȼ', p: 'ᵽ', P: 'Ᵽ', k: 'ꝁ', K: 'Ꝁ', 2: 'ƻ' };
 const TILDE = { l: 'ɫ', L: 'Ɫ', b: 'ᵬ', d: 'ᵭ', f: 'ᵮ', m: 'ᵯ', n: 'ᵰ', p: 'ᵱ', r: 'ᵲ', s: 'ᵴ', t: 'ᵵ', z: 'ᵶ' };
+const ovNote = { stroke: 'stroke overlay (⌥y): base → its precomposed stroked letter', tilde: 'middle-tilde overlay (⌥⇧y): base → its precomposed letter' };
 for (const [nm, tbl, cp] of [['stroke', STROKE, '̵'], ['tilde', TILDE, '̴']]) {
-  addSet(`${nm}_in`, Object.keys(tbl)); addSet(`${nm}_out`, Object.values(tbl));
+  addSet(`${nm}_in`, Object.keys(tbl), ovNote[nm]); addSet(`${nm}_out`, Object.values(tbl));
   push(`\\m{${mname(cp)}}($[${nm}_in])`, `$[1:${nm}_out]`);
 }
 
@@ -82,10 +85,10 @@ for (const mk of deadkeyChars) push(`\\m{${mname(mk)}}(.)`, `$1${U(mk)}`);
 // 5) superscripts / subscripts
 section('superscripts (⌥z arms raise) and subscripts (⌥⇧z arms lower)');
 const sup = spec.superscripts.table.filter(e => e.sup);
-addSet('sup_in', sup.map(e => e.base)); addSet('sup_out', sup.map(e => e.sup));
+addSet('sup_in', sup.map(e => e.base), 'superscript forms (⌥z arms the raise)'); addSet('sup_out', sup.map(e => e.sup));
 push(`\\m{raise}($[sup_in])`, `$[1:sup_out]`);
 const sub = spec.subscripts.table.filter(e => e.sub);
-addSet('sub_in', sub.map(e => e.base)); addSet('sub_out', sub.map(e => e.sub));
+addSet('sub_in', sub.map(e => e.base), 'subscript forms (⌥⇧z arms the lower)'); addSet('sub_out', sub.map(e => e.sub));
 push(`\\m{lower}($[sub_in])`, `$[1:sub_out]`);
 
 // 6) rhotic hook
@@ -132,7 +135,8 @@ o.push('  <info name="IPAbet" indicator="IPA"/>');
 o.push('  <settings normalization="NFC"/>');
 o.push('');
 o.push('  <variables>');
-for (const s of sets) o.push(`    <set id="${s.id}" value="${X(s.value.join(' '))}"/>`);
+const cmt = t => t.replace(/--+/g, '—');   // '--' is illegal inside an XML comment
+for (const s of sets) { if (s.note) o.push(`    <!-- ${cmt(s.note)} -->`); o.push(`    <set id="${s.id}" value="${X(s.value.join(' '))}"/>`); }
 o.push('  </variables>');
 o.push('');
 o.push('  <keys>');
