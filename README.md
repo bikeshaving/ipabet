@@ -75,18 +75,16 @@ The full official IPA chart is covered and notated at
 
 ## Repo
 
-One notation, one implementation per platform.
+One engine, one thin shell per platform.
 
 - `spec/ipabet.json` — the canonical mapping. Source of truth for everything
   else.
-- `macos/` — the input method (Swift / InputMethodKit). The reference
-  implementation.
+- `engine/` — the Rust crate every desktop shell links, through a C ABI.
 - `js/` — `@b9g/ipabet`, the engine in TypeScript. Its parity suite is the
   notation's executable spec.
+- `macos/` — the InputMethodKit shell.
 - `linux/` — two shells over one engine: IBus (what ships) and fcitx5.
 - `windows/` — the TSF text service.
-- `engine/` — the Rust crate `linux/` and `windows/` both link, through a C
-  ABI.
 - `www/` — [ipabet.org](https://ipabet.org).
 
 Planned, driven by the same spec and pinned to the `js/` parity suite: `ios/`

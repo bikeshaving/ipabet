@@ -1,7 +1,12 @@
 # IPAbet for macOS
 
-A faceless InputMethodKit app, no Xcode required. The reference implementation
-of the notation; other platforms port against the [`js/`](../js) parity suite.
+A faceless InputMethodKit app, no Xcode required. It owns no phonetics: every
+keystroke decision comes from the Rust crate in `engine/` through the C ABI in
+`engine/include/ipabet_engine.h`, linked as a static library — the same crate
+the IBus, fcitx5, and Windows shells link. `spec/ipabet.json` ships in the
+bundle and is parsed when the engine is created. This file translates IMKit key
+events into the engine's keystroke shape, calls the engine, and applies the
+edit it hands back, so the ports cannot drift.
 
 ## Build
 
@@ -9,6 +14,12 @@ of the notation; other platforms port against the [`js/`](../js) parity suite.
 ./build.sh          # build/IPAbet.app
 ./build.sh install  # + install to ~/Library/Input Methods/
 ```
+
+The app is a **universal binary**: the engine crate builds for both
+`aarch64-apple-darwin` and `x86_64-apple-darwin` and the two slices are
+`lipo`'d together, so an Intel Mac isn't left with an arm64-only input method
+that registers but can never launch. `rustup target add x86_64-apple-darwin`
+is required for the Intel slice.
 
 First install needs a logout for TIS registration. After that: `pkill IPAbet`,
 then quit and relaunch the app under test — apps hold a session to the old
@@ -20,47 +31,24 @@ macOS scans both, so once the pkg is installed the system copy runs and every
 `build.sh install` lands where the OS has stopped reading — silently, reporting
 success. `pgrep -lf IPAbet` says which is live.
 
-## Architecture
+## Composition model
 
-The engine is **stateless**, mimicking Apple's Korean (2-Set) input method,
-whose client protocol `tools/probe.swift` captured. Each keystroke inserts text
-at the cursor or rewrites the previous grapheme cluster through
-`insertText(_:replacementRange:)` — the call pattern every Mac app must support
-or Hangul typing breaks. No composition session, no underline, nothing to
-desync, no per-host mode. The only marked text is the dead-key preview of a
-pending prefix diacritic (`⌥e` → ´), committed by the next base.
+Mirrors the IBus shell. An edit commits to the document immediately through
+`insertText(_:replacementRange:)` — the same call pattern Apple's Korean
+(2-Set) method uses, which every Mac app must support or Hangul typing breaks.
+The engine's `pending` (an armed dead-key mark, `⌥e` → ´) shows as marked text:
+the preview a base will absorb, committed by the next base. There is no
+composition session to desync.
 
-Every previous-glyph rule operates on the **decomposed view** of the cluster —
-base plus combining marks, split via NFD — and recomposes to NFC on write, so
-NFC fusion (é is one codepoint, n̥ is two) never changes rule behavior. On a
-rule miss the keystroke falls through until something emits.
-
-Backspace on a marked cluster deletes the base and re-arms its marks as
-pending: marks are prefix keystrokes, so the base was typed last, and fixing a
-wrong base is one key (ã ⌫ o → õ). A trailing tie is postfix and peels instead.
-A bare glyph is declined so the host deletes it natively.
+Unlike Linux, a Mac client can be read back, so the engine's lookback reads
+what is already committed rather than the shell keeping its own record of the
+run. On a decline the keystroke falls through to the host — a bare glyph under
+backspace is declined so the host deletes it natively.
 
 Keys are decoded from the physical `keyCode` through a fixed US layout
 (`UCKeyTranslate` against `com.apple.keylayout.US`), so the ASCII-keyed tables
-hold under Dvorak or a non-US QWERTY.
-
-## Files
-
-- `Sources/main.swift` — IMKServer boot, `.accessory` activation policy, the
-  raw-lock-clears-on-arrival observer.
-- `Sources/InputController.swift` — the engine, the raw-US lock, secure-field
-  handling. Loads `ipabet.json`.
-- `ipabet.json` — copied from `spec/ipabet.json` at build time.
-- `Info.plist` — the bundle ID must contain `.inputmethod.`. Registers one
-  visible input mode. Read the macOS 15 rules before touching the launch keys.
-- `tools/genmenupdf.swift` — regenerates `ipabet.pdf`, the input-source icon.
-- `Helper/register.swift` — built as `ipabet-register`: `TISRegisterInputSource`
-  and enable/disable, so a reinstall appears without a logout.
-- `tools/probe.swift` — instrumented test host: an `NSTextView` logging every
-  NSTextInputClient call and a `WKWebView` logging DOM composition events, to
-  the window, stdout and `/tmp/imeprobe.log`. Build with
-  `swiftc tools/probe.swift -o /tmp/imeprobe -framework Cocoa -framework WebKit`.
-  Ground truth for any input bug — trust the log, not terminal scrollback.
+hold under Dvorak or a non-US QWERTY. The active layout's delivered characters
+are never consulted for logic.
 
 ## macOS 15 rules
 
@@ -84,7 +72,3 @@ Sequoia runs a half-modernized IMK stack (`IMKClient_Modern` client,
 5. Worth consulting on a client quirk: Squirrel and vChewing (per-client
    mitigation registries), macSKK (the AquaSKK `setMarkedText` flush idiom),
    azooKey-Desktop (minimal modern Swift IME).
-
-## Keystrokes
-
-The full chart, every keystroke, and audio: [ipabet.org](https://ipabet.org).

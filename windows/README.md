@@ -76,25 +76,6 @@ the gates call `DllRegisterServer` directly and print the HRESULT.
 process, so an x64 build on an ARM machine cannot load at all — the
 registration custom action fails and the install rolls back.
 
-## Gates
-
-| Workflow | Covers | Arches |
-| --- | --- | --- |
-| `windows-parity` | 3825 vectors through the engine | x64, arm64 |
-| `windows-build` | DLL builds, static CRT | x64, arm64 |
-| `windows-registration` | absent → register → present → unregister → absent | x64 |
-| `windows-installer` | install, profile present, files land, uninstall clean | x64, arm64 |
-| `windows-typing` | 60 vectors + 25 on Ctrl+Alt + 25 on right Alt, into Notepad | x64 |
-
-Synthetic keystrokes work on x64 runners only. ARM runners are interactive and
-on `WinSta0`, but another window holds the foreground and will not yield it to
-a `SetForegroundWindow` loop, a zeroed foreground lock timeout, or
-`AttachThreadInput`.
-
-A hosted runner is not a clean machine. It ships Visual Studio, so the static
-CRT requirement never bit there, and it is x64, so the arch split never
-surfaced. Both needed a real ARM VM.
-
 ## WiX
 
 Pinned to 5, the last MIT version. v6 requires accepting the Open Source
