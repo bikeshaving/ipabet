@@ -1,0 +1,190 @@
+{
+ "́": {
+  "group": "Tone",
+  "shiftSense": "extreme"
+ },
+ "̀": {
+  "group": "Tone",
+  "shiftSense": "extreme"
+ },
+ "̂": {
+  "group": "Tone",
+  "shiftSense": "twin"
+ },
+ "̌": {
+  "group": "Tone",
+  "shiftSense": "below"
+ },
+ "̄": {
+  "group": "Tone",
+  "shiftSense": "below"
+ },
+ "̃": {
+  "group": "Nasalization",
+  "shiftSense": "below"
+ },
+ "̈": {
+  "group": "Articulation",
+  "shiftSense": "below"
+ },
+ "̆": {
+  "group": "Syllabicity",
+  "shiftSense": "below"
+ },
+ "̊": {
+  "group": "Phonation",
+  "shiftSense": "placement"
+ },
+ "̧": {
+  "group": "Transliteration",
+  "shiftSense": "twin",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "̦": {
+  "group": "Transliteration",
+  "shiftSense": "twin",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "̨": {
+  "group": "Transliteration",
+  "shiftSense": "twin",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "̪": {
+  "group": "Articulation",
+  "shiftSense": "placement"
+ },
+ "̺": {
+  "group": "Articulation",
+  "shiftSense": "arbitrary"
+ },
+ "̠": {
+  "group": "Articulation",
+  "shiftSense": "greater"
+ },
+ "̵": {
+  "group": "Transliteration",
+  "shiftSense": "twin",
+  "arbitraryKey": true
+ },
+ "̞": {
+  "group": "Articulation",
+  "shiftSense": "greater"
+ },
+ "̜": {
+  "group": "Articulation",
+  "shiftSense": "greater"
+ },
+ "̩": {
+  "group": "Syllabicity",
+  "shiftSense": "placement"
+ },
+ "͉": {
+  "group": "Phonation",
+  "shiftSense": "greater",
+  "ipa": false,
+  "beyond": "extIPA"
+ },
+ "̼": {
+  "group": "Prosody",
+  "shiftSense": "twin"
+ },
+ "͡": {
+  "group": "Prosody",
+  "shiftSense": "placement"
+ },
+ "̽": {
+  "group": "Articulation",
+  "shiftSense": "placement"
+ },
+ "ˈ": {
+  "group": "Prosody",
+  "shiftSense": "lesser"
+ },
+ "ː": {
+  "group": "Length",
+  "shiftSense": "lesser"
+ },
+ "ʻ": {
+  "group": "Phonation",
+  "shiftSense": "twin"
+ },
+ "˞": {
+  "group": "Articulation",
+  "shiftSense": "twin"
+ },
+ "↘": {
+  "group": "Tone",
+  "shiftSense": "greater"
+ },
+ "↓": {
+  "group": "Phonation",
+  "shiftSense": "greater",
+  "ipa": false,
+  "beyond": "extIPA"
+ },
+ "ꜜ": {
+  "group": "Tone",
+  "shiftSense": "greater"
+ },
+ "˩": {
+  "group": "Tone"
+ },
+ "˨": {
+  "group": "Tone"
+ },
+ "˧": {
+  "group": "Tone"
+ },
+ "˦": {
+  "group": "Tone",
+  "shiftSense": "twin"
+ },
+ "˥": {
+  "group": "Tone"
+ },
+ "̚": {
+  "group": "Articulation",
+  "shiftSense": "twin"
+ },
+ "̙": {
+  "group": "Articulation",
+  "shiftSense": "greater"
+ },
+ "̇": {
+  "group": "Transliteration",
+  "shiftSense": "below",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "̉": {
+  "group": "Transliteration",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "₍": {
+  "group": "Phonation",
+  "shiftSense": "twin",
+  "ipa": false,
+  "beyond": "extIPA"
+ },
+ "ʹ": {
+  "group": "Transliteration",
+  "shiftSense": "greater",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "⟨": {
+  "group": "Transliteration",
+  "shiftSense": "twin",
+  "ipa": false,
+  "beyond": "tenant"
+ },
+ "̯": {
+  "group": "Syllabicity",
+  "shiftSense": "twin"
+ }
+}
