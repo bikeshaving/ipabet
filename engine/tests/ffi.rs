@@ -14,7 +14,7 @@ use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
 fn spec() -> CString {
-    CString::new(include_str!("../../spec/ipabet.json")).unwrap()
+    CString::new(include_str!("../../spec/ipabet.xml")).unwrap()
 }
 
 fn engine() -> *mut ipabet_engine::Engine {
@@ -208,7 +208,7 @@ fn a_deep_stack_of_marks_survives_the_round_trip() {
     };
     assert_eq!(landed.pending.count, 0);
 
-    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let native = ipabet_engine::Engine::from_ldml(spec().to_str().unwrap()).unwrap();
     let mut native_pending: ipabet_engine::Pending = Vec::new();
     for m in marks {
         let k = ipabet_engine::Keystroke {
@@ -322,7 +322,7 @@ fn a_stack_past_the_array_truncates_at_the_boundary_and_stays_coherent() {
         ipabet_engine_handle_key(e, before.as_ptr(), stroke(&a, false, false), pending, false)
     };
 
-    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let native = ipabet_engine::Engine::from_ldml(spec().to_str().unwrap()).unwrap();
     let mut native_pending: ipabet_engine::Pending = Vec::new();
     for m in marks {
         let k = ipabet_engine::Keystroke {
