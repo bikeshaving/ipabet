@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- GENERATED from spec/ipabet.json by spec/tools/gen-ldml.mjs. Do not edit by hand. -->
+<!-- IPAbet keyboard — CLDR LDML (UTS #35 part 7). Source of the layout.
+     Seeded from spec/ipabet.json; hand-edited from here. -->
 <keyboard3 xmlns="https://schemas.unicode.org/cldr/45/keyboard3" locale="und" conformsTo="45">
   <info name="IPAbet" indicator="IPA"/>
   <settings normalization="NFC"/>
+
   <variables>
-    <set id="in_k59" value="i e u a o y"/>
-    <set id="out_k59" value="ɨ ɘ ʉ ä ɵ ƴ"/>
-    <set id="in_k48" value="2 3 4 5 a 7 b c d e g h i o p q x r s t u v w y z"/>
-    <set id="out_k48" value="ʔ ʕ ɾ ə ɑ ħ β ç ð ɛ ɣ ɦ ɪ ɔ ɸ χ ɧ ɹ ʃ θ ʊ ʋ ʍ ʏ ʒ"/>
-    <set id="in_k51" value="2 3 7 g n r l"/>
-    <set id="out_k51" value="ʡ ʢ ʜ ɢ ɴ ʁ ɫ"/>
-    <set id="in_k4c" value="4 s z"/>
-    <set id="out_k4c" value="ɺ ɬ ɮ"/>
-    <set id="in_k52" value="4 d l n r s t z"/>
-    <set id="out_k52" value="ɽ ɖ ɭ ɳ ɻ ʂ ʈ ʐ"/>
-    <set id="in_k56" value="4 m"/>
-    <set id="out_k56" value="ⱱ ɱ"/>
-    <set id="in_k25" value="e o a"/>
-    <set id="out_k25" value="ɜ ɞ ɐ"/>
-    <set id="in_k45" value="a o"/>
-    <set id="out_k45" value="æ œ"/>
-    <set id="in_k41" value="u o"/>
-    <set id="out_k41" value="ʌ ɒ"/>
-    <set id="in_k57" value="a e o u w"/>
-    <set id="out_k57" value="ɶ ø ɤ ɯ ɰ"/>
-    <set id="in_k50" value="b d g j q"/>
-    <set id="out_k50" value="ɓ ɗ ɠ ʄ ʛ"/>
-    <set id="in_k4a" value="d g l n s w z"/>
-    <set id="out_k4a" value="ɟ ʝ ʎ ɲ ɕ ɥ ʑ"/>
-    <set id="in_k47" value="g l n r"/>
-    <set id="out_k47" value="ɡ ʟ ŋ ʀ"/>
-    <set id="in_k42" value="r"/>
-    <set id="out_k42" value="ʙ"/>
-    <set id="in_k43" value="p t q c l"/>
-    <set id="out_k43" value="ʘ ǀ ǃ ǂ ǁ"/>
-    <set id="in_k53" value="s"/>
-    <set id="out_k53" value="ß"/>
-    <set id="in_k54" value="t"/>
-    <set id="out_k54" value="þ"/>
-    <set id="in_k49" value="i"/>
-    <set id="out_k49" value="ı"/>
-    <set id="in_k4b" value="k"/>
-    <set id="out_k4b" value="ƙ"/>
-    <set id="in_k46" value="f"/>
-    <set id="out_k46" value="ƒ"/>
-    <set id="ov_stroke_in" value="2 l L d D t T g G h H b B z Z i I u U o O j r R y Y c C p P k K"/>
-    <set id="ov_stroke_out" value="ƻ ł Ł đ Đ ŧ Ŧ ǥ Ǥ ħ Ħ ƀ Ƀ ƶ Ƶ ɨ Ɨ ʉ Ʉ ɵ Ɵ ɟ ɍ Ɍ ɏ Ɏ ȼ Ȼ ᵽ Ᵽ ꝁ Ꝁ"/>
-    <set id="ov_tilde_in" value="l L b d f m n p r s t z"/>
-    <set id="ov_tilde_out" value="ɫ Ɫ ᵬ ᵭ ᵮ ᵯ ᵰ ᵱ ᵲ ᵴ ᵵ ᵶ"/>
+    <set id="Y_in" value="i e u a o y"/>
+    <set id="Y_out" value="ɨ ɘ ʉ ä ɵ ƴ"/>
+    <set id="H_in" value="2 3 4 5 a 7 b c d e g h i o p q x r s t u v w y z"/>
+    <set id="H_out" value="ʔ ʕ ɾ ə ɑ ħ β ç ð ɛ ɣ ɦ ɪ ɔ ɸ χ ɧ ɹ ʃ θ ʊ ʋ ʍ ʏ ʒ"/>
+    <set id="Q_in" value="2 3 7 g n r l"/>
+    <set id="Q_out" value="ʡ ʢ ʜ ɢ ɴ ʁ ɫ"/>
+    <set id="L_in" value="4 s z"/>
+    <set id="L_out" value="ɺ ɬ ɮ"/>
+    <set id="R_in" value="4 d l n r s t z"/>
+    <set id="R_out" value="ɽ ɖ ɭ ɳ ɻ ʂ ʈ ʐ"/>
+    <set id="V_in" value="4 m"/>
+    <set id="V_out" value="ⱱ ɱ"/>
+    <set id="center_in" value="e o a"/>
+    <set id="center_out" value="ɜ ɞ ɐ"/>
+    <set id="E_in" value="a o"/>
+    <set id="E_out" value="æ œ"/>
+    <set id="A_in" value="u o"/>
+    <set id="A_out" value="ʌ ɒ"/>
+    <set id="W_in" value="a e o u w"/>
+    <set id="W_out" value="ɶ ø ɤ ɯ ɰ"/>
+    <set id="P_in" value="b d g j q"/>
+    <set id="P_out" value="ɓ ɗ ɠ ʄ ʛ"/>
+    <set id="J_in" value="d g l n s w z"/>
+    <set id="J_out" value="ɟ ʝ ʎ ɲ ɕ ɥ ʑ"/>
+    <set id="G_in" value="g l n r"/>
+    <set id="G_out" value="ɡ ʟ ŋ ʀ"/>
+    <set id="B_in" value="r"/>
+    <set id="B_out" value="ʙ"/>
+    <set id="C_in" value="p t q c l"/>
+    <set id="C_out" value="ʘ ǀ ǃ ǂ ǁ"/>
+    <set id="S_in" value="s"/>
+    <set id="S_out" value="ß"/>
+    <set id="T_in" value="t"/>
+    <set id="T_out" value="þ"/>
+    <set id="I_in" value="i"/>
+    <set id="I_out" value="ı"/>
+    <set id="K_in" value="k"/>
+    <set id="K_out" value="ƙ"/>
+    <set id="F_in" value="f"/>
+    <set id="F_out" value="ƒ"/>
+    <set id="stroke_in" value="2 l L d D t T g G h H b B z Z i I u U o O j r R y Y c C p P k K"/>
+    <set id="stroke_out" value="ƻ ł Ł đ Đ ŧ Ŧ ǥ Ǥ ħ Ħ ƀ Ƀ ƶ Ƶ ɨ Ɨ ʉ Ʉ ɵ Ɵ ɟ ɍ Ɍ ɏ Ɏ ȼ Ȼ ᵽ Ᵽ ꝁ Ꝁ"/>
+    <set id="tilde_in" value="l L b d f m n p r s t z"/>
+    <set id="tilde_out" value="ɫ Ɫ ᵬ ᵭ ᵮ ᵯ ᵰ ᵱ ᵲ ᵴ ᵵ ᵶ"/>
     <set id="sup_in" value="0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p r s t u v w x y z ð ŋ œ ɐ ɑ ɒ ɔ ɕ ə ɛ ɜ ɟ ɡ ɣ ɥ ɦ ɨ ɪ ɭ ɯ ɰ ɱ ɲ ɳ ɴ ɵ ɸ ɹ ɻ ʁ ʂ ʃ ʉ ʊ ʋ ʌ ʍ ʐ ʑ ʒ ʔ ʕ ʝ ʟ β θ χ ნ A Æ B D E Ǝ G H I J K L M N O Ȣ P R T U W ᴂ ᴖ ᴗ ᴝ ᴥ γ δ φ н ɩ ᵻ ᶅ ƫ ᴜ + − = ( ) V ⵡ 一 二 三 四 上 中 下 甲 乙 丙 丁 天 地 人 ъ ь ꝯ C F Q Ħ ꜧ ꬷ ɫ ꭒ ː ˑ æ ʙ ɓ ʣ ꭦ ʥ ʤ ɖ ɗ ᶑ ɘ ɞ ʩ ɤ ɢ ɠ ʛ ħ ʜ ɧ ʄ ʪ ʫ ɬ 𝼄 ꞎ ɮ 𝼅 ʎ 𝼆 ø ɶ ɷ q ɺ 𝼈 ɽ ɾ ʀ ʨ ʦ ꭧ ʧ ʈ ⱱ ʏ ʡ ʢ ʘ ǀ ǁ ǂ 𝼊 𝼞 а б в г д е ж з и к л м о п р с т у ф х ц ч ш ы э ю ꚉ ә і ј ө ү ӏ ҫ ꙑ ұ Ƀ ᴎ ᴉ ꜳ"/>
     <set id="sup_out" value="⁰ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ᵃ ᵇ ᶜ ᵈ ᵉ ᶠ ᶢ ʰ ⁱ ʲ ᵏ ˡ ᵐ ⁿ ᵒ ᵖ ʳ ˢ ᵗ ᵘ ᵛ ʷ ˣ ʸ ᶻ ᶞ ᵑ ꟹ ᵄ ᵅ ᶛ ᵓ ᶝ ᵊ ᵋ ᵌ ᶡ ᶢ ˠ ᶣ ʱ ᶤ ᶦ ᶩ ᵚ ᶭ ᶬ ᶮ ᶯ ᶰ ᶱ ᶲ ʴ ʵ ʶ ᶳ ᶴ ᶶ ᶷ ᶹ ᶺ ꭩ ᶼ ᶽ ᶾ ˀ ˤ ᶨ ᶫ ᵝ ᶿ ᵡ ჼ ᴬ ᴭ ᴮ ᴰ ᴱ ᴲ ᴳ ᴴ ᴵ ᴶ ᴷ ᴸ ᴹ ᴺ ᴼ ᴽ ᴾ ᴿ ᵀ ᵁ ᵂ ᵆ ᵔ ᵕ ᵙ ᵜ ᵞ ᵟ ᵠ ᵸ ᶥ ᶧ ᶪ ᶵ ᶸ ⁺ ⁻ ⁼ ⁽ ⁾ ⱽ ⵯ ㆒ ㆓ ㆔ ㆕ ㆖ ㆗ ㆘ ㆙ ㆚ ㆛ ㆜ ㆝ ㆞ ㆟ ꚜ ꚝ ꝰ ꟲ ꟳ ꟴ ꟸ ꭜ ꭝ ꭞ ꭟ 𐞁 𐞂 𐞃 𐞄 𐞅 𐞇 𐞈 𐞉 𐞊 𐞋 𐞌 𐞍 𐞎 𐞏 𐞐 𐞑 𐞒 𐞓 𐞔 𐞕 𐞖 𐞗 𐞘 𐞙 𐞚 𐞛 𐞜 𐞝 𐞞 𐞟 𐞠 𐞡 𐞢 𐞣 𐞤 𐞥 𐞦 𐞧 𐞨 𐞩 𐞪 𐞫 𐞬 𐞭 𐞮 𐞯 𐞰 𐞲 𐞳 𐞴 𐞵 𐞶 𐞷 𐞸 𐞹 𐞺 𞀰 𞀱 𞀲 𞀳 𞀴 𞀵 𞀶 𞀷 𞀸 𞀹 𞀺 𞀻 𞀼 𞀽 𞀾 𞀿 𞁀 𞁁 𞁂 𞁃 𞁄 𞁅 𞁆 𞁇 𞁈 𞁉 𞁊 𞁋 𞁌 𞁍 𞁎 𞁏 𞁐 𞁫 𞁬 𞁭 ᴯ ᴻ ᵎ 𐞀"/>
     <set id="sub_in" value="0 1 2 3 4 5 6 7 8 9 a e h i j k l m n o p r s t u v x ə β χ γ ρ φ + − = ( ) а б в г д е ж з и к л о п с у ф х ц ч ш ъ ы ґ і ѕ џ"/>
     <set id="sub_out" value="₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₐ ₑ ₕ ᵢ ⱼ ₖ ₗ ₘ ₙ ₒ ₚ ᵣ ₛ ₜ ᵤ ᵥ ₓ ₔ ᵦ ᵪ ᵧ ᵨ ᵩ ₊ ₋ ₌ ₍ ₎ 𞁑 𞁒 𞁓 𞁔 𞁕 𞁖 𞁗 𞁘 𞁙 𞁚 𞁛 𞁜 𞁝 𞁞 𞁟 𞁠 𞁡 𞁢 𞁣 𞁤 𞁥 𞁦 𞁧 𞁨 𞁩 𞁪"/>
   </variables>
+
   <keys>
     <key id="b_a" output="a"/>
     <key id="b_b" output="b"/>
@@ -80,52 +83,52 @@
     <key id="b_x" output="x"/>
     <key id="b_y" output="y"/>
     <key id="b_z" output="z"/>
-    <key id="mk_m0301" output="\m{m0301}"/>
-    <key id="mk_m030b" output="\m{m030b}"/>
-    <key id="mk_m0300" output="\m{m0300}"/>
-    <key id="mk_m030f" output="\m{m030f}"/>
-    <key id="mk_m0302" output="\m{m0302}"/>
-    <key id="mk_m031b" output="\m{m031b}"/>
-    <key id="mk_m030c" output="\m{m030c}"/>
-    <key id="mk_m032c" output="\m{m032c}"/>
-    <key id="mk_m0304" output="\m{m0304}"/>
-    <key id="mk_m0331" output="\m{m0331}"/>
-    <key id="mk_m0303" output="\m{m0303}"/>
-    <key id="mk_m0330" output="\m{m0330}"/>
-    <key id="mk_m0308" output="\m{m0308}"/>
-    <key id="mk_m0324" output="\m{m0324}"/>
-    <key id="mk_m0306" output="\m{m0306}"/>
-    <key id="mk_m032e" output="\m{m032e}"/>
-    <key id="mk_m030a" output="\m{m030a}"/>
-    <key id="mk_m0325" output="\m{m0325}"/>
-    <key id="mk_m0327" output="\m{m0327}"/>
-    <key id="mk_m0321" output="\m{m0321}"/>
-    <key id="mk_m0326" output="\m{m0326}"/>
-    <key id="mk_m0313" output="\m{m0313}"/>
-    <key id="mk_m0328" output="\m{m0328}"/>
-    <key id="mk_m0310" output="\m{m0310}"/>
-    <key id="mk_m032a" output="\m{m032a}"/>
-    <key id="mk_m0346" output="\m{m0346}"/>
-    <key id="mk_m033a" output="\m{m033a}"/>
-    <key id="mk_m033b" output="\m{m033b}"/>
-    <key id="mk_m0320" output="\m{m0320}"/>
-    <key id="mk_m031f" output="\m{m031f}"/>
-    <key id="mk_m0335" output="\m{m0335}"/>
-    <key id="mk_m0334" output="\m{m0334}"/>
-    <key id="mk_m031e" output="\m{m031e}"/>
-    <key id="mk_m031d" output="\m{m031d}"/>
-    <key id="mk_m031c" output="\m{m031c}"/>
-    <key id="mk_m0339" output="\m{m0339}"/>
-    <key id="mk_m0329" output="\m{m0329}"/>
-    <key id="mk_m030d" output="\m{m030d}"/>
-    <key id="mk_m0349" output="\m{m0349}"/>
-    <key id="mk_m0348" output="\m{m0348}"/>
-    <key id="mk_m033c" output="\m{m033c}"/>
+    <key id="mk_acute" output="\m{acute}"/>
+    <key id="mk_double-acute" output="\m{double-acute}"/>
+    <key id="mk_grave" output="\m{grave}"/>
+    <key id="mk_double-grave" output="\m{double-grave}"/>
+    <key id="mk_circumflex" output="\m{circumflex}"/>
+    <key id="mk_horn" output="\m{horn}"/>
+    <key id="mk_caron" output="\m{caron}"/>
+    <key id="mk_caron-below" output="\m{caron-below}"/>
+    <key id="mk_macron" output="\m{macron}"/>
+    <key id="mk_macron-below" output="\m{macron-below}"/>
+    <key id="mk_tilde" output="\m{tilde}"/>
+    <key id="mk_tilde-below" output="\m{tilde-below}"/>
+    <key id="mk_diaeresis" output="\m{diaeresis}"/>
+    <key id="mk_diaeresis-below" output="\m{diaeresis-below}"/>
+    <key id="mk_breve" output="\m{breve}"/>
+    <key id="mk_breve-below" output="\m{breve-below}"/>
+    <key id="mk_ring-above" output="\m{ring-above}"/>
+    <key id="mk_ring-below" output="\m{ring-below}"/>
+    <key id="mk_cedilla" output="\m{cedilla}"/>
+    <key id="mk_palatal-hook-below" output="\m{palatal-hook-below}"/>
+    <key id="mk_comma-below" output="\m{comma-below}"/>
+    <key id="mk_comma-above" output="\m{comma-above}"/>
+    <key id="mk_ogonek" output="\m{ogonek}"/>
+    <key id="mk_candrabindu" output="\m{candrabindu}"/>
+    <key id="mk_bridge-below" output="\m{bridge-below}"/>
+    <key id="mk_bridge-above" output="\m{bridge-above}"/>
+    <key id="mk_inverted-bridge-below" output="\m{inverted-bridge-below}"/>
+    <key id="mk_square-below" output="\m{square-below}"/>
+    <key id="mk_minus-below" output="\m{minus-below}"/>
+    <key id="mk_plus-below" output="\m{plus-below}"/>
+    <key id="mk_stroke-overlay" output="\m{stroke-overlay}"/>
+    <key id="mk_tilde-overlay" output="\m{tilde-overlay}"/>
+    <key id="mk_down-tack-below" output="\m{down-tack-below}"/>
+    <key id="mk_up-tack-below" output="\m{up-tack-below}"/>
+    <key id="mk_left-half-ring-below" output="\m{left-half-ring-below}"/>
+    <key id="mk_right-half-ring-below" output="\m{right-half-ring-below}"/>
+    <key id="mk_vertical-line-below" output="\m{vertical-line-below}"/>
+    <key id="mk_vertical-line-above" output="\m{vertical-line-above}"/>
+    <key id="mk_left-angle-below" output="\m{left-angle-below}"/>
+    <key id="mk_double-vertical-line-below" output="\m{double-vertical-line-below}"/>
+    <key id="mk_seagull-below" output="\m{seagull-below}"/>
     <key id="mk_m2016" output="‖"/>
-    <key id="mk_m0361" output="\m{m0361}"/>
-    <key id="mk_m035c" output="\m{m035c}"/>
-    <key id="mk_m033d" output="\m{m033d}"/>
-    <key id="mk_m0353" output="\m{m0353}"/>
+    <key id="mk_tie-above" output="\m{tie-above}"/>
+    <key id="mk_tie-below" output="\m{tie-below}"/>
+    <key id="mk_x-above" output="\m{x-above}"/>
+    <key id="mk_x-below" output="\m{x-below}"/>
     <key id="sp_m02c8" output="ˈ"/>
     <key id="sp_m02cc" output="ˌ"/>
     <key id="sp_m02d0" output="ː"/>
@@ -133,7 +136,7 @@
     <key id="sp_m02bb" output="ʻ"/>
     <key id="sp_m02bc" output="ʼ"/>
     <key id="sp_m02de" output="˞"/>
-    <key id="sp_m0322" output="̢"/>
+    <key id="sp_retroflex-hook-below" output="̢"/>
     <key id="sp_m2198" output="↘"/>
     <key id="sp_m2197" output="↗"/>
     <key id="sp_m2193" output="↓"/>
@@ -144,30 +147,30 @@
     <key id="sp_m02e8" output="˨"/>
     <key id="sp_m02e7" output="˧"/>
     <key id="sp_m02e6" output="˦"/>
-    <key id="sp_m0347" output="͇"/>
+    <key id="sp_equals-below" output="͇"/>
     <key id="sp_m02e5" output="˥"/>
-    <key id="mk_m031a" output="\m{m031a}"/>
-    <key id="mk_m0362" output="͢"/>
-    <key id="mk_m0319" output="\m{m0319}"/>
-    <key id="mk_m0318" output="\m{m0318}"/>
-    <key id="mk_m0307" output="\m{m0307}"/>
-    <key id="mk_m0323" output="\m{m0323}"/>
-    <key id="mk_m0309" output="\m{m0309}"/>
+    <key id="mk_left-angle-above" output="\m{left-angle-above}"/>
+    <key id="mk_double-arrow-below" output="͢"/>
+    <key id="mk_right-tack-below" output="\m{right-tack-below}"/>
+    <key id="mk_left-tack-below" output="\m{left-tack-below}"/>
+    <key id="mk_dot-above" output="\m{dot-above}"/>
+    <key id="mk_dot-below" output="\m{dot-below}"/>
+    <key id="mk_hook-above" output="\m{hook-above}"/>
     <key id="sp_m208d" output="₍"/>
     <key id="sp_m208e" output="₎"/>
     <key id="sp_m02b9" output="ʹ"/>
     <key id="sp_m02ba" output="ʺ"/>
     <key id="sp_m27e8" output="⟨"/>
     <key id="sp_m27e9" output="⟩"/>
-    <key id="mk_m032f" output="\m{m032f}"/>
-    <key id="mk_m0311" output="\m{m0311}"/>
+    <key id="mk_inverted-breve-below" output="\m{inverted-breve-below}"/>
+    <key id="mk_inverted-breve" output="\m{inverted-breve}"/>
     <key id="op_raise" output="\m{raise}"/>
     <key id="op_lower" output="\m{lower}"/>
     <key id="op_rhotic" output="\m{rhotic}"/>
-    <key id="q_o1" output="“"/>
-    <key id="q_o2" output="‘"/>
-    <key id="q_c1" output="”"/>
-    <key id="q_c2" output="’"/>
+    <key id="q_open_primary" output="“"/>
+    <key id="q_open_secondary" output="‘"/>
+    <key id="q_close_primary" output="”"/>
+    <key id="q_close_secondary" output="’"/>
     <key id="os_1" output="¡"/>
     <key id="os_2" output="ʾ"/>
     <key id="os_3" output="ʿ"/>
@@ -240,6 +243,7 @@
     <key id="sh_/" output="?"/>
     <key id="gap" output=""/>
   </keys>
+
   <layers form="hardware">
     <layer modifiers="none">
       <row keys="b_1 b_2 b_3 b_4 b_5 b_6 b_7 b_8 b_9 b_0 b_- b_="/>
@@ -254,121 +258,120 @@
       <row keys="sh_z sh_x sh_c sh_v sh_b sh_n sh_m sh_, sh_. sh_/"/>
     </layer>
     <layer modifiers="altR">
-      <row keys="sp_m02e9 sp_m02e8 sp_m02e7 sp_m02e6 sp_m02e5 sp_ma71c sp_m2198 sp_m2193 sp_m208d mk_m031a gap mk_m0320"/>
-      <row keys="sp_m02bb mk_m031c mk_m0301 op_rhotic mk_m032a mk_m0335 mk_m0308 mk_m0302 mk_m032f sp_m02b9 q_o1 q_o2 sp_m27e8"/>
-      <row keys="mk_m0304 mk_m0329 mk_m033a mk_m0349 mk_m031e mk_m0319 mk_m0361 mk_m030a mk_m033c sp_m02d0 sp_m02c8"/>
-      <row keys="op_raise mk_m033d mk_m0327 mk_m030c mk_m0306 mk_m0303 mk_m0328 mk_m0326 mk_m0307 mk_m0309"/>
+      <row keys="sp_m02e9 sp_m02e8 sp_m02e7 sp_m02e6 sp_m02e5 sp_ma71c sp_m2198 sp_m2193 sp_m208d mk_left-angle-above gap mk_minus-below"/>
+      <row keys="sp_m02bb mk_left-half-ring-below mk_acute op_rhotic mk_bridge-below mk_stroke-overlay mk_diaeresis mk_circumflex mk_inverted-breve-below sp_m02b9 q_open_primary q_open_secondary sp_m27e8"/>
+      <row keys="mk_macron mk_vertical-line-below mk_inverted-bridge-below mk_left-angle-below mk_down-tack-below mk_right-tack-below mk_tie-above mk_ring-above mk_seagull-below sp_m02d0 sp_m02c8"/>
+      <row keys="op_raise mk_x-above mk_cedilla mk_caron mk_breve mk_tilde mk_ogonek mk_comma-below mk_dot-above mk_hook-above"/>
     </layer>
     <layer modifiers="altR shift">
-      <row keys="os_1 os_2 os_3 sp_m0347 os_5 sp_ma71b sp_m2197 sp_m2191 sp_m208e mk_m0362 gap mk_m031f"/>
-      <row keys="sp_m02bc mk_m0339 mk_m030b sp_m0322 mk_m0346 mk_m0334 mk_m0324 mk_m031b mk_m0311 sp_m02ba q_c1 q_c2 sp_m27e9"/>
-      <row keys="mk_m0331 mk_m030d mk_m033b mk_m0348 mk_m031d mk_m0318 mk_m035c mk_m0325 mk_m2016 sp_m02d1 sp_m02cc"/>
-      <row keys="op_lower mk_m0353 mk_m0321 mk_m032c mk_m032e mk_m0330 mk_m0310 mk_m0313 mk_m0323 gap"/>
+      <row keys="os_1 os_2 os_3 sp_equals-below os_5 sp_ma71b sp_m2197 sp_m2191 sp_m208e mk_double-arrow-below gap mk_plus-below"/>
+      <row keys="sp_m02bc mk_right-half-ring-below mk_double-acute sp_retroflex-hook-below mk_bridge-above mk_tilde-overlay mk_diaeresis-below mk_horn mk_inverted-breve sp_m02ba q_close_primary q_close_secondary sp_m27e9"/>
+      <row keys="mk_macron-below mk_vertical-line-above mk_square-below mk_double-vertical-line-below mk_up-tack-below mk_left-tack-below mk_tie-below mk_ring-below mk_m2016 sp_m02d1 sp_m02cc"/>
+      <row keys="op_lower mk_x-below mk_palatal-hook-below mk_caron-below mk_breve-below mk_tilde-below mk_candrabindu mk_comma-above mk_dot-below gap"/>
     </layer>
   </layers>
+
   <transforms type="simple">
     <transformGroup>
-      <transform from="($[in_k59])(\p{M}*)Y" to="$[1:out_k59]$2"/>
-      <transform from="($[in_k48])(\p{M}*)H" to="$[1:out_k48]$2"/>
-      <transform from="($[in_k51])(\p{M}*)Q" to="$[1:out_k51]$2"/>
-      <transform from="($[in_k4c])(\p{M}*)L" to="$[1:out_k4c]$2"/>
-      <transform from="($[in_k52])(\p{M}*)R" to="$[1:out_k52]$2"/>
-      <transform from="($[in_k56])(\p{M}*)V" to="$[1:out_k56]$2"/>
-      <transform from="($[in_k25])(\p{M}*)%" to="$[1:out_k25]$2"/>
-      <transform from="($[in_k45])(\p{M}*)E" to="$[1:out_k45]$2"/>
-      <transform from="($[in_k41])(\p{M}*)A" to="$[1:out_k41]$2"/>
-      <transform from="($[in_k57])(\p{M}*)W" to="$[1:out_k57]$2"/>
-      <transform from="($[in_k50])(\p{M}*)P" to="$[1:out_k50]$2"/>
-      <transform from="($[in_k4a])(\p{M}*)J" to="$[1:out_k4a]$2"/>
-      <transform from="($[in_k47])(\p{M}*)G" to="$[1:out_k47]$2"/>
-      <transform from="($[in_k42])(\p{M}*)B" to="$[1:out_k42]$2"/>
-      <transform from="($[in_k43])(\p{M}*)C" to="$[1:out_k43]$2"/>
-      <transform from="($[in_k53])(\p{M}*)S" to="$[1:out_k53]$2"/>
-      <transform from="($[in_k54])(\p{M}*)T" to="$[1:out_k54]$2"/>
-      <transform from="($[in_k49])(\p{M}*)I" to="$[1:out_k49]$2"/>
-      <transform from="($[in_k4b])(\p{M}*)K" to="$[1:out_k4b]$2"/>
-      <transform from="($[in_k46])(\p{M}*)F" to="$[1:out_k46]$2"/>
-      <transform from="\m{m0335}($[ov_stroke_in])" to="$[1:ov_stroke_out]"/>
-      <transform from="\m{m0334}($[ov_tilde_in])" to="$[1:ov_tilde_out]"/>
-      <transform from="\m{m030f}\m{m030b}" to="\m{m030c}"/>
-      <transform from="\m{m030b}\m{m030f}" to="\m{m0302}"/>
-      <transform from="\m{m0301}\m{m030b}" to="\m{m1dc4}"/>
-      <transform from="\m{m030f}\m{m0300}" to="\m{m1dc5}"/>
-      <transform from="\m{m0304}\m{m0301}\m{m0304}" to="\m{m1dc8}"/>
-      <transform from="\m{m0304}\m{m0300}" to="\m{m1dc6}"/>
-      <transform from="\m{m0301}\m{m0304}" to="\m{m1dc7}"/>
-      <transform from="\m{m0301}\m{m0300}\m{m0301}" to="\m{m1dc9}"/>
-      <transform from="\m{m0301}(.)" to="$1\u{301}"/>
-      <transform from="\m{m030b}(.)" to="$1\u{30B}"/>
-      <transform from="\m{m0300}(.)" to="$1\u{300}"/>
-      <transform from="\m{m030f}(.)" to="$1\u{30F}"/>
-      <transform from="\m{m0302}(.)" to="$1\u{302}"/>
-      <transform from="\m{m031b}(.)" to="$1\u{31B}"/>
-      <transform from="\m{m030c}(.)" to="$1\u{30C}"/>
-      <transform from="\m{m032c}(.)" to="$1\u{32C}"/>
-      <transform from="\m{m0304}(.)" to="$1\u{304}"/>
-      <transform from="\m{m0331}(.)" to="$1\u{331}"/>
-      <transform from="\m{m0303}(.)" to="$1\u{303}"/>
-      <transform from="\m{m0330}(.)" to="$1\u{330}"/>
-      <transform from="\m{m0308}(.)" to="$1\u{308}"/>
-      <transform from="\m{m0324}(.)" to="$1\u{324}"/>
-      <transform from="\m{m0306}(.)" to="$1\u{306}"/>
-      <transform from="\m{m032e}(.)" to="$1\u{32E}"/>
-      <transform from="\m{m030a}(.)" to="$1\u{30A}"/>
-      <transform from="\m{m0325}(.)" to="$1\u{325}"/>
-      <transform from="\m{m0327}(.)" to="$1\u{327}"/>
-      <transform from="\m{m0321}(.)" to="$1\u{321}"/>
-      <transform from="\m{m0326}(.)" to="$1\u{326}"/>
-      <transform from="\m{m0313}(.)" to="$1\u{313}"/>
-      <transform from="\m{m0328}(.)" to="$1\u{328}"/>
-      <transform from="\m{m0310}(.)" to="$1\u{310}"/>
-      <transform from="\m{m032a}(.)" to="$1\u{32A}"/>
-      <transform from="\m{m0346}(.)" to="$1\u{346}"/>
-      <transform from="\m{m033a}(.)" to="$1\u{33A}"/>
-      <transform from="\m{m033b}(.)" to="$1\u{33B}"/>
-      <transform from="\m{m0320}(.)" to="$1\u{320}"/>
-      <transform from="\m{m031f}(.)" to="$1\u{31F}"/>
-      <transform from="\m{m0335}(.)" to="$1\u{335}"/>
-      <transform from="\m{m0334}(.)" to="$1\u{334}"/>
-      <transform from="\m{m031e}(.)" to="$1\u{31E}"/>
-      <transform from="\m{m031d}(.)" to="$1\u{31D}"/>
-      <transform from="\m{m031c}(.)" to="$1\u{31C}"/>
-      <transform from="\m{m0339}(.)" to="$1\u{339}"/>
-      <transform from="\m{m0329}(.)" to="$1\u{329}"/>
-      <transform from="\m{m030d}(.)" to="$1\u{30D}"/>
-      <transform from="\m{m0349}(.)" to="$1\u{349}"/>
-      <transform from="\m{m0348}(.)" to="$1\u{348}"/>
-      <transform from="\m{m033c}(.)" to="$1\u{33C}"/>
-      <transform from="\m{m0361}(.)" to="$1\u{361}"/>
-      <transform from="\m{m035c}(.)" to="$1\u{35C}"/>
-      <transform from="\m{m033d}(.)" to="$1\u{33D}"/>
-      <transform from="\m{m0353}(.)" to="$1\u{353}"/>
-      <transform from="\m{m031a}(.)" to="$1\u{31A}"/>
-      <transform from="\m{m0319}(.)" to="$1\u{319}"/>
-      <transform from="\m{m0318}(.)" to="$1\u{318}"/>
-      <transform from="\m{m0307}(.)" to="$1\u{307}"/>
-      <transform from="\m{m0323}(.)" to="$1\u{323}"/>
-      <transform from="\m{m0309}(.)" to="$1\u{309}"/>
-      <transform from="\m{m032f}(.)" to="$1\u{32F}"/>
-      <transform from="\m{m0311}(.)" to="$1\u{311}"/>
-      <transform from="\m{m1dc4}(.)" to="$1\u{1DC4}"/>
-      <transform from="\m{m1dc5}(.)" to="$1\u{1DC5}"/>
-      <transform from="\m{m1dc8}(.)" to="$1\u{1DC8}"/>
-      <transform from="\m{m1dc6}(.)" to="$1\u{1DC6}"/>
-      <transform from="\m{m1dc7}(.)" to="$1\u{1DC7}"/>
-      <transform from="\m{m1dc9}(.)" to="$1\u{1DC9}"/>
+      <!-- digraphs: previous glyph + a shift-operator (⇧H, ⇧R, …); \p{M}* lets the operator reach a base under its dead-key marks -->
+      <transform from="($[Y_in])(\p{M}*)Y" to="$[1:Y_out]$2"/>
+      <transform from="($[H_in])(\p{M}*)H" to="$[1:H_out]$2"/>
+      <transform from="($[Q_in])(\p{M}*)Q" to="$[1:Q_out]$2"/>
+      <transform from="($[L_in])(\p{M}*)L" to="$[1:L_out]$2"/>
+      <transform from="($[R_in])(\p{M}*)R" to="$[1:R_out]$2"/>
+      <transform from="($[V_in])(\p{M}*)V" to="$[1:V_out]$2"/>
+      <transform from="($[center_in])(\p{M}*)%" to="$[1:center_out]$2"/>
+      <transform from="($[E_in])(\p{M}*)E" to="$[1:E_out]$2"/>
+      <transform from="($[A_in])(\p{M}*)A" to="$[1:A_out]$2"/>
+      <transform from="($[W_in])(\p{M}*)W" to="$[1:W_out]$2"/>
+      <transform from="($[P_in])(\p{M}*)P" to="$[1:P_out]$2"/>
+      <transform from="($[J_in])(\p{M}*)J" to="$[1:J_out]$2"/>
+      <transform from="($[G_in])(\p{M}*)G" to="$[1:G_out]$2"/>
+      <transform from="($[B_in])(\p{M}*)B" to="$[1:B_out]$2"/>
+      <transform from="($[C_in])(\p{M}*)C" to="$[1:C_out]$2"/>
+      <transform from="($[S_in])(\p{M}*)S" to="$[1:S_out]$2"/>
+      <transform from="($[T_in])(\p{M}*)T" to="$[1:T_out]$2"/>
+      <transform from="($[I_in])(\p{M}*)I" to="$[1:I_out]$2"/>
+      <transform from="($[K_in])(\p{M}*)K" to="$[1:K_out]$2"/>
+      <transform from="($[F_in])(\p{M}*)F" to="$[1:F_out]$2"/>
+      <!-- overlays: no NFC composition exists, so base→precomposed-letter is listed -->
+      <transform from="\m{stroke-overlay}($[stroke_in])" to="$[1:stroke_out]"/>
+      <transform from="\m{tilde-overlay}($[tilde_in])" to="$[1:tilde_out]"/>
+      <!-- tone contours: a sequence of level-tone markers folds to one contour mark -->
+      <transform from="\m{double-grave}\m{double-acute}" to="\m{caron}"/>
+      <transform from="\m{double-acute}\m{double-grave}" to="\m{circumflex}"/>
+      <transform from="\m{acute}\m{double-acute}" to="\m{macron-acute}"/>
+      <transform from="\m{double-grave}\m{grave}" to="\m{grave-macron}"/>
+      <transform from="\m{macron}\m{acute}\m{macron}" to="\m{grave-acute-grave}"/>
+      <transform from="\m{macron}\m{grave}" to="\m{macron-grave}"/>
+      <transform from="\m{acute}\m{macron}" to="\m{acute-macron}"/>
+      <transform from="\m{acute}\m{grave}\m{acute}" to="\m{acute-grave-acute}"/>
+      <!-- dead keys: an Option mark, then the next base absorbs it (NFC composes) -->
+      <transform from="\m{acute}(.)" to="$1\u{0301}"/>
+      <transform from="\m{double-acute}(.)" to="$1\u{030B}"/>
+      <transform from="\m{grave}(.)" to="$1\u{0300}"/>
+      <transform from="\m{double-grave}(.)" to="$1\u{030F}"/>
+      <transform from="\m{circumflex}(.)" to="$1\u{0302}"/>
+      <transform from="\m{horn}(.)" to="$1\u{031B}"/>
+      <transform from="\m{caron}(.)" to="$1\u{030C}"/>
+      <transform from="\m{caron-below}(.)" to="$1\u{032C}"/>
+      <transform from="\m{macron}(.)" to="$1\u{0304}"/>
+      <transform from="\m{macron-below}(.)" to="$1\u{0331}"/>
+      <transform from="\m{tilde}(.)" to="$1\u{0303}"/>
+      <transform from="\m{tilde-below}(.)" to="$1\u{0330}"/>
+      <transform from="\m{diaeresis}(.)" to="$1\u{0308}"/>
+      <transform from="\m{diaeresis-below}(.)" to="$1\u{0324}"/>
+      <transform from="\m{breve}(.)" to="$1\u{0306}"/>
+      <transform from="\m{breve-below}(.)" to="$1\u{032E}"/>
+      <transform from="\m{ring-above}(.)" to="$1\u{030A}"/>
+      <transform from="\m{ring-below}(.)" to="$1\u{0325}"/>
+      <transform from="\m{cedilla}(.)" to="$1\u{0327}"/>
+      <transform from="\m{palatal-hook-below}(.)" to="$1\u{0321}"/>
+      <transform from="\m{comma-below}(.)" to="$1\u{0326}"/>
+      <transform from="\m{comma-above}(.)" to="$1\u{0313}"/>
+      <transform from="\m{ogonek}(.)" to="$1\u{0328}"/>
+      <transform from="\m{candrabindu}(.)" to="$1\u{0310}"/>
+      <transform from="\m{bridge-below}(.)" to="$1\u{032A}"/>
+      <transform from="\m{bridge-above}(.)" to="$1\u{0346}"/>
+      <transform from="\m{inverted-bridge-below}(.)" to="$1\u{033A}"/>
+      <transform from="\m{square-below}(.)" to="$1\u{033B}"/>
+      <transform from="\m{minus-below}(.)" to="$1\u{0320}"/>
+      <transform from="\m{plus-below}(.)" to="$1\u{031F}"/>
+      <transform from="\m{stroke-overlay}(.)" to="$1\u{0335}"/>
+      <transform from="\m{tilde-overlay}(.)" to="$1\u{0334}"/>
+      <transform from="\m{down-tack-below}(.)" to="$1\u{031E}"/>
+      <transform from="\m{up-tack-below}(.)" to="$1\u{031D}"/>
+      <transform from="\m{left-half-ring-below}(.)" to="$1\u{031C}"/>
+      <transform from="\m{right-half-ring-below}(.)" to="$1\u{0339}"/>
+      <transform from="\m{vertical-line-below}(.)" to="$1\u{0329}"/>
+      <transform from="\m{vertical-line-above}(.)" to="$1\u{030D}"/>
+      <transform from="\m{left-angle-below}(.)" to="$1\u{0349}"/>
+      <transform from="\m{double-vertical-line-below}(.)" to="$1\u{0348}"/>
+      <transform from="\m{seagull-below}(.)" to="$1\u{033C}"/>
+      <transform from="\m{tie-above}(.)" to="$1\u{0361}"/>
+      <transform from="\m{tie-below}(.)" to="$1\u{035C}"/>
+      <transform from="\m{x-above}(.)" to="$1\u{033D}"/>
+      <transform from="\m{x-below}(.)" to="$1\u{0353}"/>
+      <transform from="\m{left-angle-above}(.)" to="$1\u{031A}"/>
+      <transform from="\m{right-tack-below}(.)" to="$1\u{0319}"/>
+      <transform from="\m{left-tack-below}(.)" to="$1\u{0318}"/>
+      <transform from="\m{dot-above}(.)" to="$1\u{0307}"/>
+      <transform from="\m{dot-below}(.)" to="$1\u{0323}"/>
+      <transform from="\m{hook-above}(.)" to="$1\u{0309}"/>
+      <transform from="\m{inverted-breve-below}(.)" to="$1\u{032F}"/>
+      <transform from="\m{inverted-breve}(.)" to="$1\u{0311}"/>
+      <transform from="\m{macron-acute}(.)" to="$1\u{1DC4}"/>
+      <transform from="\m{grave-macron}(.)" to="$1\u{1DC5}"/>
+      <transform from="\m{grave-acute-grave}(.)" to="$1\u{1DC8}"/>
+      <transform from="\m{macron-grave}(.)" to="$1\u{1DC6}"/>
+      <transform from="\m{acute-macron}(.)" to="$1\u{1DC7}"/>
+      <transform from="\m{acute-grave-acute}(.)" to="$1\u{1DC9}"/>
+      <!-- superscripts (⌥z arms raise) and subscripts (⌥⇧z arms lower) -->
       <transform from="\m{raise}($[sup_in])" to="$[1:sup_out]"/>
       <transform from="\m{lower}($[sub_in])" to="$[1:sub_out]"/>
+      <!-- rhotic hook (⌥r) fuses onto ə/ɜ -->
       <transform from="ə\m{rhotic}" to="ɚ"/>
       <transform from="ɜ\m{rhotic}" to="ɝ"/>
     </transformGroup>
   </transforms>
-  <!--
-  NOT EXPRESSIBLE as data — these stay in the engine:
-    1. Shift-release chain-breaking (depends on a modifier RELEASE event).
-    2. Runtime settings: quotes locale (baked: en) and capital-digraphs.
-    3. Unconvert ⌃⌫ (the inverse of every transform, re-typing the spelling).
-    4. Order-dependent multi-mark fusion beyond NFC (fuse_marks).
-    5. Lookback rewrite of already-committed host text (macOS).
-  -->
 </keyboard3>

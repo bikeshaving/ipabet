@@ -47,9 +47,14 @@ for (const mk of spec.marks) {
 }
 const cloneOf = {};                    // sentinel char -> clone string | '' (drop)
 const combining = new Set();           // sentinel chars that are dead-key marks
-for (const [name, s] of Object.entries(sent)) {
-  const m = name.match(/^m([0-9a-f]+)$/);          // markers named m<hex> decode to their char
-  if (m) { const ch = String.fromCodePoint(parseInt(m[1], 16)); if (/\p{M}/u.test(ch)) { combining.add(s); cloneOf[s] = cloneByChar[ch] ?? ch; } }
+// learn each marker's combining char from its own dead-key rule: \m{NAME}(.) -> $1\u{XXXX}
+for (const [from, to] of rawT) {
+  const fm = from.match(/^\\m\{([^}]+)\}\(\.\)$/);
+  const tm = to.match(/^\$1\\u\{([0-9A-Fa-f]+)\}$/);
+  if (fm && tm && sent[fm[1]]) {
+    const s = sent[fm[1]], ch = String.fromCodePoint(parseInt(tm[1], 16));
+    combining.add(s); cloneOf[s] = cloneByChar[ch] ?? ch;
+  }
 }
 for (const n of ['raise', 'lower', 'rhotic']) if (sent[n]) cloneOf[sent[n]] = '';
 
