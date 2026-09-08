@@ -1,17 +1,16 @@
 import Cocoa
 import InputMethodKit
 
-// Drives the real InputController — the macOS reference implementation — through
-// a mock IMKTextInput, replaying the shared parity + fuzz vector corpus the Rust
-// and JS engines replay in their own suites. Until this existed the Swift logic
-// had zero automated coverage, which is how a hand review found the Control-chord
-// and newline-tie divergences; now every push checks the reference against the
-// same oracle as the ports.
+// Drives the real InputController — now a shell over the Rust core — through a
+// mock IMKTextInput, replaying the shared parity + fuzz vector corpus the Rust
+// and JS engines replay in their own suites. This checks the whole macOS path
+// (event translation, the core call, applying the edit) against the same oracle
+// as the ports, on every push.
 //
-// The one thing it cannot express is a shift RELEASE mid-sequence: macOS learns
-// that from a flagsChanged event, and handle() only takes keyDown. Vectors that
-// carry shiftBroke are skipped and left to the shared engine tests and the
-// on-device gate.
+// A shift RELEASE mid-sequence is reproduced by synthesizing the flagsChanged
+// event the controller learns it from (see flagsChanged below), so shiftBroke
+// vectors run rather than being skipped. Only backspace is skipped, for the
+// documented macOS-15 net-empty divergence, and left to the on-device gate.
 //
 //   swiftc tests/main.swift Sources/InputController.swift Sources/Debug.swift \
 //     -framework Cocoa -framework InputMethodKit -framework Carbon -framework IOKit
@@ -145,16 +144,10 @@ for v in vectors {
     // start empty, so they hit that documented divergence, and the mock's
     // insertText applies a net-empty replace cleanly — MORE forgiving than the
     // real transport — so it could not prove the workaround anyway. Backspace
-    // stays with the engine tests and the on-device gate.
-    // ⌥Escape is a corner (option+Escape flushes here, passes in the engine).
-    if v.keys.contains(where: { $0.key == "⌫" || ($0.key == "Escape" && $0.option) }) {
-        skip += 1; continue
-    }
-    // The raise/lower operators (⌥z, ⌥⇧z) preview through marked text before
-    // they land, and this mock's setMarkedText is a no-op — so their
-    // in-progress state is not observable here. Covered by the engines and the
-    // on-device gate. (This harness asserts committed text, never the preview.)
-    if v.keys.contains(where: { $0.key == "z" && $0.option }) { skip += 1; continue }
+    // stays with the engine tests and the on-device gate. (⌥z and ⌥Escape used
+    // to be skipped too, for the old Swift engine's bugs; the re-shell onto the
+    // core fixed both, so they run now.)
+    if v.keys.contains(where: { $0.key == "⌫" }) { skip += 1; continue }
     UserDefaults.standard.set(v.capital_digraphs, forKey: "capitalDigraphs")
     UserDefaults.standard.set(v.locale, forKey: "quoteLocale")
     let c = InputController()
@@ -189,7 +182,7 @@ for v in vectors {
 }
 
 for f in failures { FileHandle.standardError.write("FAIL \(f)\n".data(using: .utf8)!) }
-print("\(pass) pass, \(failures.count) fail, \(skip) skipped (backspace, ⌥Escape, ⌥z, or unmapped key)")
+print("\(pass) pass, \(failures.count) fail, \(skip) skipped (backspace or unmapped key)")
 // A floor, so an empty corpus or a future all-skipping change fails loudly
 // rather than passing having checked nothing. Half the corpus is a wide margin
 // below what actually runs (~90%+) and well above any legitimate skip rate.

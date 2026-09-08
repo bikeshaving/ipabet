@@ -1,6 +1,7 @@
 #!/bin/bash
-# Uninstall IPAbet: disable its input sources, remove the app, forget the
-# pkg receipt.
+# Uninstall IPAbet: disable its input sources, then remove everything the
+# production install leaves — the app, the pkg receipt, and the sandbox
+# container (settings + debug log) of the user running this.
 #
 #   sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"
 #
@@ -11,14 +12,17 @@ set -euo pipefail
 
 APP="/Library/Input Methods/IPAbet.app"
 CONSOLE_USER=$(stat -f%Su /dev/console)
+CONSOLE_HOME=$(eval echo "~$CONSOLE_USER")
+BUNDLE=org.bikeshaving.inputmethod.IPAbet
 
 # TIS state is per-session: disable as the logged-in user, never as root.
 if [ -x "$APP/Contents/MacOS/ipabet-register" ]; then
   sudo -u "$CONSOLE_USER" "$APP/Contents/MacOS/ipabet-register" --disable || true
 fi
 killall IPAbet 2>/dev/null || true
-rm -rf "$APP"
-pkgutil --forget org.bikeshaving.inputmethod.IPAbet.pkg >/dev/null 2>&1 || true
+[ -d "$APP" ] && rm -r "$APP"
+pkgutil --forget "$BUNDLE.pkg" >/dev/null 2>&1 || true
+CONTAINER="$CONSOLE_HOME/Library/Containers/$BUNDLE"
+[ -d "$CONTAINER" ] && rm -r "$CONTAINER"
 
-echo "IPAbet is removed. Log out and back in to clear the input menu."
-echo "Per-user data (if any): ~/Library/Containers/org.bikeshaving.inputmethod.IPAbet — delete it for a clean slate."
+echo "IPAbet is fully removed. Log out and back in to clear the input menu."

@@ -19,12 +19,22 @@ trap 'rm -rf "$TMP"' EXIT
 # GitHub prereleases, never as /download.
 DBGFLAGS="${DEBUG:+-D IPABET_DEBUG}"
 
+# The app is a thin shell over the shared Rust engine (engine/), linked as a
+# static lib through the C header the IBus/fcitx5/Windows shells also use. The
+# crate builds per Apple target; needs the x86_64-apple-darwin rustc target
+# installed (rustup target add x86_64-apple-darwin).
+rust_target() { [ "$1" = arm64 ] && echo aarch64-apple-darwin || echo x86_64-apple-darwin; }
+
 # UNIVERSAL binaries — swiftc builds host-arch only, and an arm64-only input
 # method on an Intel Mac registers from its plist but can never launch: the
 # input source appears, and typing is dead. Build both slices, lipo them.
 for arch in arm64 x86_64; do
+  rt="$(rust_target "$arch")"
+  ( cd ../engine && cargo build --release --target "$rt" )
   swiftc Sources/*.swift \
     -target "$arch-apple-macos13.0" \
+    -import-objc-header ../engine/include/ipabet_engine.h \
+    -L "../engine/target/$rt/release" -lipabet_engine \
     -o "$TMP/ipabet-main-$arch" \
     -framework Cocoa -framework InputMethodKit \
     -O $DBGFLAGS
@@ -68,6 +78,11 @@ codesign --force --entitlements IPAbet.entitlements --sign - "$APP"
 echo "built $APP"
 
 if [[ "${1:-}" == "install" ]]; then
+  # Disable the prior registration before replacing the bundle, so repeated
+  # dev installs (each re-signed, which TIS sees as a new source) don't pile up
+  # duplicate enabled entries in the input-source list.
+  OLD=~/Library/Input\ Methods/IPAbet.app
+  [ -x "$OLD/Contents/MacOS/ipabet-register" ] && "$OLD/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
   rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
