@@ -24,12 +24,22 @@ const MARKER_NAME = {
   '0335': 'stroke-overlay', '0334': 'tilde-overlay', '031e': 'down-tack-below', '031d': 'up-tack-below', '031c': 'left-half-ring-below',
   '0339': 'right-half-ring-below', '0329': 'vertical-line-below', '030d': 'vertical-line-above', '0349': 'left-angle-below',
   '0348': 'double-vertical-line-below', '033c': 'seagull-below', '0361': 'tie-above', '035c': 'tie-below', '033d': 'x-above',
-  '0353': 'x-below', '0322': 'retroflex-hook-below', '0347': 'equals-below', '031a': 'left-angle-above', '0362': 'double-arrow-below',
+  '0353': 'x-below', '031a': 'no-audible-release', '0362': 'double-arrow-below',
   '0319': 'right-tack-below', '0318': 'left-tack-below', '0307': 'dot-above', '0323': 'dot-below', '0309': 'hook-above',
   '032f': 'inverted-breve-below', '0311': 'inverted-breve',
   '1dc4': 'macron-acute', '1dc5': 'grave-macron', '1dc8': 'grave-acute-grave', '1dc6': 'macron-grave', '1dc7': 'acute-macron', '1dc9': 'acute-grave-acute',
 };
-const mname = c => MARKER_NAME[hex(c)] || 'm' + hex(c);
+// IPA function names for the spacing marks (they output a literal char, never a
+// \m{} marker; the Unicode names — "MODIFIER LETTER VERTICAL LINE" — are useless here).
+const IPA_NAME = {
+  '02c8': 'primary-stress', '02cc': 'secondary-stress', '02d0': 'long', '02d1': 'half-long',
+  '02e5': 'extra-high-tone', '02e6': 'high-tone', '02e7': 'mid-tone', '02e8': 'low-tone', '02e9': 'extra-low-tone',
+  'a71b': 'upstep', 'a71c': 'downstep', '2197': 'global-rise', '2198': 'global-fall',
+  '2191': 'egressive', '2193': 'ingressive', '0347': 'alveolar', '2016': 'major-group', '0322': 'retroflex-hook',
+  '208d': 'pre-voicing', '208e': 'post-voicing', '02de': 'rhoticity', '02bb': 'okina', '02bc': 'ejective',
+  '02b9': 'prime', '02ba': 'double-prime', '27e8': 'grapheme-open', '27e9': 'grapheme-close',
+};
+const mname = c => MARKER_NAME[hex(c)] || IPA_NAME[hex(c)] || 'm' + hex(c);
 const opLabel = op => op === '%' ? '⇧5' : `⇧${op}`;
 
 const glyphOf = {};
@@ -103,7 +113,7 @@ for (const m of spec.marks) {
   const c = m.opt;
   if (m.type === 'combining') {
     addKey('mk_' + mname(m.mark), `\\m{${mname(m.mark)}}`); optLayer[c] = 'mk_' + mname(m.mark);
-    if (m.double) { const id = 'mk_' + mname(m.double); addKey(id, m.doubleSpacing ? m.double : `\\m{${mname(m.double)}}`); optShiftLayer[c] = id; }
+    if (m.double) { const id = (m.doubleSpacing ? 'sp_' : 'mk_') + mname(m.double); addKey(id, m.doubleSpacing ? m.double : `\\m{${mname(m.double)}}`); optShiftLayer[c] = id; }
   } else {
     addKey('sp_' + mname(m.mark), m.mark); optLayer[c] = 'sp_' + mname(m.mark);
     if (m.double) { const id = 'sp_' + mname(m.double); addKey(id, m.double); optShiftLayer[c] = id; }

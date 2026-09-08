@@ -1,12 +1,12 @@
 // Replay the shared parity corpus through the GENERATED LDML transforms, to
 // prove the sets+NFC collapse is faithful and not just smaller. This is a
-// micro-interpreter for exactly the LDML subset gen-ldml.mjs emits: hardware
+// micro-interpreter for exactly the LDML subset gen-ldml.ts emits: hardware
 // layers, <set> mapped substitution ($[n:set]), markers \m{...}, \u{...}, and
 // NFC of the output. Vectors that exercise behavior we already identified as
 // engine-only (chain-breaking, runtime settings, unconvert, backspace,
 // multi-mark fusion) are skipped and counted, not failed.
 //
-//   node spec/tools/replay-ldml.mjs
+//   bun spec/tools/replay-ldml.ts
 
 import fs from 'node:fs';
 const here = u => new URL(u, import.meta.url);

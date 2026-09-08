@@ -1,6 +1,6 @@
 // Extract the ONLY part of ipabet.json that isn't layout (-> LDML), UCD-derivable
 // (cp/name), or prose (-> content/keys.md): the per-mark editorial tags the /keys
-// page renders. Keyed by the ⌥ mark character. Run: node spec/tools/gen-annotations.mjs
+// page renders. Keyed by the ⌥ mark character. Run: bun spec/tools/gen-annotations.ts
 import fs from 'node:fs';
 const s = JSON.parse(fs.readFileSync(new URL('../ipabet.json', import.meta.url), 'utf8'));
 
