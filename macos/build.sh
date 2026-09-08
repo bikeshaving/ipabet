@@ -78,6 +78,11 @@ codesign --force --entitlements IPAbet.entitlements --sign - "$APP"
 echo "built $APP"
 
 if [[ "${1:-}" == "install" ]]; then
+  # Disable the prior registration before replacing the bundle, so repeated
+  # dev installs (each re-signed, which TIS sees as a new source) don't pile up
+  # duplicate enabled entries in the input-source list.
+  OLD=~/Library/Input\ Methods/IPAbet.app
+  [ -x "$OLD/Contents/MacOS/ipabet-register" ] && "$OLD/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
   rm -rf ~/Library/Input\ Methods/IPAbet.app
   cp -R "$APP" ~/Library/Input\ Methods/
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
