@@ -20,8 +20,6 @@ const layers: Record<string, string[][]> = {};
 for (const L of each(/<layer modifiers="([^"]+)">([\s\S]*?)<\/layer>/g))
   layers[L[1]] = [...L[2].matchAll(/<row keys="([^"]+)"\/>/g)].map((r) => r[1].split(/\s+/));
 const transforms = each(/<transform from="([^"]+)" to="([^"]*)"\/>/g).map((m) => [unesc(m[1]), unesc(m[2])]);
-const sets: Record<string, string[]> = {};
-for (const m of each(/<set id="([^"]+)" value="([^"]*)"\/>/g)) sets[m[1]] = unesc(m[2]).split(/\s+/);
 const disp: Record<string, string> = {};
 for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) disp[m[1]] = unesc(m[2]);
 const modifiers: Record<string, string> = {};
@@ -102,9 +100,13 @@ for (const m of each(/<ipabet:term cat="([^"]+)" id="([^"]+)" note="([^"]*)"\/>/
   const [, cat, id, note] = [m[0], unesc(m[1]), unesc(m[2]), unesc(m[3])];
   if (cat === "classes") classes[id] = note; else (classes[cat] ??= {})[id] = note;
 }
-const zip = (a: string[], b: string[], k: string) => a.map((base, i) => ({ base, [k]: b[i] }));
-const superscripts = { operator: attr(prose, "supOperator"), table: zip(sets.sup_in, sets.sup_out, "sup"), rule: attr(prose, "supRule") };
-const subscripts = { operator: attr(prose, "subOperator"), table: zip(sets.sub_in, sets.sub_out, "sub"), rule: attr(prose, "subRule") };
+// Each \m{raise}<base> → <sup> (and \m{lower}<base> → <sub>) transform is one
+// table row; the base carries a regex escape (\( \+) that we strip back off.
+const pairs = (marker: string, k: string) => transforms
+  .filter(([f]) => f.startsWith(`\\m{${marker}}`))
+  .map(([f, t]) => ({ base: f.slice(`\\m{${marker}}`.length).replace(/^\\/, ""), [k]: t }));
+const superscripts = { operator: attr(prose, "supOperator"), table: pairs("raise", "sup"), rule: attr(prose, "supRule") };
+const subscripts = { operator: attr(prose, "subOperator"), table: pairs("lower", "sub"), rule: attr(prose, "subRule") };
 const optShift: Record<string, string> = { about: attr(prose, "optShiftAbout")! };
 for (const [id, out] of Object.entries(keys)) { const m = id.match(/^os_(\d)$/); if (m) optShift[m[1]] = out; }
 const locales: Record<string, string[]> = {};

@@ -91,12 +91,6 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
         .iter()
         .filter_map(|n| Some((n.attribute("from")?.to_string(), n.attribute("to")?.to_string())))
         .collect();
-    let mut sets: HashMap<String, Vec<String>> = HashMap::new();
-    for n in all("set") {
-        if let (Some(id), Some(v)) = (n.attribute("id"), n.attribute("value")) {
-            sets.insert(id.to_string(), v.split_whitespace().map(String::from).collect());
-        }
-    }
     let mut disp: HashMap<String, String> = HashMap::new();
     for n in all("display") {
         if let (Some(out), Some(d)) = (n.attribute("output"), n.attribute("display")) {
@@ -231,23 +225,27 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
         marks.push(e);
     }
 
-    let table = |inn: &str, out: &str, sup: bool| -> SupSubTable {
-        let a = sets.get(inn).cloned().unwrap_or_default();
-        let b = sets.get(out).cloned().unwrap_or_default();
+    // Each \m{raise}<base> -> <sup> (and \m{lower}<base> -> <sub>) transform is
+    // one table row; the base carries a regex escape (\( \+) that we strip off.
+    let table = |marker: &str, sup: bool| -> SupSubTable {
+        let pfx = format!("\\m{{{marker}}}");
         SupSubTable {
-            table: a
+            table: transforms
                 .iter()
-                .zip(b.iter())
-                .map(|(base, v)| SupSubEntry {
-                    base: base.clone(),
-                    sup: if sup { Some(v.clone()) } else { None },
-                    sub: if sup { None } else { Some(v.clone()) },
+                .filter_map(|(f, t)| {
+                    let base = f.strip_prefix(&pfx)?;
+                    let base = base.strip_prefix('\\').unwrap_or(base);
+                    Some(SupSubEntry {
+                        base: base.to_string(),
+                        sup: if sup { Some(t.clone()) } else { None },
+                        sub: if sup { None } else { Some(t.clone()) },
+                    })
                 })
                 .collect(),
         }
     };
-    let superscripts = table("sup_in", "sup_out", true);
-    let subscripts = table("sub_in", "sub_out", false);
+    let superscripts = table("raise", true);
+    let subscripts = table("lower", false);
 
     let mut opt_shift: HashMap<String, String> = HashMap::new();
     for (id, out) in &keys {
