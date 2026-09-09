@@ -861,15 +861,6 @@
   <!-- cannot see it (extensions never validate against a DTD), the loader reads it. -->
   <special>
     <ipabet:engine xmlns:ipabet="https://ipabet.org/ldml">
-      <ipabet:quotes default="en">
-        <ipabet:locale id="en" open1="“" close1="”" open2="‘" close2="’"/>
-        <ipabet:locale id="de" open1="„" close1="“" open2="‚" close2="‘"/>
-        <ipabet:locale id="fr" open1="«" close1="»" open2="‹" close2="›"/>
-        <ipabet:locale id="ch" open1="»" close1="«" open2="›" close2="‹"/>
-        <ipabet:locale id="pl" open1="„" close1="”" open2="«" close2="»"/>
-        <ipabet:locale id="ru" open1="«" close1="»" open2="„" close2="“"/>
-        <ipabet:locale id="sv" open1="”" close1="”" open2="’" close2="’"/>
-      </ipabet:quotes>
       <ipabet:modifiers>
         <ipabet:modifier key="5" meaning="pull toward the center — the ə-neighborhood (e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ); ə itself is the 5 base's default, 5⇧H"/>
         <ipabet:modifier key="H" meaning="the h-digraph — plosives spirantize (tH→θ, pH→ɸ), sibilants hush (sH→ʃ), vowels lax (iH→ɪ, uH→ʊ); for a, back (aH→ɑ)"/>

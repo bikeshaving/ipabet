@@ -12,6 +12,7 @@
 
 import {describe, expect, test} from "bun:test";
 import spec from "../src/spec.ts";
+import {QUOTE_LOCALES} from "../src/index.ts";
 
 interface Mark {
 	opt: string;
@@ -167,7 +168,7 @@ describe("spec · encoding lints", () => {
 		}
 		for (const t of (spec.superscripts as {table: {base: string; sup: string}[]}).table) check(t.sup, t.base);
 		for (const t of (spec.subscripts as {table: {base: string; sub: string}[]}).table) check(t.sub, t.base);
-		for (const quad of Object.values((spec as any).quotes.locales as Record<string, string[]>)) {
+		for (const quad of Object.values(QUOTE_LOCALES.locales)) {
 			for (const q of quad) check(q, "quotes");
 		}
 	});

@@ -1,6 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../../js/src/spec.ts";
-import {SHIFTED_DIGITS, SHIFTED_PUNCT} from "../../../js/src/index.ts";
+import {SHIFTED_DIGITS, SHIFTED_PUNCT, QUOTE_LOCALES} from "../../../js/src/index.ts";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.
 // Unit widths are the ANSI standard (quarter-key grid, 15u per row):
@@ -18,8 +18,7 @@ const modifiers = spec.modifiers as Record<string, string>;
 const optShift = spec.optShift as Record<string, string>;
 
 
-const quotes = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
-const quad = quotes.locales[quotes.default];
+const quad = QUOTE_LOCALES.locales[QUOTE_LOCALES.default];
 
 /** A physical key: a typing key (`ch`) or chrome (`label`), `w` in key units. */
 export interface PhysKey {
@@ -81,7 +80,7 @@ function shown(glyph: string) {
 const SPECIALS: Record<string, {main: unknown; second: unknown; title: string}> = {
 	j: {main: "◌͡◌", second: "◌͜◌", title: "⌥j tie bar (joins the two segments around it) · ⌥⇧j tie below, for colliding descenders · pressed again on the tie it made → the spacing linker (⁀ over, ‿ under)"},
 	z: {main: "◌ᶻ", second: "◌₂", title: "⌥z raise the next glyph (t ⌥z h → tʰ) · ⌥⇧z lower it"},
-	"[": {main: quad[0], second: quad[1], title: `⌥[ opening primary quote · ⌥⇧[ closing (locale ${quotes.default}; set in the input menu)`},
+	"[": {main: quad[0], second: quad[1], title: `⌥[ opening primary quote · ⌥⇧[ closing (locale ${QUOTE_LOCALES.default}; set in the input menu)`},
 	"]": {main: quad[2], second: quad[3], title: `⌥] opening secondary quote · ⌥⇧] closing`},
 };
 

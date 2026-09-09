@@ -154,8 +154,16 @@ export const SHIFTED_PUNCT: Record<string, string> = {
 	";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
 };
 
-// The quote locale is CONFIGURATION, not composition state.
-const QUOTE_LOCALES = (spec as {quotes: {default: string; locales: Record<string, string[]>}}).quotes;
+// The bracket-key quotes per locale — [open1, close1, open2, close2]. CLDR
+// <delimiters> reference data the engine owns, not keyboard layout (mirrors the
+// Rust builtin_quotes). The quote locale is CONFIGURATION, not composition state.
+export const QUOTE_LOCALES: {default: string; locales: Record<string, string[]>} = {
+	default: "en",
+	locales: {
+		en: ["“", "”", "‘", "’"], de: ["„", "“", "‚", "‘"], fr: ["«", "»", "‹", "›"],
+		ch: ["»", "«", "›", "‹"], pl: ["„", "”", "«", "»"], ru: ["«", "»", "„", "“"], sv: ["”", "”", "’", "’"],
+	},
+};
 let quoteLocale = QUOTE_LOCALES.default;
 /** Set the active quote locale (en, de, fr, ch, pl, ru, sv). Unknown → default. */
 /** Capital digraphs (⇧A⇧E → Æ, ⇧S⇧H → Ʃ, ⇧5⇧H → Ə) are OFF by default, because

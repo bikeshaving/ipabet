@@ -12,7 +12,6 @@ pub struct Spec {
     pub subscripts: SupSubTable,
     #[serde(rename = "optShift", default)]
     pub opt_shift: HashMap<String, String>,
-    pub quotes: Quotes,
 }
 
 #[derive(Deserialize)]
@@ -51,12 +50,6 @@ pub struct SupSubEntry {
     pub base: String,
     pub sup: Option<String>,
     pub sub: Option<String>,
-}
-
-#[derive(Deserialize)]
-pub struct Quotes {
-    pub default: String,
-    pub locales: HashMap<String, Vec<String>>,
 }
 
 use roxmltree::{Document, Node};
@@ -306,16 +299,5 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
         }
     }
 
-    let mut locales: HashMap<String, Vec<String>> = HashMap::new();
-    for n in all("locale") {
-        if let Some(id) = n.attribute("id") {
-            locales.insert(
-                id.to_string(),
-                ["open1", "close1", "open2", "close2"].iter().map(|a| n.attribute(*a).unwrap_or("").to_string()).collect(),
-            );
-        }
-    }
-    let default = all("quotes").first().and_then(|n| n.attribute("default")).unwrap_or("en").to_string();
-
-    Ok(Spec { letters, marks, superscripts, subscripts, opt_shift, quotes: Quotes { default, locales } })
+    Ok(Spec { letters, marks, superscripts, subscripts, opt_shift })
 }

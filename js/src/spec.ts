@@ -129,10 +129,6 @@ const superscripts = { operator: attr(prose, "supOperator"), table: pairs("raise
 const subscripts = { operator: attr(prose, "subOperator"), table: pairs("lower", "sub"), rule: attr(prose, "subRule") };
 const optShift: Record<string, string> = { about: attr(prose, "optShiftAbout")! };
 for (const [id, out] of Object.entries(keys)) { const m = id.match(/^os_(\d)$/); if (m) optShift[m[1]] = out; }
-const locales: Record<string, string[]> = {};
-for (const m of each(/<ipabet:locale id="([^"]+)" open1="([^"]*)" close1="([^"]*)" open2="([^"]*)" close2="([^"]*)"\/>/g))
-  locales[m[1]] = [unesc(m[2]), unesc(m[3]), unesc(m[4]), unesc(m[5])];
-const quotes = { about: attr(prose, "quotesAbout"), default: xml.match(/<ipabet:quotes default="([^"]+)"/)?.[1] ?? "en", locales };
 
-export const spec = { modifiers, letters, marks, superscripts, subscripts, classes, optShift, quotes };
+export const spec = { modifiers, letters, marks, superscripts, subscripts, classes, optShift };
 export default spec;
