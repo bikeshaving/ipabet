@@ -881,9 +881,15 @@
    "doubleCycle": [
     "͎"
    ],
+   "doubleCycleCp": [
+    "U+034E"
+   ],
    "clone": "˓",
    "cycle": [
     "͍"
+   ],
+   "cycleCp": [
+    "U+034D"
    ],
    "exclusive": true,
    "group": "Articulation",
@@ -1211,6 +1217,11 @@
     "͋",
     "͌"
    ],
+   "cycleCp": [
+    "U+034A",
+    "U+034B",
+    "U+034C"
+   ],
    "group": "Nasalization",
    "shiftSense": "below"
   },
@@ -1268,6 +1279,7 @@
   }
  ],
  "superscripts": {
+  "operator": "opt+z",
   "table": [
    {
     "base": "0",
@@ -2253,9 +2265,11 @@
     "base": "ꜳ",
     "sup": "𐞀"
    }
-  ]
+  ],
+  "rule": "Generated from Unicode: a glyph raises iff a character exists whose compatibility decomposition is <super> of it. Raised letters Unicode gives no decomposition are added by hand — ʔ→ˀ, ʕ→ˤ, Ƀ→ᴯ, ᴎ→ᴻ, ᴉ→ᵎ, ꜳ→𐞀 — so the table is the complete set."
  },
  "subscripts": {
+  "operator": "opt+shift+z",
   "table": [
    {
     "base": "0",
@@ -2513,7 +2527,8 @@
     "base": "џ",
     "sub": "𞁪"
    }
-  ]
+  ],
+  "rule": "Generated from Unicode: a glyph lowers iff a character exists whose compatibility decomposition is <sub> of it. Nothing lacks one."
  },
  "classes": {
   "about": "Vocabulary for the flags on each mark. Membership lives on the mark, not here.",
@@ -2537,13 +2552,14 @@
   "exclusive": "The two forms are values of one dimension, so ⌥⇧ replaces rather than stacks."
  },
  "optShift": {
+  "about": "Deliberate ⌥⇧<digit> spends. There is no raw-US digit escape; an unlisted ⌥⇧<digit> passes to the host.",
   "1": "¡",
   "2": "ʾ",
   "3": "ʿ",
   "5": "˭"
  },
  "quotes": {
-  "about": "",
+  "about": "⌥[ opens primary, ⌥⇧[ closes it; ⌥] / ⌥⇧] are the secondary pair. `default` names a key of `locales`.",
   "default": "en",
   "locales": {
    "en": [

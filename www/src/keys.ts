@@ -1,6 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
-import spec from "./gen/spec.json";
+import spec from "../../spec/ipabet.gen.json";
 import schema from "../../spec/ipabet.schema.json";
 import {Layout} from "./layout.ts";
 import {keySpelled as keystrokes} from "./keystrokes.ts";

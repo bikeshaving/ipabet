@@ -1,5 +1,5 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import spec from "./gen/spec.json";
+import spec from "../../spec/ipabet.gen.json";
 import {Layout} from "./layout.ts";
 import {keySpelled, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.

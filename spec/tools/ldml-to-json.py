@@ -3,7 +3,7 @@
 # and the /ipabet.json endpoint. ipabet.xml is the source; this is a generated
 # artifact. Python because it needs Unicode names (JS has no UCD names).
 #
-#   python3 spec/tools/ldml-to-json.py > www/src/gen/spec.json
+#   python3 spec/tools/ldml-to-json.py > spec/ipabet.gen.json
 #
 # Verify with --check: diffs the site-used fields against the old spec/ipabet.json.
 
@@ -92,9 +92,9 @@ for phys, kid in altR.items():
         e['double'] = char_of(did); e['doubleCp'] = cps(e['double'])
         if did.startswith('sp_'): e['doubleSpacing'] = True
         if did.startswith('mk_') and disp.get(did[3:]): e['doubleClone'] = disp[did[3:]]
-        if fam(did[3:]): e['doubleCycle'] = fam(did[3:])
+        if fam(did[3:]): e['doubleCycle'] = fam(did[3:]); e['doubleCycleCp'] = [cps(c) for c in fam(did[3:])]
     if combining and disp.get(nm): e['clone'] = disp[nm]
-    if fam(nm): e['cycle'] = fam(nm)
+    if fam(nm): e['cycle'] = fam(nm); e['cycleCp'] = [cps(c) for c in fam(nm)]
     if nm in excl: e['exclusive'] = True
     tag = ann.get(f'{ord(ch):04x}')
     if tag is not None:
@@ -112,9 +112,11 @@ for t in all_('term'):
     cat, tid, note = t.get('cat'), t.get('id'), t.get('note')
     if cat == 'classes': classes[tid] = note
     else: classes.setdefault(cat, {})[tid] = note
-superscripts = {'table': [{'base': b, 'sup': s} for b, s in zip(sets['sup_in'], sets['sup_out'])]}
-subscripts = {'table': [{'base': b, 'sub': s} for b, s in zip(sets['sub_in'], sets['sub_out'])]}
-optShift = {kid[3:]: out for kid, out in keys.items() if re.match(r'^os_\d$', kid)}
+pr = all_('prose')[0] if all_('prose') else None
+def prose(a): return pr.get(a) if pr is not None else ''
+superscripts = {'operator': prose('supOperator'), 'table': [{'base': b, 'sup': s} for b, s in zip(sets['sup_in'], sets['sup_out'])], 'rule': prose('supRule')}
+subscripts = {'operator': prose('subOperator'), 'table': [{'base': b, 'sub': s} for b, s in zip(sets['sub_in'], sets['sub_out'])], 'rule': prose('subRule')}
+optShift = {'about': prose('optShiftAbout'), **{kid[3:]: out for kid, out in keys.items() if re.match(r'^os_\d$', kid)}}
 locales = {}
 for l in all_('locale'):
     locales[l.get('id')] = [l.get('open1'), l.get('close1'), l.get('open2'), l.get('close2')]
@@ -122,7 +124,7 @@ qdef = all_('quotes')[0].get('default') if all_('quotes') else 'en'
 
 spec = {'modifiers': modifiers, 'letters': letters, 'marks': marks,
         'superscripts': superscripts, 'subscripts': subscripts, 'classes': classes,
-        'optShift': optShift, 'quotes': {'about': '', 'default': qdef, 'locales': locales}}
+        'optShift': optShift, 'quotes': {'about': prose('quotesAbout'), 'default': qdef, 'locales': locales}}
 
 
 if __name__ == '__main__':

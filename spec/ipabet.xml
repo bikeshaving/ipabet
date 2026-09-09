@@ -796,6 +796,7 @@
         <ipabet:name cp="27e8" text="MATHEMATICAL LEFT ANGLE BRACKET (the grapheme brackets — /phoneme/ [phone] ⟨grapheme⟩; opening unshifted, per the quote law. « » are the French locale's primary quotes)"/>
         <ipabet:name cp="032f" text="COMBINING INVERTED BREVE BELOW (non-syllabic — the diphthong glide, a vowel mark on the vowel key; ⇧ → ̑ the Slavic long-falling accent)"/>
       </ipabet:names>
+      <ipabet:prose supOperator="opt+z" subOperator="opt+shift+z" optShiftAbout="Deliberate ⌥⇧&lt;digit&gt; spends. There is no raw-US digit escape; an unlisted ⌥⇧&lt;digit&gt; passes to the host." quotesAbout="⌥[ opens primary, ⌥⇧[ closes it; ⌥] / ⌥⇧] are the secondary pair. `default` names a key of `locales`." supRule="Generated from Unicode: a glyph raises iff a character exists whose compatibility decomposition is &lt;super&gt; of it. Raised letters Unicode gives no decomposition are added by hand — ʔ→ˀ, ʕ→ˤ, Ƀ→ᴯ, ᴎ→ᴻ, ᴉ→ᵎ, ꜳ→𐞀 — so the table is the complete set." subRule="Generated from Unicode: a glyph lowers iff a character exists whose compatibility decomposition is &lt;sub&gt; of it. Nothing lacks one."/>
     </ipabet:engine>
   </special>
 </keyboard3>
