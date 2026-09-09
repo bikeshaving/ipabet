@@ -6,7 +6,7 @@
 // pass supplies them.
 
 import {jsx} from "@b9g/crank/standalone";
-import spec from "../../../spec/ipabet.gen.json";
+import spec from "../../../js/src/spec.ts";
 import {keySpelled} from "../keystrokes.ts";
 
 /* --------------------------------------------------------------- audio --- */

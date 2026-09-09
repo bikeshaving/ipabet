@@ -1,5 +1,5 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import spec from "../../../spec/ipabet.gen.json";
+import spec from "../../../js/src/spec.ts";
 import {SHIFTED_DIGITS, SHIFTED_PUNCT} from "../../../js/src/index.ts";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.

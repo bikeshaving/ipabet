@@ -11,7 +11,7 @@
 // declared vocabulary, and every declared term must be used.
 
 import {describe, expect, test} from "bun:test";
-import spec from "../../spec/ipabet.gen.json";
+import spec from "../src/spec.ts";
 import schema from "../../spec/ipabet.schema.json";
 
 interface Mark {

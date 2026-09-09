@@ -99,7 +99,7 @@ describe("chart · shape", () => {
 	// and tradition marks (Korean fortis) are typeable and documented on /keys,
 	// but they are not on it — spec/ipabet.json flags them `"ipa": false`.
 	test("no non-IPA mark reaches the chart", async () => {
-		const spec = (await import("../../spec/ipabet.gen.json")).default as {
+		const spec = (await import("../src/spec.ts")).default as {
 			marks: {mark: string; ipa?: boolean}[];
 		};
 		const nonIPA = new Set(

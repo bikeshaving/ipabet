@@ -23,7 +23,7 @@ import {
 	setCapitalDigraphs as realSetCapitalDigraphs,
 	type Keystroke,
 } from "../src/index.ts";
-import spec from "../../spec/ipabet.gen.json";
+import spec from "../src/spec.ts";
 
 const DUMP = process.env.IPABET_DUMP_VECTORS === "1";
 const LOG_PATH = (() => {

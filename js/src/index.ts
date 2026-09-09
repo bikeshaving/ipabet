@@ -1,7 +1,7 @@
 // @b9g/ipabet — the IPAbet engine in TypeScript, ported from the macOS IME
 // (macos/Sources/InputController.swift). Tables come from spec/ipabet.json.
 
-import spec from "../../spec/ipabet.gen.json";
+import spec from "./spec.ts";
 
 export interface Keystroke {
 	/** The key's unshifted US-layout character: "a", "5", ";", "[" … */
