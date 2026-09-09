@@ -271,6 +271,39 @@
   </layers>
 
   <transforms type="simple">
+    <!-- exclusive marks: the ⌥ and ⌥⇧ forms are two values of one
+         dimension, so the second replaces the first instead of stacking -->
+    <transformGroup>
+      <transform from="\m{acute}\m{double-acute}" to="\m{double-acute}"/>
+      <transform from="\m{double-acute}\m{acute}" to="\m{acute}"/>
+      <transform from="\m{grave}\m{double-grave}" to="\m{double-grave}"/>
+      <transform from="\m{double-grave}\m{grave}" to="\m{grave}"/>
+      <transform from="\m{ring-above}\m{ring-below}" to="\m{ring-below}"/>
+      <transform from="\m{ring-below}\m{ring-above}" to="\m{ring-above}"/>
+      <transform from="\m{inverted-bridge-below}\m{square-below}" to="\m{square-below}"/>
+      <transform from="\m{square-below}\m{inverted-bridge-below}" to="\m{inverted-bridge-below}"/>
+      <transform from="\m{minus-below}\m{plus-below}" to="\m{plus-below}"/>
+      <transform from="\m{plus-below}\m{minus-below}" to="\m{minus-below}"/>
+      <transform from="\m{down-tack-below}\m{up-tack-below}" to="\m{up-tack-below}"/>
+      <transform from="\m{up-tack-below}\m{down-tack-below}" to="\m{down-tack-below}"/>
+      <transform from="\m{left-half-ring-below}\m{right-half-ring-below}" to="\m{right-half-ring-below}"/>
+      <transform from="\m{right-half-ring-below}\m{left-half-ring-below}" to="\m{left-half-ring-below}"/>
+      <transform from="\m{vertical-line-below}\m{vertical-line-above}" to="\m{vertical-line-above}"/>
+      <transform from="\m{vertical-line-above}\m{vertical-line-below}" to="\m{vertical-line-below}"/>
+      <transform from="\m{left-angle-below}\m{double-vertical-line-below}" to="\m{double-vertical-line-below}"/>
+      <transform from="\m{double-vertical-line-below}\m{left-angle-below}" to="\m{left-angle-below}"/>
+      <transform from="\m{right-tack-below}\m{left-tack-below}" to="\m{left-tack-below}"/>
+      <transform from="\m{left-tack-below}\m{right-tack-below}" to="\m{right-tack-below}"/>
+      <!-- cycles: repeated presses of one key walk a family and wrap -->
+      <transform from="\m{tilde}\m{tilde}" to="\m{denasal}"/>
+      <transform from="\m{denasal}\m{tilde}" to="\m{nasal-escape}"/>
+      <transform from="\m{nasal-escape}\m{tilde}" to="\m{velopharyngeal}"/>
+      <transform from="\m{velopharyngeal}\m{tilde}" to="\m{tilde}"/>
+      <transform from="\m{left-half-ring-below}\m{left-half-ring-below}" to="\m{labial-spreading}"/>
+      <transform from="\m{labial-spreading}\m{left-half-ring-below}" to="\m{left-half-ring-below}"/>
+      <transform from="\m{right-half-ring-below}\m{right-half-ring-below}" to="\m{whistled}"/>
+      <transform from="\m{whistled}\m{right-half-ring-below}" to="\m{right-half-ring-below}"/>
+    </transformGroup>
     <transformGroup>
       <!-- digraphs — a previous glyph, then a shift-operator; \p{M}* reaches a base under its dead-key marks -->
       <!-- ⇧Y -->
@@ -828,23 +861,6 @@
   <!-- cannot see it (extensions never validate against a DTD), the loader reads it. -->
   <special>
     <ipabet:engine xmlns:ipabet="https://ipabet.org/ldml">
-      <ipabet:cycles>
-        <ipabet:cycle marker="tilde" family="tilde denasal nasal-escape velopharyngeal"/>
-        <ipabet:cycle marker="left-half-ring-below" family="left-half-ring-below labial-spreading"/>
-        <ipabet:cycle marker="right-half-ring-below" family="right-half-ring-below whistled"/>
-      </ipabet:cycles>
-      <ipabet:exclusive>
-        <ipabet:pair a="acute" b="double-acute"/>
-        <ipabet:pair a="grave" b="double-grave"/>
-        <ipabet:pair a="ring-above" b="ring-below"/>
-        <ipabet:pair a="inverted-bridge-below" b="square-below"/>
-        <ipabet:pair a="minus-below" b="plus-below"/>
-        <ipabet:pair a="down-tack-below" b="up-tack-below"/>
-        <ipabet:pair a="left-half-ring-below" b="right-half-ring-below"/>
-        <ipabet:pair a="vertical-line-below" b="vertical-line-above"/>
-        <ipabet:pair a="left-angle-below" b="double-vertical-line-below"/>
-        <ipabet:pair a="right-tack-below" b="left-tack-below"/>
-      </ipabet:exclusive>
       <ipabet:quotes default="en">
         <ipabet:locale id="en" open1="“" close1="”" open2="‘" close2="’"/>
         <ipabet:locale id="de" open1="„" close1="“" open2="‚" close2="‘"/>

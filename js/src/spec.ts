@@ -26,9 +26,29 @@ const modifiers: Record<string, string> = {};
 for (const m of each(/<ipabet:modifier key="([^"]+)" meaning="([^"]*)"\/>/g)) modifiers[unesc(m[1])] = unesc(m[2]);
 const names: Record<string, string> = {};
 for (const m of each(/<ipabet:name cp="([^"]+)" text="([^"]*)"\/>/g)) names[m[1]] = unesc(m[2]);
+// Cycles come from chain transforms \m{P}\m{key} -> \m{R} (R != key): repeated
+// presses of `key` walk a family. Follow each key's chain from the key itself.
 const cyc: Record<string, string[]> = {};
-for (const m of each(/<ipabet:cycle marker="([^"]+)" family="([^"]+)"\/>/g)) cyc[m[1]] = m[2].split(/\s+/);
-const excl = new Set(each(/<ipabet:pair a="([^"]+)" b="[^"]+"\/>/g).map((m) => m[1]));
+{
+  const edge = new Map<string, string>();
+  const keys2 = new Set<string>();
+  for (const [f, t] of transforms) {
+    const fm = f.match(/^\\m\{([^}]+)\}\\m\{([^}]+)\}$/), tm = t.match(/^\\m\{([^}]+)\}$/);
+    if (fm && tm && tm[1] !== fm[2]) { edge.set(fm[1] + "|" + fm[2], tm[1]); keys2.add(fm[2]); }
+  }
+  for (const key of keys2) {
+    const family = [key];
+    for (let cur = key; ;) { const r = edge.get(cur + "|" + key); if (r === undefined || r === key) break; family.push(r); cur = r; }
+    cyc[key] = family;
+  }
+}
+// Exclusive pairs come from marker-collapse transforms: \m{A}\m{B} -> \m{B}
+// means primary A and its double B are one dimension, so B replaces A.
+const exclEdges = new Set<string>();
+for (const [f, t] of transforms) {
+  const fm = f.match(/^\\m\{([^}]+)\}\\m\{([^}]+)\}$/), tm = t.match(/^\\m\{([^}]+)\}$/);
+  if (fm && tm && tm[1] === fm[2]) exclEdges.add(fm[1] + "|" + fm[2]);
+}
 const ann: Record<string, string> = {};
 for (const m of each(/<ipabet:mark ([^>]*)\/>/g)) { const cp = attr(m[1], "cp"); if (cp) ann[cp] = m[1]; }
 const nonipa = new Set((xml.match(/<ipabet:nonipa glyphs="([^"]*)"\/>/)?.[1].split(/\s+/) ?? []).map(unesc));
@@ -82,7 +102,7 @@ for (const [phys, id] of Object.entries(altR)) {
   }
   if (combining && disp[nm]) e.clone = disp[nm];
   if (fam(nm).length) { e.cycle = fam(nm); e.cycleCp = e.cycle.map(cps); }
-  if (excl.has(nm)) e.exclusive = true;
+  if (did && did.startsWith("mk_") && exclEdges.has(nm + "|" + did.slice(3))) e.exclusive = true;
   const tag = ann[ch.codePointAt(0)!.toString(16).padStart(4, "0")];
   if (tag !== undefined) {
     e.group = attr(tag, "group");

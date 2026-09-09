@@ -158,16 +158,62 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
             None
         }
     };
+    // Cycles come from chain transforms \m{P}\m{key} -> \m{R} (R != key):
+    // repeated presses of `key` walk a family. Follow each key's chain from the
+    // key itself. (two_markers / one_marker are defined just below.)
     let mut cyc: HashMap<String, Vec<String>> = HashMap::new();
-    for n in all("cycle") {
-        if let (Some(m), Some(fam)) = (n.attribute("marker"), n.attribute("family")) {
-            cyc.insert(m.to_string(), fam.split_whitespace().map(String::from).collect());
+    {
+        let mut edge: HashMap<(String, String), String> = HashMap::new();
+        let mut keys2: Vec<String> = Vec::new();
+        for (f, t) in &transforms {
+            if let (Some((p, q)), Some(r)) = (two_markers(f), one_marker(t)) {
+                if r != q {
+                    edge.insert((p.to_string(), q.to_string()), r.to_string());
+                    if !keys2.iter().any(|k| k == q) {
+                        keys2.push(q.to_string());
+                    }
+                }
+            }
+        }
+        for key in &keys2 {
+            let mut family = vec![key.clone()];
+            let mut cur = key.clone();
+            while let Some(r) = edge.get(&(cur.clone(), key.clone())) {
+                if r == key {
+                    break;
+                }
+                family.push(r.clone());
+                cur = r.clone();
+            }
+            cyc.insert(key.clone(), family);
         }
     }
-    let mut excl: HashSet<String> = HashSet::new();
-    for n in all("pair") {
-        if let Some(a) = n.attribute("a") {
-            excl.insert(a.to_string());
+    // Exclusive pairs come from marker-collapse transforms: \m{A}\m{B} -> \m{B}
+    // means the primary A and its double B are one dimension, so B replaces A.
+    fn two_markers(s: &str) -> Option<(&str, &str)> {
+        let r = s.strip_prefix("\\m{")?;
+        let e = r.find('}')?;
+        let after = r[e + 1..].strip_prefix("\\m{")?;
+        let e2 = after.find('}')?;
+        if !after[e2 + 1..].is_empty() {
+            return None;
+        }
+        Some((&r[..e], &after[..e2]))
+    }
+    fn one_marker(s: &str) -> Option<&str> {
+        let r = s.strip_prefix("\\m{")?;
+        let e = r.find('}')?;
+        if !r[e + 1..].is_empty() {
+            return None;
+        }
+        Some(&r[..e])
+    }
+    let mut excl_edges: HashSet<(String, String)> = HashSet::new();
+    for (f, t) in &transforms {
+        if let (Some((a, b)), Some(c)) = (two_markers(f), one_marker(t)) {
+            if c == b {
+                excl_edges.insert((a.to_string(), b.to_string()));
+            }
         }
     }
     let fam_chars = |name: &str| -> Vec<String> {
@@ -199,6 +245,7 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
             double_clone: None,
             exclusive: false,
         };
+        let mut double_name: Option<String> = None;
         if let Some(did) = alt_rs.get(phys) {
             if did.starts_with("mk_") || did.starts_with("sp_") {
                 e.double = char_of(did).map(|c| c.to_string());
@@ -206,6 +253,7 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
                     e.double_spacing = true;
                 }
                 if did.starts_with("mk_") {
+                    double_name = Some(did[3..].to_string());
                     if let Some(d) = disp.get(&did[3..]) {
                         e.double_clone = Some(d.clone());
                     }
@@ -219,8 +267,10 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
             }
         }
         e.cycle = fam_chars(name);
-        if excl.contains(name) {
-            e.exclusive = true;
+        if let Some(dn) = &double_name {
+            if excl_edges.contains(&(name.to_string(), dn.clone())) {
+                e.exclusive = true;
+            }
         }
         marks.push(e);
     }
