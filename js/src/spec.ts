@@ -9,8 +9,6 @@ import xml from "../../spec/ipabet.xml";
 const unesc = (s: string) =>
   s.replace(/&quot;/g, '"').replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&amp;/g, "&");
 const cps = (g: string) => [...g].map((c) => "U+" + c.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")).join(" ");
-const nameKey = (g: string) => [...g].map((c) => c.codePointAt(0)!.toString(16).padStart(4, "0")).join(" ");
-const attr = (s: string, a: string) => { const m = s.match(new RegExp(`${a}="([^"]*)"`)); return m ? unesc(m[1]) : undefined; };
 const each = (re: RegExp) => [...xml.matchAll(re)];
 
 // ---- raw XML ----
@@ -22,10 +20,6 @@ for (const L of each(/<layer modifiers="([^"]+)">([\s\S]*?)<\/layer>/g))
 const transforms = each(/<transform from="([^"]+)" to="([^"]*)"\/>/g).map((m) => [unesc(m[1]), unesc(m[2])]);
 const disp: Record<string, string> = {};
 for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) disp[m[1]] = unesc(m[2]);
-const modifiers: Record<string, string> = {};
-for (const m of each(/<ipabet:modifier key="([^"]+)" meaning="([^"]*)"\/>/g)) modifiers[unesc(m[1])] = unesc(m[2]);
-const names: Record<string, string> = {};
-for (const m of each(/<ipabet:name cp="([^"]+)" text="([^"]*)"\/>/g)) names[m[1]] = unesc(m[2]);
 // Cycles come from chain transforms \m{P}\m{key} -> \m{R} (R != key): repeated
 // presses of `key` walk a family. Follow each key's chain from the key itself.
 const cyc: Record<string, string[]> = {};
@@ -49,12 +43,7 @@ for (const [f, t] of transforms) {
   const fm = f.match(/^\\m\{([^}]+)\}\\m\{([^}]+)\}$/), tm = t.match(/^\\m\{([^}]+)\}$/);
   if (fm && tm && tm[1] === fm[2]) exclEdges.add(fm[1] + "|" + fm[2]);
 }
-const ann: Record<string, string> = {};
-for (const m of each(/<ipabet:mark ([^>]*)\/>/g)) { const cp = attr(m[1], "cp"); if (cp) ann[cp] = m[1]; }
-const nonipa = new Set((xml.match(/<ipabet:nonipa glyphs="([^"]*)"\/>/)?.[1].split(/\s+/) ?? []).map(unesc));
-const prose = xml.match(/<ipabet:prose ([^>]*)\/>/)?.[1] ?? "";
 
-const name = (g: string) => names[nameKey(g)] ?? "";
 const markerChar: Record<string, string> = {};
 for (const [f, t] of transforms) {
   const fm = f.match(/^\\m\{([^}]+)\}\(\.\)$/), tm = t.match(/^\$1\\u\{([0-9A-Fa-f]+)\}$/);
@@ -62,18 +51,18 @@ for (const [f, t] of transforms) {
 }
 
 // ---- letters ----
-interface Letter { key: string; glyph: string; cp: string; name: string; ipa?: boolean }
+interface Letter { key: string; glyph: string; cp: string }
 const letters: Letter[] = [];
 for (let c = 97; c <= 122; c++) {
   const id = "b_" + String.fromCharCode(c), g = keys[id];
-  if (g !== undefined) letters.push({ key: String.fromCharCode(c), glyph: g, cp: cps(g), name: name(g), ...(nonipa.has(g) ? { ipa: false } : {}) });
+  if (g !== undefined) letters.push({ key: String.fromCharCode(c), glyph: g, cp: cps(g) });
 }
 for (const [f, t] of transforms) {
   if (!f.includes("(\\p{M}*)")) continue;
   const base = f.slice(0, f.indexOf("("));
   if (!/^[a-z0-9]$/i.test(base)) continue;
   const g = t.replace(/\$1$/, "");
-  letters.push({ key: base + f.slice(f.indexOf(")") + 1), glyph: g, cp: cps(g), name: name(g), ...(nonipa.has(g) ? { ipa: false } : {}) });
+  letters.push({ key: base + f.slice(f.indexOf(")") + 1), glyph: g, cp: cps(g) });
 }
 
 // ---- marks ----
@@ -92,7 +81,7 @@ for (const [phys, id] of Object.entries(altR)) {
   if (!/^(mk|sp)_/.test(id)) continue;
   const nm = id.slice(3), combining = id.startsWith("mk_"), ch = charOf(id);
   if (ch === undefined) continue;
-  const e: any = { opt: phys, mark: ch, type: combining ? "combining" : "spacing", cp: cps(ch), name: name(ch) };
+  const e: any = { opt: phys, mark: ch, type: combining ? "combining" : "spacing", cp: cps(ch) };
   const did = altRS[phys];
   if (did && /^(mk|sp)_/.test(did)) {
     e.double = charOf(did); e.doubleCp = cps(e.double);
@@ -103,32 +92,19 @@ for (const [phys, id] of Object.entries(altR)) {
   if (combining && disp[nm]) e.clone = disp[nm];
   if (fam(nm).length) { e.cycle = fam(nm); e.cycleCp = e.cycle.map(cps); }
   if (did && did.startsWith("mk_") && exclEdges.has(nm + "|" + did.slice(3))) e.exclusive = true;
-  const tag = ann[ch.codePointAt(0)!.toString(16).padStart(4, "0")];
-  if (tag !== undefined) {
-    e.group = attr(tag, "group");
-    if (attr(tag, "shiftSense")) e.shiftSense = attr(tag, "shiftSense");
-    if (attr(tag, "ipa") === "false") e.ipa = false;
-    if (attr(tag, "beyond")) e.beyond = attr(tag, "beyond");
-    if (attr(tag, "arbitraryKey")) e.arbitraryKey = true;
-  }
   marks.push(e);
 }
 
-// ---- classes, sup/sub, optShift, quotes ----
-const classes: Record<string, any> = {};
-for (const m of each(/<ipabet:term cat="([^"]+)" id="([^"]+)" note="([^"]*)"\/>/g)) {
-  const [, cat, id, note] = [m[0], unesc(m[1]), unesc(m[2]), unesc(m[3])];
-  if (cat === "classes") classes[id] = note; else (classes[cat] ??= {})[id] = note;
-}
+// ---- sup/sub, optShift ----
 // Each \m{raise}<base> → <sup> (and \m{lower}<base> → <sub>) transform is one
 // table row; the base carries a regex escape (\( \+) that we strip back off.
 const pairs = (marker: string, k: string) => transforms
   .filter(([f]) => f.startsWith(`\\m{${marker}}`))
   .map(([f, t]) => ({ base: f.slice(`\\m{${marker}}`.length).replace(/^\\/, ""), [k]: t }));
-const superscripts = { operator: attr(prose, "supOperator"), table: pairs("raise", "sup"), rule: attr(prose, "supRule") };
-const subscripts = { operator: attr(prose, "subOperator"), table: pairs("lower", "sub"), rule: attr(prose, "subRule") };
-const optShift: Record<string, string> = { about: attr(prose, "optShiftAbout")! };
+const superscripts = { table: pairs("raise", "sup") };
+const subscripts = { table: pairs("lower", "sub") };
+const optShift: Record<string, string> = {};
 for (const [id, out] of Object.entries(keys)) { const m = id.match(/^os_(\d)$/); if (m) optShift[m[1]] = out; }
 
-export const spec = { modifiers, letters, marks, superscripts, subscripts, classes, optShift };
+export const spec = { letters, marks, superscripts, subscripts, optShift };
 export default spec;

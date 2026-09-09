@@ -1,14 +1,11 @@
 // The spec must describe itself accurately.
 //
-// spec/ipabet.xml is the source both engines and the website read. Its prose
-// (`laws`, `classes`, each mark's `name`) is the only place the *reasoning* for
-// a key assignment lives, and prose does not typecheck — nothing else catches a
-// stale "⌥c cedilla" the moment that mark changes keys.
-//
-// So membership lives on the marks (`ipa`, `beyond`, `shiftSense`,
-// `arbitraryKey`), and `laws`/`classes` only define terms. These tests hold
-// that line: prose may not claim membership, every flag must be drawn from the
-// declared vocabulary, and every declared term must be used.
+// spec/ipabet.xml is the source both engines read, reconstructed here into the
+// engine-facing spec. These tests hold the invariants that reconstruction and
+// both ports lean on: marks land on the keys the laws assume, every emitted
+// glyph is well-encoded, and no field drifts outside its declared shape. The
+// editorial data (names, class meanings, mark grouping) lives with the website
+// now, so it is validated there, not here.
 
 import {describe, expect, test} from "bun:test";
 import spec from "../src/spec.ts";
@@ -21,86 +18,11 @@ interface Mark {
 	type?: string;
 	doubleSpacing?: boolean;
 	exclusive?: boolean;
-	ipa?: boolean;
-	beyond?: string;
-	shiftSense?: string;
-	arbitraryKey?: boolean;
-	name?: string;
 	cp?: string;
 }
 
 const marks = spec.marks as Mark[];
-const classes = spec.classes as Record<string, any>;
 const byOpt = new Map(marks.map((m) => [m.opt, m]));
-
-describe("spec · flag vocabulary", () => {
-	test("every mark with a ⌥⇧ form declares what ⌥⇧ means for it", () => {
-		for (const m of marks) {
-			if (m.double !== undefined) expect(m.shiftSense).toBeTruthy();
-			else expect(m.shiftSense).toBeUndefined();
-		}
-	});
-
-	test("every shiftSense is one the classes block defines", () => {
-		const defined = new Set(Object.keys(classes.shiftSense).filter((k) => k !== "about"));
-		for (const m of marks) {
-			if (m.shiftSense !== undefined) expect(defined).toContain(m.shiftSense);
-		}
-	});
-
-	test("every defined shiftSense is actually used by some mark", () => {
-		const used = new Set(marks.map((m) => m.shiftSense).filter(Boolean));
-		for (const k of Object.keys(classes.shiftSense)) {
-			if (k !== "about") expect(used).toContain(k);
-		}
-	});
-
-	test("ipa:false and beyond imply each other, with a defined value", () => {
-		const defined = new Set(Object.keys(classes.beyond));
-		for (const m of marks) {
-			expect(m.beyond !== undefined).toBe(m.ipa === false);
-			if (m.beyond !== undefined) expect(defined).toContain(m.beyond);
-		}
-	});
-
-	test("exclusive marks are values of one dimension, so never `twin`", () => {
-		for (const m of marks) {
-			if (m.exclusive) expect(m.shiftSense).not.toBe("twin");
-		}
-	});
-});
-
-describe("spec · prose does not hardcode membership", () => {
-	const prose = (obj: unknown): string[] =>
-		typeof obj === "string"
-			? [obj]
-			: Array.isArray(obj)
-				? obj.flatMap(prose)
-				: obj && typeof obj === "object"
-					? Object.values(obj).flatMap(prose)
-					: [];
-
-	// Every ⌥-key named anywhere in the spec's prose must be a key that exists —
-	// the check a stale "⌥<key> <mark>" claim fails.
-	test("every ⌥key named in the spec's prose is assigned", () => {
-		const text = [...prose(spec)].join(" ");
-		const named = [...text.matchAll(/⌥⇧?([a-z0-9=.,`';-])/g)].map((m) => m[1]);
-		expect(named.length).toBeGreaterThan(0);
-		for (const k of named) {
-			// ⌥- is the dash law: reserved, deliberately unassigned.
-			if (k === "-") continue;
-			expect(byOpt.has(k)).toBe(true);
-		}
-	});
-
-	// A mark's own `name` may describe itself; the shared prose may not enumerate
-	// which marks belong to a class, because that duplicates the flags.
-	test("classes.beyond and classes.arbitraryKey name no keys at all", () => {
-		for (const text of [...prose(classes.beyond), classes.arbitraryKey]) {
-			expect(text).not.toMatch(/⌥/);
-		}
-	});
-});
 
 describe("spec · placements the laws lean on", () => {
 	test("the comma key carries the comma-shaped marks", () => {
@@ -115,14 +37,12 @@ describe("spec · placements the laws lean on", () => {
 	test("period carries the dot-shaped marks, ⇧ relocating below", () => {
 		expect(byOpt.get(".")!.mark).toBe("̇"); // dot above
 		expect(byOpt.get(".")!.double).toBe("̣"); // dot below
-		expect(byOpt.get(".")!.shiftSense).toBe("below");
 	});
 
-	test("lowered/raised is a greater-pole exclusive on ⌥g", () => {
+	test("lowered/raised is an exclusive pair on ⌥g", () => {
 		const g = byOpt.get("g")!;
 		expect(g.mark).toBe("̞");
 		expect(g.exclusive).toBe(true);
-		expect(g.shiftSense).toBe("greater");
 	});
 
 	test("the tie bar is a postfix joiner on ⌥j, and nowhere else", () => {
@@ -131,13 +51,11 @@ describe("spec · placements the laws lean on", () => {
 		expect(tie.mark).toBe("\u{0361}"); // tie above on ⌥j
 		expect(tie.double).toBe("\u{035C}"); // tie below on ⌥⇧j
 		expect(byOpt.get("8")!.mark).toBe("↓"); // ⌥8 is airflow (the nasal family cycles behind ⌥n)
-		expect((spec.modifiers as Record<string, string>).T).toBeUndefined();
 	});
 
 	test("⌥⇧ digit slots are spent only where the escape is redundant", () => {
 		const letters = new Set((spec.letters as {key: string}[]).map((l) => l.key));
 		for (const d of Object.keys(spec.optShift as Record<string, string>)) {
-			if (d === "about") continue;
 			expect(letters.has(d), `⇧${d} is claimed; its escape is load-bearing`).toBe(false);
 		}
 	});
@@ -193,30 +111,24 @@ describe("spec · encoding lints", () => {
 	});
 });
 
-// The shape marks and letters may take, enforced directly. A schema nobody runs
-// is just more prose, and a mark or letter with a stray field is a bug the
-// engines won't catch — the ipa:false that once escaped onto a letters entry
-// fails here. These are closed sets: a new field must be added below on purpose.
+// The shape marks and letters may take, enforced directly. A mark or letter with
+// a stray field is a bug the engines won't catch. These are closed sets: a new
+// field must be added below on purpose.
 describe("spec · marks and letters keep their declared shape", () => {
 	const MARK_FIELDS = new Set([
 		"opt", "mark", "double", "doubleCp", "doubleSpacing", "type", "clone",
-		"doubleClone", "group", "cp", "name", "exclusive", "shiftSense", "ipa",
-		"beyond", "arbitraryKey", "cycle", "cycleCp", "doubleCycle", "doubleCycleCp",
+		"doubleClone", "cp", "exclusive", "cycle", "cycleCp", "doubleCycle", "doubleCycleCp",
 	]);
-	const MARK_REQUIRED = ["opt", "mark", "type", "group", "cp", "name"];
-	const LETTER_FIELDS = new Set(["key", "glyph", "cp", "name", "ipa"]);
+	const MARK_REQUIRED = ["opt", "mark", "type", "cp"];
+	const LETTER_FIELDS = new Set(["key", "glyph", "cp"]);
 	// A present field on the left requires every field on the right.
 	const DEPENDENTS: Record<string, string[]> = {
-		double: ["shiftSense"], shiftSense: ["double"], doubleCp: ["double"],
-		doubleClone: ["double"], doubleSpacing: ["double"], exclusive: ["double"],
-		ipa: ["beyond"], beyond: ["ipa"], cycle: ["cycleCp"], cycleCp: ["cycle"],
+		doubleCp: ["double"], doubleClone: ["double"], doubleSpacing: ["double"],
+		exclusive: ["double"], cycle: ["cycleCp"], cycleCp: ["cycle"],
 		doubleCycle: ["doubleCycleCp", "double"], doubleCycleCp: ["doubleCycle"],
 	};
 	const ENUMS: Record<string, string[]> = {
 		type: ["combining", "spacing"],
-		group: ["Articulation", "Length", "Nasalization", "Phonation", "Prosody", "Syllabicity", "Tone", "Transliteration"],
-		shiftSense: ["greater", "extreme", "lesser", "below", "placement", "twin", "arbitrary"],
-		beyond: ["tenant", "tradition", "extIPA"],
 	};
 
 	test("no mark carries an undeclared field", () => {
@@ -237,7 +149,7 @@ describe("spec · marks and letters keep their declared shape", () => {
 		}
 	});
 
-	test("dependent fields hold: double↔shiftSense, ipa↔beyond, exclusive→double", () => {
+	test("dependent fields hold: the double-form fields require a double, cycles pair up", () => {
 		for (const m of marks as unknown as Record<string, unknown>[]) {
 			for (const [field, needs] of Object.entries(DEPENDENTS)) {
 				if (m[field] === undefined) continue;

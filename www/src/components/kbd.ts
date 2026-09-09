@@ -1,6 +1,7 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import spec from "../../../js/src/spec.ts";
 import {SHIFTED_DIGITS, SHIFTED_PUNCT, QUOTE_LOCALES} from "../../../js/src/index.ts";
+import {nameOf} from "../glyph-names.ts";
 
 // THE keyboard — one component, real ANSI geometry, never improvised.
 // Unit widths are the ANSI standard (quarter-key grid, 15u per row):
@@ -9,11 +10,24 @@ import {SHIFTED_DIGITS, SHIFTED_PUNCT, QUOTE_LOCALES} from "../../../js/src/inde
 // /type renders it as reference (.kbd--ref), /learn as the drill (.kbd--drill).
 
 interface MarkE {
-	opt: string; mark: string; type: string; double?: string; name?: string;
+	opt: string; mark: string; type: string; double?: string;
 }
 
 const marks = new Map((spec.marks as MarkE[]).map((m) => [m.opt, m]));
-const modifiers = spec.modifiers as Record<string, string>;
+// ⇧-modifier meanings for key tooltips — presentation data owned by this
+// component (the engine reads none of it), not the keyboard spec.
+const modifiers: Record<string, string> = {
+	"5": "pull toward the center — the ə-neighborhood (e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ); ə itself is the 5 base's default, 5⇧H",
+	"H": "the h-digraph — plosives spirantize (tH→θ, pH→ɸ), sibilants hush (sH→ʃ), vowels lax (iH→ɪ, uH→ʊ); for a, back (aH→ɑ)",
+	"R": "retroflex (coronals)", "J": "palatalize (consonants only)", "W": "labialize / round-flip",
+	"L": "lateralize", "G": "dorsal deepening — velar/uvular place",
+	"Q": "guttural — uvular-pharyngeal-epiglottal throat region", "V": "labiodental", "B": "bilabial place",
+	"A": "drag toward a (vowels: oA→ɒ, uA→ʌ)",
+	"Y": "central — the y-vowels (iY→ɨ, uY→ʉ, eY→ɘ, oY→ɵ, aY→ä); Welsh y, Russian ы",
+	"E": "ligature with e",
+	"C": "click — base letter is the anterior place (p bilabial, t dental, q alveolar, c palatal, l lateral)",
+	"P": "implosive (voiced glottalic ingressive)",
+};
 // The ⌥⇧<digit> spends (¡ ʾ ʿ ˭) live in optShift, not marks.
 const optShift = spec.optShift as Record<string, string>;
 
@@ -90,7 +104,7 @@ export function capTitle(ch: string): string {
 	const sp = SPECIALS[ch];
 	if (sp !== undefined) return sp.title + modTitle;
 	const m = marks.get(ch);
-	if (m !== undefined) return `⌥${ch} ${(m.name ?? "").toLowerCase()}` + modTitle;
+	if (m !== undefined) return `⌥${ch} ${nameOf(m.mark).toLowerCase()}` + modTitle;
 	return (ch === "-" ? "⌥- reserved — the host’s dashes pass through" : `⌥${ch} passes to the host`) + modTitle;
 }
 

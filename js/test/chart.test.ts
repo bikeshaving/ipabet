@@ -97,13 +97,13 @@ describe("chart · shape", () => {
 
 	// The chart is of the IPA chart. Latin tenants (cedilla, ogonek, horn, …)
 	// and tradition marks (Korean fortis) are typeable and documented on /keys,
-	// but they are not on it — spec/ipabet.xml flags them `"ipa": false`.
+	// but they are not on it. The non-IPA marks are presentation data the site
+	// owns (keys.ts flags them); their codepoints are inlined here so this
+	// engine-side check needn't reach into the website.
 	test("no non-IPA mark reaches the chart", async () => {
-		const spec = (await import("../src/spec.ts")).default as {
-			marks: {mark: string; ipa?: boolean}[];
-		};
 		const nonIPA = new Set(
-			spec.marks.filter((m) => m.ipa === false).map((m) => m.mark),
+			["0327", "0326", "0328", "0349", "2193", "0307", "0309", "208d", "02b9", "27e8"]
+				.map((h) => String.fromCodePoint(parseInt(h, 16))),
 		);
 		expect(nonIPA.size).toBeGreaterThan(0);
 		for (const [, entries] of sections) {
