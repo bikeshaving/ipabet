@@ -373,7 +373,7 @@ export const CHART_JSON = JSON.stringify(
 			"after. The voiced velar plosive shows as plain g (U+0067), the bare " +
 			"key; the single-story script ɡ (U+0261) is typed as g⇧G (the " +
 			"doubled-letter law), and both stand for that plosive. " +
-			"Canonical spec: /ipabet.json.",
+			"Full keystroke mapping at /keys.",
 		pulmonic: {
 			places: PLACES,
 			manners: PULMONIC.map(([manner, cells]) => ({

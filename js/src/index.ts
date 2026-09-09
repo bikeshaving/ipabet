@@ -1,5 +1,5 @@
 // @b9g/ipabet — the IPAbet engine in TypeScript, ported from the macOS IME
-// (macos/Sources/InputController.swift). Tables come from spec/ipabet.json.
+// (macos/Sources/InputController.swift). Tables come from spec/ipabet.xml.
 
 import spec from "./spec.ts";
 

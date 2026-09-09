@@ -1,7 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../js/src/spec.ts";
-import schema from "../../spec/ipabet.schema.json";
 import {Layout} from "./layout.ts";
 import {keySpelled as keystrokes} from "./keystrokes.ts";
 import {components} from "./marked-components.ts";
@@ -102,6 +101,3 @@ export function Keys() {
 			</main>
 		<//>`;
 }
-
-export const SPEC_JSON = JSON.stringify(spec, null, "\t");
-export const SCHEMA_JSON = JSON.stringify(schema, null, "\t");

@@ -3,7 +3,7 @@
 A faceless InputMethodKit app, no Xcode required. It owns no phonetics: every
 keystroke decision comes from the Rust crate in `engine/` through the C ABI in
 `engine/include/ipabet_engine.h`, linked as a static library — the same crate
-the IBus, fcitx5, and Windows shells link. `spec/ipabet.json` ships in the
+the IBus, fcitx5, and Windows shells link. `spec/ipabet.xml` ships in the
 bundle and is parsed when the engine is created. This file translates IMKit key
 events into the engine's keystroke shape, calls the engine, and applies the
 edit it hands back, so the ports cannot drift.

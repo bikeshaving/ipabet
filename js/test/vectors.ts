@@ -35,7 +35,7 @@ interface Vector {
 	keys: Keystroke[];
 	initial: string;
 	expected: string;
-	// The quote locale active when this was typed (spec/ipabet.json's
+	// The quote locale active when this was typed (spec/ipabet.xml's
 	// quotes.default, "en", unless a test called setQuoteLocale). Recorded
 	// because the ⌥[/⌥]/⌥⇧[/⌥⇧] outputs depend on it — without this a replay
 	// can't tell a German-locale vector from an English one.

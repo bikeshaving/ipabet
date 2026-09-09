@@ -71,14 +71,14 @@ workflow that produced it:
 The full official IPA chart is covered and notated at
 [ipabet.org/chart](https://ipabet.org/chart). The complete mapping is at
 [ipabet.org/keys](https://ipabet.org/keys) and in
-[`spec/ipabet.json`](spec/ipabet.json).
+[`spec/ipabet.xml`](spec/ipabet.xml).
 
 ## Repo
 
 One engine, one thin shell per platform.
 
-- `spec/ipabet.json` — the canonical mapping. Source of truth for everything
-  else.
+- `spec/ipabet.xml` — the canonical mapping, a CLDR LDML keyboard file (UTS #35
+  part 7). Source of truth for everything else.
 - `engine/` — the Rust crate every desktop shell links, through a C ABI.
 - `js/` — `@b9g/ipabet`, the engine in TypeScript. Its parity suite is the
   notation's executable spec.

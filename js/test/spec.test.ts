@@ -1,6 +1,6 @@
 // The spec must describe itself accurately.
 //
-// spec/ipabet.json is the source both engines and the website read. Its prose
+// spec/ipabet.xml is the source both engines and the website read. Its prose
 // (`laws`, `classes`, each mark's `name`) is the only place the *reasoning* for
 // a key assignment lives, and prose does not typecheck — nothing else catches a
 // stale "⌥c cedilla" the moment that mark changes keys.
@@ -12,7 +12,6 @@
 
 import {describe, expect, test} from "bun:test";
 import spec from "../src/spec.ts";
-import schema from "../../spec/ipabet.schema.json";
 
 interface Mark {
 	opt: string;
@@ -193,42 +192,53 @@ describe("spec · encoding lints", () => {
 	});
 });
 
-// spec/ipabet.schema.json documents the file for outside consumers. A schema
-// nobody runs is just more prose, and adding a validator dependency to ship one
-// assertion is not worth it — so enforce its structural claims directly. This
-// checks marks AND letters against the schema's own additionalProperties:false
-// closed sets; a letters entry with an undeclared field (the ipa:false that
-// once escaped) fails here rather than only in an outside validator.
-describe("spec · matches its published schema", () => {
-	const markSchema = (schema as any).$defs.mark;
-	const allowed = new Set(Object.keys(markSchema.properties));
-	const required: string[] = markSchema.required;
-	const dependents: Record<string, string[]> = markSchema.dependentRequired;
+// The shape marks and letters may take, enforced directly. A schema nobody runs
+// is just more prose, and a mark or letter with a stray field is a bug the
+// engines won't catch — the ipa:false that once escaped onto a letters entry
+// fails here. These are closed sets: a new field must be added below on purpose.
+describe("spec · marks and letters keep their declared shape", () => {
+	const MARK_FIELDS = new Set([
+		"opt", "mark", "double", "doubleCp", "doubleSpacing", "type", "clone",
+		"doubleClone", "group", "cp", "name", "exclusive", "shiftSense", "ipa",
+		"beyond", "arbitraryKey", "cycle", "cycleCp", "doubleCycle", "doubleCycleCp",
+	]);
+	const MARK_REQUIRED = ["opt", "mark", "type", "group", "cp", "name"];
+	const LETTER_FIELDS = new Set(["key", "glyph", "cp", "name", "ipa"]);
+	// A present field on the left requires every field on the right.
+	const DEPENDENTS: Record<string, string[]> = {
+		double: ["shiftSense"], shiftSense: ["double"], doubleCp: ["double"],
+		doubleClone: ["double"], doubleSpacing: ["double"], exclusive: ["double"],
+		ipa: ["beyond"], beyond: ["ipa"], cycle: ["cycleCp"], cycleCp: ["cycle"],
+		doubleCycle: ["doubleCycleCp", "double"], doubleCycleCp: ["doubleCycle"],
+	};
+	const ENUMS: Record<string, string[]> = {
+		type: ["combining", "spacing"],
+		group: ["Articulation", "Length", "Nasalization", "Phonation", "Prosody", "Syllabicity", "Tone", "Transliteration"],
+		shiftSense: ["greater", "extreme", "lesser", "below", "placement", "twin", "arbitrary"],
+		beyond: ["tenant", "tradition", "extIPA"],
+	};
 
-	test("no mark carries a field the schema doesn't declare", () => {
+	test("no mark carries an undeclared field", () => {
 		for (const m of marks as unknown as Record<string, unknown>[]) {
-			for (const k of Object.keys(m)) expect(allowed, `⌥${m.opt}.${k}`).toContain(k);
+			for (const k of Object.keys(m)) expect(MARK_FIELDS, `⌥${m.opt}.${k}`).toContain(k);
 		}
 	});
 
-	test("no letter carries a field the schema doesn't declare", () => {
-		const letterProps = new Set(
-			Object.keys((schema as any).properties.letters.items.properties),
-		);
+	test("no letter carries an undeclared field", () => {
 		for (const l of spec.letters as Record<string, unknown>[]) {
-			for (const k of Object.keys(l)) expect(letterProps, `${l.glyph}.${k}`).toContain(k);
+			for (const k of Object.keys(l)) expect(LETTER_FIELDS, `${l.glyph}.${k}`).toContain(k);
 		}
 	});
 
-	test("every mark carries the schema's required fields", () => {
+	test("every mark carries the required fields", () => {
 		for (const m of marks as unknown as Record<string, unknown>[]) {
-			for (const k of required) expect(m[k], `⌥${m.opt}.${k}`).toBeDefined();
+			for (const k of MARK_REQUIRED) expect(m[k], `⌥${m.opt}.${k}`).toBeDefined();
 		}
 	});
 
-	test("dependentRequired holds: double↔shiftSense, ipa↔beyond, exclusive→double", () => {
+	test("dependent fields hold: double↔shiftSense, ipa↔beyond, exclusive→double", () => {
 		for (const m of marks as unknown as Record<string, unknown>[]) {
-			for (const [field, needs] of Object.entries(dependents)) {
+			for (const [field, needs] of Object.entries(DEPENDENTS)) {
 				if (m[field] === undefined) continue;
 				for (const n of needs) expect(m[n], `⌥${m.opt}: ${field} requires ${n}`).toBeDefined();
 			}
@@ -237,9 +247,9 @@ describe("spec · matches its published schema", () => {
 
 	test("enum-valued flags stay inside their enums", () => {
 		for (const m of marks as unknown as Record<string, any>[]) {
-			for (const f of ["type", "group", "shiftSense", "beyond"]) {
+			for (const [f, values] of Object.entries(ENUMS)) {
 				if (m[f] === undefined) continue;
-				expect(markSchema.properties[f].enum, `⌥${m.opt}.${f}`).toContain(m[f]);
+				expect(values, `⌥${m.opt}.${f}`).toContain(m[f]);
 			}
 		}
 	});

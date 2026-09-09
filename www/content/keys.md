@@ -1,9 +1,9 @@
 ---
 title: "IPA keystroke reference — every symbol and the keys that type it"
-description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint. Raw JSON at /ipabet.json."
+description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint."
 ---
 
-The complete keystroke → IPA mapping, generated from the canonical [`ipabet.json`](/ipabet.json) (raw JSON, served verbatim). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **Alt** — the key to the right of the spacebar, labeled AltGr on the layouts that have one — mapped 1:1, and `⌥⇧` is Alt+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
+The complete keystroke → IPA mapping, generated from the canonical LDML keyboard file ([`spec/ipabet.xml`](https://github.com/bikeshaving/ipabet/blob/main/spec/ipabet.xml)). Notation: `⇧` = Shift, `⌥` = Option, `⌃` = Control; a space separates keystrokes typed in sequence. On Windows and Linux the `⌥` layer is **Alt** — the key to the right of the spacebar, labeled AltGr on the layouts that have one — mapped 1:1, and `⌥⇧` is Alt+Shift; keystroke labels across this site follow your platform (the pill in the corner switches spellings). [Visual chart](/chart) · [home](/).
 
 ## Base letters (identity)
 
@@ -52,7 +52,7 @@ A few keys carry their own behavior: the rhotic hook (`⌥r`) is postfix and fus
 
 <MarkTable kind="ipa"/>
 
-Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in [`ipabet.json`](/ipabet.json).
+Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in the LDML source (`spec/ipabet.xml`).
 
 ## Beyond IPA
 
@@ -100,6 +100,6 @@ On macOS pick it in the input menu (Quote Style); on the web editor, the picker.
 
 ## Machine access
 
-`GET /ipabet.schema.json` is the JSON Schema (Draft 2020-12) for `ipabet.json`: every field, its meaning, and the invariants that hold between them (a mark has a `shiftSense` exactly when it has a `double`; `ipa: false` and `beyond` imply each other).
+`GET /chart.json` returns the IPA chart as structured data — every symbol with its codepoint, keystrokes, and place/manner or vowel coordinates.
 
-`GET /chart.json` returns the IPA chart as structured data — every symbol with its codepoint, keystrokes, and place/manner or vowel coordinates. `GET /ipabet.json` returns the canonical mapping verbatim (the source of every row above). The `letters` array is the base/digraph list (`key` is the keystroke sequence, `glyph` the output); `marks` is the Option layer; `modifiers` documents each ⇧ modifier’s meaning.
+The mapping itself is the LDML keyboard file, [`spec/ipabet.xml`](https://github.com/bikeshaving/ipabet/blob/main/spec/ipabet.xml) — a CLDR keyboard (UTS #35 part 7), canonical for the macOS IME, the TypeScript engine, and this site alike.
