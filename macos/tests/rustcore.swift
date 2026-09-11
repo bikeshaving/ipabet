@@ -71,7 +71,7 @@ guard let data = FileManager.default.contents(atPath: path),
     FileHandle.standardError.write("cannot read \(path)\n".data(using: .utf8)!)
     exit(2)
 }
-let spec = try! String(contentsOfFile: "../spec/ipabet.json", encoding: .utf8)
+let spec = try! String(contentsOfFile: "../spec/ipabet.xml", encoding: .utf8)
 guard let engine = spec.withCString({ ipabet_engine_new($0) }) else { fatalError("engine did not parse") }
 
 var pass = 0

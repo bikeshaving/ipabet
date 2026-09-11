@@ -51,7 +51,7 @@ die() {
 for f in \
     /usr/share/fcitx5/addon/ipabet.conf \
     /usr/share/fcitx5/inputmethod/ipabet.conf \
-    /usr/share/fcitx5/ipabet/ipabet.json
+    /usr/share/fcitx5/ipabet/ipabet.xml
 do
     [ -s "$f" ] || die "missing or empty: $f (is IPAbet installed?)"
 done

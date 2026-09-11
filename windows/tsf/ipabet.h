@@ -126,7 +126,7 @@ private:
 
     ITfComposition *composition_ = nullptr;
 
-    /// spec/ipabet.json, shipped beside the DLL and read at activation.
+    /// spec/ipabet.xml, shipped beside the DLL and read at activation.
     std::string LoadSpec();
 
     LONG refs_ = 1;

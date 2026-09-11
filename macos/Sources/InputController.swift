@@ -57,7 +57,7 @@ enum QuoteMenu {
     private struct Quotes: Decodable { let locales: [String: [String]]; let `default`: String }
     private struct Root: Decodable { let quotes: Quotes }
     private static let data: Quotes? = {
-        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
+        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "xml"),
               let bytes = try? Data(contentsOf: url),
               let root = try? JSONDecoder().decode(Root.self, from: bytes) else { return nil }
         return root.quotes
@@ -130,7 +130,7 @@ class InputController: IMKInputController {
     /// settings (capital digraphs, quote locale) are pushed from UserDefaults on
     /// creation and whenever the menu changes them.
     private lazy var engine: OpaquePointer? = {
-        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "json"),
+        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "xml"),
               let spec = try? String(contentsOf: url, encoding: .utf8),
               let e = spec.withCString({ ipabet_engine_new($0) }) else {
             Dbg.log("engine did not construct — spec missing or unparseable")

@@ -1,7 +1,7 @@
 // Shared machinery for the word-bank harvesters: IPA string → keystrokes →
 // round-trip-verified bank entry. Used by harvest-words.ts (wikipron tenants)
 // and harvest-en-cmu.ts (English from CMUdict).
-import spec from "../../spec/ipabet.json";
+import spec from "../../js/src/spec.ts";
 
 export type K = {key: string; shift: boolean; option: boolean};
 

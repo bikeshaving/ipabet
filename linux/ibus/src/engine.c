@@ -292,7 +292,7 @@ static void ipabet_ibus_engine_class_init(IpabetIBusEngineClass *klass) {
 
 // --- process ---------------------------------------------------------------
 
-/// spec/ipabet.json as installed. The tables are data on every platform and are
+/// spec/ipabet.xml as installed. The tables are data on every platform and are
 /// never transcribed into code.
 static char *read_spec(void) {
     char *contents = NULL;
@@ -300,7 +300,7 @@ static char *read_spec(void) {
     // The prefix this build installs to first (a plain `cmake --install`
     // defaults to /usr/local, where a hardcoded /usr found nothing), then
     // the packaged location, then the source tree for the dev loop.
-    const char *paths[] = {IPABET_SPEC_INSTALLED, "/usr/share/ipabet/ipabet.json",
+    const char *paths[] = {IPABET_SPEC_INSTALLED, "/usr/share/ipabet/ipabet.xml",
                            IPABET_SPEC_FALLBACK};
     for (guint i = 0; i < G_N_ELEMENTS(paths); i++) {
         if (g_file_get_contents(paths[i], &contents, &len, NULL)) return contents;
@@ -347,7 +347,7 @@ int main(int argc, char **argv) {
 
     char *spec = read_spec();
     if (!spec) {
-        g_printerr("ipabet: cannot read ipabet.json — the install is incomplete\n");
+        g_printerr("ipabet: cannot read ipabet.xml — the install is incomplete\n");
         return 1;
     }
     g_transform = ipabet_engine_new(spec);

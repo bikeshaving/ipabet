@@ -46,7 +46,7 @@ std::string readSpec() {
     // Installed layout first; the build tree's copy is the fallback so the
     // addon can be run straight out of a build directory during development.
     std::string path =
-        fcitx::StandardPath::global().locate(fcitx::StandardPath::Type::PkgData, "ipabet/ipabet.json");
+        fcitx::StandardPath::global().locate(fcitx::StandardPath::Type::PkgData, "ipabet/ipabet.xml");
     if (path.empty()) {
         path = IPABET_SPEC_FALLBACK;
     }

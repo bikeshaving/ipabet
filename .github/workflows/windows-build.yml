@@ -55,4 +55,4 @@ jobs:
           name: ipabet-tsf-x86_64
           path: |
             windows/build/Release/ipabet.dll
-            windows/build/Release/ipabet.json
+            windows/build/Release/ipabet.xml

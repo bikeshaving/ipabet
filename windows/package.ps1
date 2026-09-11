@@ -14,7 +14,7 @@ $bin = Join-Path $root 'windows\build\Release'
 $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
 $out = Join-Path $root "windows\build\IPAbet-$arch.msi"
 
-foreach ($f in @('ipabet.dll', 'ipabet.json', 'ipabet-register.exe')) {
+foreach ($f in @('ipabet.dll', 'ipabet.xml', 'ipabet-register.exe')) {
     if (-not (Test-Path (Join-Path $bin $f))) {
         throw "missing $f — build first: cmake --build windows/build --config Release"
     }

@@ -118,10 +118,33 @@ fn is_letter(c: char) -> bool {
     )
 }
 
+/// The bracket-key quotes per locale — [open1, close1, open2, close2]. This is
+/// CLDR <delimiters> data (quotation*/alternateQuotation*), locale reference the
+/// engine owns, not keyboard layout — so it lives here, not in the LDML file.
+fn builtin_quotes() -> (String, HashMap<String, [char; 4]>) {
+    let data: [(&str, [char; 4]); 7] = [
+        ("en", ['“', '”', '‘', '’']),
+        ("de", ['„', '“', '‚', '‘']),
+        ("fr", ['«', '»', '‹', '›']),
+        ("ch", ['»', '«', '›', '‹']),
+        ("pl", ['„', '”', '«', '»']),
+        ("ru", ['«', '»', '„', '“']),
+        ("sv", ['”', '”', '’', '’']),
+    ];
+    ("en".to_string(), data.iter().map(|(k, v)| (k.to_string(), *v)).collect())
+}
+
 impl Engine {
     pub fn new(spec_json: &str) -> Result<Engine, serde_json::Error> {
-        let spec: Spec = serde_json::from_str(spec_json)?;
+        Engine::from_spec(serde_json::from_str(spec_json)?)
+    }
 
+    /// Build from the LDML source (spec/ipabet.xml) instead of the bespoke JSON.
+    pub fn from_ldml(xml: &str) -> Result<Engine, String> {
+        Engine::from_spec(spec::parse_ldml(xml)?).map_err(|e| e.to_string())
+    }
+
+    fn from_spec(spec: Spec) -> Result<Engine, serde_json::Error> {
         let mut letters = HashMap::new();
         for e in &spec.letters {
             // An empty key or glyph is a malformed spec that would later panic
@@ -226,28 +249,7 @@ impl Engine {
             }
         }
 
-        let mut quote_locales = HashMap::new();
-        for (loc, arr) in &spec.quotes.locales {
-            if arr.len() == 4 {
-                let quad = [
-                    first_char(&arr[0]),
-                    first_char(&arr[1]),
-                    first_char(&arr[2]),
-                    first_char(&arr[3]),
-                ];
-                quote_locales.insert(loc.clone(), quad);
-            }
-        }
-        let quote_default = spec.quotes.default.clone();
-        // A spec whose default locale is missing or malformed (dropped by
-        // the len==4 filter above) answers null from ipabet_engine_new, as
-        // the FFI contract promises — not a panic on the first ⌥[.
-        if !quote_locales.contains_key(&quote_default) {
-            use serde::de::Error;
-            return Err(serde_json::Error::custom(
-                "quotes.default names no well-formed entry in quotes.locales",
-            ));
-        }
+        let (quote_default, quote_locales) = builtin_quotes();
 
         Ok(Engine {
             letters,

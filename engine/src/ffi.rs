@@ -175,20 +175,21 @@ unsafe fn keystroke_from_c(k: &CKeystroke) -> Keystroke {
 }
 
 /// # Safety
-/// `spec_json` must be a valid NUL-terminated UTF-8 C string. Returns null on
-/// a parse error — a build/packaging bug (a malformed spec.json shipped),
-/// not a runtime condition the caller recovers from.
+/// `spec_ldml` must be a valid NUL-terminated UTF-8 C string holding the LDML
+/// keyboard source (spec/ipabet.xml). Returns null on a parse error — a
+/// build/packaging bug (a malformed spec shipped), not a runtime condition the
+/// caller recovers from.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn ipabet_engine_new(spec_json: *const c_char) -> *mut Engine {
+pub unsafe extern "C" fn ipabet_engine_new(spec_ldml: *const c_char) -> *mut Engine {
     unsafe {
-        if spec_json.is_null() {
+        if spec_ldml.is_null() {
             return std::ptr::null_mut();
         }
-        let json = match CStr::from_ptr(spec_json).to_str() {
+        let xml = match CStr::from_ptr(spec_ldml).to_str() {
             Ok(s) => s,
             Err(_) => return std::ptr::null_mut(),
         };
-        match Engine::new(json) {
+        match Engine::from_ldml(xml) {
             Ok(engine) => Box::into_raw(Box::new(engine)),
             Err(_) => std::ptr::null_mut(),
         }

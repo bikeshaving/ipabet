@@ -77,13 +77,19 @@ fn replay(engine: &Engine, keys: Vec<RawKeystroke>, initial: &str) -> String {
     text
 }
 
-fn replay_vector_file(path: &str) {
-    let spec_json = std::fs::read_to_string(
-        concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"),
-    )
-    .expect("read spec/ipabet.json");
-    let mut engine = Engine::new(&spec_json).expect("parse spec");
+/// The engine, built from the LDML source (spec/ipabet.xml) — the spec.
+fn ldml_engine() -> Engine {
+    let xml = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.xml"))
+        .expect("read spec/ipabet.xml");
+    Engine::from_ldml(&xml).expect("parse ldml")
+}
 
+fn replay_vector_file(path: &str) {
+    let mut engine = ldml_engine();
+    replay_all(&mut engine, path);
+}
+
+fn replay_all(engine: &mut Engine, path: &str) {
     let vectors_json = std::fs::read_to_string(path).expect("read vector file");
     let vectors: Vec<Vector> = serde_json::from_str(&vectors_json).expect("parse vectors");
 
@@ -97,7 +103,7 @@ fn replay_vector_file(path: &str) {
             .iter()
             .map(|k| format!("{}{}{}{}", k.key, if k.shift { "+shift" } else { "" }, if k.option { "+opt" } else { "" }, if k.control { "+ctrl" } else { "" }))
             .collect();
-        let got = replay(&engine, v.keys, &v.initial);
+        let got = replay(engine, v.keys, &v.initial);
         if got == v.expected {
             pass += 1;
         } else {
@@ -158,9 +164,7 @@ fn fuzz_vectors_fresh() {
 fn ffi_buffer_bounds() {
     const EDIT_TEXT_MAX: usize = 64; // must match ffi.rs's EDIT_TEXT_MAX
 
-    let spec_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/ipabet.json"))
-        .expect("read spec/ipabet.json");
-    let mut engine = Engine::new(&spec_json).expect("parse spec");
+    let mut engine = ldml_engine();
 
     let vectors_json = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../spec/parity-vectors.json"))
         .expect("read spec/parity-vectors.json");
