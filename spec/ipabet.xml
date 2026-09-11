@@ -3,6 +3,14 @@
      standard LDML only, carrying exactly what the engine reads. Hand-edited. -->
 <keyboard3 xmlns="https://schemas.unicode.org/cldr/45/keyboard3" locale="und" conformsTo="45">
   <info name="IPAbet" indicator="IPA"/>
+
+  <!-- Reading this file: keys (what each key emits) → forms/layers (where the
+       keys sit) → transforms (how key sequences rewrite into text). The
+       transforms run in two ordered passes: pass 1 collapses markers (exclusive
+       pairs, cycles), pass 2 resolves markers and sequences into text.
+       key id prefixes:  b_ base · sh_ shifted · mk_ combining dead-key marker ·
+       sp_ spacing mark · op_ raise/lower operator · os_ ⌥⇧-digit · q_ quote -->
+
   <!-- output is NFC by default; a <settings normalization="disabled"> would opt out -->
 
   <!-- dead-key preview: the spacing form a pending mark shows before a base absorbs it -->
@@ -46,6 +54,7 @@
   </displays>
 
   <keys>
+    <!-- base letters -->
     <key id="b_a" output="a"/>
     <key id="b_b" output="b"/>
     <key id="b_c" output="c"/>
@@ -72,6 +81,7 @@
     <key id="b_x" output="x"/>
     <key id="b_y" output="y"/>
     <key id="b_z" output="z"/>
+    <!-- option layer (⌥): combining dead-key markers and spacing marks, by key position -->
     <key id="mk_acute" output="\m{acute}"/>
     <key id="mk_double-acute" output="\m{double-acute}"/>
     <key id="mk_grave" output="\m{grave}"/>
@@ -153,6 +163,7 @@
     <key id="sp_grapheme-close" output="⟩"/>
     <key id="mk_inverted-breve-below" output="\m{inverted-breve-below}"/>
     <key id="mk_inverted-breve" output="\m{inverted-breve}"/>
+    <!-- operators (raise/lower), locale quotes, ⌥⇧-digit spends -->
     <key id="op_raise" output="\m{raise}"/>
     <key id="op_lower" output="\m{lower}"/>
     <key id="q_open_primary" output="“"/>
@@ -163,6 +174,7 @@
     <key id="os_2" output="ʾ"/>
     <key id="os_3" output="ʿ"/>
     <key id="os_5" output="˭"/>
+    <!-- base number row and punctuation -->
     <key id="b_backquote" output="`"/>
     <key id="b_1" output="1"/>
     <key id="b_2" output="2"/>
@@ -184,6 +196,7 @@
     <key id="b_comma" output=","/>
     <key id="b_period" output="."/>
     <key id="b_slash" output="/"/>
+    <!-- shifted layer (⇧): capitals, shifted digits/punctuation, the ⇧-operator digraphs -->
     <key id="sh_backquote" output="~"/>
     <key id="sh_1" output="!"/>
     <key id="sh_2" output="@"/>
@@ -271,6 +284,7 @@
   </layers>
 
   <transforms type="simple">
+    <!-- ============ pass 1: collapse markers (runs before resolution) ============ -->
     <!-- exclusive marks: the ⌥ and ⌥⇧ forms are two values of one
          dimension, so the second replaces the first instead of stacking -->
     <transformGroup>
@@ -304,6 +318,7 @@
       <transform from="\m{right-half-ring-below}\m{right-half-ring-below}" to="\m{whistled}"/>
       <transform from="\m{whistled}\m{right-half-ring-below}" to="\m{right-half-ring-below}"/>
     </transformGroup>
+    <!-- ============ pass 2: resolve markers and sequences to text ============ -->
     <transformGroup>
       <!-- digraphs — a previous glyph, then a shift-operator; \p{M}* reaches a base under its dead-key marks -->
       <!-- ⇧Y -->
