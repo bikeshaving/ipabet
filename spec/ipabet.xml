@@ -288,6 +288,17 @@
     <!-- exclusive marks: the ⌥ and ⌥⇧ forms are two values of one
          dimension, so the second replaces the first instead of stacking -->
     <transformGroup>
+      <!-- tone contours run first: a level-tone sequence folds to a contour
+           BEFORE the exclusive rule could collapse the pair (contour wins) -->
+      <!-- tone contours — a sequence of level-tone markers folds to one contour mark -->
+      <transform from="\m{double-grave}\m{double-acute}" to="\m{caron}"/>
+      <transform from="\m{double-acute}\m{double-grave}" to="\m{circumflex}"/>
+      <transform from="\m{acute}\m{double-acute}" to="\m{macron-acute}"/>
+      <transform from="\m{double-grave}\m{grave}" to="\m{grave-macron}"/>
+      <transform from="\m{macron}\m{acute}\m{macron}" to="\m{grave-acute-grave}"/>
+      <transform from="\m{macron}\m{grave}" to="\m{macron-grave}"/>
+      <transform from="\m{acute}\m{macron}" to="\m{acute-macron}"/>
+      <transform from="\m{acute}\m{grave}\m{acute}" to="\m{acute-grave-acute}"/>
       <transform from="\m{acute}\m{double-acute}" to="\m{double-acute}"/>
       <transform from="\m{double-acute}\m{acute}" to="\m{acute}"/>
       <transform from="\m{grave}\m{double-grave}" to="\m{double-grave}"/>
@@ -317,6 +328,8 @@
       <transform from="\m{labial-spreading}\m{left-half-ring-below}" to="\m{left-half-ring-below}"/>
       <transform from="\m{right-half-ring-below}\m{right-half-ring-below}" to="\m{whistled}"/>
       <transform from="\m{whistled}\m{right-half-ring-below}" to="\m{right-half-ring-below}"/>
+      <!-- a doubled tie commits as the spacing undertie (nothing to join) -->
+      <transform from="\m{tie-below}\m{tie-below}" to="‿"/>
     </transformGroup>
     <!-- ============ pass 2: resolve markers and sequences to text ============ -->
     <transformGroup>
@@ -478,15 +491,6 @@
       <transform from="\m{tilde-overlay}s" to="ᵴ"/>
       <transform from="\m{tilde-overlay}t" to="ᵵ"/>
       <transform from="\m{tilde-overlay}z" to="ᵶ"/>
-      <!-- tone contours — a sequence of level-tone markers folds to one contour mark -->
-      <transform from="\m{double-grave}\m{double-acute}" to="\m{caron}"/>
-      <transform from="\m{double-acute}\m{double-grave}" to="\m{circumflex}"/>
-      <transform from="\m{acute}\m{double-acute}" to="\m{macron-acute}"/>
-      <transform from="\m{double-grave}\m{grave}" to="\m{grave-macron}"/>
-      <transform from="\m{macron}\m{acute}\m{macron}" to="\m{grave-acute-grave}"/>
-      <transform from="\m{macron}\m{grave}" to="\m{macron-grave}"/>
-      <transform from="\m{acute}\m{macron}" to="\m{acute-macron}"/>
-      <transform from="\m{acute}\m{grave}\m{acute}" to="\m{acute-grave-acute}"/>
       <!-- dead keys — ⌥<mark>, then the next base absorbs it (NFC composes) -->
       <transform from="\m{acute}(.)" to="$1\u{0301}"/>  <!-- ◌́ -->
       <transform from="\m{double-acute}(.)" to="$1\u{030B}"/>  <!-- ◌̋ -->

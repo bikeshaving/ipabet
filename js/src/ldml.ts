@@ -64,12 +64,16 @@ const keyOutput = (k: Stroke): string | null => {
 };
 
 // ---- transforms, grouped, each rule end-anchored ----
+const MARKER_RANGE = "-";
 interface Rule { re: RegExp; to: string }
 const groups: Rule[][] = [];
 for (const g of each(/<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
   const rules: Rule[] = [];
   for (const m of [...g[1].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)]) {
-    rules.push({ re: new RegExp("(?:" + expandU(encodeMarkers(unesc(m[1]))) + ")$", "u"), to: m[2] });
+    // A dead-key's (.) matches the base it lands on — never a still-pending
+    // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
+    const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, `([^${MARKER_RANGE}])`);
+    rules.push({ re: new RegExp(src, "u"), to: m[2] });
   }
   groups.push(rules);
 }
@@ -81,12 +85,24 @@ const applyTo = (to: string, m: RegExpMatchArray) =>
 const displays: Record<string, string> = {};
 for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) displays[m[1]] = unesc(m[2]);
 
-function runPasses(buf: string): string {
+// One sweep: each group fires its first matching rule (leftmost match) once,
+// then the next group. UTS #35 re-normalizes and re-runs between insertions;
+// we iterate the whole sweep to a fixpoint so a rewrite that exposes a new
+// match (a freshly-composed base a pending mark can now land on) settles.
+function sweep(buf: string): string {
   for (const g of groups) {
     for (const r of g) {
       const m = buf.match(r.re);
-      if (m) { buf = buf.slice(0, m.index) + applyTo(r.to, m); break; }
+      if (m) { buf = buf.slice(0, m.index) + applyTo(r.to, m) + buf.slice(m.index + m[0].length); break; }
     }
+  }
+  return buf;
+}
+function runPasses(buf: string): string {
+  for (let i = 0; i < 32; i++) {
+    const next = sweep(buf);
+    if (next === buf) break;
+    buf = next;
   }
   return buf;
 }
@@ -102,7 +118,7 @@ export function type(strokes: Stroke[], initial = ""): string {
   let buf = initial;
   for (const k of strokes) {
     const o = keyOutput(k);
-    if (o === null) continue;
+    if (o === null) continue; // not on the layout — the host would pass it through
     buf = runPasses(buf + o);
   }
   return render(buf);
