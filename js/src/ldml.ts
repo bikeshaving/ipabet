@@ -66,16 +66,21 @@ const keyOutput = (k: Stroke): string | null => {
 // ---- transforms, grouped, each rule end-anchored ----
 const MARKER_RANGE = "-";
 interface Rule { re: RegExp; to: string }
-const groups: Rule[][] = [];
-for (const g of each(/<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
+// A group may carry `when`: a setting id from a `<!-- @optional NAME -->`
+// sentinel just before it. Such a group runs only when the caller enables
+// NAME — how a mode like capital-digraphs becomes a toggleable transform
+// layer rather than case logic in the shell.
+interface Group { when: string | null; rules: Rule[] }
+const groups: Group[] = [];
+for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
   const rules: Rule[] = [];
-  for (const m of [...g[1].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)]) {
+  for (const m of [...g[2].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)]) {
     // A dead-key's (.) matches the base it lands on — never a still-pending
     // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
     const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, `([^${MARKER_RANGE}])`);
     rules.push({ re: new RegExp(src, "u"), to: m[2] });
   }
-  groups.push(rules);
+  groups.push({ when: g[1] ?? null, rules });
 }
 const applyTo = (to: string, m: RegExpMatchArray) =>
   expandU(encodeMarkers(unesc(to))).replace(/\$(\d)/g, (_, d) => m[Number(d)] ?? "");
@@ -89,18 +94,20 @@ for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) 
 // then the next group. UTS #35 re-normalizes and re-runs between insertions;
 // we iterate the whole sweep to a fixpoint so a rewrite that exposes a new
 // match (a freshly-composed base a pending mark can now land on) settles.
-function sweep(buf: string): string {
+export interface Settings { capitalDigraphs?: boolean }
+function sweep(buf: string, on: Settings): string {
   for (const g of groups) {
-    for (const r of g) {
+    if (g.when && !(on as Record<string, boolean>)[g.when]) continue;
+    for (const r of g.rules) {
       const m = buf.match(r.re);
       if (m) { buf = buf.slice(0, m.index) + applyTo(r.to, m) + buf.slice(m.index + m[0].length); break; }
     }
   }
   return buf;
 }
-function runPasses(buf: string): string {
+function runPasses(buf: string, on: Settings): string {
   for (let i = 0; i < 32; i++) {
-    const next = sweep(buf);
+    const next = sweep(buf, on);
     if (next === buf) break;
     buf = next;
   }
@@ -113,13 +120,14 @@ function render(buf: string): string {
 }
 
 /** Type a sequence of keystrokes over an initial string, returning the text.
- *  Pure composition only — no shell state (shift-chaining, modes, preview). */
-export function type(strokes: Stroke[], initial = ""): string {
+ *  `on` enables optional transform layers (e.g. {capitalDigraphs: true}).
+ *  Still no keystroke-timing shell (shift-chaining) or preview. */
+export function type(strokes: Stroke[], initial = "", on: Settings = {}): string {
   let buf = initial;
   for (const k of strokes) {
     const o = keyOutput(k);
     if (o === null) continue; // not on the layout — the host would pass it through
-    buf = runPasses(buf + o);
+    buf = runPasses(buf + o, on);
   }
   return render(buf);
 }

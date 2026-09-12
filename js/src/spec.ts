@@ -17,7 +17,13 @@ for (const m of each(/<key id="([^"]+)" output="([^"]*)"\/>/g)) keys[m[1]] = une
 const layers: Record<string, string[][]> = {};
 for (const L of each(/<layer modifiers="([^"]+)">([\s\S]*?)<\/layer>/g))
   layers[L[1]] = [...L[2].matchAll(/<row keys="([^"]+)"\/>/g)].map((r) => r[1].split(/\s+/));
-const transforms = each(/<transform from="([^"]+)" to="([^"]*)"\/>/g).map((m) => [unesc(m[1]), unesc(m[2])]);
+// Reconstruction reads only the base transforms; an @optional group (a
+// toggleable layer like capital-digraphs) is the executor's business, not the
+// hand-written engine's, so those transforms are excluded here.
+const transforms = each(/(?:<!--\s*@optional\s+\w+[\s\S]*?-->\s*)?<transformGroup>([\s\S]*?)<\/transformGroup>/g)
+  .filter((g) => !/^\s*<!--\s*@optional/.test(g[0]))
+  .flatMap((g) => [...g[1].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)])
+  .map((m) => [unesc(m[1]), unesc(m[2])]);
 const disp: Record<string, string> = {};
 for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) disp[m[1]] = unesc(m[2]);
 // Cycles come from chain transforms \m{P}\m{key} -> \m{R} (R != key): repeated

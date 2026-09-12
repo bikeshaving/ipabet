@@ -80,8 +80,20 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
             .collect();
         layers.insert(mods, rows);
     }
+    // Reconstruction reads only the base transforms. An @optional group (a
+    // toggleable layer such as capital-digraphs) is the executor's concern; a
+    // transform whose transformGroup is preceded by an @optional sentinel is
+    // skipped here so it never pollutes letters/cycles/etc.
+    let in_optional_group = |t: &Node| -> bool {
+        t.ancestors()
+            .find(|a| a.tag_name().name() == "transformGroup")
+            .and_then(|g| xml.get(..g.range().start))
+            .and_then(|before| before.rfind("@optional").map(|i| before.len() - i < 200))
+            .unwrap_or(false)
+    };
     let transforms: Vec<(String, String)> = all("transform")
         .iter()
+        .filter(|n| !in_optional_group(n))
         .filter_map(|n| Some((n.attribute("from")?.to_string(), n.attribute("to")?.to_string())))
         .collect();
     let mut disp: HashMap<String, String> = HashMap::new();

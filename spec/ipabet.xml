@@ -874,6 +874,60 @@
       <transform from="ə(\p{M}*)˞" to="ɚ$1"/>
       <transform from="ɜ(\p{M}*)˞" to="ɝ$1"/>
     </transformGroup>
+    <!-- @optional capitalDigraphs — the leading-capital digraphs (⇧S⇧H → Ʃ).
+         An opt-in layer: keystroke-identical to yelling (SHIP), so the engine runs
+         this group only when the capital-digraphs setting is on. -->
+    <transformGroup>
+      <transform from="U(\p{M}*)Y" to="Ʉ$1"/>
+      <transform from="A(\p{M}*)Y" to="Ä$1"/>
+      <transform from="O(\p{M}*)Y" to="Ɵ$1"/>
+      <transform from="Y(\p{M}*)Y" to="Ƴ$1"/>
+      <transform from="@(\p{M}*)H" to="Ɂ$1"/>
+      <transform from="%(\p{M}*)H" to="Ə$1"/>
+      <transform from="A(\p{M}*)H" to="Ɑ$1"/>
+      <transform from="&amp;(\p{M}*)H" to="Ħ$1"/>
+      <transform from="B(\p{M}*)H" to="Β$1"/>
+      <transform from="C(\p{M}*)H" to="Ç$1"/>
+      <transform from="D(\p{M}*)H" to="Ð$1"/>
+      <transform from="E(\p{M}*)H" to="Ɛ$1"/>
+      <transform from="G(\p{M}*)H" to="Ɣ$1"/>
+      <transform from="H(\p{M}*)H" to="Ɦ$1"/>
+      <transform from="I(\p{M}*)H" to="Ɪ$1"/>
+      <transform from="O(\p{M}*)H" to="Ɔ$1"/>
+      <transform from="Q(\p{M}*)H" to="Χ$1"/>
+      <transform from="S(\p{M}*)H" to="Ʃ$1"/>
+      <transform from="T(\p{M}*)H" to="Θ$1"/>
+      <transform from="U(\p{M}*)H" to="Ʊ$1"/>
+      <transform from="V(\p{M}*)H" to="Ʋ$1"/>
+      <transform from="Z(\p{M}*)H" to="Ʒ$1"/>
+      <transform from="L(\p{M}*)Q" to="Ɫ$1"/>
+      <transform from="S(\p{M}*)L" to="Ɬ$1"/>
+      <transform from="$(\p{M}*)R" to="Ɽ$1"/>
+      <transform from="D(\p{M}*)R" to="Ɖ$1"/>
+      <transform from="S(\p{M}*)R" to="Ʂ$1"/>
+      <transform from="T(\p{M}*)R" to="Ʈ$1"/>
+      <transform from="M(\p{M}*)V" to="Ɱ$1"/>
+      <transform from="E(\p{M}*)%" to="Ɜ$1"/>
+      <transform from="A(\p{M}*)%" to="Ɐ$1"/>
+      <transform from="A(\p{M}*)E" to="Æ$1"/>
+      <transform from="O(\p{M}*)E" to="Œ$1"/>
+      <transform from="U(\p{M}*)A" to="Ʌ$1"/>
+      <transform from="O(\p{M}*)A" to="Ɒ$1"/>
+      <transform from="E(\p{M}*)W" to="Ø$1"/>
+      <transform from="U(\p{M}*)W" to="Ɯ$1"/>
+      <transform from="B(\p{M}*)P" to="Ɓ$1"/>
+      <transform from="D(\p{M}*)P" to="Ɗ$1"/>
+      <transform from="G(\p{M}*)P" to="Ɠ$1"/>
+      <transform from="G(\p{M}*)J" to="Ʝ$1"/>
+      <transform from="N(\p{M}*)J" to="Ɲ$1"/>
+      <transform from="W(\p{M}*)J" to="Ɥ$1"/>
+      <transform from="G(\p{M}*)G" to="Ɡ$1"/>
+      <transform from="N(\p{M}*)G" to="Ŋ$1"/>
+      <transform from="R(\p{M}*)G" to="Ʀ$1"/>
+      <transform from="T(\p{M}*)T" to="Þ$1"/>
+      <transform from="K(\p{M}*)K" to="Ƙ$1"/>
+      <transform from="F(\p{M}*)F" to="Ƒ$1"/>
+    </transformGroup>
   </transforms>
 
 </keyboard3>
