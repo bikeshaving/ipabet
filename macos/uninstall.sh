@@ -28,5 +28,4 @@ pkgutil --forget "$BUNDLE.pkg" >/dev/null 2>&1 || true
 CONTAINER="$CONSOLE_HOME/Library/Containers/$BUNDLE"
 [ -d "$CONTAINER" ] && rm -r "$CONTAINER"
 
-sudo -u "$CONSOLE_USER" killall TextInputMenuAgent 2>/dev/null || true
 echo "IPAbet is fully removed. Log out and back in to clear the input menu."

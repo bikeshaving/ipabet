@@ -93,7 +93,6 @@ if [ -n "$uid" ] && [ "$u" != "root" ]; then
     | grep -vxF "$APP" \
     | while IFS= read -r other; do asuser "$LSREGISTER" -u "$other" >/dev/null 2>&1 || true; done
   asuser "$APP/Contents/MacOS/ipabet-register" || true
-  asuser killall TextInputMenuAgent 2>/dev/null || true
 fi
 exit 0
 EOF

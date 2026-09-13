@@ -95,5 +95,4 @@ if [[ "${1:-}" == "install" ]]; then
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
     && echo "installed; registration attempted — if IPA is not in the input menu, log out/in." \
     || echo "installed; registration failed — log out/in and add it in System Settings."
-  killall TextInputMenuAgent 2>/dev/null || true
 fi
