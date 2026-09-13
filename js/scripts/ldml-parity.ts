@@ -22,14 +22,14 @@ const buckets = {
 };
 const core: string[] = [];
 for (const v of vectors) {
-  if (type(v.keys, v.initial ?? "", {capitalDigraphs: v.capital_digraphs}) === v.expected) { pass++; continue; }
+  if (type(v.keys, v.initial ?? "", {capitalDigraphs: v.capital_digraphs, quoteLocale: v.locale}) === v.expected) { pass++; continue; }
   if (v.capital_digraphs) buckets["cd=true (capital-digraphs mode)"]++;
   else if (v.locale !== "en") buckets["locale!=en (quote mode)"]++;
   else {
     buckets["core (cd=false, en)"]++;
     if (core.length < show) {
       const ks = v.keys.map((k: any) => (k.option ? "⌥" : "") + (k.shift ? "⇧" : "") + k.key).join(" ");
-      core.push(`  [${ks}]  exp ${JSON.stringify(v.expected)}  got ${JSON.stringify(type(v.keys, v.initial ?? "", {capitalDigraphs: v.capital_digraphs}))}`);
+      core.push(`  [${ks}]  exp ${JSON.stringify(v.expected)}  got ${JSON.stringify(type(v.keys, v.initial ?? "", {capitalDigraphs: v.capital_digraphs, quoteLocale: v.locale}))}`);
     }
   }
 }

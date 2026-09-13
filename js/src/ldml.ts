@@ -14,6 +14,7 @@
 
 // @ts-ignore — bundlers inline this file's text.
 import xml from "../../spec/ipabet.xml";
+import {QUOTE_LOCALES} from "./quotes.ts";
 
 const unesc = (s: string) =>
   s.replace(/&quot;/g, '"').replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&amp;/g, "&");
@@ -60,12 +61,18 @@ export interface Stroke {
   control?: boolean;
   capsLock?: boolean;
 }
-const keyOutput = (k: Stroke): string | null => {
+const QUOTE_SLOT: Record<string, number> = { q_open_primary: 0, q_close_primary: 1, q_open_secondary: 2, q_close_secondary: 3 };
+const keyOutput = (k: Stroke, locale?: string): string | null => {
+  if (!k.shift && !k.option && k.key in SHIFTED) return k.key;
   const p = positionOf(k.key);
   if (!p) return null;
   const layer = k.option ? (k.shift ? "altR shift" : "altR") : (k.shift ? "shift" : "none");
   const id = layers[layer]?.[p[0]]?.[p[1]];
   if (!id || id === "gap") return null;
+  if (id in QUOTE_SLOT) {
+    const quad = QUOTE_LOCALES.locales[locale ?? ""] ?? QUOTE_LOCALES.locales[QUOTE_LOCALES.default];
+    return quad[QUOTE_SLOT[id]];
+  }
   return keys[id] ?? null;
 };
 
@@ -109,7 +116,7 @@ for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) 
 // then the next group. UTS #35 re-normalizes and re-runs between insertions;
 // we iterate the whole sweep to a fixpoint so a rewrite that exposes a new
 // match (a freshly-composed base a pending mark can now land on) settles.
-export interface Settings { capitalDigraphs?: boolean; capitalDigitDigraphs?: boolean }
+export interface Settings { capitalDigraphs?: boolean; capitalDigitDigraphs?: boolean; quoteLocale?: string }
 function sweep(buf: string, on: Settings): string {
   for (const g of groups) {
     if (g.when && !(on as Record<string, boolean>)[g.when]) continue;
@@ -143,6 +150,25 @@ function render(buf: string): string {
 const isIPA = (c: string) => c.codePointAt(0)! > 0x7f && /[\p{L}\p{M}]/u.test(c);
 
 const isMarker = (c: string) => cpMarker.has(c);
+function fuseMarks(built: string, rest: string[]): string {
+  let best = (built + rest.join("")).normalize("NFC");
+  for (let i = 0; i < rest.length; i++) {
+    const candidate = (built + rest[i]).normalize("NFC");
+    if ([...candidate].length !== [...built].length) continue;
+    const s = fuseMarks(candidate, [...rest.slice(0, i), ...rest.slice(i + 1)]);
+    if ([...s].length < [...best].length) best = s;
+  }
+  return best;
+}
+function fuseTail(buf: string, typed: string[]): string {
+  const chars = [...buf];
+  const i = lastBase(chars);
+  const nfd = [...chars.slice(i).join("").normalize("NFD")];
+  if (nfd.length < 3 || isMarker(nfd[0])) return buf;
+  const marks = nfd.slice(1);
+  const same = typed.length === marks.length && [...typed].sort().join("") === [...marks].sort().join("");
+  return chars.slice(0, i).join("") + fuseMarks(nfd[0], same ? typed : marks);
+}
 const lastBase = (chars: string[]) => {
   let i = chars.length;
   while (i > 0 && /\p{M}/u.test(chars[i - 1])) i--;
@@ -178,7 +204,11 @@ export function type(strokes: Stroke[], initial = "", on: Settings = {}): string
       if (!(chars.length && isMarker(chars[chars.length - 1]))) buf += " ";
       continue;
     }
-    let o = keyOutput(k);
+    const pre = [...buf];
+    let j = pre.length;
+    while (j > 0 && isMarker(pre[j - 1])) j--;
+    const typed = pre.slice(j).map((c) => markerGlyph[cpMarker.get(c)!]).filter((c) => c !== undefined);
+    let o = keyOutput(k, on.quoteLocale);
     if (k.control) o = k.shift && /^[A-Za-z]$/.test(k.key) ? PROTECT + k.key.toUpperCase() : null;
     else if (k.capsLock && /^[A-Za-z]$/.test(k.key)) o = PROTECT + k.key.toUpperCase();
     if (o === null) continue;
@@ -193,7 +223,7 @@ export function type(strokes: Stroke[], initial = "", on: Settings = {}): string
         if (tried !== lowered) next = tried;
       }
     }
-    buf = next ?? runPasses(buf + o, settings);
+    buf = fuseTail(next ?? runPasses(buf + o, settings), typed);
     const tail = [...buf].pop();
     chainBroken = tail !== undefined && isIPA(tail) ? false : brokenIn;
   }
