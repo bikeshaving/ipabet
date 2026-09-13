@@ -233,7 +233,7 @@ fn a_zero_capacity_buffer_is_left_alone() {
     let mut buf = [0x7f as c_char; 4];
     unsafe { ipabet_preview_string(e, empty_pending(), buf.as_mut_ptr(), 0) };
     assert_eq!(buf[0], 0x7f as c_char);
-    unsafe { ipabet_commit_string(e, empty_pending(), std::ptr::null_mut(), 8) };
+    unsafe { ipabet_commit_string(e, key("").as_ptr(), empty_pending(), std::ptr::null_mut(), 8) };
     unsafe { ipabet_engine_free(e) };
 }
 
@@ -363,5 +363,21 @@ fn the_quote_table_lists_every_locale_default_first_and_truncates_whole_lines() 
 
     assert_eq!(unsafe { ipabet_engine_quote_locales(std::ptr::null(), buf.as_mut_ptr(), buf.len()) }, 0);
     assert_eq!(unsafe { ipabet_engine_quote_locales(e, std::ptr::null_mut(), 0) }, need);
+    unsafe { ipabet_engine_free(e) };
+}
+
+#[test]
+fn a_trailing_tie_commits_combining_after_a_letter_and_spacing_after_nothing() {
+    let e = engine();
+    let j = key("j");
+    let mut pending = empty_pending();
+    let step = unsafe { ipabet_engine_handle_key(e, key("i").as_ptr(), stroke(&j, true, false), pending, false) };
+    pending = step.pending;
+    assert!(pending.count > 0, "⌥j arms the tie");
+    let mut out = [0 as c_char; 32];
+    unsafe { ipabet_commit_string(e, key("i").as_ptr(), pending, out.as_mut_ptr(), out.len()) };
+    assert_eq!(unsafe { CStr::from_ptr(out.as_ptr()) }.to_str().unwrap(), "\u{0361}");
+    unsafe { ipabet_commit_string(e, key("").as_ptr(), pending, out.as_mut_ptr(), out.len()) };
+    assert_eq!(unsafe { CStr::from_ptr(out.as_ptr()) }.to_str().unwrap(), "⁀");
     unsafe { ipabet_engine_free(e) };
 }

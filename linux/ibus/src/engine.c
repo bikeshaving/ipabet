@@ -77,10 +77,10 @@ static void ipabet_update_preedit(IpabetIBusEngine *self) {
 /// Hand the client everything held and stop composing — the boundary behaviour
 /// for a key IPAbet declines, and for losing focus.
 static void ipabet_flush(IpabetIBusEngine *self) {
-    // An armed diacritic that never found a base commits as its spacing clone,
-    // which is exactly what the engine's commit string is.
+    // An armed diacritic that never found a base commits in the form the text
+    // before it calls for, which is exactly what the engine's commit string is.
     char tail[EDIT_TEXT_MAX];
-    ipabet_commit_string(g_transform, self->pending, tail, sizeof(tail));
+    ipabet_commit_string(g_transform, self->buffer->str, self->pending, tail, sizeof(tail));
 
     GString *out = g_string_new(self->buffer->str);
     g_string_append(out, tail);

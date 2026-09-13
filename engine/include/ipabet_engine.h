@@ -158,11 +158,18 @@ void ipabet_preview_string(const struct Engine *engine,
                            uintptr_t out_cap);
 
 /**
+ * What the armed pending becomes when composition ends without a base: the
+ * text to append after `text_before`. The context decides the form — a lone
+ * tie after a letter or digit commits combining, a dead-key mark after nothing
+ * commits as its spacing clone.
+ *
  * # Safety
- * `engine` must be live. `out` must point to at least `out_cap` bytes.
+ * `engine` must be live; `text_before` a valid NUL-terminated UTF-8 C string.
+ * `out` must point to at least `out_cap` bytes.
  */
 
 void ipabet_commit_string(const struct Engine *engine,
+                          const char *text_before,
                           struct CPending pending,
                           char *out,
                           uintptr_t out_cap);

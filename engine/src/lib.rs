@@ -589,9 +589,6 @@ impl Engine {
     pub fn commit_text(&self, before: &str, pending: &Pending) -> String {
         self.resolve(&self.to_markers(pending), before).chars().nfc().collect()
     }
-    pub fn commit_string(&self, pending: &Pending) -> String {
-        self.commit_text("", pending)
-    }
 
     fn last_cluster(text: &str) -> Option<&str> {
         text.graphemes(true).last()

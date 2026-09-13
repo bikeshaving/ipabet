@@ -51,9 +51,9 @@ func nativeChar(_ ks: CKeystroke) -> String {
     return String(cString: out)
 }
 
-func commitString(_ engine: OpaquePointer, _ pending: CPending) -> String {
+func commitString(_ engine: OpaquePointer, _ before: String, _ pending: CPending) -> String {
     var out = [CChar](repeating: 0, count: 256)
-    ipabet_commit_string(engine, pending, &out, 256)
+    before.withCString { ipabet_commit_string(engine, $0, pending, &out, 256) }
     return String(cString: out)
 }
 
@@ -105,7 +105,7 @@ for v in vectors {
             }
         }
     }
-    if pending.count > 0 { text += commitString(engine, pending) }
+    if pending.count > 0 { text += commitString(engine, text, pending) }
     if text == v.expected { pass += 1 }
     else if failures.count < 30 {
         failures.append("got [\(text)] want [\(v.expected)] initial=[\(v.initial)] keys=\(v.keys.map { $0.key })")

@@ -359,17 +359,30 @@ pub unsafe extern "C" fn ipabet_preview_string(engine: *const Engine, pending: C
     }
 }
 
+/// What the armed pending becomes when composition ends without a base: the
+/// text to append after `text_before`. The context decides the form — a lone
+/// tie after a letter or digit commits combining, a dead-key mark after nothing
+/// commits as its spacing clone.
+///
 /// # Safety
-/// `engine` must be live. `out` must point to at least `out_cap` bytes.
+/// `engine` must be live; `text_before` a valid NUL-terminated UTF-8 C string.
+/// `out` must point to at least `out_cap` bytes.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn ipabet_commit_string(engine: *const Engine, pending: CPending, out: *mut c_char, out_cap: usize) {
+pub unsafe extern "C" fn ipabet_commit_string(
+    engine: *const Engine,
+    text_before: *const c_char,
+    pending: CPending,
+    out: *mut c_char,
+    out_cap: usize,
+) {
     unsafe {
         if engine.is_null() {
             write_c_string("", out, out_cap);
             return;
         }
+        let text = str_from_c(text_before);
         let p = pending_from_c(&pending);
-        let s = (*engine).commit_string(&p);
+        let s = (*engine).commit_text(&text, &p);
         write_c_string(&s, out, out_cap);
     }
 }

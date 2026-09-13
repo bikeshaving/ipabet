@@ -458,15 +458,15 @@ class InputController: IMKInputController {
         return String(cString: out)
     }
 
-    /// Commit any armed pending as its spacing form and clear the preview — for
-    /// losing focus, a command chord, or a run-ending key.
+    /// Commit any armed pending in the form the text before it calls for and
+    /// clear the preview — for losing focus, a command chord, or a run-ending key.
     private func flush(_ client: IMKTextInput) {
         guard let engine = engine, pending.count > 0 else {
             if pending.count == 0 { return }
             pending = CPending(); updateMarked(client); return
         }
         var out = [CChar](repeating: 0, count: 256)
-        ipabet_commit_string(engine, pending, &out, 256)
+        lookback(client).withCString { ipabet_commit_string(engine, $0, pending, &out, 256) }
         let s = String(cString: out)
         pending = CPending()
         if !s.isEmpty { insert(s, client) } else { updateMarked(client) }

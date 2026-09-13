@@ -77,10 +77,10 @@ IpabetEngine::~IpabetEngine() {
 }
 
 void IpabetEngine::flush(fcitx::InputContext *ic, IpabetState *state) {
-    // An armed diacritic that never found a base commits as its spacing clone,
-    // which is exactly what the engine's commit string is.
+    // An armed diacritic that never found a base commits in the form the text
+    // before it calls for, which is exactly what the engine's commit string is.
     char tail[EDIT_TEXT_MAX];
-    ipabet_commit_string(engine_, state->pending, tail, sizeof(tail));
+    ipabet_commit_string(engine_, state->buffer.c_str(), state->pending, tail, sizeof(tail));
     const std::string text = state->buffer + tail;
     state->clear();
     ic->inputPanel().reset();
