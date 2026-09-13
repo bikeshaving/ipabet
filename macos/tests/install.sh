@@ -4,6 +4,7 @@
 #
 #   sudo tests/install.sh
 set -euo pipefail
+trap 'echo "FAIL line $LINENO: $BASH_COMMAND" >&2' ERR
 cd "$(dirname "$0")/.."
 [ "$(id -u)" = 0 ] || { echo "run me with sudo"; exit 1; }
 [ -d build/IPAbet.app ] || { echo "build first: ./build.sh"; exit 1; }
