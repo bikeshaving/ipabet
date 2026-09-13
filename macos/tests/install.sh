@@ -13,13 +13,13 @@ APP="/Library/Input Methods/IPAbet.app"
 BIN="$APP/Contents/MacOS/IPAbet"
 u=$(stat -f%Su /dev/console)
 
-root=$(mktemp -d); mkdir -p "$root/Library/Input Methods"
+work=$(mktemp -d); root="$work/root"; mkdir -p "$root/Library/Input Methods"
 cp -R build/IPAbet.app "$root/Library/Input Methods/"
-plist="$root/component.plist"
+plist="$work/component.plist"
 pkgbuild --analyze --root "$root" "$plist" >/dev/null
 /usr/libexec/PlistBuddy -c 'Set :0:BundleIsRelocatable false' "$plist"
 pkgbuild --root "$root" --component-plist "$plist" --scripts scripts --install-location / \
-  --identifier org.bikeshaving.inputmethod.IPAbet.pkg --version 0 "$root/IPAbet.pkg" >/dev/null
+  --identifier org.bikeshaving.inputmethod.IPAbet.pkg --version 0 "$work/IPAbet.pkg" >/dev/null
 
 running() { pgrep -f "^$BIN" || true; }
 check() {  # label
@@ -30,12 +30,12 @@ check() {  # label
   echo "ok  $1: installed, one process (pid $(running)), input source present"
 }
 
-installer -pkg "$root/IPAbet.pkg" -target /
+installer -pkg "$work/IPAbet.pkg" -target /
 sleep 2
 check "install"
 first=$(running)
 
-installer -pkg "$root/IPAbet.pkg" -target /
+installer -pkg "$work/IPAbet.pkg" -target /
 sleep 2
 check "upgrade"
 [ "$(running)" != "$first" ] || { echo "FAIL upgrade: the old process (pid $first) survived"; exit 1; }
@@ -47,4 +47,4 @@ sleep 1
 [ -z "$(running)" ] || { echo "FAIL uninstall: IPAbet still running"; exit 1; }
 pkgutil --pkg-info org.bikeshaving.inputmethod.IPAbet.pkg >/dev/null 2>&1 && { echo "FAIL uninstall: receipt left"; exit 1; }
 echo "ok  uninstall: app, process and receipt gone"
-rm -rf "$root"
+rm -rf "$work"
