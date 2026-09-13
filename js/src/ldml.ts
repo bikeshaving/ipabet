@@ -84,6 +84,10 @@ interface Rule { re: RegExp; to: string }
 // NAME — how a mode like capital-digraphs becomes a toggleable transform
 // layer rather than case logic in the shell.
 interface Group { when: string | null; rules: Rule[] }
+const SPACING = Object.entries(keys)
+  .filter(([id, o]) => id.startsWith("sp_") && [...o].length === 1)
+  .map(([, o]) => o.replace(/[\\\]^-]/g, "\\$&"))
+  .join("");
 const unconvert: Record<string, string> = {};
 const groups: Group[] = [];
 for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
@@ -91,10 +95,10 @@ for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup
   for (const m of [...g[2].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)]) {
     // A dead-key's (.) matches the base it lands on — never a still-pending
     // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
-    const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, "([\\p{L}\\p{N}]\\p{M}*)");
+    const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, `(?![${SPACING}])([\\p{L}\\p{N}]\\p{M}*)`);
     rules.push({ re: new RegExp("(?:" + src + ")$", "u"), to: m[2] });
     const d = unesc(m[1]).match(/^([^(\\])\(\\p\{M\}\*\)(.+)$/u), t = unesc(m[2]).match(/^(.)\$1$/u);
-    if (d && t) unconvert[t[1]] = d[1] + d[2];
+    if (d && t && keys["b_" + t[1]] !== t[1]) unconvert[t[1]] ??= d[1] + d[2];
   }
   groups.push({ when: g[1] ?? null, rules });
 }
@@ -179,6 +183,24 @@ const lastBase = (chars: string[]) => {
  *  `on` enables optional transform layers (e.g. {capitalDigraphs: true}).
  *  The composition is the transforms; the shell around them is shift-chaining
  *  (keystroke timing), the editing keys, and the chords the host claims. */
+function compose(buf: string, k: Stroke, o: string, on: Settings, brokenIn: boolean): string {
+  buf = buf.normalize("NFD");
+  const pre = [...buf];
+  let j = pre.length;
+  while (j > 0 && isMarker(pre[j - 1])) j--;
+  const typed = pre.slice(j).map((c) => markerGlyph[cpMarker.get(c)!]).filter((c) => c !== undefined);
+  let next: string | null = null;
+  if (k.shift && !k.option && !k.capsLock && /^[A-Za-z]$/.test(k.key) && !brokenIn) {
+    const last = pre[pre.length - 1], prev = pre[pre.length - 2];
+    if (last !== undefined && /^[A-Z]$/.test(last) && prev !== undefined && isIPA(prev)) {
+      const lowered = pre.slice(0, -1).join("") + last.toLowerCase() + o;
+      const tried = runPasses(lowered, on);
+      if (tried !== lowered) next = tried;
+    }
+  }
+  return fuseTail(next ?? runPasses(buf + o, on), typed);
+}
+
 export function type(strokes: Stroke[], initial = "", on: Settings = {}): string {
   let buf = initial;
   let chainBroken = false;
@@ -204,28 +226,206 @@ export function type(strokes: Stroke[], initial = "", on: Settings = {}): string
       if (!(chars.length && isMarker(chars[chars.length - 1]))) buf += " ";
       continue;
     }
-    const pre = [...buf];
-    let j = pre.length;
-    while (j > 0 && isMarker(pre[j - 1])) j--;
-    const typed = pre.slice(j).map((c) => markerGlyph[cpMarker.get(c)!]).filter((c) => c !== undefined);
     let o = keyOutput(k, on.quoteLocale);
     if (k.control) o = k.shift && /^[A-Za-z]$/.test(k.key) ? PROTECT + k.key.toUpperCase() : null;
     else if (k.capsLock && /^[A-Za-z]$/.test(k.key)) o = PROTECT + k.key.toUpperCase();
     if (o === null) continue;
     const settings: Settings = {...on, capitalDigitDigraphs: !!on.capitalDigraphs && !brokenIn};
-    let next: string | null = null;
-    if (k.shift && !k.option && /^[A-Za-z]$/.test(k.key) && !brokenIn) {
-      const chars = [...buf];
-      const last = chars[chars.length - 1], prev = chars[chars.length - 2];
-      if (last !== undefined && /^[A-Z]$/.test(last) && prev !== undefined && isIPA(prev)) {
-        const lowered = chars.slice(0, -1).join("") + last.toLowerCase() + o;
-        const tried = runPasses(lowered, settings);
-        if (tried !== lowered) next = tried;
-      }
-    }
-    buf = fuseTail(next ?? runPasses(buf + o, settings), typed);
+    buf = compose(buf, k, o, settings, brokenIn);
     const tail = [...buf].pop();
     chainBroken = tail !== undefined && isIPA(tail) ? false : brokenIn;
   }
   return render(buf);
+}
+
+// ---- the IME contract: one keystroke at a time over host-held text ----
+export interface Keystroke {
+  key: string; shift?: boolean; option?: boolean;
+  shiftBroke?: boolean; capsLock?: boolean; control?: boolean;
+}
+export type Edit =
+  | {type: "insert"; text: string}
+  | {type: "replace"; length: number; text: string}
+  | {type: "pass"}
+  | {type: "noop"};
+export type Pending = readonly string[];
+export interface Step { edit: Edit; pending: Pending; chainBroken?: boolean }
+
+export const SHIFTED_DIGITS: Record<string, string> = {
+  "1": "!", "2": "@", "3": "#", "4": "$", "5": "%",
+  "6": "^", "7": "&", "8": "*", "9": "(", "0": ")",
+};
+export const SHIFTED_PUNCT: Record<string, string> = {
+  "`": "~", "-": "_", "=": "+", "[": "{", "]": "}", "\\": "|",
+  ";": ":", "'": "\"", ",": "<", ".": ">", "/": "?",
+};
+export function nativeChar(k: Keystroke): string {
+  if (k.key.length !== 1) return "";
+  if (k.shift && /[a-z]/i.test(k.key)) return k.key.toUpperCase();
+  if (k.shift && /[0-9]/.test(k.key)) return SHIFTED_DIGITS[k.key] ?? "";
+  if (k.shift) return SHIFTED_PUNCT[k.key] ?? k.key;
+  if (k.option) return "";
+  return k.key;
+}
+export function applyEdit(text: string, edit: Edit, native = ""): string {
+  switch (edit.type) {
+    case "insert": return text + edit.text;
+    case "replace": return text.slice(0, text.length - edit.length) + edit.text;
+    case "pass": return text + native;
+    case "noop": return text;
+  }
+}
+
+const RAISE = "\u0001sup";
+const LOWER = "\u0001sub";
+let capitalDigraphs = false;
+let quoteLocale = QUOTE_LOCALES.default;
+export function setCapitalDigraphs(on: boolean): void { capitalDigraphs = on; }
+export function setQuoteLocale(locale: string): void {
+  quoteLocale = locale in QUOTE_LOCALES.locales ? locale : QUOTE_LOCALES.default;
+}
+
+const toMarkers = (p: Pending) =>
+  p.map((sc) => sc === RAISE ? markerChar("raise") : sc === LOWER ? markerChar("lower") : (glyphMarker[sc] ?? "")).join("");
+const fromMarkers = (s: string): string[] => [...s].flatMap((c) => {
+  const n = cpMarker.get(c);
+  if (n === undefined) return [];
+  if (n === "raise") return [RAISE];
+  if (n === "lower") return [LOWER];
+  const g = markerGlyph[n];
+  return g === undefined ? [] : [g];
+});
+const pendingText = (sc: string): string => {
+  if (sc === RAISE) return displays.raise ?? "";
+  if (sc === LOWER) return displays.lower ?? "";
+  const m = glyphMarker[sc];
+  const n = m === undefined ? undefined : cpMarker.get(m);
+  return (n === undefined ? undefined : displays[n]) ?? sc;
+};
+export function previewString(pending: Pending): string { return pending.map(pendingText).join(""); }
+function commitString(pending: Pending): string {
+  return pending.filter((sc) => sc !== RAISE && sc !== LOWER).map(pendingText).join("");
+}
+
+const segmenter = new Intl.Segmenter(undefined, {granularity: "grapheme"});
+function lastCluster(text: string): string | undefined {
+  if (text.length === 0) return undefined;
+  let last: string | undefined;
+  for (const s of segmenter.segment(text.slice(-64))) last = s.segment;
+  return last;
+}
+function lastClusters(text: string, n: number): string {
+  const segs: string[] = [];
+  for (const s of segmenter.segment(text.slice(-128))) segs.push(s.segment);
+  return segs.slice(-n).join("");
+}
+const replaceCluster = (p: string, text: string): Edit => ({type: "replace", length: p.length, text});
+const COMBINING_TIES = ["\u{0361}", "\u{035C}"];
+
+export function handleBackspace(textBefore: string, pending: Pending = []): Step {
+  if (pending.length > 0) return {edit: {type: "noop"}, pending: pending.slice(0, -1)};
+  const p = lastCluster(textBefore);
+  if (p === undefined) return {edit: {type: "pass"}, pending: []};
+  const nfd = [...p.normalize("NFD")];
+  const base = nfd.filter((c) => !/\p{M}/u.test(c)).join("");
+  const marks = nfd.filter((c) => /\p{M}/u.test(c));
+  if (marks.length === 0 || base.length === 0) return {edit: {type: "pass"}, pending: []};
+  if (COMBINING_TIES.includes(marks[marks.length - 1]))
+    return {edit: replaceCluster(p, (base + marks.slice(0, -1).join("")).normalize("NFC")), pending: []};
+  return {edit: replaceCluster(p, ""), pending: marks};
+}
+
+export function handleUnconvert(textBefore: string, pending: Pending = []): Step {
+  if (pending.length > 0) return handleBackspace(textBefore, pending);
+  const p = lastCluster(textBefore);
+  if (p !== undefined) {
+    const whole = p.normalize("NFC");
+    const low = whole.toLowerCase();
+    const key = unconvert[low];
+    if (key !== undefined) return {edit: replaceCluster(p, whole === low ? key : key.toUpperCase()), pending: []};
+  }
+  return {edit: {type: "pass"}, pending: []};
+}
+
+export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [], chainBroken = false): Step {
+  const brokenIn = chainBroken || (k.shiftBroke ?? false);
+  const fin = (s: Step): Step => {
+    const e = s.edit;
+    const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
+    return {...s, chainBroken: seg ? false : brokenIn};
+  };
+  const flush = (): Step => {
+    const text = commitString(pending);
+    return text === "" ? {edit: {type: "noop"}, pending: []} : {edit: {type: "insert", text}, pending: []};
+  };
+  const withFlush = (edit: Edit): Step => {
+    if (pending.length === 0) return {edit, pending: []};
+    const pre = commitString(pending);
+    if (pre === "") return {edit, pending: []};
+    if (edit.type === "insert") return {edit: {type: "insert", text: pre + edit.text}, pending: []};
+    if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
+    return {edit, pending: []};
+  };
+  const key = k.key, shift = k.shift ?? false, option = k.option ?? false;
+  if (key === "Escape" && k.control !== true && !option) return fin(pending.length > 0 ? flush() : {edit: {type: "pass"}, pending});
+  if ([...key].length !== 1) return fin({edit: {type: "pass"}, pending});
+  if (k.control === true) {
+    if (shift && /^[a-z]$/i.test(key)) return fin(withFlush({type: "insert", text: key.toUpperCase()}));
+    return fin({edit: {type: "pass"}, pending});
+  }
+  if (key === " " && !option && pending.length > 0) {
+    const f = flush();
+    return fin(f.edit.type === "noop" ? {edit: {type: "pass"}, pending: []} : f);
+  }
+  const stroke: Stroke = {key, shift, option, shiftBroke: k.shiftBroke, capsLock: k.capsLock, control: k.control};
+  let o = keyOutput(stroke, quoteLocale);
+  const caps = k.capsLock === true && /^[a-z]$/i.test(key);
+  if (caps) o = key.toUpperCase();
+  if (o === null) return fin(withFlush({type: "pass"}));
+  const on: Settings = {
+    capitalDigraphs: capitalDigraphs && !caps,
+    capitalDigitDigraphs: capitalDigraphs && !caps && !brokenIn,
+    quoteLocale,
+  };
+  const w = lastClusters(textBefore, 2);
+  const buf = compose(w + toMarkers(pending), stroke, o, on, brokenIn || caps);
+  const chars = [...buf];
+  let j = chars.length;
+  while (j > 0 && isMarker(chars[j - 1])) j--;
+  const committed = render(chars.slice(0, j).join(""));
+  const next = fromMarkers(chars.slice(j).join(""));
+  if (committed === w) return fin({edit: {type: "noop"}, pending: next});
+  if (committed.startsWith(w)) {
+    const ins = committed.slice(w.length);
+    if (pending.length === 0 && ins === nativeChar(k)) return fin({edit: {type: "pass"}, pending: next});
+    return fin({edit: {type: "insert", text: ins}, pending: next});
+  }
+  let i = 0;
+  const a = [...w], b = [...committed];
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  const keep = a.slice(0, i).join("");
+  return fin({edit: {type: "replace", length: w.length - keep.length, text: committed.slice(keep.length)}, pending: next});
+}
+
+export function typeKeys(keys: Keystroke[], initial = ""): string {
+  let text = initial;
+  let pending: Pending = [];
+  let chainBroken = false;
+  for (const k of keys) {
+    const step: Step = k.key === "⌫"
+      ? (k.control === true ? handleUnconvert(text, pending) : handleBackspace(text, pending))
+      : handleKey(text, k, pending, chainBroken);
+    pending = step.pending;
+    chainBroken = step.chainBroken ?? false;
+    if (k.key === "⌫" && step.edit.type === "pass") {
+      if (k.control !== true) {
+        const p = lastCluster(text);
+        text = p === undefined ? text : text.slice(0, text.length - p.length);
+      }
+    } else {
+      text = applyEdit(text, step.edit, nativeChar(k));
+    }
+  }
+  if (pending.length > 0) text += commitString(pending);
+  return text;
 }
