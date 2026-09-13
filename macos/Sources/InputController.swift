@@ -46,22 +46,20 @@ enum USLayout {
     }
 }
 
-// The quote-locale list, read from the spec for the settings menu only — display
-// data, not engine logic (the engine carries its own copy and switches locale
-// through ipabet_engine_set_quote_locale). Nil-safe: a missing file just yields
-// an empty submenu.
+// The quote-locale table for the settings menu, as the engine reports it:
+// display data the engine owns (its CLDR delimiters), not keyboard layout.
 enum QuoteMenu {
-    static let locales: [String: [String]] = data?.locales ?? [:]
-    static let `default`: String = data?.default ?? "en"
-
-    private struct Quotes: Decodable { let locales: [String: [String]]; let `default`: String }
-    private struct Root: Decodable { let quotes: Quotes }
-    private static let data: Quotes? = {
-        guard let url = Bundle.main.url(forResource: "ipabet", withExtension: "xml"),
-              let bytes = try? Data(contentsOf: url),
-              let root = try? JSONDecoder().decode(Root.self, from: bytes) else { return nil }
-        return root.quotes
-    }()
+    static func table(_ engine: OpaquePointer?) -> [(locale: String, quad: [String])] {
+        guard let engine else { return [] }
+        var buf = [CChar](repeating: 0, count: 1024)
+        _ = ipabet_engine_quote_locales(engine, &buf, UInt(buf.count))
+        return String(cString: buf).split(separator: "\n").compactMap { line in
+            let parts = line.split(separator: " ", maxSplits: 1)
+            guard parts.count == 2 else { return nil }
+            return (String(parts[0]), parts[1].map(String.init))
+        }
+    }
+    static func `default`(_ engine: OpaquePointer?) -> String { table(engine).first?.locale ?? "en" }
 }
 
 // The engine's edit kinds, matched against the plain-int CEdit.edit_type.
@@ -146,7 +144,7 @@ class InputController: IMKInputController {
 
     private func applySettings(to engine: OpaquePointer) {
         ipabet_engine_set_capital_digraphs(engine, capitalDigraphs)
-        let locale = UserDefaults.standard.string(forKey: "quoteLocale") ?? QuoteMenu.default
+        let locale = UserDefaults.standard.string(forKey: "quoteLocale") ?? QuoteMenu.default(engine)
         locale.withCString { ipabet_engine_set_quote_locale(engine, $0) }
     }
 
@@ -160,11 +158,10 @@ class InputController: IMKInputController {
 
     override func menu() -> NSMenu! {
         let menu = NSMenu()
-        let active = UserDefaults.standard.string(forKey: "quoteLocale") ?? QuoteMenu.default
+        let active = UserDefaults.standard.string(forKey: "quoteLocale") ?? QuoteMenu.default(engine)
         let quotes = NSMenuItem(title: "Quote Style", action: nil, keyEquivalent: "")
         let sub = NSMenu()
-        for locale in QuoteMenu.locales.keys.sorted() {
-            let quad = QuoteMenu.locales[locale] ?? []
+        for (locale, quad) in QuoteMenu.table(engine).sorted(by: { $0.locale < $1.locale }) {
             let sample = quad.count == 4 ? "   \(quad[0])a\(quad[1]) \(quad[2])a\(quad[3])" : ""
             let item = NSMenuItem(title: locale + sample,
                                   action: #selector(setQuoteLocaleItem(_:)), keyEquivalent: "")

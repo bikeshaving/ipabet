@@ -231,6 +231,43 @@ pub unsafe extern "C" fn ipabet_engine_set_quote_locale(engine: *mut Engine, loc
     }
 }
 
+/// Writes the quote-locale table into `out` as NUL-terminated UTF-8, one line
+/// per locale: the name, a space, then the four quote characters
+/// (`en “”‘’`), sorted by name, the default locale's line first. Returns the
+/// byte length needed (excluding the NUL); if that exceeds `cap` the output is
+/// truncated at a line boundary. A settings menu's data, not engine logic.
+///
+/// # Safety
+/// `engine` must be live; `out` must point to at least `cap` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn ipabet_engine_quote_locales(engine: *const Engine, out: *mut c_char, cap: usize) -> usize {
+    if engine.is_null() {
+        return 0;
+    }
+    let e = unsafe { &*engine };
+    let mut lines: Vec<String> = e.quote_locales().iter().map(|(k, q)| format!("{k} {}", q.iter().collect::<String>())).collect();
+    if let Some(i) = lines.iter().position(|l| l.starts_with(&format!("{} ", e.quote_default()))) {
+        let d = lines.remove(i);
+        lines.insert(0, d);
+    }
+    let text = lines.join("\n");
+    if !out.is_null() && cap > 0 {
+        let mut fit = String::new();
+        for l in &lines {
+            let next = if fit.is_empty() { l.clone() } else { format!("{fit}\n{l}") };
+            if next.len() + 1 > cap {
+                break;
+            }
+            fit = next;
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(fit.as_ptr(), out as *mut u8, fit.len());
+            *out.add(fit.len()) = 0;
+        }
+    }
+    text.len()
+}
+
 /// # Safety
 /// `engine` must be live; `text_before` a valid NUL-terminated UTF-8 C string;
 /// `keystroke.key` a valid NUL-terminated UTF-8 C string.

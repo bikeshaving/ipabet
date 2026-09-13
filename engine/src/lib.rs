@@ -347,6 +347,15 @@ impl Engine {
     pub fn set_quote_locale(&mut self, locale: &str) {
         self.quote_active = if self.quote_locales.contains_key(locale) { locale.to_string() } else { self.quote_default.clone() };
     }
+    pub fn quote_default(&self) -> &str {
+        &self.quote_default
+    }
+    /// Every quote locale with its [open1, close1, open2, close2], sorted by name.
+    pub fn quote_locales(&self) -> Vec<(String, [char; 4])> {
+        let mut v: Vec<_> = self.quote_locales.iter().map(|(k, q)| (k.clone(), *q)).collect();
+        v.sort();
+        v
+    }
 
     // ------------------------------------------------------------ keys
 

@@ -341,3 +341,27 @@ fn a_stack_past_the_array_truncates_at_the_boundary_and_stays_coherent() {
     assert_eq!(text_of(&landed.edit), expected);
     unsafe { ipabet_engine_free(e) };
 }
+
+#[test]
+fn the_quote_table_lists_every_locale_default_first_and_truncates_whole_lines() {
+    let e = engine();
+    let mut buf = vec![0 as c_char; 1024];
+    let need = unsafe { ipabet_engine_quote_locales(e, buf.as_mut_ptr(), buf.len()) };
+    let text = unsafe { CStr::from_ptr(buf.as_ptr()) }.to_str().unwrap().to_string();
+    assert_eq!(need, text.len());
+    let lines: Vec<&str> = text.lines().collect();
+    assert_eq!(lines[0], "en “”‘’");
+    assert_eq!(lines.len(), 7);
+    assert!(lines[1..].windows(2).all(|w| w[0] < w[1]));
+    assert!(lines.iter().all(|l| l.split(' ').nth(1).map(|q| q.chars().count()) == Some(4)));
+
+    let mut small = vec![0 as c_char; 20];
+    let need2 = unsafe { ipabet_engine_quote_locales(e, small.as_mut_ptr(), small.len()) };
+    assert_eq!(need2, need);
+    let cut = unsafe { CStr::from_ptr(small.as_ptr()) }.to_str().unwrap();
+    assert_eq!(cut, "en “”‘’");
+
+    assert_eq!(unsafe { ipabet_engine_quote_locales(std::ptr::null(), buf.as_mut_ptr(), buf.len()) }, 0);
+    assert_eq!(unsafe { ipabet_engine_quote_locales(e, std::ptr::null_mut(), 0) }, need);
+    unsafe { ipabet_engine_free(e) };
+}
