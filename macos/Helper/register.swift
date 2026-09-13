@@ -54,15 +54,24 @@ let enable: Set<String> = [
     "org.bikeshaving.inputmethod.IPAbet.IPA",
 ]
 let legacyLayout = "org.bikeshaving.inputmethod.IPAbet.keylayout.IPAbet"
+var copies = 0
 if let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISInputSource] {
     for src in list {
         guard let p = TISGetInputSourceProperty(src, kTISPropertyInputSourceID) else { continue }
         let id = Unmanaged<CFString>.fromOpaque(p).takeUnretainedValue() as String
-        if enable.contains(id) { TISEnableInputSource(src) }
+        if id == "org.bikeshaving.inputmethod.IPAbet" { copies += 1 }
+        if enable.contains(id) {
+            let on = TISGetInputSourceProperty(src, kTISPropertyInputSourceIsEnabled)
+                .map { CFBooleanGetValue(Unmanaged<CFBoolean>.fromOpaque($0).takeUnretainedValue()) } ?? false
+            if !on { TISEnableInputSource(src) }
+        }
         if id == legacyLayout { TISDisableInputSource(src) }
         if id.contains(".keylayout.") && id.contains("IPAbet") {
             FileHandle.standardError.write(Data("layout source present: \(id)\n".utf8))
         }
     }
+}
+if copies > 1 {
+    FileHandle.standardError.write(Data("warning: \(copies) copies of IPAbet.app are registered and each one appears in the input menu. Remove the others — a dev copy in ~/Library/Input Methods, or a build directory — then log out and back in.\n".utf8))
 }
 print("registered + enabled in the current session")

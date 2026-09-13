@@ -1,7 +1,8 @@
 #!/bin/bash
 # Uninstall IPAbet: disable its input sources, then remove everything the
-# production install leaves — the app, the pkg receipt, and the sandbox
-# container (settings + debug log) of the user running this.
+# production install leaves — the app, the pkg receipt, the sandbox container
+# (settings + debug log) of the logged-in user — and any dev copy of the app
+# in that user's home, which would otherwise register a second IPAbet.
 #
 #   sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"
 #
@@ -21,8 +22,11 @@ if [ -x "$APP/Contents/MacOS/ipabet-register" ]; then
 fi
 killall IPAbet 2>/dev/null || true
 [ -d "$APP" ] && rm -r "$APP"
+DEV="$CONSOLE_HOME/Library/Input Methods/IPAbet.app"
+[ -d "$DEV" ] && rm -r "$DEV"
 pkgutil --forget "$BUNDLE.pkg" >/dev/null 2>&1 || true
 CONTAINER="$CONSOLE_HOME/Library/Containers/$BUNDLE"
 [ -d "$CONTAINER" ] && rm -r "$CONTAINER"
 
+sudo -u "$CONSOLE_USER" killall TextInputMenuAgent 2>/dev/null || true
 echo "IPAbet is fully removed. Log out and back in to clear the input menu."
