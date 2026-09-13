@@ -1,7 +1,6 @@
-// The spec, parsed from the LDML source (spec/ipabet.xml) at import time — the
-// TS counterpart to the engine's Rust `from_ldml`. No build step, no generated
-// JSON: the XML is bundled as text and reconstructed here. Both the engine
-// (index.ts) and the website read the `spec` object this exports.
+// The website's view of spec/ipabet.xml: the letters, marks and sup/sub tables
+// that /keys and /chart render, reconstructed from the LDML at import time. The
+// engine does not read this — it executes the transforms directly (ldml.ts).
 
 // @ts-ignore — bundlers inline this file's text; the XML is the source of truth.
 import xml from "../../spec/ipabet.xml";
