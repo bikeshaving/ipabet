@@ -111,11 +111,10 @@ body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
 kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
 </style></head><body>
 <h3>IPAbet is installed.</h3>
-<p>Pick <b>IPA</b> in the input menu (top-right of the menu bar) and type.</p>
-<p><b>Not in the menu?</b> Log out and back in — macOS refreshes input
-sources at login. If it is still missing after that, add it under
-<b>System Settings → Keyboard → Input Sources</b> → <kbd>+</kbd> → English →
-<b>IPA</b>. Do not add it while it is already listed: that only makes a duplicate.</p>
+<p><b>Log out and back in</b>, then pick <b>IPA</b> in the input menu
+(top-right of the menu bar).</p>
+<p>If it is not listed after that, add it under <b>System Settings → Keyboard →
+Input Sources</b> → <kbd>+</kbd> → English → <b>IPA</b>.</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"
