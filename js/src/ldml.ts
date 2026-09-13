@@ -92,7 +92,7 @@ for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup
     // A dead-key's (.) matches the base it lands on — never a still-pending
     // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
     const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, "([\\p{L}\\p{N}]\\p{M}*)");
-    rules.push({ re: new RegExp(src, "u"), to: m[2] });
+    rules.push({ re: new RegExp("(?:" + src + ")$", "u"), to: m[2] });
     const d = unesc(m[1]).match(/^([^(\\])\(\\p\{M\}\*\)(.+)$/u), t = unesc(m[2]).match(/^(.)\$1$/u);
     if (d && t) unconvert[t[1]] = d[1] + d[2];
   }
