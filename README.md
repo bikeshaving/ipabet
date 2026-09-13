@@ -21,14 +21,15 @@ keystroke information, a browser scratchpad, and a typing course.
 
 ## Install
 
-Three steps everywhere: install, log out and back in, pick IPAbet from the
-input menu.
+Install, then pick IPAbet from the input menu. If it is not listed, log out
+and back in first — the OS refreshes input sources at login.
 
-**macOS** — [download **IPAbet.pkg**](https://ipabet.org/download), run it,
-then add **IPA** under System Settings → Keyboard → Input Sources. Or `brew
-install --cask bikeshaving/tap/ipabet`. Uninstalling is `sudo "/Library/Input
-Methods/IPAbet.app/Contents/Resources/uninstall.sh"` (or `brew uninstall
-ipabet`).
+**macOS** — [download **IPAbet.pkg**](https://ipabet.org/download) and run it;
+**IPA** appears in the input menu (top-right of the menu bar). Or `brew
+install --cask bikeshaving/tap/ipabet`. Only if it is still missing after a
+logout, add it under System Settings → Keyboard → Input Sources → + → English.
+Uninstalling is `sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`
+(or `brew uninstall ipabet`).
 
 **Windows** — download **IPAbet-x64.msi** (or **IPAbet-arm64.msi**) and run it,
 then pick IPAbet from the language bar.
