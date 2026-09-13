@@ -4,7 +4,7 @@
 #
 #   sudo tests/install.sh
 set -euo pipefail
-trap 'echo "FAIL line $LINENO: $BASH_COMMAND" >&2' ERR
+trap 'echo "FAIL line $LINENO: $BASH_COMMAND" >&2; tail -40 /var/log/install.log >&2' ERR
 cd "$(dirname "$0")/.."
 [ "$(id -u)" = 0 ] || { echo "run me with sudo"; exit 1; }
 [ -d build/IPAbet.app ] || { echo "build first: ./build.sh"; exit 1; }
@@ -30,12 +30,12 @@ check() {  # label
   echo "ok  $1: installed, one process (pid $(running)), input source present"
 }
 
-installer -pkg "$root/IPAbet.pkg" -target / >/dev/null
+installer -pkg "$root/IPAbet.pkg" -target /
 sleep 2
 check "install"
 first=$(running)
 
-installer -pkg "$root/IPAbet.pkg" -target / >/dev/null
+installer -pkg "$root/IPAbet.pkg" -target /
 sleep 2
 check "upgrade"
 [ "$(running)" != "$first" ] || { echo "FAIL upgrade: the old process (pid $first) survived"; exit 1; }
