@@ -1,0 +1,13 @@
+#!/bin/bash
+# Stop the IPAbet that is running (it belongs to the bundle just replaced),
+# then register and launch the new one as the logged-in user. TIS state is
+# per-session, so neither step may run as root.
+APP="/Library/Input Methods/IPAbet.app"
+pkill -x IPAbet 2>/dev/null || true
+u=$(stat -f%Su /dev/console)
+uid=$(id -u "$u" 2>/dev/null)
+if [ -n "$uid" ] && [ "$u" != "root" ]; then
+  launchctl asuser "$uid" sudo -u "$u" "$APP/Contents/MacOS/ipabet-register" || true
+  launchctl asuser "$uid" sudo -u "$u" open "$APP" || true
+fi
+exit 0

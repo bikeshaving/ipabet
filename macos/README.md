@@ -21,18 +21,16 @@ The app is a **universal binary**: the engine crate builds for both
 that registers but can never launch. `rustup target add x86_64-apple-darwin`
 is required for the Intel slice.
 
-`build.sh install` registers and enables the dev copy in the current session;
-if IPA still does not show in the menu, log out and back in. After a rebuild:
-`pkill IPAbet`, then quit and relaunch the app under test — apps hold a
-session to the old process.
+`build.sh install` stops any running IPAbet, registers the dev copy, and
+launches it, so it is live in the current session. If IPA is not in the input
+menu, log out and back in.
 
-**One installed copy at a time.** `build.sh install` writes
-`~/Library/Input Methods/`, the pkg writes `/Library/Input Methods/`, and every
-copy macOS can see registers as its own input source — two copies means IPAbet
-listed twice. So `build.sh install` refuses while the release is installed
-(uninstall it first with `sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`),
-and the pkg's postinstall removes a dev copy it finds. `pgrep -lf IPAbet` says
-which copy is live.
+The pkg installs to `/Library/Input Methods/`; `build.sh install` writes
+`~/Library/Input Methods/`. Every copy macOS can see is its own row in the
+input menu, so with both installed IPA is listed twice — harmless, but
+`pgrep -fl IPAbet` says which one is live. The release uninstaller
+(`sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`)
+removes only the release.
 
 ## Composition model
 

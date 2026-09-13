@@ -57,46 +57,10 @@ PLIST="build/component.plist"
 pkgbuild --analyze --root "$PKGROOT" "$PLIST"
 /usr/libexec/PlistBuddy -c 'Set :0:BundleIsRelocatable false' "$PLIST"
 
-# postinstall makes a BEST-EFFORT registration into the logged-in user's
-# session: launchctl asuser joins the user's Mach bootstrap namespace (a bare
-# sudo -u from the installer daemon stays outside the Aqua session, where TIS
-# calls succeed into a namespace the input menu never reads). Even done
-# right, macOS only reliably registers brand-new input methods at login — so
-# the conclusion page documents the logout, and this is a bonus when it works.
+# postinstall: scripts/postinstall, run as root by the installer.
 SCRIPTS="build/scripts"
 mkdir -p "$SCRIPTS"
-cat > "$SCRIPTS/postinstall" <<'EOF'
-#!/bin/bash
-# One IPAbet.app may be registered at a time: every registered copy is its own
-# entry in the input menu. Before registering the release, disable whatever is
-# enabled, remove the logged-in user's dev copy, and unregister any other copy
-# LaunchServices knows (build directories, old checkouts).
-launchctl bootout system /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
-rm -f /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist
-APP="/Library/Input Methods/IPAbet.app"
-LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
-u=$(stat -f%Su /dev/console)
-uid=$(id -u "$u" 2>/dev/null)
-if [ -n "$uid" ] && [ "$u" != "root" ]; then
-  home=$(eval echo "~$u")
-  asuser() { launchctl asuser "$uid" sudo -u "$u" "$@"; }
-  launchctl bootout "gui/$uid" /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
-  asuser "$APP/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
-  dev="$home/Library/Input Methods/IPAbet.app"
-  if [ -d "$dev" ]; then
-    asuser "$LSREGISTER" -u "$dev" >/dev/null 2>&1 || true
-    rm -rf "$dev"
-  fi
-  asuser "$LSREGISTER" -dump 2>/dev/null \
-    | grep -E '^[[:space:]]*path:.*IPAbet\.app' \
-    | sed -E 's/^[[:space:]]*path:[[:space:]]*//; s/ \(0x[0-9a-f]+\)$//' \
-    | grep -vxF "$APP" \
-    | while IFS= read -r other; do asuser "$LSREGISTER" -u "$other" >/dev/null 2>&1 || true; done
-  asuser "$APP/Contents/MacOS/ipabet-register" || true
-fi
-exit 0
-EOF
-chmod +x "$SCRIPTS/postinstall"
+cp scripts/postinstall "$SCRIPTS/postinstall"
 
 pkgbuild --root "$PKGROOT" --component-plist "$PLIST" --scripts "$SCRIPTS" \
 	--install-location "/" \
@@ -111,10 +75,10 @@ body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
 kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
 </style></head><body>
 <h3>IPAbet is installed.</h3>
-<p><b>Log out and back in</b>, then pick <b>IPA</b> in the input menu
-(top-right of the menu bar).</p>
-<p>If it is not listed after that, add it under <b>System Settings → Keyboard →
-Input Sources</b> → <kbd>+</kbd> → English → <b>IPA</b>.</p>
+<p>Pick <b>IPA</b> in the input menu (top-right of the menu bar).</p>
+<p>If it is not listed, log out and back in. If it is still not listed, add it
+under <b>System Settings → Keyboard → Input Sources</b> → <kbd>+</kbd> →
+English → <b>IPA</b>.</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"

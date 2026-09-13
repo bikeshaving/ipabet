@@ -80,12 +80,14 @@ LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchSe
 "$LSREGISTER" -u "$PWD/$APP" >/dev/null 2>&1 || true
 
 if [[ "${1:-}" == "install" ]]; then
-  PROD="/Library/Input Methods/IPAbet.app"
-  if [ -d "$PROD" ]; then
-    echo "a release is installed at $PROD; a dev copy beside it registers a second IPAbet." >&2
-    echo "remove it first:  sudo \"$PROD/Contents/Resources/uninstall.sh\"" >&2
-    exit 1
-  fi
+  DEV=~/Library/Input\ Methods/IPAbet.app
+  pkill -x IPAbet 2>/dev/null || true
+  rm -rf "$DEV"
+  cp -R "$APP" "$DEV"
+  "$DEV/Contents/MacOS/ipabet-register" || echo "registration failed — log out and back in, then add IPA in System Settings." >&2
+  open "$DEV"
+  echo "installed $DEV — pick IPA in the input menu; if it is not listed, log out and back in."
+fi
   OLD=~/Library/Input\ Methods/IPAbet.app
   [ -x "$OLD/Contents/MacOS/ipabet-register" ] && "$OLD/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
   "$LSREGISTER" -u "$OLD" >/dev/null 2>&1 || true

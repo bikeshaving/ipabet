@@ -100,30 +100,24 @@ jobs:
       - name: Build
         run: cd macos && ./build.sh
 
+      # The real pkg, through the real installer: install, upgrade over it,
+      # uninstall — one running copy from /Library after each install, and
+      # nothing left after the uninstall.
+      - name: Install, upgrade, uninstall
+        run: cd macos && sudo tests/install.sh
+
       - name: Install where the system looks
         run: |
           sudo mkdir -p "/Library/Input Methods"
           sudo cp -R macos/build/IPAbet.app "/Library/Input Methods/"
-          ls -d "/Library/Input Methods/IPAbet.app"
-
-      - name: Register
-        run: |
           "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
 
-      # The question: does the system list it in this session, or only after a
-      # logout the runner cannot perform?
-      # The same assertion the clean-VM gate makes, and the reason that gate
-      # existed: an input method that installs and does not register is a
-      # keyboard that never appears, with nothing anywhere saying why.
       - name: The system sees it
         run: |
           swiftc macos/tools/tis-probe.swift -o /tmp/tis-probe -framework Carbon -O
           /tmp/tis-probe list | grep -i ipabet
           /tmp/tis-probe assert-present
 
-      # Informational: selecting fails on a runner, which is where the typing
-      # gate stops. Recorded rather than asserted, so the day it starts working
-      # the log says so.
       - name: Selecting it (not expected to work here)
         continue-on-error: true
         run: /tmp/tis-probe enable-select
