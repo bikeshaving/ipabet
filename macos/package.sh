@@ -16,6 +16,7 @@ cd "$(dirname "$0")"
 NOTARY_PROFILE="${1:-ipabet-notary}"
 APP="build/IPAbet.app"
 PKGROOT="build/pkgroot"
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 STAGE="$PKGROOT/Library/Input Methods"
 COMPONENT="build/IPAbet-component.pkg"
 PKG="build/IPAbet.pkg"
@@ -66,17 +67,33 @@ SCRIPTS="build/scripts"
 mkdir -p "$SCRIPTS"
 cat > "$SCRIPTS/postinstall" <<'EOF'
 #!/bin/bash
-# Clean up what earlier releases left behind: the 0.1.0-v2 LaunchAgent (pkg
-# upgrades never delete files absent from the new payload, and the orphaned
-# plist would re-register at every login, unguarded).
+# One IPAbet.app may be registered at a time: every registered copy is its own
+# entry in the input menu. Before registering the release, disable whatever is
+# enabled, remove the logged-in user's dev copy, and unregister any other copy
+# LaunchServices knows (build directories, old checkouts).
 launchctl bootout system /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
 rm -f /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist
+APP="/Library/Input Methods/IPAbet.app"
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 u=$(stat -f%Su /dev/console)
 uid=$(id -u "$u" 2>/dev/null)
 if [ -n "$uid" ] && [ "$u" != "root" ]; then
+  home=$(eval echo "~$u")
+  asuser() { launchctl asuser "$uid" sudo -u "$u" "$@"; }
   launchctl bootout "gui/$uid" /Library/LaunchAgents/org.bikeshaving.ipabet.register.plist 2>/dev/null || true
-  launchctl asuser "$uid" sudo -u "$u" \
-    "/Library/Input Methods/IPAbet.app/Contents/MacOS/ipabet-register" || true
+  asuser "$APP/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
+  dev="$home/Library/Input Methods/IPAbet.app"
+  if [ -d "$dev" ]; then
+    asuser "$LSREGISTER" -u "$dev" >/dev/null 2>&1 || true
+    rm -rf "$dev"
+  fi
+  asuser "$LSREGISTER" -dump 2>/dev/null \
+    | grep -E '^[[:space:]]*path:.*IPAbet\.app' \
+    | sed -E 's/^[[:space:]]*path:[[:space:]]*//; s/ \(0x[0-9a-f]+\)$//' \
+    | grep -vxF "$APP" \
+    | while IFS= read -r other; do asuser "$LSREGISTER" -u "$other" >/dev/null 2>&1 || true; done
+  asuser "$APP/Contents/MacOS/ipabet-register" || true
+  asuser killall TextInputMenuAgent 2>/dev/null || true
 fi
 exit 0
 EOF
@@ -120,6 +137,9 @@ cat > "$DIST" <<EOF
 EOF
 productbuild --distribution "$DIST" --resources "$RES" --package-path build \
 	--sign "$DEVID_INST" "$PKG"
+"$LSREGISTER" -u "$PWD/$STAGE/IPAbet.app" >/dev/null 2>&1 || true
+"$LSREGISTER" -u "$PWD/$APP" >/dev/null 2>&1 || true
+rm -rf "$PKGROOT"
 
 # --- 5. notarize (waits for Apple) and staple the ticket ---
 # SKIP_NOTARIZE=1 produces a signed-but-unstapled pkg for the E2E gate (the

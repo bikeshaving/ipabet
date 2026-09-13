@@ -77,15 +77,23 @@ codesign --force --entitlements IPAbet.entitlements --sign - "$APP"
 
 echo "built $APP"
 
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+"$LSREGISTER" -u "$PWD/$APP" >/dev/null 2>&1 || true
+
 if [[ "${1:-}" == "install" ]]; then
-  # Disable the prior registration before replacing the bundle, so repeated
-  # dev installs (each re-signed, which TIS sees as a new source) don't pile up
-  # duplicate enabled entries in the input-source list.
+  PROD="/Library/Input Methods/IPAbet.app"
+  if [ -d "$PROD" ]; then
+    echo "a release is installed at $PROD; a dev copy beside it registers a second IPAbet." >&2
+    echo "remove it first:  sudo \"$PROD/Contents/Resources/uninstall.sh\"" >&2
+    exit 1
+  fi
   OLD=~/Library/Input\ Methods/IPAbet.app
   [ -x "$OLD/Contents/MacOS/ipabet-register" ] && "$OLD/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
-  rm -rf ~/Library/Input\ Methods/IPAbet.app
+  "$LSREGISTER" -u "$OLD" >/dev/null 2>&1 || true
+  rm -rf "$OLD"
   cp -R "$APP" ~/Library/Input\ Methods/
   ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
     && echo "installed; registration attempted — if IPA is not in the input menu, log out/in." \
     || echo "installed; registration failed — log out/in and add it in System Settings."
+  killall TextInputMenuAgent 2>/dev/null || true
 fi
