@@ -72,7 +72,7 @@ fn replay(engine: &Engine, keys: Vec<RawKeystroke>, initial: &str) -> String {
         }
     }
     if !pending.is_empty() {
-        text.push_str(&engine.commit_string(&pending));
+        text.push_str(&engine.commit_text(&text, &pending));
     }
     text
 }
@@ -218,7 +218,7 @@ fn ffi_buffer_bounds() {
             }
         }
         if !pending.is_empty() {
-            let commit = engine.commit_string(&pending);
+            let commit = engine.commit_text(&text, &pending);
             note(commit.len(), &format!("commit [{commit}]"));
         }
         let preview = engine.preview_string(&pending);

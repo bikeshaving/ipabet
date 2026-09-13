@@ -1,4 +1,4 @@
-// Replays the parity corpus through the generic LDML executor (js/src/ldml.ts)
+// Replays the parity corpus through the engine's incremental IME contract
 // and buckets the misses. The executor is pure composition, so the runtime-mode
 // vectors (capital digraphs, non-en quote locale) are expected to miss — they
 // live in the shell, not the transforms. The "core" bucket (cd=false, en) is
@@ -7,7 +7,12 @@
 //   bun run js/scripts/ldml-parity.ts [--show N]
 
 import {readFileSync} from "node:fs";
-import {type} from "../src/ldml.ts";
+import {typeKeys, setQuoteLocale, setCapitalDigraphs} from "../src/index.ts";
+const type = (keys: any[], initial: string, on: {capitalDigraphs?: boolean; quoteLocale?: string}) => {
+  setQuoteLocale(on.quoteLocale ?? "en");
+  setCapitalDigraphs(!!on.capitalDigraphs);
+  return typeKeys(keys, initial);
+};
 
 const vectors = JSON.parse(
   readFileSync(new URL("../../spec/parity-vectors.json", import.meta.url), "utf8"),

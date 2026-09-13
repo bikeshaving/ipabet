@@ -85,10 +85,11 @@ interface Rule { re: RegExp; to: string }
 // layer rather than case logic in the shell.
 interface Group { when: string | null; rules: Rule[] }
 const SPACING = Object.entries(keys)
-  .filter(([id, o]) => id.startsWith("sp_") && [...o].length === 1)
+  .filter(([id, o]) => /^(sp|os|q)_/.test(id) && [...o].length === 1)
   .map(([, o]) => o.replace(/[\\\]^-]/g, "\\$&"))
   .join("");
 const unconvert: Record<string, string> = {};
+const POSTFIX = new Set<string>();
 const groups: Group[] = [];
 for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
   const rules: Rule[] = [];
@@ -97,6 +98,8 @@ for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup
     // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
     const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, `(?![${SPACING}])([\\p{L}\\p{N}]\\p{M}*)`);
     rules.push({ re: new RegExp("(?:" + src + ")$", "u"), to: m[2] });
+    const pf = unesc(m[1]).match(/^\(\.\)\\m\{([^}]+)\}/);
+    if (pf) POSTFIX.add(pf[1]);
     const d = unesc(m[1]).match(/^([^(\\])\(\\p\{M\}\*\)(.+)$/u), t = unesc(m[2]).match(/^(.)\$1$/u);
     if (d && t && keys["b_" + t[1]] !== t[1]) unconvert[t[1]] ??= d[1] + d[2];
   }
@@ -139,14 +142,25 @@ function runPasses(buf: string, on: Settings): string {
   }
   return buf;
 }
-function render(buf: string): string {
+const attachable = (prev: string | undefined) => prev !== undefined && /[\p{L}\p{N}]/u.test(prev);
+function resolve(buf: string, before = ""): string {
   let out = "";
+  let prev: string | undefined = [...before].pop();
   for (const ch of buf) {
     if (ch === PROTECT) continue;
     const name = cpMarker.get(ch);
-    out += name === undefined ? ch : OPERATORS.has(name) ? "" : (displays[name] ?? markerGlyph[name] ?? "");
+    let piece: string;
+    if (name === undefined) piece = ch;
+    else if (OPERATORS.has(name)) piece = "";
+    else if (POSTFIX.has(name) && attachable(prev)) piece = markerGlyph[name] ?? "";
+    else piece = displays[name] ?? markerGlyph[name] ?? "";
+    out += piece;
+    if (piece !== "") prev = [...piece].pop();
   }
-  return out.normalize("NFC");
+  return out;
+}
+function render(buf: string): string {
+  return resolve(buf).normalize("NFC");
 }
 
 // An IPA segment: a non-ASCII letter or combining mark (what a transcription
@@ -199,43 +213,6 @@ function compose(buf: string, k: Stroke, o: string, on: Settings, brokenIn: bool
     }
   }
   return fuseTail(next ?? runPasses(buf + o, on), typed);
-}
-
-export function type(strokes: Stroke[], initial = "", on: Settings = {}): string {
-  let buf = initial;
-  let chainBroken = false;
-  for (const k of strokes) {
-    const brokenIn = chainBroken || (k.shiftBroke ?? false);
-    if (k.key === "⌫") {
-      const chars = [...buf];
-      if (chars.length && isMarker(chars[chars.length - 1])) { chars.pop(); buf = chars.join(""); continue; }
-      const i = lastBase(chars);
-      if (k.control) {
-        const keysFor = unconvert[chars[i]];
-        if (keysFor !== undefined) { chars.splice(i, 1, ...keysFor); buf = chars.join(""); }
-        continue;
-      }
-      const marks = [...chars.slice(i).join("").normalize("NFD")].slice(1);
-      buf = chars.slice(0, i).join("") + marks.map((c) => glyphMarker[c] ?? "").join("");
-      continue;
-    }
-    if (k.key === " ") {
-      const chars = [...buf];
-      while (chars.length && isMarker(chars[chars.length - 1]) && OPERATORS.has(cpMarker.get(chars[chars.length - 1])!)) chars.pop();
-      buf = chars.join("");
-      if (!(chars.length && isMarker(chars[chars.length - 1]))) buf += " ";
-      continue;
-    }
-    let o = keyOutput(k, on.quoteLocale);
-    if (k.control) o = k.shift && /^[A-Za-z]$/.test(k.key) ? PROTECT + k.key.toUpperCase() : null;
-    else if (k.capsLock && /^[A-Za-z]$/.test(k.key)) o = PROTECT + k.key.toUpperCase();
-    if (o === null) continue;
-    const settings: Settings = {...on, capitalDigitDigraphs: !!on.capitalDigraphs && !brokenIn};
-    buf = compose(buf, k, o, settings, brokenIn);
-    const tail = [...buf].pop();
-    chainBroken = tail !== undefined && isIPA(tail) ? false : brokenIn;
-  }
-  return render(buf);
 }
 
 // ---- the IME contract: one keystroke at a time over host-held text ----
@@ -303,9 +280,10 @@ const pendingText = (sc: string): string => {
   return (n === undefined ? undefined : displays[n]) ?? sc;
 };
 export function previewString(pending: Pending): string { return pending.map(pendingText).join(""); }
-function commitString(pending: Pending): string {
-  return pending.filter((sc) => sc !== RAISE && sc !== LOWER).map(pendingText).join("");
+function commitText(before: string, pending: Pending): string {
+  return resolve(toMarkers(pending), before).normalize("NFC");
 }
+function commitString(pending: Pending): string { return commitText("", pending); }
 
 const segmenter = new Intl.Segmenter(undefined, {granularity: "grapheme"});
 function lastCluster(text: string): string | undefined {
@@ -355,12 +333,12 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
     return {...s, chainBroken: seg ? false : brokenIn};
   };
   const flush = (): Step => {
-    const text = commitString(pending);
+    const text = commitText(textBefore, pending);
     return text === "" ? {edit: {type: "noop"}, pending: []} : {edit: {type: "insert", text}, pending: []};
   };
   const withFlush = (edit: Edit): Step => {
     if (pending.length === 0) return {edit, pending: []};
-    const pre = commitString(pending);
+    const pre = commitText(textBefore, pending);
     if (pre === "") return {edit, pending: []};
     if (edit.type === "insert") return {edit: {type: "insert", text: pre + edit.text}, pending: []};
     if (edit.type === "pass") return {edit: {type: "insert", text: pre + nativeChar(k)}, pending: []};
@@ -379,7 +357,7 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
   }
   const stroke: Stroke = {key, shift, option, shiftBroke: k.shiftBroke, capsLock: k.capsLock, control: k.control};
   let o = keyOutput(stroke, quoteLocale);
-  const caps = k.capsLock === true && /^[a-z]$/i.test(key);
+  const caps = k.capsLock === true && !option && /^[a-z]$/i.test(key);
   if (caps) o = key.toUpperCase();
   if (o === null) return fin(withFlush({type: "pass"}));
   const on: Settings = {
@@ -392,19 +370,32 @@ export function handleKey(textBefore: string, k: Keystroke, pending: Pending = [
   const chars = [...buf];
   let j = chars.length;
   while (j > 0 && isMarker(chars[j - 1])) j--;
-  const committed = render(chars.slice(0, j).join(""));
+  const cd = [...resolve(chars.slice(0, j).join("")).normalize("NFD")];
   const next = fromMarkers(chars.slice(j).join(""));
-  if (committed === w) return fin({edit: {type: "noop"}, pending: next});
-  if (committed.startsWith(w)) {
-    const ins = committed.slice(w.length);
-    if (pending.length === 0 && ins === nativeChar(k)) return fin({edit: {type: "pass"}, pending: next});
-    return fin({edit: {type: "insert", text: ins}, pending: next});
+  const wd = [...w.normalize("NFD")];
+  let p = 0;
+  while (p < wd.length && p < cd.length && wd[p] === cd[p]) p++;
+  if (p === wd.length && p === cd.length) return fin({edit: {type: "noop"}, pending: next});
+  const orig = [...w];
+  let b = 0, pd = 0;
+  for (const c of orig) {
+    const n = [...c.normalize("NFD")].length;
+    if (pd + n > p) break;
+    pd += n;
+    b++;
   }
-  let i = 0;
-  const a = [...w], b = [...committed];
-  while (i < a.length && i < b.length && a[i] === b[i]) i++;
-  const keep = a.slice(0, i).join("");
-  return fin({edit: {type: "replace", length: w.length - keep.length, text: committed.slice(keep.length)}, pending: next});
+  while (b > 0 && pd < cd.length && /\p{M}/u.test(cd[pd])) {
+    b--;
+    pd -= [...orig[b].normalize("NFD")].length;
+    if (!/\p{M}/u.test(orig[b])) break;
+  }
+  const text = cd.slice(pd).join("").normalize("NFC");
+  const length = orig.slice(b).join("").length;
+  if (length === 0) {
+    if (pending.length === 0 && text === nativeChar(k)) return fin({edit: {type: "pass"}, pending: next});
+    return fin({edit: {type: "insert", text}, pending: next});
+  }
+  return fin({edit: {type: "replace", length, text}, pending: next});
 }
 
 export function typeKeys(keys: Keystroke[], initial = ""): string {
@@ -426,6 +417,6 @@ export function typeKeys(keys: Keystroke[], initial = ""): string {
       text = applyEdit(text, step.edit, nativeChar(k));
     }
   }
-  if (pending.length > 0) text += commitString(pending);
+  if (pending.length > 0) text += commitText(text, pending);
   return text;
 }

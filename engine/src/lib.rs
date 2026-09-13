@@ -1,26 +1,24 @@
-// The IPAbet keystroke engine, hand-ported from js/src/index.ts (itself
-// ported from macos/Sources/InputController.swift). Section comments mirror
-// the reference file so the two can be read side by side. Verified
-// byte-for-byte against every case in spec/parity-vectors.json (see
-// tests/parity.rs), the fixture js/test writes and every port replays.
+// The IPAbet engine: a generic LDML keyboard3 transform executor (UTS #35
+// part 7) plus the IME contract three shells link through the C ABI in
+// ffi.rs (IBus, fcitx5, the Windows text service). The composition IS the
+// transforms in spec/ipabet.xml — a keystroke maps to a key's output through
+// the layers, that output is appended to a buffer, and the transformGroups
+// run as ordered passes, first match per group, to a fixpoint. Markers
+// (\m{name}) are atomic tokens carried through the passes and resolved at
+// output. The buffer is NFD while transforms run and NFC when it leaves.
 //
-// Three shells link this crate through the C ABI in ffi.rs: the IBus engine,
-// the fcitx5 addon, and the Windows text service.
-//
-// spec/ipabet.json parses generically via serde (`spec.rs`) — no hand-written
-// parser. Composition uses unicode-normalization's nfc(), which correctly
-// reorders combining marks by class before composing (verified directly
-// against the tone-vs-shape-mark case this matters for). Internal
-// representation is `char`/`String` throughout (Rust's `char` already IS a
-// Unicode scalar value), with `Edit::Replace.length` a codepoint count —
-// nothing here is ever UTF-16.
+// Mirrors js/src/ldml.ts and is verified byte-for-byte against every case in
+// spec/parity-vectors.json (tests/parity.rs). `Edit::Replace.length` is a
+// codepoint count — nothing here is ever UTF-16.
 
-mod spec;
 pub mod ffi;
 
-use spec::Spec;
-use std::collections::HashMap;
+use regex::{Captures, Regex};
+use roxmltree::{Document, Node};
+use std::collections::{HashMap, HashSet};
+use unicode_normalization::char::is_combining_mark;
 use unicode_normalization::UnicodeNormalization;
+use unicode_segmentation::UnicodeSegmentation;
 
 // ------------------------------------------------------------------ types
 
@@ -41,8 +39,7 @@ pub struct Keystroke {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Edit {
     Insert { text: String },
-    /// Replace the last `length` CODEPOINTS before the cursor with `text` —
-    /// see the module doc for why this isn't UTF-16 units here.
+    /// Replace the last `length` CODEPOINTS before the cursor with `text`.
     Replace { length: usize, text: String },
     /// Defer to the host: native character, native delete, native shortcut.
     Pass,
@@ -62,52 +59,80 @@ pub enum PendingItem {
 
 pub type Pending = Vec<PendingItem>;
 
-/// An edit, the next pending, and whether a shift release broke an IPA
-/// chain. Only the caller can see a release, so it threads `chain_broken`
-/// back in (`None` when the JS engine's Step.chainBroken would be absent).
 pub struct Step {
     pub edit: Edit,
     pub pending: Pending,
     pub chain_broken: Option<bool>,
 }
 
-struct Mark {
-    mark: char,
-    spacing: bool,
-    double: Option<char>,
-    double_spacing: bool,
-    cycle: Vec<char>,
-    double_cycle: Vec<char>,
-}
-
 // ---------------------------------------------------------------- engine
 
+const PROTECT: char = '\u{F8FE}';
+const ROWS: [&str; 4] = ["`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;'", "zxcvbnm,./"];
+const OPERATORS: [&str; 2] = ["raise", "lower"];
+
+struct Rule {
+    re: Regex,
+    to: String,
+}
+struct Group {
+    when: Option<String>,
+    rules: Vec<Rule>,
+}
+
 pub struct Engine {
-    letters: HashMap<String, String>, // key label ("s", "5H") or glyph -> glyph
-    transforms: HashMap<String, String>, // (prev glyph or digit) + modifier char -> glyph
-    unconvert_key: HashMap<String, String>, // glyph -> key label
-    opt_shift_digits: HashMap<char, String>,
-    opt_marks: HashMap<char, Mark>,
-    sups: HashMap<char, char>,
-    subs: HashMap<char, char>,
-    unsup: HashMap<char, char>,
-    unsub: HashMap<char, char>,
-    exclusive_twin: HashMap<char, char>,
-    clone_of: HashMap<PendingItem, char>,
+    keys: HashMap<String, String>,
+    layers: HashMap<String, Vec<Vec<String>>>,
+    groups: Vec<Group>,
+    displays: HashMap<String, String>,
+    marker_cp: HashMap<String, char>,
+    cp_marker: HashMap<char, String>,
+    marker_glyph: HashMap<String, char>,
+    glyph_marker: HashMap<char, char>,
+    unconvert: HashMap<String, String>,
+    postfix: HashSet<String>,
     quote_locales: HashMap<String, [char; 4]>,
     quote_default: String,
     quote_active: String,
     capital_digraphs: bool,
 }
 
-fn first_char(s: &str) -> char {
-    s.chars().next().unwrap_or('\0')
+struct Settings {
+    capital_digraphs: bool,
+    capital_digit_digraphs: bool,
 }
 
-/// General category L (Lu Ll Lt Lm Lo) — the \p{L} half of index.ts's
-/// segment test, deliberately narrower than char::is_alphabetic.
+fn shifted_digit(d: char) -> Option<&'static str> {
+    match d {
+        '0' => Some(")"), '1' => Some("!"), '2' => Some("@"), '3' => Some("#"), '4' => Some("$"),
+        '5' => Some("%"), '6' => Some("^"), '7' => Some("&"), '8' => Some("*"), '9' => Some("("),
+        _ => None,
+    }
+}
+fn shifted_punct(c: char) -> Option<&'static str> {
+    match c {
+        '`' => Some("~"), '-' => Some("_"), '=' => Some("+"), '[' => Some("{"), ']' => Some("}"),
+        '\\' => Some("|"), ';' => Some(":"), '\'' => Some("\""), ',' => Some("<"), '.' => Some(">"),
+        '/' => Some("?"),
+        _ => None,
+    }
+}
+/// A shifted glyph back to its physical key.
+fn unshift(label: &str) -> Option<char> {
+    let c = label.chars().next()?;
+    for d in '0'..='9' {
+        if shifted_digit(d) == Some(label) { return Some(d); }
+    }
+    for p in ['`', '-', '=', '[', ']', '\\', ';', '\'', ',', '.', '/'] {
+        if shifted_punct(p) == Some(label) { return Some(p); }
+    }
+    let _ = c;
+    None
+}
+
+/// General category L — the \p{L} half of the IPA-segment test.
 fn is_letter(c: char) -> bool {
-    use unicode_general_category::{GeneralCategory, get_general_category};
+    use unicode_general_category::{get_general_category, GeneralCategory};
     matches!(
         get_general_category(c),
         GeneralCategory::UppercaseLetter
@@ -117,10 +142,12 @@ fn is_letter(c: char) -> bool {
             | GeneralCategory::OtherLetter
     )
 }
+fn is_ipa(c: char) -> bool {
+    (c as u32) > 0x7f && (is_letter(c) || is_combining_mark(c))
+}
 
-/// The bracket-key quotes per locale — [open1, close1, open2, close2]. This is
-/// CLDR <delimiters> data (quotation*/alternateQuotation*), locale reference the
-/// engine owns, not keyboard layout — so it lives here, not in the LDML file.
+/// The bracket-key quotes per locale — [open1, close1, open2, close2]: CLDR
+/// <delimiters> data the engine owns, not keyboard layout.
 fn builtin_quotes() -> (String, HashMap<String, [char; 4]>) {
     let data: [(&str, [char; 4]); 7] = [
         ("en", ['“', '”', '‘', '’']),
@@ -134,781 +161,41 @@ fn builtin_quotes() -> (String, HashMap<String, [char; 4]>) {
     ("en".to_string(), data.iter().map(|(k, v)| (k.to_string(), *v)).collect())
 }
 
-impl Engine {
-    pub fn new(spec_json: &str) -> Result<Engine, serde_json::Error> {
-        Engine::from_spec(serde_json::from_str(spec_json)?)
-    }
-
-    /// Build from the LDML source (spec/ipabet.xml) instead of the bespoke JSON.
-    pub fn from_ldml(xml: &str) -> Result<Engine, String> {
-        Engine::from_spec(spec::parse_ldml(xml)?).map_err(|e| e.to_string())
-    }
-
-    fn from_spec(spec: Spec) -> Result<Engine, serde_json::Error> {
-        let mut letters = HashMap::new();
-        for e in &spec.letters {
-            // An empty key or glyph is a malformed spec that would later panic
-            // on a `.chars().next().unwrap()` in the transform lookups —
-            // fatal across the C boundary. Reject it here, as the FFI contract
-            // promises (null from ipabet_engine_new), not on the hot path.
-            if e.key.is_empty() || e.glyph.is_empty() {
-                use serde::de::Error;
-                return Err(serde_json::Error::custom("a letter entry has an empty key or glyph"));
-            }
-            letters.insert(e.key.clone(), e.glyph.clone());
-        }
-
-        let mut opt_marks = HashMap::new();
-        let mut exclusive_twin = HashMap::new();
-        let mut clone_of = HashMap::new();
-        for e in &spec.marks {
-            let opt = first_char(&e.opt);
-            let mark = first_char(&e.mark);
-            let double = e.double.as_deref().map(first_char);
-            opt_marks.insert(
-                opt,
-                Mark {
-                    mark,
-                    spacing: e.kind == "spacing",
-                    double,
-                    double_spacing: e.double_spacing,
-                    cycle: e.cycle.iter().map(|s| first_char(s)).collect(),
-                    double_cycle: e.double_cycle.iter().map(|s| first_char(s)).collect(),
-                },
-            );
-            if let Some(c) = &e.clone {
-                clone_of.insert(PendingItem::Mark(mark), first_char(c));
-            }
-            if let (Some(dbl), Some(dc)) = (double, &e.double_clone) {
-                clone_of.insert(PendingItem::Mark(dbl), first_char(dc));
-            }
-            if e.exclusive
-                && let Some(dbl) = double {
-                    exclusive_twin.insert(mark, dbl);
-                    exclusive_twin.insert(dbl, mark);
+fn expand_u(s: &str) -> String {
+    let mut out = String::new();
+    let mut rest = s;
+    while let Some(i) = rest.find("\\u{") {
+        out.push_str(&rest[..i]);
+        let after = &rest[i + 3..];
+        match after.find('}') {
+            Some(j) => {
+                match u32::from_str_radix(&after[..j], 16).ok().and_then(char::from_u32) {
+                    Some(c) => out.push(c),
+                    None => out.push_str(&rest[i..i + 3 + j + 1]),
                 }
-        }
-        // RAISE/LOWER previews — operators, not real marks, but clone_of is
-        // just PendingItem -> char, so they slot in like anything else.
-        clone_of.insert(PendingItem::Raise, '\u{207B}'); // ⁻
-        clone_of.insert(PendingItem::Lower, '\u{208B}'); // ₋
-
-        let mut sups = HashMap::new();
-        let mut unsup = HashMap::new();
-        for e in &spec.superscripts.table {
-            if let Some(sup) = &e.sup {
-                let (b, s) = (first_char(&e.base), first_char(sup));
-                sups.insert(b, s);
-                unsup.entry(s).or_insert(b);
+                rest = &after[j + 1..];
             }
-        }
-        let mut subs = HashMap::new();
-        let mut unsub = HashMap::new();
-        for e in &spec.subscripts.table {
-            if let Some(sub) = &e.sub {
-                let (b, s) = (first_char(&e.base), first_char(sub));
-                subs.insert(b, s);
-                unsub.entry(s).or_insert(b);
+            None => {
+                out.push_str(rest);
+                return out;
             }
-        }
-
-        // transforms + unconvert_key: mirrors index.ts's single loop over `letters`.
-        let mut transforms = HashMap::new();
-        let mut unconvert_key = HashMap::new();
-        for e in &spec.letters {
-            let key = &e.key;
-            let glyph = &e.glyph;
-            if key.chars().count() != 2 {
-                continue;
-            }
-            let mut chars = key.chars();
-            let k0 = chars.next().unwrap();
-            let k1 = chars.next().unwrap();
-            let prev = if k0.is_ascii_digit() {
-                Some(k0.to_string())
-            } else {
-                letters.get(&k0.to_string()).cloned()
-            };
-            if let Some(prev) = prev {
-                transforms.insert(format!("{prev}{k1}"), glyph.clone());
-            }
-            let existing_alias = letters.get(glyph);
-            let is_identity_alias = existing_alias.is_some_and(|a| a == glyph);
-            if !unconvert_key.contains_key(glyph) && !is_identity_alias {
-                unconvert_key.insert(glyph.clone(), key.clone());
-            }
-        }
-
-        let mut opt_shift_digits = HashMap::new();
-        for (k, v) in &spec.opt_shift {
-            if k.chars().count() == 1 {
-                let c = first_char(k);
-                if c.is_ascii_digit() {
-                    opt_shift_digits.insert(c, v.clone());
-                }
-            }
-        }
-
-        let (quote_default, quote_locales) = builtin_quotes();
-
-        Ok(Engine {
-            letters,
-            transforms,
-            unconvert_key,
-            opt_shift_digits,
-            opt_marks,
-            sups,
-            subs,
-            unsup,
-            unsub,
-            exclusive_twin,
-            clone_of,
-            quote_locales,
-            quote_active: quote_default.clone(),
-            quote_default,
-            capital_digraphs: false,
-        })
-    }
-
-    pub fn set_capital_digraphs(&mut self, on: bool) {
-        self.capital_digraphs = on;
-    }
-
-    pub fn set_quote_locale(&mut self, locale: &str) {
-        self.quote_active = if self.quote_locales.contains_key(locale) {
-            locale.to_string()
-        } else {
-            self.quote_default.clone()
-        };
-    }
-
-    fn quote_quad(&self) -> [char; 4] {
-        // index.ts: locales[active] ?? locales[default]. The default's
-        // presence is validated at construction, so the final fallback is
-        // unreachable — it exists so no spec can make this panic across
-        // the C boundary, where a panic aborts the host IME.
-        self.quote_locales
-            .get(&self.quote_active)
-            .or_else(|| self.quote_locales.get(&self.quote_default))
-            .copied()
-            .unwrap_or(['\u{201C}', '\u{201D}', '\u{2018}', '\u{2019}'])
-    }
-
-    // ------------------------------------------------------------ unicode
-
-    /// The last grapheme cluster of `text`, as a suffix. `None` if `text`
-    /// is empty. Real UAX #29 segmentation, matching Intl.Segmenter in
-    /// index.ts — the mark-scanning approximation this replaces split
-    /// emoji ZWJ sequences, skin tones, flags, and decomposed Hangul, so a
-    /// backspace deleted half a grapheme.
-    fn last_cluster(text: &str) -> Option<&str> {
-        if text.is_empty() {
-            return None;
-        }
-        let mut cursor = unicode_segmentation::GraphemeCursor::new(text.len(), text.len(), true);
-        let start = cursor.prev_boundary(text, 0).ok().flatten().unwrap_or(0);
-        Some(&text[start..])
-    }
-
-    /// Split a cluster into its base glyph and trailing combining marks
-    /// (NFD), mirroring decompose() in index.ts exactly, including its
-    /// "once any mark appears, everything after goes to marks" rule.
-    fn decompose(cluster: &str) -> (String, Vec<char>) {
-        let mut base = String::new();
-        let mut marks = Vec::new();
-        for c in cluster.nfd() {
-            if marks.is_empty() && !unicode_normalization::char::is_combining_mark(c) {
-                base.push(c);
-            } else {
-                marks.push(c);
-            }
-        }
-        (base, marks)
-    }
-
-    /// Recomposes base+marks to its shortest NFC spelling, trying every mark
-    /// permutation when there's more than one — mirrors recompose()
-    /// exactly: two marks of the SAME combining class never reorder under
-    /// NFC (nfc() only reorders marks of different classes automatically),
-    /// so which one is typed first can determine whether they fuse into one
-    /// precomposed glyph.
-    fn recompose(base: &str, marks: &[char]) -> String {
-        if marks.len() <= 1 {
-            let s: String = base.chars().chain(marks.iter().copied()).collect();
-            return s.chars().nfc().collect();
-        }
-        fuse_marks(base, marks)
-    }
-
-    // ------------------------------------------------------------- marks
-
-    /// The dead-key preview / commit string: each pending mark as its
-    /// spacing clone (falling back to itself if there's no clone).
-    /// `skip_operators`: a COMMIT drops Raise/Lower entirely (an unconsumed
-    /// operator lifts without residue); a PREVIEW shows their small-mark glyph.
-    fn render_pending(&self, pending: &[PendingItem], skip_operators: bool) -> String {
-        pending
-            .iter()
-            .filter(|item| !(skip_operators && matches!(item, PendingItem::Raise | PendingItem::Lower)))
-            .map(|item| self.clone_of.get(item).copied().unwrap_or_else(|| match item {
-                PendingItem::Mark(c) => *c,
-                _ => unreachable!("Raise/Lower always have a clone_of entry"),
-            }))
-            .collect()
-    }
-
-    pub fn preview_string(&self, pending: &Pending) -> String {
-        self.render_pending(pending, false)
-    }
-
-    /// What an unconsumed pending composition writes when it commits (Esc,
-    /// space, or the end of a keystroke sequence).
-    pub fn commit_string(&self, pending: &Pending) -> String {
-        self.render_pending(pending, true)
-    }
-
-    fn flush(&self, pending: &Pending) -> Step {
-        if pending.is_empty() {
-            return Step { edit: Edit::Noop, pending: vec![], chain_broken: None };
-        }
-        let text = self.commit_string(pending);
-        if text.is_empty() {
-            return Step { edit: Edit::Noop, pending: vec![], chain_broken: None };
-        }
-        Step { edit: Edit::Insert { text }, pending: vec![], chain_broken: None }
-    }
-
-    /// The contour this mark completes, consuming the levels before it.
-    fn contour_of(pending: &[PendingItem], scalar: char) -> Option<Step> {
-        for len in [3usize, 2] {
-            if pending.len() + 1 < len {
-                continue;
-            }
-            let keep = pending.len() - (len - 1);
-            let mut seq: Vec<char> = pending[keep..]
-                .iter()
-                .map(|item| match item {
-                    PendingItem::Mark(c) => *c,
-                    _ => '\0',
-                })
-                .collect();
-            seq.push(scalar);
-            if let Some(atom) = contour_atom(&seq) {
-                let mut next: Pending = pending[..keep].to_vec();
-                next.push(PendingItem::Mark(atom));
-                return Some(Step { edit: Edit::Noop, pending: next, chain_broken: None });
-            }
-        }
-        None
-    }
-
-    /// Stack a diacritic into the pending composition. The same form again
-    /// peels it off, unless the key declares a CYCLE, which advances and wraps.
-    fn pending_diacritic(&self, scalar: char, pending: &Pending, cycle: &[char]) -> Step {
-        if let Some(contour) = Self::contour_of(pending, scalar) {
-            return contour;
-        }
-        let top = pending.last().copied();
-        let family: Vec<char> = std::iter::once(scalar).chain(cycle.iter().copied()).collect();
-        let at = match top {
-            Some(PendingItem::Mark(c)) => family.iter().position(|&f| f == c),
-            _ => None,
-        };
-        let next: Pending = if let (Some(at), false) = (at, cycle.is_empty()) {
-            let mut n = pending[..pending.len() - 1].to_vec();
-            n.push(PendingItem::Mark(family[(at + 1) % family.len()]));
-            n
-        } else if top == Some(PendingItem::Mark(scalar)) {
-            pending[..pending.len() - 1].to_vec()
-        } else {
-            let twin = self.exclusive_twin.get(&scalar).copied();
-            let mut n: Pending = pending
-                .iter()
-                .filter(|item| !matches!((item, twin), (PendingItem::Mark(c), Some(t)) if *c == t))
-                .copied()
-                .collect();
-            n.push(PendingItem::Mark(scalar));
-            n
-        };
-        Step { edit: Edit::Noop, pending: next, chain_broken: None }
-    }
-
-    /// Apply a mark's primary (⌥) or secondary (⌥⇧, the `double`) form.
-    fn apply_mark(&self, m: &Mark, pending: &Pending, secondary: bool) -> Step {
-        let scalar = if secondary { m.double.unwrap_or(m.mark) } else { m.mark };
-        let spacing = if secondary && m.double.is_some() { m.double_spacing } else { m.spacing };
-        if !spacing {
-            let cycle = if secondary { &m.double_cycle } else { &m.cycle };
-            return self.pending_diacritic(scalar, pending, cycle);
-        }
-        let f = self.flush(pending);
-        let mut text = match &f.edit {
-            Edit::Insert { text } => text.clone(),
-            _ => String::new(),
-        };
-        text.push(scalar);
-        Step { edit: Edit::Insert { text }, pending: vec![], chain_broken: None }
-    }
-
-    /// Emit a base glyph, committing any pending prefix diacritics onto it.
-    fn emit_base(&self, glyph: &str, pending: &Pending) -> Step {
-        if pending.is_empty() {
-            return Step { edit: Edit::Insert { text: glyph.to_string() }, pending: vec![], chain_broken: None };
-        }
-        // Raise/lower substitutes the glyph itself; any marks then ride the result.
-        let op_index = pending.iter().position(|i| matches!(i, PendingItem::Raise | PendingItem::Lower));
-        if let Some(idx) = op_index {
-            let op = pending[idx];
-            let rest: Vec<char> = pending
-                .iter()
-                .enumerate()
-                .filter(|(i, _)| *i != idx)
-                .filter_map(|(_, item)| match item {
-                    PendingItem::Mark(c) => Some(*c),
-                    _ => None,
-                })
-                .collect();
-            let base_char = glyph.chars().next();
-            let moved = base_char.and_then(|g| {
-                let table = if op == PendingItem::Raise { &self.sups } else { &self.subs };
-                table.get(&g).copied()
-            });
-            let base = moved.map(String::from).unwrap_or_else(|| glyph.to_string());
-            let text = Self::recompose(&base, &rest);
-            return Step { edit: Edit::Insert { text }, pending: vec![], chain_broken: None };
-        }
-        // tilde overlay: middle-tilde atoms — ɫ is also a digraph, l⇧Q
-        if pending.len() == 1 && pending[0] == PendingItem::Mark('\u{0334}')
-            && let Some(g) = glyph.chars().next()
-                && let Some(t) = tilded(g) {
-                    return Step { edit: Edit::Insert { text: t.to_string() }, pending: vec![], chain_broken: None };
-                }
-        // stroke overlay: orthographic letters are precomposed (⌥y l → ł, ⌥y d → đ)
-        if pending.len() == 1 && pending[0] == PendingItem::Mark('\u{0335}')
-            && let Some(g) = glyph.chars().next()
-                && let Some(s) = stroked(g) {
-                    return Step { edit: Edit::Insert { text: s.to_string() }, pending: vec![], chain_broken: None };
-                }
-        let marks: Vec<char> = pending
-            .iter()
-            .map(|item| match item {
-                PendingItem::Mark(c) => *c,
-                _ => '\0',
-            })
-            .collect();
-        let text = Self::recompose(glyph, &marks);
-        Step { edit: Edit::Insert { text }, pending: vec![], chain_broken: None }
-    }
-
-    /// ⌥z / ⌥⇧z: arm the raise or the lower. Same chord again lifts it; the
-    /// twin replaces.
-    fn pending_operator(op: PendingItem, pending: &Pending) -> Step {
-        let next: Pending = if pending.contains(&op) {
-            pending.iter().copied().filter(|&i| i != op).collect()
-        } else {
-            let twin = if op == PendingItem::Raise { PendingItem::Lower } else { PendingItem::Raise };
-            let mut n: Pending = pending.iter().copied().filter(|&i| i != twin).collect();
-            n.push(op);
-            n
-        };
-        Step { edit: Edit::Noop, pending: next, chain_broken: None }
-    }
-
-    /// ⌥j / ⌥⇧j: attach the affricate joiner, or emit the standalone
-    /// spacing tie.
-    fn emit_joiner(&self, text_before: &str, start: char, pending: &Pending) -> Step {
-        const TIE: char = '\u{0361}'; // ͡
-        const OVERTIE: char = '\u{2040}'; // ⁀
-        const UNDERTIE: char = '\u{203F}'; // ‿
-        let spacing = if start == TIE { OVERTIE } else { UNDERTIE };
-        if pending.is_empty() {
-            let last = Self::last_cluster(text_before).and_then(|c| c.chars().next_back());
-            if let Some(last) = last {
-                let combining_tie = matches!(last, '\u{0361}' | '\u{035C}' | '\u{0362}');
-                let spacing_tie = matches!(last, OVERTIE | UNDERTIE);
-                if combining_tie || spacing_tie {
-                    return Step {
-                        edit: Edit::Replace { length: 1, text: spacing.to_string() },
-                        pending: vec![],
-                        chain_broken: None,
-                    };
-                }
-            }
-            if last.is_none() || last.is_some_and(|c| c.is_whitespace()) {
-                return Step { edit: Edit::Insert { text: spacing.to_string() }, pending: vec![], chain_broken: None };
-            }
-        }
-        self.emit_base(&start.to_string(), pending)
-    }
-
-    // ------------------------------------------------------------ engine
-
-    /// The IPAbet keystroke handler, mirroring the IME's handle().
-    ///
-    /// Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ),
-    /// gated on a *broken* flag the caller threads in. This owns the flag;
-    /// handle_key_core only reads it.
-    pub fn handle_key(&self, text_before: &str, k: &Keystroke, pending: &Pending, chain_broken: bool) -> Step {
-        let broken_in = chain_broken || k.shift_broke;
-        let mut step = self.handle_key_core(text_before, k, pending, !broken_in);
-        let seg = match &step.edit {
-            Edit::Replace { .. } => true,
-            Edit::Insert { text } => !text.is_ascii(),
-            _ => false,
-        };
-        step.chain_broken = Some(if seg { false } else { broken_in });
-        step
-    }
-
-    fn with_flush(&self, edit: Edit, pending: &Pending, k: &Keystroke, for_pass_use_native: bool) -> Step {
-        if pending.is_empty() {
-            return Step { edit, pending: pending.clone(), chain_broken: None };
-        }
-        let pre = self.commit_string(pending);
-        if pre.is_empty() {
-            return Step { edit, pending: vec![], chain_broken: None };
-        }
-        match edit {
-            Edit::Insert { text } => {
-                Step { edit: Edit::Insert { text: pre + &text }, pending: vec![], chain_broken: None }
-            }
-            Edit::Pass => {
-                let native = if for_pass_use_native { native_char(k) } else { String::new() };
-                Step { edit: Edit::Insert { text: pre + &native }, pending: vec![], chain_broken: None }
-            }
-            other => Step { edit: other, pending: vec![], chain_broken: None },
         }
     }
-
-    /// A capital digraph capitalizes its result; a plain-ASCII result is
-    /// excluded (⇧T⇧J stays "TJ"). ʔ is caseless in Unicode — Ɂ is the one
-    /// hand map.
-    fn capital_of(low: char) -> Option<char> {
-        if low == '\u{0294}' {
-            return Some('\u{0241}'); // ʔ → Ɂ
-        }
-        // A multi-codepoint uppercase (ß → "SS") is rejected outright,
-        // matching index.ts's [...up].length === 1 rather than silently
-        // taking the first codepoint.
-        let mut ups = low.to_uppercase();
-        let up = ups.next().unwrap_or(low);
-        if ups.next().is_none() && up != low && (up as u32) > 0x7f {
-            Some(up)
-        } else {
-            None
-        }
-    }
-
-    fn handle_key_core(&self, text_before: &str, k: &Keystroke, pending: &Pending, chain_live: bool) -> Step {
-        let key = k.key.as_str();
-        let shift = k.shift;
-        let option = k.option;
-
-        if key == "Escape" && !k.control && !option {
-            return if !pending.is_empty() {
-                self.flush(pending)
-            } else {
-                Step { edit: Edit::Pass, pending: pending.clone(), chain_broken: None }
-            };
-        }
-        if key.chars().count() != 1 {
-            return Step { edit: Edit::Pass, pending: pending.clone(), chain_broken: None };
-        }
-        let kc = key.chars().next().unwrap();
-
-        if k.control {
-            if shift && kc.is_ascii_lowercase() {
-                let up = kc.to_ascii_uppercase().to_string();
-                return self.with_flush(Edit::Insert { text: up }, pending, k, false);
-            }
-            return Step { edit: Edit::Pass, pending: pending.clone(), chain_broken: None };
-        }
-
-        if kc == ' ' && !option && !pending.is_empty() {
-            let f = self.flush(pending);
-            return if f.edit == Edit::Noop {
-                Step { edit: Edit::Pass, pending: vec![], chain_broken: None }
-            } else {
-                f
-            };
-        }
-
-        if option && shift {
-            if kc == 'j' {
-                const TIE_BELOW: char = '\u{035C}'; // ͜
-                return self.emit_joiner(text_before, TIE_BELOW, pending);
-            }
-            if kc == 'z' {
-                return Self::pending_operator(PendingItem::Lower, pending);
-            }
-            if kc == '[' {
-                return self.with_flush(Edit::Insert { text: self.quote_quad()[1].to_string() }, pending, k, false);
-            }
-            if kc == ']' {
-                return self.with_flush(Edit::Insert { text: self.quote_quad()[3].to_string() }, pending, k, false);
-            }
-            if let Some(m) = self.opt_marks.get(&kc)
-                && m.double.is_some() {
-                    return self.apply_mark(m, pending, true);
-                }
-            if kc.is_ascii_digit() {
-                if let Some(over) = self.opt_shift_digits.get(&kc) {
-                    return self.with_flush(Edit::Insert { text: over.clone() }, pending, k, false);
-                }
-                if self.letters.contains_key(&kc.to_string()) {
-                    let text = shifted_digit(kc).map(String::from).unwrap_or_else(|| kc.to_string());
-                    return self.with_flush(Edit::Insert { text }, pending, k, false);
-                }
-            }
-            return self.with_flush(Edit::Pass, pending, k, true);
-        }
-
-        if option {
-            if kc == 'j' {
-                const TIE: char = '\u{0361}'; // ͡
-                return self.emit_joiner(text_before, TIE, pending);
-            }
-            if kc == '[' {
-                return self.with_flush(Edit::Insert { text: self.quote_quad()[0].to_string() }, pending, k, false);
-            }
-            if kc == ']' {
-                return self.with_flush(Edit::Insert { text: self.quote_quad()[2].to_string() }, pending, k, false);
-            }
-            if kc == 'r' && pending.is_empty()
-                && let Some(p) = Self::last_cluster(text_before) {
-                    let (base, marks) = Self::decompose(p);
-                    if base == "ə" {
-                        let text = Self::recompose("ɚ", &marks);
-                        return self.with_flush(
-                            Edit::Replace { length: p.chars().count(), text },
-                            pending,
-                            k,
-                            false,
-                        );
-                    }
-                    if base == "ɜ" {
-                        let text = Self::recompose("ɝ", &marks);
-                        return self.with_flush(
-                            Edit::Replace { length: p.chars().count(), text },
-                            pending,
-                            k,
-                            false,
-                        );
-                    }
-                }
-            if kc == '.' && pending.len() == 1 && pending[0] == PendingItem::Mark('\u{0307}') {
-                return Step {
-                    edit: Edit::Insert { text: "\u{00B7}".to_string() },
-                    pending: vec![],
-                    chain_broken: None,
-                };
-            }
-            if let Some(m) = self.opt_marks.get(&kc) {
-                return self.apply_mark(m, pending, false);
-            }
-            if kc == 'z' {
-                return Self::pending_operator(PendingItem::Raise, pending);
-            }
-            return self.with_flush(Edit::Pass, pending, k, true);
-        }
-
-        if kc.is_ascii_digit() {
-            if !shift && !pending.is_empty() {
-                return self.emit_base(&kc.to_string(), pending);
-            }
-            if !shift {
-                return self.with_flush(Edit::Pass, pending, k, true);
-            }
-        }
-
-        if k.caps_lock && !shift && kc.is_ascii_lowercase() {
-            return self.emit_base(&kc.to_ascii_uppercase().to_string(), pending);
-        }
-
-        // The modifier character: the shifted letter's capital, or the
-        // shifted digit's US symbol (the spec spells ⇧5 as "%": e% → ɜ).
-        let s: String = if shift {
-            shifted_digit(kc).map(String::from).unwrap_or_else(|| kc.to_ascii_uppercase().to_string())
-        } else {
-            kc.to_string()
-        };
-
-        let p = if pending.is_empty() { Self::last_cluster(text_before) } else { None };
-        if let Some(p) = p {
-            let (mut base, marks) = Self::decompose(p);
-
-            if shift && !k.caps_lock && base.chars().count() == 1 && base.chars().next().unwrap().is_ascii_uppercase() {
-                let before_len = text_before.len() - p.len();
-                let before = &text_before[..before_len];
-                let p2 = Self::last_cluster(before);
-                let p2_segment = p2.is_some_and(|seg| {
-                    seg.chars().any(|c| {
-                        // index.ts tests /[\p{L}\p{M}]/u — general category
-                        // L or M exactly. is_alphabetic() is the wider
-                        // Alphabetic property (adds Nl and friends), which
-                        // made a Roman numeral count as an IPA segment.
-                        (c as u32) > 127 && (is_letter(c) || unicode_normalization::char::is_combining_mark(c))
-                    })
-                });
-                if p2_segment && chain_live {
-                    base = base.to_ascii_lowercase();
-                } else if self.capital_digraphs {
-                    let low_key = format!("{}{s}", base.to_ascii_lowercase());
-                    if let Some(low) = self.transforms.get(&low_key)
-                        && let Some(up) = Self::capital_of(low.chars().next().unwrap()) {
-                            let text = Self::recompose(&up.to_string(), &marks);
-                            return Step {
-                                edit: Edit::Replace { length: p.chars().count(), text },
-                                pending: vec![],
-                                chain_broken: None,
-                            };
-                        }
-                }
-            }
-            // The shifted digit is the digit's capital plane (⇧5⇧H → Ə).
-            if self.capital_digraphs && shift && chain_live && !k.caps_lock
-                && let Some(digit) = (0u8..10).map(|d| (d, shifted_digit(char::from(b'0' + d))))
-                    .find_map(|(d, sd)| (sd == Some(base.as_str())).then_some(d))
-                {
-                    let digit_key = format!("{digit}{s}");
-                    if let Some(low) = self.transforms.get(&digit_key)
-                        && let Some(up) = Self::capital_of(low.chars().next().unwrap()) {
-                            let text = Self::recompose(&up.to_string(), &marks);
-                            return Step {
-                                edit: Edit::Replace { length: p.chars().count(), text },
-                                pending: vec![],
-                                chain_broken: None,
-                            };
-                        }
-                }
-            let combo_key = format!("{base}{s}");
-            if let Some(combo) = self.transforms.get(&combo_key) {
-                let text = Self::recompose(combo, &marks);
-                return Step {
-                    edit: Edit::Replace { length: p.chars().count(), text },
-                    pending: vec![],
-                    chain_broken: None,
-                };
-            }
-            // A raised or lowered glyph still transforms: unraise,
-            // transform, re-raise.
-            if base.chars().count() == 1 {
-                let bc = base.chars().next().unwrap();
-                let is_sup = self.unsup.contains_key(&bc);
-                let plain = if is_sup { self.unsup.get(&bc) } else { self.unsub.get(&bc) };
-                if let Some(&plain) = plain {
-                    let pk = format!("{plain}{s}");
-                    if let Some(t) = self.transforms.get(&pk) {
-                        let tc = t.chars().next().unwrap();
-                        let table = if is_sup { &self.sups } else { &self.subs };
-                        if let Some(&back) = table.get(&tc) {
-                            let text = Self::recompose(&back.to_string(), &marks);
-                            return Step {
-                                edit: Edit::Replace { length: p.chars().count(), text },
-                                pending: vec![],
-                                chain_broken: None,
-                            };
-                        }
-                    }
-                }
-            }
-        }
-
-        // letter / click base glyph — committing any pending prefix diacritics
-        if let Some(glyph) = self.letters.get(&s) {
-            return self.emit_base(glyph, pending);
-        }
-
-        // A pending accent absorbs onto a CAPITAL base (⌥u ⇧A → Ä).
-        if !pending.is_empty() && s.chars().count() == 1 && s.chars().next().unwrap().is_ascii_uppercase() {
-            return self.emit_base(&s, pending);
-        }
-
-        self.with_flush(Edit::Pass, pending, k, true)
-    }
-
-    /// Backspace: marks are PREFIX keystrokes, so undoing the last
-    /// keystroke of a marked cluster deletes the base and re-arms the mark
-    /// stack as pending — the next base absorbs it (ãː ⌫ o → õ). Ties are
-    /// postfix joiners typed after their base, so a trailing tie peels
-    /// instead. A bare glyph passes so the host deletes it natively.
-    pub fn handle_backspace(&self, text_before: &str, pending: &Pending) -> Step {
-        if !pending.is_empty() {
-            let mut next = pending.clone();
-            next.pop();
-            return Step { edit: Edit::Noop, pending: next, chain_broken: None };
-        }
-        let p = match Self::last_cluster(text_before) {
-            Some(p) => p,
-            None => return Step { edit: Edit::Pass, pending: vec![], chain_broken: None },
-        };
-        let (base, marks) = Self::decompose(p);
-        if marks.is_empty() || base.is_empty() {
-            return Step { edit: Edit::Pass, pending: vec![], chain_broken: None };
-        }
-        let last_mark = *marks.last().unwrap();
-        if matches!(last_mark, '\u{0361}' | '\u{035C}' | '\u{0362}') {
-            let text = Self::recompose(&base, &marks[..marks.len() - 1]);
-            return Step {
-                edit: Edit::Replace { length: p.chars().count(), text },
-                pending: vec![],
-                chain_broken: None,
-            };
-        }
-        let pending: Pending = marks.into_iter().map(PendingItem::Mark).collect();
-        Step { edit: Edit::Replace { length: p.chars().count(), text: String::new() }, pending, chain_broken: None }
-    }
-
-    /// ⌃⌫ — unconvert: the committed transform before the cursor becomes
-    /// its literal keystroke spelling (θ → "tH"), stateless via the reverse
-    /// map. The cluster is matched whole and canonically: ä and ç decompose
-    /// under NFD, but their marks are part of the glyph, not something the
-    /// user stacked on.
-    pub fn handle_unconvert(&self, text_before: &str, pending: &Pending) -> Step {
-        if !pending.is_empty() {
-            return self.handle_backspace(text_before, pending);
-        }
-        if let Some(p) = Self::last_cluster(text_before) {
-            let whole: String = p.chars().nfc().collect();
-            let low: String = whole.chars().flat_map(|c| c.to_lowercase()).collect();
-            if let Some(key) = self.unconvert_key.get(&low) {
-                let text = if whole == low {
-                    key.clone()
-                } else {
-                    key.chars().flat_map(|c| c.to_uppercase()).collect()
-                };
-                return Step {
-                    edit: Edit::Replace { length: p.chars().count(), text },
-                    pending: vec![],
-                    chain_broken: None,
-                };
-            }
-        }
-        Step { edit: Edit::Pass, pending: vec![], chain_broken: None }
-    }
+    out.push_str(rest);
+    out
 }
 
-// --------------------------------------------------------------- helpers
+fn class_escape(c: char) -> String {
+    if "\\]^-[&~".contains(c) { format!("\\{c}") } else { c.to_string() }
+}
 
-/// The arrangement of `marks` on `base` that fuses, as NFC would have done had
-/// they arrived in that order: Vietnamese ằ is a + breve + grave and no other
-/// order, though a hurried hand types the tone first.
-///
-/// Only a mark that composes with what is built so far is worth trying, and
-/// Unicode encodes no character carrying three combining marks, so the search
-/// stops almost immediately. Trying every arrangement instead costs n! — which
-/// is invisible at the two or three marks a transcription uses, and a hang at
-/// ten. Nothing stops a user from arming ten.
 fn fuse_marks(built: &str, rest: &[char]) -> String {
-    // Fusing nothing more is always an option, and the answer when none fuse.
     let flat: String = built.chars().chain(rest.iter().copied()).collect();
     let mut best: String = flat.chars().nfc().collect();
     let built_len = built.chars().count();
-
     for (i, mark) in rest.iter().enumerate() {
         let attempt: String = built.chars().chain(std::iter::once(*mark)).collect();
         let candidate: String = attempt.chars().nfc().collect();
-        // It fused if the mark added no codepoint of its own.
         if candidate.chars().count() != built_len {
             continue;
         }
@@ -922,67 +209,537 @@ fn fuse_marks(built: &str, rest: &[char]) -> String {
     best
 }
 
-// A contour tone is its level tones typed in order. Where Unicode encodes
-// that sequence as one character, it is emitted rather than stacking the
-// marks, so ⌥e ⌥⇧e spells a contour instead of the twin replacing its partner.
-fn contour_atom(seq: &[char]) -> Option<char> {
-    const CONTOURS: &[(&[char], char)] = &[
-        (&['\u{030F}', '\u{030B}'], '\u{030C}'),
-        (&['\u{030B}', '\u{030F}'], '\u{0302}'),
-        (&['\u{0301}', '\u{030B}'], '\u{1DC4}'),
-        (&['\u{030F}', '\u{0300}'], '\u{1DC5}'),
-        (&['\u{0304}', '\u{0301}', '\u{0304}'], '\u{1DC8}'),
-        (&['\u{0304}', '\u{0300}'], '\u{1DC6}'),
-        (&['\u{0301}', '\u{0304}'], '\u{1DC7}'),
-        (&['\u{0301}', '\u{0300}', '\u{0301}'], '\u{1DC9}'),
-    ];
-    CONTOURS.iter().find(|(s, _)| *s == seq).map(|(_, atom)| *atom)
-}
+impl Engine {
+    pub fn from_ldml(xml: &str) -> Result<Engine, String> {
+        let doc = Document::parse(xml).map_err(|e| e.to_string())?;
+        let all = |t: &'static str| -> Vec<Node> { doc.descendants().filter(|n| n.tag_name().name() == t).collect() };
+        let (quote_default, quote_locales) = builtin_quotes();
+        let mut e = Engine {
+            keys: HashMap::new(),
+            layers: HashMap::new(),
+            groups: Vec::new(),
+            displays: HashMap::new(),
+            marker_cp: HashMap::new(),
+            cp_marker: HashMap::new(),
+            marker_glyph: HashMap::new(),
+            glyph_marker: HashMap::new(),
+            unconvert: HashMap::new(),
+            postfix: HashSet::new(),
+            quote_locales,
+            quote_active: quote_default.clone(),
+            quote_default,
+            capital_digraphs: false,
+        };
+        for n in all("key") {
+            if let (Some(id), Some(out)) = (n.attribute("id"), n.attribute("output")) {
+                let v = e.encode_markers(out);
+                e.keys.insert(id.to_string(), v);
+            }
+        }
+        for layer in all("layer") {
+            let mods = layer.attribute("modifiers").unwrap_or("none").to_string();
+            let rows = layer
+                .children()
+                .filter(|r| r.tag_name().name() == "row")
+                .map(|r| r.attribute("keys").unwrap_or("").split_whitespace().map(String::from).collect())
+                .collect();
+            e.layers.insert(mods, rows);
+        }
+        for n in all("display") {
+            if let (Some(out), Some(d)) = (n.attribute("output"), n.attribute("display")) {
+                if let Some(name) = out.strip_prefix("\\m{").and_then(|s| s.strip_suffix('}')) {
+                    e.displays.insert(name.to_string(), d.to_string());
+                }
+            }
+        }
+        let spacing: String = e
+            .keys
+            .iter()
+            .filter(|(id, o)| (id.starts_with("sp_") || id.starts_with("os_") || id.starts_with("q_")) && o.chars().count() == 1)
+            .map(|(_, o)| class_escape(o.chars().next().unwrap()))
+            .collect();
+        let base = format!("([[\\p{{L}}\\p{{N}}]--[{spacing}]]\\p{{M}}*)");
+        for g in all("transformGroup") {
+            let start = g.range().start;
+            let when = xml.get(..start).and_then(|before| {
+                let i = before.rfind("@optional")?;
+                if before.len() - i > 200 {
+                    return None;
+                }
+                let name: String = before[i + 9..].trim_start().chars().take_while(|c| c.is_alphanumeric() || *c == '_').collect();
+                if name.is_empty() { None } else { Some(name) }
+            });
+            let mut rules = Vec::new();
+            for t in g.children().filter(|n| n.tag_name().name() == "transform") {
+                let (Some(from), Some(to)) = (t.attribute("from"), t.attribute("to")) else { continue };
+                let mut src = expand_u(&e.encode_markers(from));
+                src = src.replace("(.)", &base);
+                let re = Regex::new(&format!("(?:{src})$")).map_err(|err| format!("{from}: {err}"))?;
+                rules.push(Rule { re, to: expand_u(&e.encode_markers(to)) });
+                if let Some(rest) = from.strip_prefix("(.)\\m{") {
+                    if let Some(j) = rest.find('}') {
+                        e.postfix.insert(rest[..j].to_string());
+                    }
+                }
+                // marker -> its combining char, from \m{X}(.) -> $1\u{...} (tie: (.)\m{X}(.))
+                let f = from.strip_prefix("(.)").unwrap_or(from);
+                let t2 = to.strip_suffix("$2").unwrap_or(to);
+                if let (Some(name), Some(hx)) = (
+                    f.strip_prefix("\\m{").and_then(|s| s.strip_suffix("}(.)")),
+                    t2.strip_prefix("$1\\u{").and_then(|s| s.strip_suffix('}')),
+                ) {
+                    if let Some(ch) = u32::from_str_radix(hx, 16).ok().and_then(char::from_u32) {
+                        e.marker_glyph.insert(name.to_string(), ch);
+                    }
+                }
+                // digraph B(\p{M}*)M -> G$1 gives the unconvert spelling G -> "BM"
+                if let Some(idx) = from.find("(\\p{M}*)") {
+                    let b = &from[..idx];
+                    let m = &from[idx + 8..];
+                    if b.chars().count() == 1 && !b.starts_with('\\') {
+                        if let Some(gl) = to.strip_suffix("$1") {
+                            if gl.chars().count() == 1 && e.keys.get(&format!("b_{gl}")).map(String::as_str) != Some(gl) {
+                                e.unconvert.entry(gl.to_string()).or_insert_with(|| format!("{b}{m}"));
+                            }
+                        }
+                    }
+                }
+            }
+            e.groups.push(Group { when, rules });
+        }
+        for (name, ch) in e.marker_glyph.clone() {
+            let pua = e.marker(&name);
+            e.glyph_marker.insert(ch, pua);
+        }
+        Ok(e)
+    }
 
-// NFC cannot fuse an overlay, so every combination Unicode encodes
-// atomically must be emitted atomic — a raw combining render is a permanent
-// homoglyph (i̵ beside ɨ fails search forever). Diagonal-slash atoms stay
-// out, ł excepted. Hand-authored constants, not spec-driven, same as the JS
-// and C engines.
-fn stroked(c: char) -> Option<char> {
-    const TABLE: &[(char, char)] = &[
-        ('l', 'ł'), ('L', 'Ł'), ('d', 'đ'), ('D', 'Đ'), ('t', 'ŧ'), ('T', 'Ŧ'), ('g', 'ǥ'), ('G', 'Ǥ'),
-        ('h', 'ħ'), ('H', 'Ħ'), ('b', 'ƀ'), ('B', 'Ƀ'), ('z', 'ƶ'), ('Z', 'Ƶ'),
-        ('i', 'ɨ'), ('I', 'Ɨ'), ('u', 'ʉ'), ('U', 'Ʉ'), ('o', 'ɵ'), ('O', 'Ɵ'), ('j', 'ɟ'),
-        ('r', 'ɍ'), ('R', 'Ɍ'), ('y', 'ɏ'), ('Y', 'Ɏ'), ('c', 'ȼ'), ('C', 'Ȼ'), ('p', 'ᵽ'), ('P', 'Ᵽ'),
-        ('k', 'ꝁ'), ('K', 'Ꝁ'), ('2', 'ƻ'),
-    ];
-    TABLE.iter().find(|(k, _)| *k == c).map(|(_, v)| *v)
-}
+    fn marker(&mut self, name: &str) -> char {
+        if let Some(c) = self.marker_cp.get(name) {
+            return *c;
+        }
+        let c = char::from_u32(0xE000 + self.marker_cp.len() as u32).unwrap();
+        self.marker_cp.insert(name.to_string(), c);
+        self.cp_marker.insert(c, name.to_string());
+        c
+    }
+    fn encode_markers(&mut self, s: &str) -> String {
+        let mut out = String::new();
+        let mut rest = s;
+        while let Some(i) = rest.find("\\m{") {
+            out.push_str(&rest[..i]);
+            let after = &rest[i + 3..];
+            let Some(j) = after.find('}') else { out.push_str(rest); return out };
+            let c = self.marker(&after[..j]);
+            out.push(c);
+            rest = &after[j + 1..];
+        }
+        out.push_str(rest);
+        out
+    }
+    fn is_marker(&self, c: char) -> bool {
+        self.cp_marker.contains_key(&c)
+    }
 
-// Unicode's middle-tilde letters, plus the dark ls.
-fn tilded(c: char) -> Option<char> {
-    const TABLE: &[(char, char)] = &[
-        ('l', 'ɫ'), ('L', 'Ɫ'), ('b', 'ᵬ'), ('d', 'ᵭ'), ('f', 'ᵮ'), ('m', 'ᵯ'), ('n', 'ᵰ'),
-        ('p', 'ᵱ'), ('r', 'ᵲ'), ('s', 'ᵴ'), ('t', 'ᵵ'), ('z', 'ᵶ'),
-    ];
-    TABLE.iter().find(|(k, _)| *k == c).map(|(_, v)| *v)
-}
+    pub fn set_capital_digraphs(&mut self, on: bool) {
+        self.capital_digraphs = on;
+    }
+    pub fn set_quote_locale(&mut self, locale: &str) {
+        self.quote_active = if self.quote_locales.contains_key(locale) { locale.to_string() } else { self.quote_default.clone() };
+    }
 
-// US shift plane for digits — matches SHIFTED_DIGITS in the JS engine.
-fn shifted_digit(d: char) -> Option<&'static str> {
-    match d {
-        '0' => Some(")"), '1' => Some("!"), '2' => Some("@"), '3' => Some("#"), '4' => Some("$"),
-        '5' => Some("%"), '6' => Some("^"), '7' => Some("&"), '8' => Some("*"), '9' => Some("("),
-        _ => None,
+    // ------------------------------------------------------------ keys
+
+    fn key_output(&self, k: &Keystroke) -> Option<String> {
+        let label = k.key.as_str();
+        if !k.shift && !k.option && unshift(label).is_some() {
+            return Some(label.to_string());
+        }
+        let c = label.chars().next()?;
+        let phys = if label.chars().count() == 1 && c.is_ascii_alphabetic() {
+            c.to_ascii_lowercase()
+        } else {
+            unshift(label).unwrap_or(c)
+        };
+        let mut pos = None;
+        for (r, row) in ROWS.iter().enumerate() {
+            if let Some(ci) = row.chars().position(|x| x == phys) {
+                pos = Some((r, ci));
+                break;
+            }
+        }
+        let (r, ci) = pos?;
+        let layer = match (k.option, k.shift) {
+            (true, true) => "altR shift",
+            (true, false) => "altR",
+            (false, true) => "shift",
+            (false, false) => "none",
+        };
+        let id = self.layers.get(layer)?.get(r)?.get(ci)?;
+        if id == "gap" {
+            return None;
+        }
+        let slot = match id.as_str() {
+            "q_open_primary" => Some(0),
+            "q_close_primary" => Some(1),
+            "q_open_secondary" => Some(2),
+            "q_close_secondary" => Some(3),
+            _ => None,
+        };
+        if let Some(s) = slot {
+            let quad = self.quote_locales.get(&self.quote_active).or_else(|| self.quote_locales.get(&self.quote_default))?;
+            return Some(quad[s].to_string());
+        }
+        self.keys.get(id).cloned()
+    }
+
+    // ------------------------------------------------------- transforms
+
+    fn apply_to(to: &str, caps: &Captures) -> String {
+        let mut out = String::new();
+        let mut chars = to.chars().peekable();
+        while let Some(c) = chars.next() {
+            if c == '$' {
+                if let Some(d) = chars.peek().and_then(|d| d.to_digit(10)) {
+                    chars.next();
+                    if let Some(m) = caps.get(d as usize) {
+                        out.push_str(m.as_str());
+                    }
+                    continue;
+                }
+            }
+            out.push(c);
+        }
+        out
+    }
+    fn sweep(&self, mut buf: String, on: &Settings) -> String {
+        for g in &self.groups {
+            if let Some(w) = &g.when {
+                let enabled = match w.as_str() {
+                    "capitalDigraphs" => on.capital_digraphs,
+                    "capitalDigitDigraphs" => on.capital_digit_digraphs,
+                    _ => false,
+                };
+                if !enabled {
+                    continue;
+                }
+            }
+            for r in &g.rules {
+                if let Some(caps) = r.re.captures(&buf) {
+                    let m = caps.get(0).unwrap();
+                    let mut next = buf[..m.start()].to_string();
+                    next.push_str(&Self::apply_to(&r.to, &caps));
+                    next.push_str(&buf[m.end()..]);
+                    buf = next;
+                    break;
+                }
+            }
+        }
+        buf
+    }
+    fn run_passes(&self, mut buf: String, on: &Settings) -> String {
+        for _ in 0..32 {
+            let next = self.sweep(buf.clone(), on);
+            if next == buf {
+                break;
+            }
+            buf = next;
+        }
+        buf
+    }
+
+    fn last_base(chars: &[char]) -> usize {
+        let mut i = chars.len();
+        while i > 0 && is_combining_mark(chars[i - 1]) {
+            i -= 1;
+        }
+        i.saturating_sub(1)
+    }
+    fn fuse_tail(&self, buf: String, typed: &[char]) -> String {
+        let chars: Vec<char> = buf.chars().collect();
+        let i = Self::last_base(&chars);
+        let cluster: String = chars[i..].iter().collect();
+        let nfd: Vec<char> = cluster.chars().nfd().collect();
+        if nfd.len() < 3 || self.is_marker(nfd[0]) {
+            return buf;
+        }
+        let marks = &nfd[1..];
+        let mut a: Vec<char> = typed.to_vec();
+        let mut b: Vec<char> = marks.to_vec();
+        a.sort_unstable();
+        b.sort_unstable();
+        let order: &[char] = if a == b { typed } else { marks };
+        let head: String = chars[..i].iter().collect();
+        head + &fuse_marks(&nfd[0].to_string(), order)
+    }
+
+    fn compose(&self, buf: &str, k: &Keystroke, o: &str, on: &Settings, broken_in: bool) -> String {
+        let buf: String = buf.chars().nfd().collect();
+        let pre: Vec<char> = buf.chars().collect();
+        let mut j = pre.len();
+        while j > 0 && self.is_marker(pre[j - 1]) {
+            j -= 1;
+        }
+        let typed: Vec<char> = pre[j..]
+            .iter()
+            .filter_map(|c| self.cp_marker.get(c).and_then(|n| self.marker_glyph.get(n)).copied())
+            .collect();
+        let kc = k.key.chars().next().unwrap_or('\0');
+        if k.shift && !k.option && !k.caps_lock && k.key.chars().count() == 1 && kc.is_ascii_alphabetic() && !broken_in {
+            if pre.len() >= 2 {
+                let last = pre[pre.len() - 1];
+                let prev = pre[pre.len() - 2];
+                if last.is_ascii_uppercase() && is_ipa(prev) {
+                    let mut lowered: String = pre[..pre.len() - 1].iter().collect();
+                    lowered.push(last.to_ascii_lowercase());
+                    lowered.push_str(o);
+                    let tried = self.run_passes(lowered.clone(), on);
+                    if tried != lowered {
+                        return self.fuse_tail(tried, &typed);
+                    }
+                }
+            }
+        }
+        let mut b = buf;
+        b.push_str(o);
+        let out = self.run_passes(b, on);
+        self.fuse_tail(out, &typed)
+    }
+
+    fn resolve(&self, buf: &str, before: &str) -> String {
+        let mut out = String::new();
+        let mut prev = before.chars().last();
+        for c in buf.chars() {
+            if c == PROTECT {
+                continue;
+            }
+            let piece: String = match self.cp_marker.get(&c) {
+                None => c.to_string(),
+                Some(name) => {
+                    if OPERATORS.contains(&name.as_str()) {
+                        String::new()
+                    } else if self.postfix.contains(name) && prev.is_some_and(|p| is_letter(p) || p.is_numeric()) {
+                        self.marker_glyph.get(name).map(|g| g.to_string()).unwrap_or_default()
+                    } else {
+                        match self.displays.get(name) {
+                            Some(d) => d.clone(),
+                            None => self.marker_glyph.get(name).map(|g| g.to_string()).unwrap_or_default(),
+                        }
+                    }
+                }
+            };
+            if let Some(last) = piece.chars().last() {
+                prev = Some(last);
+            }
+            out.push_str(&piece);
+        }
+        out
+    }
+    // ------------------------------------------------------- the IME contract
+
+    fn to_markers(&self, pending: &Pending) -> String {
+        pending
+            .iter()
+            .filter_map(|p| match p {
+                PendingItem::Raise => self.marker_cp.get("raise").copied(),
+                PendingItem::Lower => self.marker_cp.get("lower").copied(),
+                PendingItem::Mark(c) => self.glyph_marker.get(c).copied(),
+            })
+            .collect()
+    }
+    fn from_markers(&self, s: &str) -> Pending {
+        s.chars()
+            .filter_map(|c| {
+                let name = self.cp_marker.get(&c)?;
+                match name.as_str() {
+                    "raise" => Some(PendingItem::Raise),
+                    "lower" => Some(PendingItem::Lower),
+                    _ => self.marker_glyph.get(name).map(|g| PendingItem::Mark(*g)),
+                }
+            })
+            .collect()
+    }
+    fn pending_text(&self, item: &PendingItem) -> String {
+        match item {
+            PendingItem::Raise => self.displays.get("raise").cloned().unwrap_or_default(),
+            PendingItem::Lower => self.displays.get("lower").cloned().unwrap_or_default(),
+            PendingItem::Mark(c) => self
+                .glyph_marker
+                .get(c)
+                .and_then(|m| self.cp_marker.get(m))
+                .and_then(|n| self.displays.get(n))
+                .cloned()
+                .unwrap_or_else(|| c.to_string()),
+        }
+    }
+    pub fn preview_string(&self, pending: &Pending) -> String {
+        pending.iter().map(|p| self.pending_text(p)).collect()
+    }
+    /// Commit a pending stack after `before`: a postfix mark (a tie) after a
+    /// letter or digit lands as its combining form, otherwise as its clone.
+    pub fn commit_text(&self, before: &str, pending: &Pending) -> String {
+        self.resolve(&self.to_markers(pending), before).chars().nfc().collect()
+    }
+    pub fn commit_string(&self, pending: &Pending) -> String {
+        self.commit_text("", pending)
+    }
+
+    fn last_cluster(text: &str) -> Option<&str> {
+        text.graphemes(true).last()
+    }
+    fn last_clusters(text: &str, n: usize) -> String {
+        let segs: Vec<&str> = text.graphemes(true).collect();
+        let start = segs.len().saturating_sub(n);
+        segs[start..].concat()
+    }
+    fn replace_cluster(p: &str, text: String) -> Edit {
+        Edit::Replace { length: p.chars().count(), text }
+    }
+
+    pub fn handle_backspace(&self, text_before: &str, pending: &Pending) -> Step {
+        if !pending.is_empty() {
+            return Step { edit: Edit::Noop, pending: pending[..pending.len() - 1].to_vec(), chain_broken: None };
+        }
+        let Some(p) = Self::last_cluster(text_before) else {
+            return Step { edit: Edit::Pass, pending: vec![], chain_broken: None };
+        };
+        let nfd: Vec<char> = p.chars().nfd().collect();
+        let base: String = nfd.iter().filter(|c| !is_combining_mark(**c)).collect();
+        let marks: Vec<char> = nfd.iter().filter(|c| is_combining_mark(**c)).copied().collect();
+        if marks.is_empty() || base.is_empty() {
+            return Step { edit: Edit::Pass, pending: vec![], chain_broken: None };
+        }
+        if matches!(marks[marks.len() - 1], '\u{0361}' | '\u{035C}') {
+            let kept: String = base.chars().chain(marks[..marks.len() - 1].iter().copied()).nfc().collect();
+            return Step { edit: Self::replace_cluster(p, kept), pending: vec![], chain_broken: None };
+        }
+        Step { edit: Self::replace_cluster(p, String::new()), pending: marks.into_iter().map(PendingItem::Mark).collect(), chain_broken: None }
+    }
+
+    pub fn handle_unconvert(&self, text_before: &str, pending: &Pending) -> Step {
+        if !pending.is_empty() {
+            return self.handle_backspace(text_before, pending);
+        }
+        if let Some(p) = Self::last_cluster(text_before) {
+            let whole: String = p.chars().nfc().collect();
+            let low = whole.to_lowercase();
+            if let Some(key) = self.unconvert.get(&low) {
+                let text = if whole == low { key.clone() } else { key.to_uppercase() };
+                return Step { edit: Self::replace_cluster(p, text), pending: vec![], chain_broken: None };
+            }
+        }
+        Step { edit: Edit::Pass, pending: vec![], chain_broken: None }
+    }
+
+    pub fn handle_key(&self, text_before: &str, k: &Keystroke, pending: &Pending, chain_broken: bool) -> Step {
+        let broken_in = chain_broken || k.shift_broke;
+        let fin = |edit: Edit, pending: Pending| -> Step {
+            let seg = match &edit {
+                Edit::Replace { .. } => true,
+                Edit::Insert { text } => !text.is_ascii(),
+                _ => false,
+            };
+            Step { edit, pending, chain_broken: Some(if seg { false } else { broken_in }) }
+        };
+        let flush = || -> (Edit, Pending) {
+            let text = self.commit_text(text_before, pending);
+            if text.is_empty() { (Edit::Noop, vec![]) } else { (Edit::Insert { text }, vec![]) }
+        };
+        let with_flush = |edit: Edit| -> (Edit, Pending) {
+            if pending.is_empty() {
+                return (edit, vec![]);
+            }
+            let pre = self.commit_text(text_before, pending);
+            if pre.is_empty() {
+                return (edit, vec![]);
+            }
+            match edit {
+                Edit::Insert { text } => (Edit::Insert { text: pre + &text }, vec![]),
+                Edit::Pass => (Edit::Insert { text: pre + &native_char(k) }, vec![]),
+                other => (other, vec![]),
+            }
+        };
+        let key = k.key.as_str();
+        if key == "Escape" && !k.control && !k.option {
+            let (e, p) = if pending.is_empty() { (Edit::Pass, pending.clone()) } else { flush() };
+            return fin(e, p);
+        }
+        if key.chars().count() != 1 {
+            return fin(Edit::Pass, pending.clone());
+        }
+        let kc = key.chars().next().unwrap();
+        if k.control {
+            if k.shift && kc.is_ascii_alphabetic() {
+                let (e, p) = with_flush(Edit::Insert { text: kc.to_ascii_uppercase().to_string() });
+                return fin(e, p);
+            }
+            return fin(Edit::Pass, pending.clone());
+        }
+        if key == " " && !k.option && !pending.is_empty() {
+            let (e, p) = flush();
+            return if e == Edit::Noop { fin(Edit::Pass, vec![]) } else { fin(e, p) };
+        }
+        let caps = k.caps_lock && !k.option && kc.is_ascii_alphabetic();
+        let o = if caps { Some(kc.to_ascii_uppercase().to_string()) } else { self.key_output(k) };
+        let Some(o) = o else {
+            let (e, p) = with_flush(Edit::Pass);
+            return fin(e, p);
+        };
+        let on = Settings {
+            capital_digraphs: self.capital_digraphs && !caps,
+            capital_digit_digraphs: self.capital_digraphs && !caps && !broken_in,
+        };
+        let w = Self::last_clusters(text_before, 2);
+        let mut start = w.clone();
+        start.push_str(&self.to_markers(pending));
+        let buf = self.compose(&start, k, &o, &on, broken_in || caps);
+        let chars: Vec<char> = buf.chars().collect();
+        let mut j = chars.len();
+        while j > 0 && self.is_marker(chars[j - 1]) {
+            j -= 1;
+        }
+        let raw: String = chars[..j].iter().collect();
+        let cd: Vec<char> = self.resolve(&raw, "").chars().nfd().collect();
+        let next = self.from_markers(&chars[j..].iter().collect::<String>());
+        let wd: Vec<char> = w.chars().nfd().collect();
+        let mut p = 0;
+        while p < wd.len() && p < cd.len() && wd[p] == cd[p] {
+            p += 1;
+        }
+        if p == wd.len() && p == cd.len() {
+            return fin(Edit::Noop, next);
+        }
+        let orig: Vec<char> = w.chars().collect();
+        let (mut b, mut pd) = (0usize, 0usize);
+        for c in &orig {
+            let n = c.to_string().chars().nfd().count();
+            if pd + n > p {
+                break;
+            }
+            pd += n;
+            b += 1;
+        }
+        while b > 0 && pd < cd.len() && is_combining_mark(cd[pd]) {
+            b -= 1;
+            pd -= orig[b].to_string().chars().nfd().count();
+            if !is_combining_mark(orig[b]) {
+                break;
+            }
+        }
+        let text: String = cd[pd..].iter().collect::<String>().chars().nfc().collect();
+        let length = orig.len() - b;
+        if length == 0 {
+            if pending.is_empty() && text == native_char(k) {
+                return fin(Edit::Pass, next);
+            }
+            return fin(Edit::Insert { text }, next);
+        }
+        fin(Edit::Replace { length, text }, next)
     }
 }
 
-fn shifted_punct(c: char) -> Option<&'static str> {
-    match c {
-        '`' => Some("~"), '-' => Some("_"), '=' => Some("+"), '[' => Some("{"), ']' => Some("}"),
-        '\\' => Some("|"), ';' => Some(":"), '\'' => Some("\""), ',' => Some("<"), '.' => Some(">"),
-        '/' => Some("?"),
-        _ => None,
-    }
-}
+// ----------------------------------------------------------- free fns
 
-/// The native (US) character a keystroke would type, for pass fallbacks.
 pub fn native_char(k: &Keystroke) -> String {
     if k.key.chars().count() != 1 {
         return String::new();
@@ -998,13 +755,11 @@ pub fn native_char(k: &Keystroke) -> String {
         return shifted_punct(kc).map(String::from).unwrap_or_else(|| kc.to_string());
     }
     if k.option {
-        return String::new(); // host Option typography is host-specific
+        return String::new();
     }
     kc.to_string()
 }
 
-/// Applies `edit` to `text_before`. `native` is what a PASS edit appends
-/// (from native_char), matching applyEdit(text, edit, native).
 pub fn apply_edit(text_before: &str, edit: &Edit, native: &str) -> String {
     match edit {
         Edit::Insert { text } => format!("{text_before}{text}"),
@@ -1019,10 +774,6 @@ pub fn apply_edit(text_before: &str, edit: &Edit, native: &str) -> String {
     }
 }
 
-/// The byte length of the last grapheme cluster (a base codepoint plus any
-/// trailing combining marks) in `text_before`, or 0 if it's empty. For a
-/// host implementing its own native single-character delete when the engine
-/// declines a backspace (PASS).
 pub fn last_cluster_byte_len(text_before: &str) -> usize {
     Engine::last_cluster(text_before).map(str::len).unwrap_or(0)
 }
