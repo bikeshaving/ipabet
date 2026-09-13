@@ -112,11 +112,11 @@ body { font: 13px -apple-system, sans-serif; color: #333; margin: 16px; }
 kbd { font-family: ui-monospace, monospace; background: #eee; border-radius: 4px; padding: 1px 5px; }
 </style></head><body>
 <h3>IPAbet is installed.</h3>
-<p>Add it under <b>System Settings → Keyboard → Input Sources</b> →
-<kbd>+</kbd> → English → <b>IPA</b>, then pick <b>IPA</b> in the input menu
-(top-right of the menu bar).</p>
-<p><b>Not listed yet?</b> Log out and back in first — macOS registers new input
-methods at login.</p>
+<p>Pick <b>IPA</b> in the input menu (top-right of the menu bar) and type.</p>
+<p><b>Not in the menu?</b> Log out and back in — macOS refreshes input
+sources at login. If it is still missing after that, add it under
+<b>System Settings → Keyboard → Input Sources</b> → <kbd>+</kbd> → English →
+<b>IPA</b>. Do not add it while it is already listed: that only makes a duplicate.</p>
 </body></html>
 EOF
 DIST="build/distribution.xml"
@@ -154,6 +154,9 @@ else
 fi
 
 echo
-echo "✓ notarized + stapled:  $(pwd)/$PKG"
-echo "  ship it. installs to /Library/Input Methods; users add it in"
-echo "  System Settings -> Keyboard -> Input Sources -> + -> English."
+if [ "${SKIP_NOTARIZE:-0}" = "1" ]; then
+  echo "signed, not notarized:  $(pwd)/$PKG  (local testing only)"
+else
+  echo "✓ notarized + stapled:  $(pwd)/$PKG"
+  echo "  ship it. installs to /Library/Input Methods and enables IPA in the input menu."
+fi

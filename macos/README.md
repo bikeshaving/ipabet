@@ -21,15 +21,18 @@ The app is a **universal binary**: the engine crate builds for both
 that registers but can never launch. `rustup target add x86_64-apple-darwin`
 is required for the Intel slice.
 
-First install needs a logout for TIS registration. After that: `pkill IPAbet`,
-then quit and relaunch the app under test — apps hold a session to the old
-process.
+`build.sh install` registers and enables the dev copy in the current session;
+if IPA still does not show in the menu, log out and back in. After a rebuild:
+`pkill IPAbet`, then quit and relaunch the app under test — apps hold a
+session to the old process.
 
-**The dev loop and the pkg install to different prefixes.** `build.sh install`
-writes `~/Library/Input Methods/`, `package.sh` writes `/Library/Input Methods/`.
-macOS scans both, so once the pkg is installed the system copy runs and every
-`build.sh install` lands where the OS has stopped reading — silently, reporting
-success. `pgrep -lf IPAbet` says which is live.
+**One installed copy at a time.** `build.sh install` writes
+`~/Library/Input Methods/`, the pkg writes `/Library/Input Methods/`, and every
+copy macOS can see registers as its own input source — two copies means IPAbet
+listed twice. So `build.sh install` refuses while the release is installed
+(uninstall it first with `sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`),
+and the pkg's postinstall removes a dev copy it finds. `pgrep -lf IPAbet` says
+which copy is live.
 
 ## Composition model
 
