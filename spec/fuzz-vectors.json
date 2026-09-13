@@ -5822,7 +5822,7 @@
    }
   ],
   "initial": "x̣̯́",
-  "expected": "x̣̯́j͡l̻̣̀$",
+  "expected": "x̣̯́j͡l̻̣̀$",
   "locale": "de",
   "capital_digraphs": true
  },
@@ -6243,7 +6243,7 @@
    }
   ],
   "initial": "",
-  "expected": "x̤̐.qF",
+  "expected": "x̤̐.qF",
   "locale": "de",
   "capital_digraphs": true
  },
@@ -8889,7 +8889,7 @@
    }
   ],
   "initial": "",
-  "expected": "˓&%]j̵̯",
+  "expected": "˓&%]ɟ̯",
   "locale": "en",
   "capital_digraphs": true
  },

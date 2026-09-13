@@ -14,7 +14,7 @@ use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
 fn spec() -> CString {
-    CString::new(include_str!("../../spec/ipabet.json")).unwrap()
+    CString::new(include_str!("../../spec/ipabet.xml")).unwrap()
 }
 
 fn engine() -> *mut ipabet_engine::Engine {
@@ -208,7 +208,7 @@ fn a_deep_stack_of_marks_survives_the_round_trip() {
     };
     assert_eq!(landed.pending.count, 0);
 
-    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let native = ipabet_engine::Engine::from_ldml(spec().to_str().unwrap()).unwrap();
     let mut native_pending: ipabet_engine::Pending = Vec::new();
     for m in marks {
         let k = ipabet_engine::Keystroke {
@@ -233,7 +233,7 @@ fn a_zero_capacity_buffer_is_left_alone() {
     let mut buf = [0x7f as c_char; 4];
     unsafe { ipabet_preview_string(e, empty_pending(), buf.as_mut_ptr(), 0) };
     assert_eq!(buf[0], 0x7f as c_char);
-    unsafe { ipabet_commit_string(e, empty_pending(), std::ptr::null_mut(), 8) };
+    unsafe { ipabet_commit_string(e, key("").as_ptr(), empty_pending(), std::ptr::null_mut(), 8) };
     unsafe { ipabet_engine_free(e) };
 }
 
@@ -322,7 +322,7 @@ fn a_stack_past_the_array_truncates_at_the_boundary_and_stays_coherent() {
         ipabet_engine_handle_key(e, before.as_ptr(), stroke(&a, false, false), pending, false)
     };
 
-    let native = ipabet_engine::Engine::new(spec().to_str().unwrap()).unwrap();
+    let native = ipabet_engine::Engine::from_ldml(spec().to_str().unwrap()).unwrap();
     let mut native_pending: ipabet_engine::Pending = Vec::new();
     for m in marks {
         let k = ipabet_engine::Keystroke {
@@ -339,5 +339,45 @@ fn a_stack_past_the_array_truncates_at_the_boundary_and_stays_coherent() {
         other => panic!("the engine answered {other:?}"),
     };
     assert_eq!(text_of(&landed.edit), expected);
+    unsafe { ipabet_engine_free(e) };
+}
+
+#[test]
+fn the_quote_table_lists_every_locale_default_first_and_truncates_whole_lines() {
+    let e = engine();
+    let mut buf = vec![0 as c_char; 1024];
+    let need = unsafe { ipabet_engine_quote_locales(e, buf.as_mut_ptr(), buf.len()) };
+    let text = unsafe { CStr::from_ptr(buf.as_ptr()) }.to_str().unwrap().to_string();
+    assert_eq!(need, text.len());
+    let lines: Vec<&str> = text.lines().collect();
+    assert_eq!(lines[0], "en “”‘’");
+    assert_eq!(lines.len(), 7);
+    assert!(lines[1..].windows(2).all(|w| w[0] < w[1]));
+    assert!(lines.iter().all(|l| l.split(' ').nth(1).map(|q| q.chars().count()) == Some(4)));
+
+    let mut small = vec![0 as c_char; 20];
+    let need2 = unsafe { ipabet_engine_quote_locales(e, small.as_mut_ptr(), small.len()) };
+    assert_eq!(need2, need);
+    let cut = unsafe { CStr::from_ptr(small.as_ptr()) }.to_str().unwrap();
+    assert_eq!(cut, "en “”‘’");
+
+    assert_eq!(unsafe { ipabet_engine_quote_locales(std::ptr::null(), buf.as_mut_ptr(), buf.len()) }, 0);
+    assert_eq!(unsafe { ipabet_engine_quote_locales(e, std::ptr::null_mut(), 0) }, need);
+    unsafe { ipabet_engine_free(e) };
+}
+
+#[test]
+fn a_trailing_tie_commits_combining_after_a_letter_and_spacing_after_nothing() {
+    let e = engine();
+    let j = key("j");
+    let mut pending = empty_pending();
+    let step = unsafe { ipabet_engine_handle_key(e, key("i").as_ptr(), stroke(&j, true, false), pending, false) };
+    pending = step.pending;
+    assert!(pending.count > 0, "⌥j arms the tie");
+    let mut out = [0 as c_char; 32];
+    unsafe { ipabet_commit_string(e, key("i").as_ptr(), pending, out.as_mut_ptr(), out.len()) };
+    assert_eq!(unsafe { CStr::from_ptr(out.as_ptr()) }.to_str().unwrap(), "\u{0361}");
+    unsafe { ipabet_commit_string(e, key("").as_ptr(), pending, out.as_mut_ptr(), out.len()) };
+    assert_eq!(unsafe { CStr::from_ptr(out.as_ptr()) }.to_str().unwrap(), "⁀");
     unsafe { ipabet_engine_free(e) };
 }

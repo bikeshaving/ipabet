@@ -77,10 +77,10 @@ static void ipabet_update_preedit(IpabetIBusEngine *self) {
 /// Hand the client everything held and stop composing — the boundary behaviour
 /// for a key IPAbet declines, and for losing focus.
 static void ipabet_flush(IpabetIBusEngine *self) {
-    // An armed diacritic that never found a base commits as its spacing clone,
-    // which is exactly what the engine's commit string is.
+    // An armed diacritic that never found a base commits in the form the text
+    // before it calls for, which is exactly what the engine's commit string is.
     char tail[EDIT_TEXT_MAX];
-    ipabet_commit_string(g_transform, self->pending, tail, sizeof(tail));
+    ipabet_commit_string(g_transform, self->buffer->str, self->pending, tail, sizeof(tail));
 
     GString *out = g_string_new(self->buffer->str);
     g_string_append(out, tail);
@@ -292,7 +292,7 @@ static void ipabet_ibus_engine_class_init(IpabetIBusEngineClass *klass) {
 
 // --- process ---------------------------------------------------------------
 
-/// spec/ipabet.json as installed. The tables are data on every platform and are
+/// spec/ipabet.xml as installed. The tables are data on every platform and are
 /// never transcribed into code.
 static char *read_spec(void) {
     char *contents = NULL;
@@ -300,7 +300,7 @@ static char *read_spec(void) {
     // The prefix this build installs to first (a plain `cmake --install`
     // defaults to /usr/local, where a hardcoded /usr found nothing), then
     // the packaged location, then the source tree for the dev loop.
-    const char *paths[] = {IPABET_SPEC_INSTALLED, "/usr/share/ipabet/ipabet.json",
+    const char *paths[] = {IPABET_SPEC_INSTALLED, "/usr/share/ipabet/ipabet.xml",
                            IPABET_SPEC_FALLBACK};
     for (guint i = 0; i < G_N_ELEMENTS(paths); i++) {
         if (g_file_get_contents(paths[i], &contents, &len, NULL)) return contents;
@@ -347,7 +347,7 @@ int main(int argc, char **argv) {
 
     char *spec = read_spec();
     if (!spec) {
-        g_printerr("ipabet: cannot read ipabet.json — the install is incomplete\n");
+        g_printerr("ipabet: cannot read ipabet.xml — the install is incomplete\n");
         return 1;
     }
     g_transform = ipabet_engine_new(spec);

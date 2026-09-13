@@ -37,7 +37,7 @@
         <Component Id="Spec">
           <!-- Read at activation from beside the DLL: the tables are data, not
                code, and the same file ships on every platform. -->
-          <File Id="IpabetJson" Source="$(var.BinDir)\ipabet.json" KeyPath="yes" />
+          <File Id="IpabetJson" Source="$(var.BinDir)\ipabet.xml" KeyPath="yes" />
         </Component>
         <Component Id="Registrar">
           <File Id="IpabetRegisterExe" Source="$(var.BinDir)\ipabet-register.exe" KeyPath="yes" />

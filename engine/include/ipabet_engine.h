@@ -79,11 +79,12 @@ typedef struct CKeystroke {
 
 /**
  * # Safety
- * `spec_json` must be a valid NUL-terminated UTF-8 C string. Returns null on
- * a parse error — a build/packaging bug (a malformed spec.json shipped),
- * not a runtime condition the caller recovers from.
+ * `spec_ldml` must be a valid NUL-terminated UTF-8 C string holding the LDML
+ * keyboard source (spec/ipabet.xml). Returns null on a parse error — a
+ * build/packaging bug (a malformed spec shipped), not a runtime condition the
+ * caller recovers from.
  */
- struct Engine *ipabet_engine_new(const char *spec_json);
+ struct Engine *ipabet_engine_new(const char *spec_ldml);
 
 /**
  * # Safety
@@ -103,6 +104,18 @@ typedef struct CKeystroke {
  * `engine` must be live; `locale` must be a valid NUL-terminated UTF-8 C string.
  */
  void ipabet_engine_set_quote_locale(struct Engine *engine, const char *locale);
+
+/**
+ * Writes the quote-locale table into `out` as NUL-terminated UTF-8, one line
+ * per locale: the name, a space, then the four quote characters
+ * (`en “”‘’`), sorted by name, the default locale's line first. Returns the
+ * byte length needed (excluding the NUL); if that exceeds `cap` the output is
+ * truncated at a line boundary. A settings menu's data, not engine logic.
+ *
+ * # Safety
+ * `engine` must be live; `out` must point to at least `cap` writable bytes.
+ */
+ uintptr_t ipabet_engine_quote_locales(const struct Engine *engine, char *out, uintptr_t cap);
 
 /**
  * # Safety
@@ -145,11 +158,18 @@ void ipabet_preview_string(const struct Engine *engine,
                            uintptr_t out_cap);
 
 /**
+ * What the armed pending becomes when composition ends without a base: the
+ * text to append after `text_before`. The context decides the form — a lone
+ * tie after a letter or digit commits combining, a dead-key mark after nothing
+ * commits as its spacing clone.
+ *
  * # Safety
- * `engine` must be live. `out` must point to at least `out_cap` bytes.
+ * `engine` must be live; `text_before` a valid NUL-terminated UTF-8 C string.
+ * `out` must point to at least `out_cap` bytes.
  */
 
 void ipabet_commit_string(const struct Engine *engine,
+                          const char *text_before,
                           struct CPending pending,
                           char *out,
                           uintptr_t out_cap);

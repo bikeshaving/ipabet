@@ -26,7 +26,7 @@ build_and_run() {  # name  main-source  [extra-sources...]
 	cp "$mainsrc" "$d/main.swift"
 	# shellcheck disable=SC2086
 	swiftc -O -import-objc-header "$HDR" $LIB "$d/main.swift" "$@" $FRAMEWORKS -o "$d/bin"
-	cp ../spec/ipabet.json "$d/ipabet.json"
+	cp ../spec/ipabet.xml "$d/ipabet.xml"
 	for vf in parity-vectors fuzz-vectors; do
 		echo "== $vf ($name)"
 		IPABET_VECTORS="../spec/$vf.json" "$d/bin" || fail=1
@@ -45,7 +45,7 @@ echo "== regression tests (ultrareview findings)"
 regd="$(mktemp -d)"; cp tests/regressions.swift "$regd/main.swift"
 # shellcheck disable=SC2086
 swiftc -O -import-objc-header "$HDR" $LIB "$regd/main.swift" Sources/InputController.swift Sources/Debug.swift $FRAMEWORKS -o "$regd/bin"
-cp ../spec/ipabet.json "$regd/ipabet.json"
+cp ../spec/ipabet.xml "$regd/ipabet.xml"
 "$regd/bin" || fail=1
 
 exit $fail

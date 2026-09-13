@@ -23,7 +23,6 @@
   },
   "include": [
     "src",
-    "../js/src",
-    "../spec/ipabet.json"
+    "../js/src"
   ]
 }

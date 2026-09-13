@@ -175,20 +175,21 @@ unsafe fn keystroke_from_c(k: &CKeystroke) -> Keystroke {
 }
 
 /// # Safety
-/// `spec_json` must be a valid NUL-terminated UTF-8 C string. Returns null on
-/// a parse error — a build/packaging bug (a malformed spec.json shipped),
-/// not a runtime condition the caller recovers from.
+/// `spec_ldml` must be a valid NUL-terminated UTF-8 C string holding the LDML
+/// keyboard source (spec/ipabet.xml). Returns null on a parse error — a
+/// build/packaging bug (a malformed spec shipped), not a runtime condition the
+/// caller recovers from.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn ipabet_engine_new(spec_json: *const c_char) -> *mut Engine {
+pub unsafe extern "C" fn ipabet_engine_new(spec_ldml: *const c_char) -> *mut Engine {
     unsafe {
-        if spec_json.is_null() {
+        if spec_ldml.is_null() {
             return std::ptr::null_mut();
         }
-        let json = match CStr::from_ptr(spec_json).to_str() {
+        let xml = match CStr::from_ptr(spec_ldml).to_str() {
             Ok(s) => s,
             Err(_) => return std::ptr::null_mut(),
         };
-        match Engine::new(json) {
+        match Engine::from_ldml(xml) {
             Ok(engine) => Box::into_raw(Box::new(engine)),
             Err(_) => std::ptr::null_mut(),
         }
@@ -228,6 +229,43 @@ pub unsafe extern "C" fn ipabet_engine_set_quote_locale(engine: *mut Engine, loc
         let locale = str_from_c(locale);
         (*engine).set_quote_locale(&locale);
     }
+}
+
+/// Writes the quote-locale table into `out` as NUL-terminated UTF-8, one line
+/// per locale: the name, a space, then the four quote characters
+/// (`en “”‘’`), sorted by name, the default locale's line first. Returns the
+/// byte length needed (excluding the NUL); if that exceeds `cap` the output is
+/// truncated at a line boundary. A settings menu's data, not engine logic.
+///
+/// # Safety
+/// `engine` must be live; `out` must point to at least `cap` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn ipabet_engine_quote_locales(engine: *const Engine, out: *mut c_char, cap: usize) -> usize {
+    if engine.is_null() {
+        return 0;
+    }
+    let e = unsafe { &*engine };
+    let mut lines: Vec<String> = e.quote_locales().iter().map(|(k, q)| format!("{k} {}", q.iter().collect::<String>())).collect();
+    if let Some(i) = lines.iter().position(|l| l.starts_with(&format!("{} ", e.quote_default()))) {
+        let d = lines.remove(i);
+        lines.insert(0, d);
+    }
+    let text = lines.join("\n");
+    if !out.is_null() && cap > 0 {
+        let mut fit = String::new();
+        for l in &lines {
+            let next = if fit.is_empty() { l.clone() } else { format!("{fit}\n{l}") };
+            if next.len() + 1 > cap {
+                break;
+            }
+            fit = next;
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(fit.as_ptr(), out as *mut u8, fit.len());
+            *out.add(fit.len()) = 0;
+        }
+    }
+    text.len()
 }
 
 /// # Safety
@@ -321,17 +359,30 @@ pub unsafe extern "C" fn ipabet_preview_string(engine: *const Engine, pending: C
     }
 }
 
+/// What the armed pending becomes when composition ends without a base: the
+/// text to append after `text_before`. The context decides the form — a lone
+/// tie after a letter or digit commits combining, a dead-key mark after nothing
+/// commits as its spacing clone.
+///
 /// # Safety
-/// `engine` must be live. `out` must point to at least `out_cap` bytes.
+/// `engine` must be live; `text_before` a valid NUL-terminated UTF-8 C string.
+/// `out` must point to at least `out_cap` bytes.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn ipabet_commit_string(engine: *const Engine, pending: CPending, out: *mut c_char, out_cap: usize) {
+pub unsafe extern "C" fn ipabet_commit_string(
+    engine: *const Engine,
+    text_before: *const c_char,
+    pending: CPending,
+    out: *mut c_char,
+    out_cap: usize,
+) {
     unsafe {
         if engine.is_null() {
             write_c_string("", out, out_cap);
             return;
         }
+        let text = str_from_c(text_before);
         let p = pending_from_c(&pending);
-        let s = (*engine).commit_string(&p);
+        let s = (*engine).commit_text(&text, &p);
         write_c_string(&s, out, out_cap);
     }
 }

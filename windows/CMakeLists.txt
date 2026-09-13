@@ -54,8 +54,8 @@ target_link_libraries(ipabet PRIVATE
 # The spec is data the text service reads at activation, from beside the DLL.
 add_custom_command(TARGET ipabet POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_CURRENT_SOURCE_DIR}/../spec/ipabet.json"
-        "$<TARGET_FILE_DIR:ipabet>/ipabet.json")
+        "${CMAKE_CURRENT_SOURCE_DIR}/../spec/ipabet.xml"
+        "$<TARGET_FILE_DIR:ipabet>/ipabet.xml")
 
 # The registration probe: a console binary, no TSF text service involved, so it
 # can ask what Windows thinks is registered without being the thing under test.

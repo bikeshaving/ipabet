@@ -2,7 +2,7 @@
 
 A TSF text service. It owns no phonetics: every keystroke decision comes from
 the Rust crate in `engine/` through the C ABI in `engine/include/ipabet_engine.h`,
-linked as a static library. `spec/ipabet.json` ships beside the DLL and is
+linked as a static library. `spec/ipabet.xml` ships beside the DLL and is
 parsed at activation.
 
 ## Build

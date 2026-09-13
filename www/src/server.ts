@@ -4,7 +4,7 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {Landing} from "./landing.ts";
 import {Chart, CHART_JSON} from "./chart.ts";
 import {Learn} from "./learn.ts";
-import {Keys, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
+import {Keys} from "./keys.ts";
 import {Design} from "./design.ts";
 import {Type} from "./editor.ts";
 import {page} from "./layout.ts";
@@ -177,26 +177,6 @@ router.route("/robots.txt").get(
 
 router.route("/chart.json").get(() => {
 	return new Response(CHART_JSON, {
-		headers: {
-			"Content-Type": "application/json; charset=utf-8",
-			"Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
-			"Access-Control-Allow-Origin": "*",
-		},
-	});
-});
-
-router.route("/ipabet.schema.json").get(() => {
-	return new Response(SCHEMA_JSON, {
-		headers: {
-			"Content-Type": "application/schema+json; charset=utf-8",
-			"Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
-			"Access-Control-Allow-Origin": "*",
-		},
-	});
-});
-
-router.route("/ipabet.json").get(() => {
-	return new Response(SPEC_JSON, {
 		headers: {
 			"Content-Type": "application/json; charset=utf-8",
 			"Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",

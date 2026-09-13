@@ -51,9 +51,9 @@ func nativeChar(_ ks: CKeystroke) -> String {
     return String(cString: out)
 }
 
-func commitString(_ engine: OpaquePointer, _ pending: CPending) -> String {
+func commitString(_ engine: OpaquePointer, _ before: String, _ pending: CPending) -> String {
     var out = [CChar](repeating: 0, count: 256)
-    ipabet_commit_string(engine, pending, &out, 256)
+    before.withCString { ipabet_commit_string(engine, $0, pending, &out, 256) }
     return String(cString: out)
 }
 
@@ -71,7 +71,7 @@ guard let data = FileManager.default.contents(atPath: path),
     FileHandle.standardError.write("cannot read \(path)\n".data(using: .utf8)!)
     exit(2)
 }
-let spec = try! String(contentsOfFile: "../spec/ipabet.json", encoding: .utf8)
+let spec = try! String(contentsOfFile: "../spec/ipabet.xml", encoding: .utf8)
 guard let engine = spec.withCString({ ipabet_engine_new($0) }) else { fatalError("engine did not parse") }
 
 var pass = 0
@@ -105,7 +105,7 @@ for v in vectors {
             }
         }
     }
-    if pending.count > 0 { text += commitString(engine, pending) }
+    if pending.count > 0 { text += commitString(engine, text, pending) }
     if text == v.expected { pass += 1 }
     else if failures.count < 30 {
         failures.append("got [\(text)] want [\(v.expected)] initial=[\(v.initial)] keys=\(v.keys.map { $0.key })")
