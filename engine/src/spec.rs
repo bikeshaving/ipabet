@@ -107,6 +107,8 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
     // marker name -> combining char, from each dead-key rule \m{NAME}(.) -> $1\u{XXXX}
     let mut marker_char: HashMap<String, char> = HashMap::new();
     for (f, t) in &transforms {
+        let f = f.strip_prefix("(.)").unwrap_or(f);
+        let t = t.strip_suffix("$2").unwrap_or(t);
         if let (Some(name), Some(hx)) = (
             f.strip_prefix("\\m{").and_then(|s| s.strip_suffix("}(.)")),
             t.strip_prefix("$1\\u{").and_then(|s| s.strip_suffix('}')),
@@ -289,6 +291,9 @@ pub fn parse_ldml(xml: &str) -> Result<Spec, String> {
                 .iter()
                 .filter_map(|(f, t)| {
                     let base = f.strip_prefix(&pfx)?;
+                    if base.starts_with('(') {
+                        return None;
+                    }
                     let base = base.strip_prefix('\\').unwrap_or(base);
                     Some(SupSubEntry {
                         base: base.to_string(),

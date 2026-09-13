@@ -53,7 +53,13 @@ const positionOf = (label: string): [number, number] | null => {
   for (let r = 0; r < ROWS.length; r++) { const c = ROWS[r].indexOf(phys); if (c >= 0) return [r, c]; }
   return null;
 };
-export interface Stroke { key: string; shift: boolean; option: boolean }
+export interface Stroke {
+  key: string; shift: boolean; option: boolean;
+  /** Shift was physically released since the previous keystroke. */
+  shiftBroke?: boolean;
+  control?: boolean;
+  capsLock?: boolean;
+}
 const keyOutput = (k: Stroke): string | null => {
   const p = positionOf(k.key);
   if (!p) return null;
@@ -64,21 +70,24 @@ const keyOutput = (k: Stroke): string | null => {
 };
 
 // ---- transforms, grouped, each rule end-anchored ----
-const MARKER_RANGE = "-";
+const PROTECT = "\uF8FE";
 interface Rule { re: RegExp; to: string }
 // A group may carry `when`: a setting id from a `<!-- @optional NAME -->`
 // sentinel just before it. Such a group runs only when the caller enables
 // NAME — how a mode like capital-digraphs becomes a toggleable transform
 // layer rather than case logic in the shell.
 interface Group { when: string | null; rules: Rule[] }
+const unconvert: Record<string, string> = {};
 const groups: Group[] = [];
 for (const g of each(/(?:<!--\s*@optional\s+(\w+)[\s\S]*?-->\s*)?<transformGroup>([\s\S]*?)<\/transformGroup>/g)) {
   const rules: Rule[] = [];
   for (const m of [...g[2].matchAll(/<transform from="([^"]+)" to="([^"]*)"\/>/g)]) {
     // A dead-key's (.) matches the base it lands on — never a still-pending
     // marker, so ⌥a ⌥e … keeps both pending instead of one eating the other.
-    const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, `([^${MARKER_RANGE}])`);
+    const src = expandU(encodeMarkers(unesc(m[1]))).replace(/\(\.\)/g, "([\\p{L}\\p{N}]\\p{M}*)");
     rules.push({ re: new RegExp(src, "u"), to: m[2] });
+    const d = unesc(m[1]).match(/^([^(\\])\(\\p\{M\}\*\)(.+)$/u), t = unesc(m[2]).match(/^(.)\$1$/u);
+    if (d && t) unconvert[t[1]] = d[1] + d[2];
   }
   groups.push({ when: g[1] ?? null, rules });
 }
@@ -87,6 +96,12 @@ const applyTo = (to: string, m: RegExpMatchArray) =>
 
 // ---- output resolution: leftover (unresolved) markers show their spacing
 //      clone from <display> if they have one, else drop ----
+const OPERATORS = new Set(["raise", "lower"]);
+const markerGlyph: Record<string, string> = {};
+for (const m of each(/<transform from="(?:\(\.\))?\\m\{([^}]+)\}\(\.\)" to="\$1\\u\{([0-9A-Fa-f]+)\}(?:\$2)?"\/>/g))
+  markerGlyph[m[1]] = String.fromCodePoint(parseInt(m[2], 16));
+const glyphMarker: Record<string, string> = {};
+for (const [n, c] of Object.entries(markerGlyph)) glyphMarker[c] = markerChar(n);
 const displays: Record<string, string> = {};
 for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) displays[m[1]] = unesc(m[2]);
 
@@ -94,7 +109,7 @@ for (const m of each(/<display output="\\m\{([^}]+)\}" display="([^"]*)"\/>/g)) 
 // then the next group. UTS #35 re-normalizes and re-runs between insertions;
 // we iterate the whole sweep to a fixpoint so a rewrite that exposes a new
 // match (a freshly-composed base a pending mark can now land on) settles.
-export interface Settings { capitalDigraphs?: boolean }
+export interface Settings { capitalDigraphs?: boolean; capitalDigitDigraphs?: boolean }
 function sweep(buf: string, on: Settings): string {
   for (const g of groups) {
     if (g.when && !(on as Record<string, boolean>)[g.when]) continue;
@@ -115,19 +130,72 @@ function runPasses(buf: string, on: Settings): string {
 }
 function render(buf: string): string {
   let out = "";
-  for (const ch of buf) out += cpMarker.has(ch) ? (displays[cpMarker.get(ch)!] ?? "") : ch;
+  for (const ch of buf) {
+    if (ch === PROTECT) continue;
+    const name = cpMarker.get(ch);
+    out += name === undefined ? ch : OPERATORS.has(name) ? "" : (displays[name] ?? markerGlyph[name] ?? "");
+  }
   return out.normalize("NFC");
 }
 
+// An IPA segment: a non-ASCII letter or combining mark (what a transcription
+// is made of), as opposed to a plain ASCII capital that may still be yelling.
+const isIPA = (c: string) => c.codePointAt(0)! > 0x7f && /[\p{L}\p{M}]/u.test(c);
+
+const isMarker = (c: string) => cpMarker.has(c);
+const lastBase = (chars: string[]) => {
+  let i = chars.length;
+  while (i > 0 && /\p{M}/u.test(chars[i - 1])) i--;
+  return Math.max(0, i - 1);
+};
+
 /** Type a sequence of keystrokes over an initial string, returning the text.
  *  `on` enables optional transform layers (e.g. {capitalDigraphs: true}).
- *  Still no keystroke-timing shell (shift-chaining) or preview. */
+ *  The composition is the transforms; the shell around them is shift-chaining
+ *  (keystroke timing), the editing keys, and the chords the host claims. */
 export function type(strokes: Stroke[], initial = "", on: Settings = {}): string {
   let buf = initial;
+  let chainBroken = false;
   for (const k of strokes) {
-    const o = keyOutput(k);
-    if (o === null) continue; // not on the layout — the host would pass it through
-    buf = runPasses(buf + o, on);
+    const brokenIn = chainBroken || (k.shiftBroke ?? false);
+    if (k.key === "⌫") {
+      const chars = [...buf];
+      if (chars.length && isMarker(chars[chars.length - 1])) { chars.pop(); buf = chars.join(""); continue; }
+      const i = lastBase(chars);
+      if (k.control) {
+        const keysFor = unconvert[chars[i]];
+        if (keysFor !== undefined) { chars.splice(i, 1, ...keysFor); buf = chars.join(""); }
+        continue;
+      }
+      const marks = [...chars.slice(i).join("").normalize("NFD")].slice(1);
+      buf = chars.slice(0, i).join("") + marks.map((c) => glyphMarker[c] ?? "").join("");
+      continue;
+    }
+    if (k.key === " ") {
+      const chars = [...buf];
+      while (chars.length && isMarker(chars[chars.length - 1]) && OPERATORS.has(cpMarker.get(chars[chars.length - 1])!)) chars.pop();
+      buf = chars.join("");
+      if (!(chars.length && isMarker(chars[chars.length - 1]))) buf += " ";
+      continue;
+    }
+    let o = keyOutput(k);
+    if (k.control) o = k.shift && /^[A-Za-z]$/.test(k.key) ? PROTECT + k.key.toUpperCase() : null;
+    else if (k.capsLock && /^[A-Za-z]$/.test(k.key)) o = PROTECT + k.key.toUpperCase();
+    if (o === null) continue;
+    const settings: Settings = {...on, capitalDigitDigraphs: !!on.capitalDigraphs && !brokenIn};
+    let next: string | null = null;
+    if (k.shift && !k.option && /^[A-Za-z]$/.test(k.key) && !brokenIn) {
+      const chars = [...buf];
+      const last = chars[chars.length - 1], prev = chars[chars.length - 2];
+      if (last !== undefined && /^[A-Z]$/.test(last) && prev !== undefined && isIPA(prev)) {
+        const lowered = chars.slice(0, -1).join("") + last.toLowerCase() + o;
+        const tried = runPasses(lowered, settings);
+        if (tried !== lowered) next = tried;
+      }
+    }
+    buf = next ?? runPasses(buf + o, settings);
+    const tail = [...buf].pop();
+    chainBroken = tail !== undefined && isIPA(tail) ? false : brokenIn;
   }
   return render(buf);
 }

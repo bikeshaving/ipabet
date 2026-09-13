@@ -49,6 +49,8 @@
     <display output="\m{left-tack-below}" display="˱"/>
     <display output="\m{dot-above}" display="˙"/>
     <display output="\m{inverted-breve-below}" display="˯"/>
+    <display output="\m{tie-above}" display="⁀"/>
+    <display output="\m{tie-below}" display="‿"/>
     <display output="\m{raise}" display="⁻"/>
     <display output="\m{lower}" display="₋"/>
   </displays>
@@ -330,6 +332,62 @@
       <transform from="\m{whistled}\m{right-half-ring-below}" to="\m{right-half-ring-below}"/>
       <!-- a doubled tie commits as the spacing undertie (nothing to join) -->
       <transform from="\m{tie-below}\m{tie-below}" to="‿"/>
+      <transform from="\m{tie-above}\m{tie-above}" to="⁀"/>
+      <transform from="\m{raise}\m{raise}" to=""/>
+      <transform from="\m{lower}\m{lower}" to=""/>
+      <transform from="\m{raise}\m{lower}" to="\m{lower}"/>
+      <transform from="\m{lower}\m{raise}" to="\m{raise}"/>
+      <!-- the same mark twice cancels it (a cycling mark advances instead) -->
+      <transform from="\m{acute}\m{acute}" to=""/>
+      <transform from="\m{double-acute}\m{double-acute}" to=""/>
+      <transform from="\m{grave}\m{grave}" to=""/>
+      <transform from="\m{double-grave}\m{double-grave}" to=""/>
+      <transform from="\m{circumflex}\m{circumflex}" to=""/>
+      <transform from="\m{horn}\m{horn}" to=""/>
+      <transform from="\m{caron}\m{caron}" to=""/>
+      <transform from="\m{caron-below}\m{caron-below}" to=""/>
+      <transform from="\m{macron}\m{macron}" to=""/>
+      <transform from="\m{macron-below}\m{macron-below}" to=""/>
+      <transform from="\m{tilde-below}\m{tilde-below}" to=""/>
+      <transform from="\m{diaeresis}\m{diaeresis}" to=""/>
+      <transform from="\m{diaeresis-below}\m{diaeresis-below}" to=""/>
+      <transform from="\m{breve}\m{breve}" to=""/>
+      <transform from="\m{breve-below}\m{breve-below}" to=""/>
+      <transform from="\m{ring-above}\m{ring-above}" to=""/>
+      <transform from="\m{ring-below}\m{ring-below}" to=""/>
+      <transform from="\m{cedilla}\m{cedilla}" to=""/>
+      <transform from="\m{palatal-hook-below}\m{palatal-hook-below}" to=""/>
+      <transform from="\m{comma-below}\m{comma-below}" to=""/>
+      <transform from="\m{comma-above}\m{comma-above}" to=""/>
+      <transform from="\m{ogonek}\m{ogonek}" to=""/>
+      <transform from="\m{candrabindu}\m{candrabindu}" to=""/>
+      <transform from="\m{bridge-below}\m{bridge-below}" to=""/>
+      <transform from="\m{bridge-above}\m{bridge-above}" to=""/>
+      <transform from="\m{inverted-bridge-below}\m{inverted-bridge-below}" to=""/>
+      <transform from="\m{square-below}\m{square-below}" to=""/>
+      <transform from="\m{minus-below}\m{minus-below}" to=""/>
+      <transform from="\m{plus-below}\m{plus-below}" to=""/>
+      <transform from="\m{stroke-overlay}\m{stroke-overlay}" to=""/>
+      <transform from="\m{tilde-overlay}\m{tilde-overlay}" to=""/>
+      <transform from="\m{down-tack-below}\m{down-tack-below}" to=""/>
+      <transform from="\m{up-tack-below}\m{up-tack-below}" to=""/>
+      <transform from="\m{vertical-line-below}\m{vertical-line-below}" to=""/>
+      <transform from="\m{vertical-line-above}\m{vertical-line-above}" to=""/>
+      <transform from="\m{left-angle-below}\m{left-angle-below}" to=""/>
+      <transform from="\m{double-vertical-line-below}\m{double-vertical-line-below}" to=""/>
+      <transform from="\m{seagull-below}\m{seagull-below}" to=""/>
+      <transform from="\m{x-above}\m{x-above}" to=""/>
+      <transform from="\m{x-below}\m{x-below}" to=""/>
+      <transform from="\m{retroflex-hook}\m{retroflex-hook}" to=""/>
+      <transform from="\m{alveolar}\m{alveolar}" to=""/>
+      <transform from="\m{no-audible-release}\m{no-audible-release}" to=""/>
+      <transform from="\m{right-tack-below}\m{right-tack-below}" to=""/>
+      <transform from="\m{left-tack-below}\m{left-tack-below}" to=""/>
+      <transform from="\m{dot-above}\m{dot-above}" to="·"/>
+      <transform from="\m{dot-below}\m{dot-below}" to=""/>
+      <transform from="\m{hook-above}\m{hook-above}" to=""/>
+      <transform from="\m{inverted-breve-below}\m{inverted-breve-below}" to=""/>
+      <transform from="\m{inverted-breve}\m{inverted-breve}" to=""/>
     </transformGroup>
     <!-- ============ pass 2: resolve markers and sequences to text ============ -->
     <transformGroup>
@@ -444,6 +502,90 @@
       <transform from="k(\p{M}*)K" to="ƙ$1"/>
       <!-- ⇧F -->
       <transform from="f(\p{M}*)F" to="ƒ$1"/>
+      <!-- a modifier on an already raised or lowered base transforms it in place -->
+      <transform from="ⁱ(\p{M}*)Y" to="ᶤ$1"/>
+      <transform from="ᵉ(\p{M}*)Y" to="𐞎$1"/>
+      <transform from="ᵘ(\p{M}*)Y" to="ᶶ$1"/>
+      <transform from="ᵒ(\p{M}*)Y" to="ᶱ$1"/>
+      <transform from="²(\p{M}*)H" to="ˀ$1"/>
+      <transform from="³(\p{M}*)H" to="ˤ$1"/>
+      <transform from="⁴(\p{M}*)H" to="𐞩$1"/>
+      <transform from="⁵(\p{M}*)H" to="ᵊ$1"/>
+      <transform from="ᵃ(\p{M}*)H" to="ᵅ$1"/>
+      <transform from="⁷(\p{M}*)H" to="𐞕$1"/>
+      <transform from="ᵇ(\p{M}*)H" to="ᵝ$1"/>
+      <transform from="ᵈ(\p{M}*)H" to="ᶞ$1"/>
+      <transform from="ᵉ(\p{M}*)H" to="ᵋ$1"/>
+      <transform from="ᶢ(\p{M}*)H" to="ˠ$1"/>
+      <transform from="ʰ(\p{M}*)H" to="ʱ$1"/>
+      <transform from="ⁱ(\p{M}*)H" to="ᶦ$1"/>
+      <transform from="ᵒ(\p{M}*)H" to="ᵓ$1"/>
+      <transform from="ᵖ(\p{M}*)H" to="ᶲ$1"/>
+      <transform from="𐞥(\p{M}*)H" to="ᵡ$1"/>
+      <transform from="ˣ(\p{M}*)H" to="𐞗$1"/>
+      <transform from="ʳ(\p{M}*)H" to="ʴ$1"/>
+      <transform from="ˢ(\p{M}*)H" to="ᶴ$1"/>
+      <transform from="ᵗ(\p{M}*)H" to="ᶿ$1"/>
+      <transform from="ᵘ(\p{M}*)H" to="ᶷ$1"/>
+      <transform from="ᵛ(\p{M}*)H" to="ᶹ$1"/>
+      <transform from="ʷ(\p{M}*)H" to="ꭩ$1"/>
+      <transform from="ʸ(\p{M}*)H" to="𐞲$1"/>
+      <transform from="ᶻ(\p{M}*)H" to="ᶾ$1"/>
+      <transform from="²(\p{M}*)Q" to="𐞳$1"/>
+      <transform from="³(\p{M}*)Q" to="𐞴$1"/>
+      <transform from="⁷(\p{M}*)Q" to="𐞖$1"/>
+      <transform from="ᶢ(\p{M}*)Q" to="𐞒$1"/>
+      <transform from="ⁿ(\p{M}*)Q" to="ᶰ$1"/>
+      <transform from="ʳ(\p{M}*)Q" to="ʶ$1"/>
+      <transform from="ˡ(\p{M}*)Q" to="ꭞ$1"/>
+      <transform from="⁴(\p{M}*)L" to="𐞦$1"/>
+      <transform from="ˢ(\p{M}*)L" to="𐞛$1"/>
+      <transform from="ᶻ(\p{M}*)L" to="𐞞$1"/>
+      <transform from="⁴(\p{M}*)R" to="𐞨$1"/>
+      <transform from="ᵈ(\p{M}*)R" to="𐞋$1"/>
+      <transform from="ˡ(\p{M}*)R" to="ᶩ$1"/>
+      <transform from="ⁿ(\p{M}*)R" to="ᶯ$1"/>
+      <transform from="ʳ(\p{M}*)R" to="ʵ$1"/>
+      <transform from="ˢ(\p{M}*)R" to="ᶳ$1"/>
+      <transform from="ᵗ(\p{M}*)R" to="𐞯$1"/>
+      <transform from="ᶻ(\p{M}*)R" to="ᶼ$1"/>
+      <transform from="⁴(\p{M}*)V" to="𐞰$1"/>
+      <transform from="ᵐ(\p{M}*)V" to="ᶬ$1"/>
+      <transform from="ᵉ(\p{M}*)%" to="ᵌ$1"/>
+      <transform from="ᵒ(\p{M}*)%" to="𐞏$1"/>
+      <transform from="ᵃ(\p{M}*)%" to="ᵄ$1"/>
+      <transform from="ᵃ(\p{M}*)E" to="𐞃$1"/>
+      <transform from="ᵒ(\p{M}*)E" to="ꟹ$1"/>
+      <transform from="ᵘ(\p{M}*)A" to="ᶺ$1"/>
+      <transform from="ᵒ(\p{M}*)A" to="ᶛ$1"/>
+      <transform from="ᵃ(\p{M}*)W" to="𐞣$1"/>
+      <transform from="ᵉ(\p{M}*)W" to="𐞢$1"/>
+      <transform from="ᵒ(\p{M}*)W" to="𐞑$1"/>
+      <transform from="ᵘ(\p{M}*)W" to="ᵚ$1"/>
+      <transform from="ʷ(\p{M}*)W" to="ᶭ$1"/>
+      <transform from="ᵇ(\p{M}*)P" to="𐞅$1"/>
+      <transform from="ᵈ(\p{M}*)P" to="𐞌$1"/>
+      <transform from="ᶢ(\p{M}*)P" to="𐞓$1"/>
+      <transform from="ʲ(\p{M}*)P" to="𐞘$1"/>
+      <transform from="𐞥(\p{M}*)P" to="𐞔$1"/>
+      <transform from="ᵈ(\p{M}*)J" to="ᶡ$1"/>
+      <transform from="ᶢ(\p{M}*)J" to="ᶨ$1"/>
+      <transform from="ˡ(\p{M}*)J" to="𐞠$1"/>
+      <transform from="ⁿ(\p{M}*)J" to="ᶮ$1"/>
+      <transform from="ˢ(\p{M}*)J" to="ᶝ$1"/>
+      <transform from="ʷ(\p{M}*)J" to="ᶣ$1"/>
+      <transform from="ᶻ(\p{M}*)J" to="ᶽ$1"/>
+      <transform from="ᶢ(\p{M}*)G" to="ᶢ$1"/>
+      <transform from="ˡ(\p{M}*)G" to="ᶫ$1"/>
+      <transform from="ⁿ(\p{M}*)G" to="ᵑ$1"/>
+      <transform from="ʳ(\p{M}*)G" to="𐞪$1"/>
+      <transform from="ʳ(\p{M}*)B" to="𐞄$1"/>
+      <transform from="ᵖ(\p{M}*)C" to="𐞵$1"/>
+      <transform from="ᵗ(\p{M}*)C" to="𐞶$1"/>
+      <transform from="ᶜ(\p{M}*)C" to="𐞸$1"/>
+      <transform from="ˡ(\p{M}*)C" to="𐞷$1"/>
+      <transform from="ᴬ(\p{M}*)E" to="ᴭ$1"/>
+      <transform from="₅(\p{M}*)H" to="ₔ$1"/>
       <!-- overlays — the marker, then a base → its precomposed letter -->
       <!-- ⌥y -->
       <transform from="\m{stroke-overlay}2" to="ƻ"/>
@@ -533,8 +675,8 @@
       <transform from="\m{left-angle-below}(.)" to="$1\u{0349}"/>  <!-- ◌͉ -->
       <transform from="\m{double-vertical-line-below}(.)" to="$1\u{0348}"/>  <!-- ◌͈ -->
       <transform from="\m{seagull-below}(.)" to="$1\u{033C}"/>  <!-- ◌̼ -->
-      <transform from="\m{tie-above}(.)" to="$1\u{0361}"/>  <!-- ◌͡ -->
-      <transform from="\m{tie-below}(.)" to="$1\u{035C}"/>  <!-- ◌͜ -->
+      <transform from="(.)\m{tie-above}(.)" to="$1\u{0361}$2"/>  <!-- ◌͡ -->
+      <transform from="(.)\m{tie-below}(.)" to="$1\u{035C}$2"/>  <!-- ◌͜ -->
       <transform from="\m{x-above}(.)" to="$1\u{033D}"/>  <!-- ◌̽ -->
       <transform from="\m{x-below}(.)" to="$1\u{0353}"/>  <!-- ◌͓ -->
       <transform from="\m{retroflex-hook}(.)" to="$1\u{0322}"/>  <!-- ◌̢ -->
@@ -870,22 +1012,21 @@
       <transform from="\m{lower}і" to="𞁨"/>
       <transform from="\m{lower}ѕ" to="𞁩"/>
       <transform from="\m{lower}џ" to="𞁪"/>
+      <!-- an operator with nothing to raise or lower is dropped -->
+      <transform from="\m{raise}(.)" to="$1"/>
+      <transform from="\m{lower}(.)" to="$1"/>
       <!-- rhotic hook — ⌥r fuses onto ə/ɜ -->
       <transform from="ə(\p{M}*)˞" to="ɚ$1"/>
       <transform from="ɜ(\p{M}*)˞" to="ɝ$1"/>
     </transformGroup>
-    <!-- @optional capitalDigraphs — the leading-capital digraphs (⇧S⇧H → Ʃ).
-         An opt-in layer: keystroke-identical to yelling (SHIP), so the engine runs
-         this group only when the capital-digraphs setting is on. -->
+    <!-- @optional capitalDigraphs — the leading-capital digraphs (⇧S⇧H → Ʃ): keystroke-
+         identical to yelling (SHIP), so this layer runs only when the setting is on -->
     <transformGroup>
       <transform from="U(\p{M}*)Y" to="Ʉ$1"/>
       <transform from="A(\p{M}*)Y" to="Ä$1"/>
       <transform from="O(\p{M}*)Y" to="Ɵ$1"/>
       <transform from="Y(\p{M}*)Y" to="Ƴ$1"/>
-      <transform from="@(\p{M}*)H" to="Ɂ$1"/>
-      <transform from="%(\p{M}*)H" to="Ə$1"/>
       <transform from="A(\p{M}*)H" to="Ɑ$1"/>
-      <transform from="&amp;(\p{M}*)H" to="Ħ$1"/>
       <transform from="B(\p{M}*)H" to="Β$1"/>
       <transform from="C(\p{M}*)H" to="Ç$1"/>
       <transform from="D(\p{M}*)H" to="Ð$1"/>
@@ -902,7 +1043,6 @@
       <transform from="Z(\p{M}*)H" to="Ʒ$1"/>
       <transform from="L(\p{M}*)Q" to="Ɫ$1"/>
       <transform from="S(\p{M}*)L" to="Ɬ$1"/>
-      <transform from="$(\p{M}*)R" to="Ɽ$1"/>
       <transform from="D(\p{M}*)R" to="Ɖ$1"/>
       <transform from="S(\p{M}*)R" to="Ʂ$1"/>
       <transform from="T(\p{M}*)R" to="Ʈ$1"/>
@@ -927,6 +1067,14 @@
       <transform from="T(\p{M}*)T" to="Þ$1"/>
       <transform from="K(\p{M}*)K" to="Ƙ$1"/>
       <transform from="F(\p{M}*)F" to="Ƒ$1"/>
+    </transformGroup>
+    <!-- @optional capitalDigitDigraphs — the shifted-digit plane (⇧5⇧H → Ə); also needs the
+         shift chain unbroken, which the engine checks per keystroke -->
+    <transformGroup>
+      <transform from="@(\p{M}*)H" to="Ɂ$1"/>
+      <transform from="%(\p{M}*)H" to="Ə$1"/>
+      <transform from="&amp;(\p{M}*)H" to="Ħ$1"/>
+      <transform from="$(\p{M}*)R" to="Ɽ$1"/>
     </transformGroup>
   </transforms>
 

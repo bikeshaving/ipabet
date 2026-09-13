@@ -52,7 +52,7 @@ for (const [f, t] of transforms) {
 
 const markerChar: Record<string, string> = {};
 for (const [f, t] of transforms) {
-  const fm = f.match(/^\\m\{([^}]+)\}\(\.\)$/), tm = t.match(/^\$1\\u\{([0-9A-Fa-f]+)\}$/);
+  const fm = f.match(/^(?:\(\.\))?\\m\{([^}]+)\}\(\.\)$/), tm = t.match(/^\$1\\u\{([0-9A-Fa-f]+)\}(?:\$2)?$/);
   if (fm && tm) markerChar[fm[1]] = String.fromCodePoint(parseInt(tm[1], 16));
 }
 
@@ -105,7 +105,7 @@ for (const [phys, id] of Object.entries(altR)) {
 // Each \m{raise}<base> → <sup> (and \m{lower}<base> → <sub>) transform is one
 // table row; the base carries a regex escape (\( \+) that we strip back off.
 const pairs = (marker: string, k: string) => transforms
-  .filter(([f]) => f.startsWith(`\\m{${marker}}`))
+  .filter(([f]) => f.startsWith(`\\m{${marker}}`) && f[`\\m{${marker}}`.length] !== "(")
   .map(([f, t]) => ({ base: f.slice(`\\m{${marker}}`.length).replace(/^\\/, ""), [k]: t }));
 const superscripts = { table: pairs("raise", "sup") };
 const subscripts = { table: pairs("lower", "sub") };
