@@ -35,6 +35,8 @@ export const DEMOS: Demo[] = [
 	demo("ship", "s", "+h", "i", "+h", "p"),
 	demo("vision", "v", "i", "+h", "z", "+h", "5", "+h", "n"),
 	demo("thing", "t", "+h", "i", "+h", "n", "+g"),
+	demo("judge", "d", "~j", "z", "+h", "u", "+a", "d", "~j", "z", "+h"),
+	demo("cheesecake", "t", "~j", "s", "+h", "i", "z", "k", "e", "i", "+h", "k"),
 	demo("bird", "b", "e", "+5", "~r", "d"),
 	demo("about", "5", "+h", "b", "a", "u", "+h", "t"),
 	demo("über", "y", "~;", "b", "a", "+5"),
