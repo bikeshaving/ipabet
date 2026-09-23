@@ -139,9 +139,9 @@ export function* Downloads(this: Context, {target}: DownloadsProps) {
 				</div>
 
 				<nav class="callouts">
-					<a href="/type">Type in your browser</a>
-					<a href="/learn">Learn it in an afternoon</a>
-					<a href="/chart">The IPA chart, with keystrokes</a>
+					<a href="/type">Online keyboard</a>
+					<a href="/learn">Typing course</a>
+					<a href="/chart">IPA chart</a>
 				</nav>
 			</div>
 		`;
