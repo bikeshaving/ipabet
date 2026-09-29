@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "bake": "bun run scripts/bake-content.ts",
+    "bake": "bun run scripts/bake-content.ts && bun run scripts/bake-latin.ts",
     "predevelop": "npm run bake",
     "develop": "shovel develop src/server.ts --platform cloudflare",
     "prebuild": "npm run bake",
