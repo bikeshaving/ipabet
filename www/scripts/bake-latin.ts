@@ -5,10 +5,17 @@
 
 import {existsSync, readFileSync, writeFileSync} from "node:fs";
 import {join} from "node:path";
-import {latinLetters, coverage} from "../src/latin-data.ts";
+import {latinLetters, coverage, deadKeys, specialLetters} from "../src/latin-data.ts";
 
 const out = join(import.meta.dir, "..", "src", "gen", "latin.json");
 const letters = latinLetters();
-const next = JSON.stringify({letters, coverage: coverage(letters)}, null, "\t") + "\n";
+const byGlyph = new Map(letters.map((l) => [l.glyph, l]));
+const stacked = ["ấ", "ǘ"].map((g) => ({glyph: g, keys: byGlyph.get(g)?.keys ?? ""}));
+const special = specialLetters(letters).map((l) => {
+	const up = l.glyph.toUpperCase();
+	const cap = [...up].length === 1 && up !== l.glyph ? byGlyph.get(up) : undefined;
+	return {...l, capital: cap?.glyph, capitalDigraphs: cap?.capitalDigraphs};
+});
+const next = JSON.stringify({coverage: coverage(letters), deadKeys: deadKeys(), special, stacked}, null, "\t") + "\n";
 if (!existsSync(out) || readFileSync(out, "utf8") !== next) writeFileSync(out, next);
 console.log(`latin: ${letters.length} letters`);

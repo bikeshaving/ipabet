@@ -13,15 +13,23 @@ description: "Type the International Phonetic Alphabet online, free, in your bro
 
 <h2 id="latin">Latin letters</h2>
 
-The same dead keys put any diacritic on any letter, so IPAbet also writes the Latin alphabets of most languages. This list comes from typing through the keyboard's own engine, so it only shows what the keyboard really does.
-
-Capitals: hold Shift on the letter, as in <code class="k">⌥e ⇧A</code> for Á. Letters marked † type their capital only with the **Capital Digraphs** option on, from the input menu: <code class="k">⇧A⇧E</code> for Æ.
+The IPA's dead keys put any mark on any letter, so IPAbet also writes the Latin alphabets of most languages. Every letter these alphabets need types, checked through the keyboard's own engine.
 
 <Alphabets/>
 
-Every letter, grouped by the key you start from. Letters from the IPA chart above are left out unless an alphabet uses them.
+### Accented letters
 
-<Letters/>
+Press the dead key, then the letter. Capitals take Shift on the letter: <code class="k">⌥e ⇧A</code> for Á.
+
+<Diacritics/>
+
+<Stacking/>
+
+### Letters of their own
+
+Capitals marked † need the **Capital Digraphs** option, in the input menu.
+
+<Special/>
 
 <p class="notice">The IPAbet keyboard types IPA straight into Word, Google
 Docs, Praat or any other app, and works offline on macOS, Windows and Linux.

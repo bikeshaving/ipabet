@@ -66,7 +66,8 @@ const type = (steps: Step[]) => typeKeys(steps.flatMap((s) => s.strokes), "").no
 const join = (steps: Step[]) => steps.map((s) => s.label).join(" ");
 
 /** Every single Latin letter reachable in one or two dead keys, or as a digraph
- *  letter with or without one dead key. Shortest keystrokes win. */
+ *  letter with or without one dead key. Fewest keystrokes win, and on a tie the
+ *  dead key beats the IPA digraph: ä is ⌥u a, the diaeresis, not a⇧Y. */
 export function latinLetters(): LatinLetter[] {
 	setCapitalDigraphs(false);
 	const found = new Map<string, LatinLetter>();
@@ -78,8 +79,8 @@ export function latinLetters(): LatinLetter[] {
 	const bases = [...LOWER, ...LOWER.map((b) => b.toUpperCase())];
 	const digraphs = digraphSteps();
 
-	for (const d of digraphs) record(type([d.step]), [d.step], d.base);
 	for (const b of bases) for (const d of DEAD) record(type([d, baseStep(b)]), [d, baseStep(b)], b.toLowerCase());
+	for (const d of digraphs) record(type([d.step]), [d.step], d.base);
 	for (const g of digraphs) for (const d of DEAD) record(type([d, g.step]), [d, g.step], g.base);
 	for (const b of bases) {
 		for (const d1 of DEAD) for (const d2 of DEAD) {
@@ -188,4 +189,56 @@ export function coverage(letters: LatinLetter[]): Coverage[] {
 		const capitalDigraphs = [...need].filter((c) => byGlyph.get(c)?.capitalDigraphs);
 		return {name: a.name, letters: a.letters, count: need.size, missing, capitalDigraphs};
 	});
+}
+
+const MARK_NAMES: Record<string, string> = {
+	"\u0301": "acute", "\u0300": "grave", "\u0302": "circumflex", "\u030C": "caron",
+	"\u0304": "macron", "\u0303": "tilde", "\u0308": "diaeresis", "\u0306": "breve",
+	"\u030A": "ring", "\u0327": "cedilla", "\u0326": "comma below", "\u0328": "ogonek",
+	"\u0307": "dot above", "\u0323": "dot below", "\u0309": "hook above", "\u031B": "horn",
+	"\u030B": "double acute",
+};
+
+export interface DeadKey {
+	keys: string;
+	name: string;
+	examples: string;
+}
+
+/** The dead keys the alphabets use, each with the single-mark letters it makes
+ *  there, in alphabet order: ⌥u → ä ë ï ö ü ÿ. */
+export function deadKeys(): DeadKey[] {
+	const byMark = new Map<string, Set<string>>();
+	for (const a of ALPHABETS) {
+		for (const g of a.letters) {
+			const [base, ...marks] = [...g.normalize("NFD")];
+			if (marks.length !== 1 || !/[a-zA-Z]/.test(base)) continue;
+			byMark.set(marks[0], (byMark.get(marks[0]) ?? new Set()).add(g));
+		}
+	}
+	const out: DeadKey[] = [];
+	for (const d of DEAD) {
+		const letters = byMark.get(d.mark);
+		if (!letters || out.some((o) => o.keys === d.label)) continue;
+		const sorted = [...letters].sort((x, y) => x.normalize("NFD").localeCompare(y.normalize("NFD")));
+		out.push({keys: d.label, name: MARK_NAMES[d.mark] ?? "", examples: sorted.join(" ")});
+	}
+	return out;
+}
+
+/** The letters the alphabets need that are letters of their own, not a letter
+ *  plus a mark: æ ø ß ł ə … each with its keys. */
+export function specialLetters(letters: LatinLetter[]): LatinLetter[] {
+	const byGlyph = new Map(letters.map((l) => [l.glyph, l]));
+	const seen = new Set<string>();
+	const out: LatinLetter[] = [];
+	for (const a of ALPHABETS) {
+		for (const g of a.letters) {
+			if (seen.has(g) || [...g.normalize("NFD")].length !== 1 || /[a-zA-Z]/.test(g)) continue;
+			seen.add(g);
+			const l = byGlyph.get(g);
+			if (l) out.push(l);
+		}
+	}
+	return out;
 }

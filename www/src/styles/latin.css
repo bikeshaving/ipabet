@@ -2,10 +2,14 @@
 .alphabets td:first-child { white-space: nowrap; }
 .alphabets td.letters { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.1rem; letter-spacing: 0.05em; overflow-wrap: anywhere; }
 .alphabets .ok { color: var(--dim); font-size: 0.85rem; white-space: nowrap; }
-.latin-base { margin-top: 0; display: grid; grid-template-columns: 2rem 1fr; gap: 0.5rem 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); align-items: start; }
-.latin-base > h3 { font: 600 1.1rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--dim); padding-top: 0.2rem; }
-.latin-base ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.latin-base li { display: inline-flex; align-items: baseline; gap: 0.45rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 0.2rem 0.55rem; }
-.latin-base li .g { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.25rem; line-height: 1.3; }
-.latin-base li .k { font: 0.75rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
+.diacritics { margin-bottom: 1rem; }
+.diacritics td { vertical-align: baseline; }
+.diacritics td.k { font: 0.85rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
+.diacritics td:nth-child(2) { color: var(--dim); white-space: nowrap; }
+.diacritics td.letters { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.1rem; letter-spacing: 0.05em; }
+.special { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1rem 0 2.5rem; }
+.special li { display: inline-flex; align-items: baseline; gap: 0.45rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 0.2rem 0.55rem; }
+.special .g { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.25rem; line-height: 1.3; }
+.special .k { font: 0.75rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
 code.k { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
+#latin ~ h3 { font-size: 1.1rem; margin: 2.25rem 0 0.4rem; }

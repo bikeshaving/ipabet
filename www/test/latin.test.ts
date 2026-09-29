@@ -2,7 +2,7 @@
 // must keep finding, so a layout change that drops a letter fails here first.
 
 import {describe, expect, test} from "bun:test";
-import {latinLetters, coverage} from "../src/latin-data.ts";
+import {latinLetters, coverage, deadKeys, specialLetters} from "../src/latin-data.ts";
 
 const letters = latinLetters();
 const keysOf = (g: string) => letters.find((l) => l.glyph === g)?.keys;
@@ -20,6 +20,24 @@ describe("latin letters", () => {
 		expect(keysOf("ệ")).toBeDefined();
 		expect(keysOf("ß")).toBe("s⇧S");
 		expect(keysOf("ǣ")).toBe("⌥a a⇧E");
+	});
+
+	test("a dead key beats an IPA digraph of the same length", () => {
+		expect(keysOf("ä")).toBe("⌥u a");
+		expect(keysOf("ħ")).toBe("⌥y h");
+	});
+
+	test("the diacritics list names each dead key once, with its letters", () => {
+		const d = deadKeys();
+		expect(new Set(d.map((k) => k.keys)).size).toBe(d.length);
+		expect(d.find((k) => k.keys === "⌥u")?.examples).toBe("ä ë ï ö ü ÿ");
+		expect(d.find((k) => k.keys === "⌥,")?.examples).toBe("ș ț");
+	});
+
+	test("special letters are the ones with no mark to take off", () => {
+		const glyphs = specialLetters(letters).map((l) => l.glyph);
+		for (const g of ["æ", "ø", "ß", "ł", "ə", "þ"]) expect(glyphs).toContain(g);
+		expect(glyphs).not.toContain("ä");
 	});
 
 	test("every listed alphabet is fully typeable", () => {

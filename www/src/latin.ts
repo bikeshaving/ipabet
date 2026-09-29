@@ -1,6 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import raw from "./gen/latin.json";
-import type {Coverage, LatinLetter} from "./latin-data.ts";
+import type {Coverage, DeadKey, LatinLetter} from "./latin-data.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import latinCss from "./styles/latin.css" with {assetBase: "/assets/"};
 
@@ -8,18 +8,10 @@ import latinCss from "./styles/latin.css" with {assetBase: "/assets/"};
 // /type renders these under the IPA chart.
 
 export const LATIN_STYLES = [latinCss];
-const letters = raw.letters as LatinLetter[];
 const cover = raw.coverage as Coverage[];
-const byGlyph = new Map(letters.map((l) => [l.glyph, l]));
-
-const alphabetLetters = new Set(cover.flatMap((c) => [...c.letters].flatMap((g) => [g, g.toUpperCase()])));
-
-/** Phonetic-only blocks: on the chart, not in anyone's alphabet. */
-function phonetic(g: string): boolean {
-	const cp = g.codePointAt(0)!;
-	return (cp >= 0x250 && cp <= 0x2af) || (cp >= 0x1d00 && cp <= 0x1dbf) ||
-		(cp >= 0x2c60 && cp <= 0x2c7f) || (cp >= 0x1c0 && cp <= 0x1c3);
-}
+const dead = raw.deadKeys as DeadKey[];
+const special = raw.special as (LatinLetter & {capital?: string})[];
+const stacked = raw.stacked as {glyph: string; keys: string}[];
 
 export function Alphabets() {
 	return jsx`
@@ -34,26 +26,22 @@ export function Alphabets() {
 		</table></div>`;
 }
 
-export function Letters() {
-	const shown = letters.filter((l) => !phonetic(l.glyph) || alphabetLetters.has(l.glyph));
-	const lower = shown.filter((l) => {
-		const low = l.glyph.toLowerCase();
-		return l.glyph === low || !byGlyph.has(low) || [...low].length !== 1;
-	});
-	const groups = new Map<string, LatinLetter[]>();
-	for (const l of lower) groups.set(l.base, [...(groups.get(l.base) ?? []), l]);
-	const order = [...groups.keys()].sort();
-	return jsx`${order.map((b) => {
-		const items = groups.get(b)!.sort((x, y) => x.keys.length - y.keys.length || x.glyph.localeCompare(y.glyph));
-		return jsx`
-			<section class="latin-base">
-				<h3>${b}</h3>
-				<ul>${items.map((l) => {
-					const up = l.glyph.toUpperCase();
-					const cap = [...up].length === 1 && up !== l.glyph ? byGlyph.get(up) : undefined;
-					const dagger = cap?.capitalDigraphs || l.capitalDigraphs ? "†" : "";
-					return jsx`<li><span class="g">${l.glyph}${cap ? " " + cap.glyph : ""}${dagger}</span><span class="k">${l.keys}</span></li>`;
-				})}</ul>
-			</section>`;
-	})}`;
+export function Diacritics() {
+	return jsx`
+		<div class="tablewrap"><table class="diacritics">
+			<tr><th>Keys</th><th>Mark</th><th>In the alphabets above</th></tr>
+			${dead.map((d) => jsx`
+				<tr><td class="k">${d.keys}</td><td>${d.name}</td><td class="letters">${d.examples}</td></tr>`)}
+		</table></div>`;
+}
+
+export function Stacking() {
+	return jsx`<p>Two marks on one letter: press both dead keys, then the letter. ${stacked.map((s, i) => jsx`${i ? " and " : ""}<code class="k">${s.keys}</code> for <span class="ipa">${s.glyph}</span>`)}.</p>`;
+}
+
+export function Special() {
+	return jsx`
+		<ul class="special">${special.map((l) => jsx`
+			<li><span class="g">${l.glyph}${l.capital ? " " + l.capital : ""}${l.capitalDigraphs ? "†" : ""}</span><span class="k">${l.keys}</span></li>`)}
+		</ul>`;
 }
