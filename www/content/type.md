@@ -13,13 +13,9 @@ description: "Type the International Phonetic Alphabet online, free, in your bro
 
 <h2 id="latin">Latin letters</h2>
 
-Writing about a language often means its spelling next to the IPA, like Polish łódź <span class="ipa">[wut͡ɕ]</span>. IPAbet types both.
-
-<Alphabets/>
-
 ### Accents
 
-Press the key, then the letter: <code class="k">⌥e a</code> for á, <code class="k">⌥e ⇧A</code> for Á.
+Press the accent key, then the letter. For a capital, hold Shift on the letter.
 
 <Diacritics/>
 
@@ -30,6 +26,12 @@ Press the key, then the letter: <code class="k">⌥e a</code> for á, <code clas
 <Special/>
 
 <CapitalNote/>
+
+### Languages
+
+These can be typed in full:
+
+<Languages/>
 
 <p class="notice">The IPAbet keyboard types IPA straight into Word, Google
 Docs, Praat or any other app, and works offline on macOS, Windows and Linux.
