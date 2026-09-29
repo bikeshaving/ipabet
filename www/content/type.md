@@ -13,8 +13,6 @@ Every symbol with the keys that type it. Click a symbol to hear it, or open it o
 
 <Chart/>
 
-<p class="notice">This scratchpad shares the limit of every online IPA keyboard:
-your text lives in a browser tab, waiting to be copied somewhere else.
-<a href="/">Download the native IPA keyboard</a> — the same engine, typing IPA
-directly into Word, Praat, ELAN, LaTeX, or anything else, offline, on macOS,
-Windows, and Linux.</p>
+<p class="notice">Done here? You'll have to copy it out. The IPAbet keyboard
+types IPA straight into Word, Google Docs, Praat or any other app, and works
+offline on macOS, Windows and Linux. <a href="/">Download it free</a>.</p>
