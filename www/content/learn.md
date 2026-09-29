@@ -1,11 +1,11 @@
 ---
 title: "Learn IPA — a typing tutor for the phonetic alphabet"
-description: "A touch-typing tutor for IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser — powered by the real IPAbet engine. No theory, no quizzes."
+description: "A touch-typing tutor for IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser. No theory, no quizzes."
 ---
 
 <p class="tagline">Learn it like touch typing.</p>
 
-<p class="trust">Type what you see. A guided course — real words from the first lesson, one new sound at a time — drilled by the same engine as the native keyboard.</p>
+<p class="trust">Type what you see. A guided course, with real words from the first lesson and one new sound at a time.</p>
 
 <Scaffold/>
 

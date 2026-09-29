@@ -193,7 +193,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 			const sounds = partSounds();
 			return jsx`
 				<div id="partintro">
-					<div class="eyebrow">new technology</div>
+					<div class="eyebrow">Part ${lessons.slice(0, li + 1).filter((l) => l.part).length} of ${lessons.filter((l) => l.part).length}</div>
 					<h2>${partIntro}</h2>
 					${les.prose ? jsx`<p class="lore">${les.prose}</p>` : null}
 					${sounds.length ? jsx`<div class="scards">${sounds.map((s) => jsx`
