@@ -5,6 +5,7 @@ import {components} from "./marked-components.ts";
 import {docs} from "./content.ts";
 import {KeyboardRef} from "./components/kbd.ts";
 import {Pad} from "./components/pad.ts";
+import {ChartSheet, CHART_STYLES, CHART_CLIENT} from "./chart.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -22,6 +23,10 @@ const doc = docs.type;
 // The hydration root: the markdown embeds <Pad/>, the entry hydrates the same
 // component onto this container.
 const PadRoot = () => jsx`<div id="pad-root"><${Pad} /></div>`;
+
+// The chart is a letter-size sheet, wider than the reading column, so it breaks
+// out of <main> and scrolls sideways on its own when the window is narrower.
+const ChartEmbed = () => jsx`<div class="chart-embed"><${ChartSheet} /></div>`;
 
 // The browser scratchpad is its own thing to a search engine: a tool that runs
 // where you already are, not the download.
@@ -41,12 +46,12 @@ const schema = {
 
 export function Type() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" schema=${schema} styles=${[globalCss, editorCss, kbdCss]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" schema=${schema} styles=${[globalCss, editorCss, kbdCss, ...CHART_STYLES]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
 				</header>
-				<${Marked} markdown=${doc.body} components=${{...components, Pad: PadRoot, Keyboard: KeyboardRef}} />
+				<${Marked} markdown=${doc.body} components=${{...components, Pad: PadRoot, Keyboard: KeyboardRef, Chart: ChartEmbed}} />
 				<footer>
 					<a href="/">← IPAbet</a>
 					<a href="/chart">The chart</a>
@@ -55,5 +60,6 @@ export function Type() {
 				</footer>
 			</main>
 			<script type="module" src=${typeClient}></script>
+			<script type="module" src=${CHART_CLIENT}></script>
 		<//>`;
 }

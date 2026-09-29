@@ -7,6 +7,12 @@ description: "Type the International Phonetic Alphabet online, free, in your bro
 
 <Keyboard/>
 
+## The IPA chart
+
+Every symbol with the keys that type it. Click a symbol to hear it, or open it on its own page to print: [the chart](/chart).
+
+<Chart/>
+
 <p class="notice">This scratchpad shares the limit of every online IPA keyboard:
 your text lives in a browser tab, waiting to be copied somewhere else.
 <a href="/">Download the native IPA keyboard</a> — the same engine, typing IPA

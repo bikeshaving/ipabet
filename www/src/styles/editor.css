@@ -27,3 +27,9 @@
 	font: .72rem ui-monospace, Menlo, monospace; color: var(--dim);
 	border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; }
 #pending-chip .g { font-family: "Charis SIL","Doulos SIL",serif; font-size: 1rem; color: var(--fg); }
+
+.chart-embed {
+	position: relative; left: 50%; transform: translateX(-50%);
+	width: min(calc(8.5in + 2rem), calc(100vw - 2rem));
+	overflow-x: auto; margin-top: 1rem;
+}
