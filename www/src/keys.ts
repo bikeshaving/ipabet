@@ -2,7 +2,8 @@ import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
 import {Layout} from "./layout.ts";
-import {keySpelled as keystrokes} from "./keystrokes.ts";
+import {keySpelled as keystrokes, seq, formatCompact} from "./keystrokes.ts";
+import {typeKeys} from "../../js/src/index.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.ts";
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
@@ -26,8 +27,32 @@ interface MarkE {
 const letters = spec.letters as Letter[];
 const marks = spec.marks as MarkE[];
 const modifiers = spec.modifiers as Record<string, string>;
-const sups = (spec.superscripts as {table: {base: string; sup: string}[]}).table;
-const subs = (spec.subscripts as {table: {base: string; sub: string}[]}).table;
+// The raise/lower tables, kept to the rows the keyboard can really type: each
+// base is spelled as the keys that type it, the row is typed through the
+// engine, and it stays only if the result is the raised or lowered glyph.
+// Unicode raises letters (Georgian, Cyrillic, CJK) that have no key here.
+const baseKeys = new Map<string, string>();
+for (const l of spec.letters as {key: string; glyph: string}[]) if (!baseKeys.has(l.glyph)) baseKeys.set(l.glyph, l.key);
+const PUNCT: Record<string, string> = {"=": "=", "+": "+=", "(": "+9", ")": "+0", "-": "-"};
+function compactKeys(g: string): string | undefined {
+	if (/^[a-z0-9]$/.test(g)) return g;
+	if (/^[A-Z]$/.test(g)) return "+" + g.toLowerCase();
+	if (PUNCT[g] !== undefined) return PUNCT[g];
+	const k = baseKeys.get(g);
+	return k === undefined ? undefined
+		: [...k].map((c) => (c === "%" ? "+5" : /[A-Z]/.test(c) ? "+" + c.toLowerCase() : c)).join(" ");
+}
+function typeable(rows: {base: string; out: string}[], op: string) {
+	return rows.flatMap(({base, out}) => {
+		const k = compactKeys(base);
+		if (k === undefined) return [];
+		const compact = op + " " + k;
+		const label = formatCompact(compact.replace(/(^| )\+([a-z])/g, (_, sp: string, c: string) => sp + "+" + c.toUpperCase()));
+		return typeKeys(seq(...compact.split(" ")), "") === out ? [{base, out, keys: label}] : [];
+	});
+}
+const sups = typeable((spec.superscripts as {table: {base: string; sup: string}[]}).table.map((r) => ({base: r.base, out: r.sup})), "~z");
+const subs = typeable((spec.subscripts as {table: {base: string; sub: string}[]}).table.map((r) => ({base: r.base, out: r.sub})), "~+z");
 const classes = spec.classes as {beyond: Record<string, string>};
 const doc = docs.keys;
 
@@ -82,8 +107,8 @@ const keysComponents = {
 	...components,
 	SegTable: ({token}: any) => jsx`<${Table}>${segRows(SEGS[token.kind])}<//>`,
 	MarkTable: ({token}: any) => jsx`<${Table}>${markRows(token.kind === "ipa" ? ipaMarks : marks)}<//>`,
-	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">⌥z ${s.base}</td><td class="g">${s.sup}</td><td class="cp">${cp(s.sup)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
-	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">⌥⇧z ${s.base}</td><td class="g">${s.sub}</td><td class="cp">${cp(s.sub)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
+	SupTable: () => jsx`<${Table}>${sups.map((s) => jsx`<tr><td class="k">${s.keys}</td><td class="g">${s.out}</td><td class="cp">${cp(s.out)}</td><td>superscript ${s.base}</td></tr>`)}<//>`,
+	SubTable: () => jsx`<${Table}>${subs.map((s) => jsx`<tr><td class="k">${s.keys}</td><td class="g">${s.out}</td><td class="cp">${cp(s.out)}</td><td>subscript ${s.base}</td></tr>`)}<//>`,
 	BeyondTables: () =>
 		Object.entries(classes.beyond).map(([k, desc]) => jsx`
 			<h3><code>${k}</code></h3><p>${desc}</p>
