@@ -56,28 +56,13 @@ export function optLabel(): string {
 	return "Alt";
 }
 
-/** "⌥⇧w" → "Alt+Shift+w", "s ⇧H" → "s Shift+H", bare "⇧" → "Shift".
- *  Only modifier-led runs are touched, so prose around them survives. A run
- *  glued to the key before it ("s⇧H") gets a space, or it would read "sShift+H". */
+/** The PC spelling: "⌥⇧w" → "Alt+⇧w", "⌃⇧G" → "Ctrl+⇧G", bare "⌥" → "Alt".
+ *  Only the keys whose symbol a PC keyboard doesn't print are renamed; ⇧ is
+ *  on Shift keys everywhere, so it stays. Prose around the keys survives. */
 export function pcKeys(label: string, opt: string = optLabel()): string {
-	return label.replace(/[⌥⇧⌃⌘]+[^\s⌥⇧⌃⌘]*/g, (tok: string, at: number) =>
+	return label.replace(/[⌥⌃⌘]+[^\s⌥⌃⌘]*/g, (tok: string, at: number) =>
 		(at > 0 && !/[\s(\[]/.test(label[at - 1]) ? " " : "") +
-		tok
-			.replace(/⌥/g, opt + "+")
-			.replace(/⇧/g, "Shift+")
-			.replace(/[⌃⌘]/g, "Ctrl+")
-			.replace(/\+$/, ""),
-	);
-}
-
-/** The chart's tight spelling: only the ⌥ key is renamed, because it is the
- *  one key whose name differs by platform; ⇧ is printed on Shift keys
- *  everywhere, and spelled out it overruns the chart's cells. "⌥⇧k" →
- *  "Alt+⇧k", "s⇧H" unchanged. */
-export function pcKeysCompact(label: string, opt: string = optLabel()): string {
-	return label.replace(/⌥[^\s⌥]*/g, (tok: string, at: number) =>
-		(at > 0 && !/[\s(\[]/.test(label[at - 1]) ? " " : "") +
-		(tok.length === 1 ? opt : opt + "+" + tok.slice(1)),
+		tok.replace(/⌥/g, opt + "+").replace(/[⌃⌘]/g, "Ctrl+").replace(/\+$/, ""),
 	);
 }
 

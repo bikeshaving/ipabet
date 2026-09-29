@@ -2,7 +2,7 @@
 // page. Detects the platform (localStorage override wins) and rewrites keystroke
 // text in the server-rendered HTML.
 
-import {KEY_MODES, KEYMODE_EVENT, keyMode, optLabel, pcKeys, pcKeysCompact, setKeyMode, type KeyMode} from "./keycaps.ts";
+import {KEY_MODES, KEYMODE_EVENT, keyMode, optLabel, pcKeys, setKeyMode, type KeyMode} from "./keycaps.ts";
 
 const SELECTOR = "kbd, code, .k, .chip, .fine, .cap.ck, .sheet i";
 const ISLANDS = "#drill, #kbd, #demo";
@@ -25,11 +25,10 @@ function apply(mode: KeyMode): void {
 	}
 	for (const el of document.querySelectorAll(SELECTOR)) {
 		if (el.closest(ISLANDS)) continue;
-		const spell = el.closest(".sheet") ? pcKeysCompact : pcKeys;
 		const it = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
 		for (let n = it.nextNode() as KmText | null; n; n = it.nextNode() as KmText | null) {
 			const orig = (n.__km ??= n.data);
-			const next = mode === "mac" ? orig : spell(orig, optLabel());
+			const next = mode === "mac" ? orig : pcKeys(orig, optLabel());
 			if (n.data !== next) n.data = next;
 		}
 	}
