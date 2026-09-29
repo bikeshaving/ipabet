@@ -1,19 +1,13 @@
 import {jsx} from "@b9g/crank/jsx-tag";
-import {Marked} from "@b9g/crankdown";
-import {Layout} from "./layout.ts";
-import {components} from "./marked-components.ts";
-import {docs} from "./content.ts";
 import raw from "./gen/latin.json";
 import type {Coverage, LatinLetter} from "./latin-data.ts";
-// @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
-import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
-// @ts-ignore
+// @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import latinCss from "./styles/latin.css" with {assetBase: "/assets/"};
 
-// /latin — the Latin letters beyond a–z, baked from the engine by
-// scripts/bake-latin.ts. Prose is content/latin.md.
+// The Latin letters beyond a–z, baked from the engine by scripts/bake-latin.ts.
+// /type renders these under the IPA chart.
 
-const doc = docs.latin;
+export const LATIN_STYLES = [latinCss];
 const letters = raw.letters as LatinLetter[];
 const cover = raw.coverage as Coverage[];
 const byGlyph = new Map(letters.map((l) => [l.glyph, l]));
@@ -27,7 +21,7 @@ function phonetic(g: string): boolean {
 		(cp >= 0x2c60 && cp <= 0x2c7f) || (cp >= 0x1c0 && cp <= 0x1c3);
 }
 
-function Alphabets() {
+export function Alphabets() {
 	return jsx`
 		<div class="tablewrap"><table class="alphabets">
 			<tr><th>Alphabet</th><th>Letters beyond a–z</th><th></th></tr>
@@ -40,7 +34,7 @@ function Alphabets() {
 		</table></div>`;
 }
 
-function Letters() {
+export function Letters() {
 	const shown = letters.filter((l) => !phonetic(l.glyph) || alphabetLetters.has(l.glyph));
 	const lower = shown.filter((l) => {
 		const low = l.glyph.toLowerCase();
@@ -52,7 +46,7 @@ function Letters() {
 	return jsx`${order.map((b) => {
 		const items = groups.get(b)!.sort((x, y) => x.keys.length - y.keys.length || x.glyph.localeCompare(y.glyph));
 		return jsx`
-			<section class="base">
+			<section class="latin-base">
 				<h3>${b}</h3>
 				<ul>${items.map((l) => {
 					const up = l.glyph.toUpperCase();
@@ -62,22 +56,4 @@ function Letters() {
 				})}</ul>
 			</section>`;
 	})}`;
-}
-
-export function Latin() {
-	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/latin" styles=${[globalCss, latinCss]}>
-			<main>
-				<header style="padding-bottom:1rem">
-					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/latin</span></h1>
-				</header>
-				<${Marked} markdown=${doc.body} components=${{...components, Alphabets, Letters}} />
-				<footer>
-					<a href="/">← IPAbet</a>
-					<a href="/chart">The chart</a>
-					<a href="/keys">Keys</a>
-					<a href="/type">Type</a>
-				</footer>
-			</main>
-		<//>`;
 }

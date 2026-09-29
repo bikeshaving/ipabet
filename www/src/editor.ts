@@ -6,6 +6,7 @@ import {docs} from "./content.ts";
 import {KeyboardRef} from "./components/kbd.ts";
 import {Pad} from "./components/pad.ts";
 import {ChartSheet, CHART_STYLES, CHART_CLIENT} from "./chart.ts";
+import {Alphabets, Letters, LATIN_STYLES} from "./latin.ts";
 // @ts-ignore — shovel rewrites these to hashed asset URLs at build time.
 import globalCss from "./styles/global.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -46,12 +47,12 @@ const schema = {
 
 export function Type() {
 	return jsx`
-		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" schema=${schema} styles=${[globalCss, editorCss, kbdCss, ...CHART_STYLES]}>
+		<${Layout} title=${doc.attributes.title} desc=${doc.attributes.description ?? ""} path="/type" schema=${schema} styles=${[globalCss, editorCss, kbdCss, ...CHART_STYLES, ...LATIN_STYLES]}>
 			<main>
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
 				</header>
-				<${Marked} markdown=${doc.body} components=${{...components, Pad: PadRoot, Keyboard: KeyboardRef, Chart: ChartEmbed}} />
+				<${Marked} markdown=${doc.body} components=${{...components, Pad: PadRoot, Keyboard: KeyboardRef, Chart: ChartEmbed, Alphabets, Letters}} />
 				<footer>
 					<a href="/">← IPAbet</a>
 					<a href="/chart">The chart</a>

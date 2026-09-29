@@ -25,7 +25,7 @@ A capital letter after a glyph transforms it. Modifier meanings: <ModifierMeanin
 
 ## Extra letters
 
-Latin letters beyond IPA, for writing real orthographies — each typed by doubling a base with its own shift (`s⇧S` → ß, `t⇧T` → þ). For every accented Latin letter, and the alphabets they cover, see [/latin](/latin).
+Latin letters beyond IPA, for writing real orthographies — each typed by doubling a base with its own shift (`s⇧S` → ß, `t⇧T` → þ). For every accented Latin letter, and the alphabets they cover, see [the Latin letters](/type#latin).
 
 <SegTable kind="extra"/>
 
