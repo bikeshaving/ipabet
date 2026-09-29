@@ -51,7 +51,7 @@ export function* LanguagePicker(this: Context) {
 	}
 
 	for ({} of this) {
-		const needsOption = current.letters.filter((l) => l.capitalDigraphs).map((l) => l.glyph);
+		const needsOption = current.letters.some((l) => l.capitalDigraphs);
 		yield jsx`
 			<div id="langs">
 				<div class="lang-list" role="group" aria-label="Language">
@@ -62,11 +62,11 @@ export function* LanguagePicker(this: Context) {
 				<ul class="lang-letters">
 					${current.letters.map((l) => jsx`
 						<li><button type="button" title=${"Type " + l.glyph} onclick=${() => type(l.glyph)}>
-							<span class="g">${l.glyph}${l.capital ? " " + l.capital : ""}</span>
+							<span class="g">${l.glyph}${l.capital ? " " + l.capital : ""}${l.capitalDigraphs ? jsx`<sup class="fn">*</sup>` : null}</span>
 							<span class="k">${displayKeys(l.keys)}</span>
 						</button></li>`)}
 				</ul>
-				${needsOption.length ? jsx`<p class="lang-note">The capitals of <span class="ipa">${needsOption.join(" ")}</span> need Capital Digraphs on, in the input menu.</p>` : null}
+				${needsOption ? jsx`<p class="footnote"><sup class="fn">*</sup> Needs Capital Digraphs on, in the input menu.</p>` : null}
 				<input id="lang-try" class="ipa" ref=${(el: HTMLInputElement) => (input = el)}
 					spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
 					placeholder=${"Try it: type " + current.name + " here"} />

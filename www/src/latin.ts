@@ -28,16 +28,26 @@ export function Stacking() {
 }
 
 export function Special() {
+	const anyNote = special.some((l) => l.capitalDigraphs);
 	return jsx`
 		<div class="tablewrap"><table class="special">
-			<tr><th>Letter</th><th>Keys</th><th>Used in</th></tr>
+			<tr><th>Letter</th><th>Capital</th><th>Keys</th><th>Used in</th></tr>
 			${special.map((l) => jsx`
-				<tr><td class="letters">${l.glyph}</td><td class="k">${l.keys}</td><td>${l.usedIn.join(", ")}</td></tr>`)}
-		</table></div>`;
+				<tr>
+					<td class="letters">${l.glyph}</td>
+					<td class="letters">${l.capital ?? ""}${l.capitalDigraphs ? jsx`<${FootnoteRef} />` : null}</td>
+					<td class="k">${l.keys}</td>
+					<td>${l.usedIn.join(", ")}</td>
+				</tr>`)}
+		</table></div>
+		${anyNote ? jsx`<${CapitalFootnote} />` : null}`;
 }
 
-/** The special letters whose capitals need the Capital Digraphs option. */
-export function CapitalNote() {
-	const need = special.filter((l) => l.capitalDigraphs).map((l) => l.glyph).join(" ");
-	return jsx`<p>The capitals of <span class="ipa">${need}</span> need Capital Digraphs on, in the input menu.</p>`;
+/** The marker on a capital that needs Capital Digraphs, linking to the note. */
+export function FootnoteRef() {
+	return jsx`<sup class="fn"><a href="#capital-digraphs" aria-label="needs Capital Digraphs">*</a></sup>`;
+}
+
+export function CapitalFootnote() {
+	return jsx`<p class="footnote" id="capital-digraphs"><sup class="fn">*</sup> Needs Capital Digraphs on, in the input menu.</p>`;
 }

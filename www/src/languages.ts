@@ -3,7 +3,7 @@ import {Marked} from "@b9g/crankdown";
 import {Layout} from "./layout.ts";
 import {components} from "./marked-components.ts";
 import {docs} from "./content.ts";
-import {Diacritics, Stacking, Special, CapitalNote, LATIN_STYLES} from "./latin.ts";
+import {Diacritics, Stacking, Special, LATIN_STYLES} from "./latin.ts";
 import {LanguagePicker} from "./components/language-picker.ts";
 // @ts-ignore
 import languagesClient from "./clients/languages.ts" with {assetBase: "/assets/"};
@@ -24,7 +24,7 @@ export function Languages() {
 				<header style="padding-bottom:1rem">
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/languages</span></h1>
 				</header>
-				<${Marked} markdown=${doc.body} components=${{...components, Diacritics, Stacking, Special, CapitalNote, Picker}} />
+				<${Marked} markdown=${doc.body} components=${{...components, Diacritics, Stacking, Special, Picker}} />
 			</main>
 			<script type="module" src=${languagesClient}></script>
 		<//>`;

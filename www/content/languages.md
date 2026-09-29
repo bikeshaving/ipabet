@@ -18,5 +18,3 @@ Press the accent key, then the letter. For a capital, hold Shift on the letter.
 ## Other letters
 
 <Special/>
-
-<CapitalNote/>

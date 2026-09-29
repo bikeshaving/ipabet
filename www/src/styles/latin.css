@@ -29,9 +29,12 @@ code.k { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; color: var
 .lang-letters button:hover { border-color: var(--accent); }
 .lang-letters .g { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.4rem; line-height: 1.2; }
 .lang-letters .k { font: 0.72rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
-.lang-note { color: var(--dim); font-size: 0.9rem; margin-top: 0.9rem; }
 #lang-try {
 	display: block; width: 100%; margin-top: 1.1rem; font-size: 1.4rem; padding: 0.6rem 0.8rem;
 	color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 10px;
 }
 #lang-try:focus { outline: none; border-color: var(--accent); }
+sup.fn { font-size: 0.6em; line-height: 0; vertical-align: super; margin-left: 0.1em; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+sup.fn a { color: var(--accent); text-decoration: none; }
+.footnote { color: var(--dim); font-size: 0.85rem; margin-top: 0.6rem; }
+.footnote sup.fn { color: var(--accent); }
