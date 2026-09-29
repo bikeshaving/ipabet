@@ -3,8 +3,9 @@
    themes, so its colours are its own rather than the site's. */
 .sheet {
 	--fg: #111; --dim: #555; --line: #222; --shade: #c8c8c8; --key: #4455aa;
+	--paper: #fff; --pill: #eef0f8; --pill-line: #c4c9e0;
 	font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; color: var(--fg);
-	background: #fff; width: 8.5in; min-height: 11in; margin: 1rem auto;
+	background: var(--paper); width: 8.5in; min-height: 11in; margin: 1rem auto;
 	padding: 0.45in 0.5in; box-shadow: 0 2px 14px rgba(0,0,0,0.18);
 	font-size: 9.5pt; line-height: 1.25; text-align: left;
 }
@@ -18,7 +19,7 @@
 /* every keystroke — under a consonant, a vowel, a diacritic, or in a list — sits
    in the same hairline keycap pill so the notation reads consistently as keys. */
 .sheet i { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; font-size: 6.4pt; color: var(--key);
-	background: #eef0f8; border: 0.3pt solid #c4c9e0; border-radius: 2pt; padding: 0.2pt 1.6pt; white-space: nowrap; }
+	background: var(--pill); border: 0.3pt solid var(--pill-line); border-radius: 2pt; padding: 0.2pt 1.6pt; white-space: nowrap; }
 
 .sheet table { font-size: inherit; }
 .sheet th, .sheet td { color: inherit; vertical-align: middle; }
@@ -72,12 +73,32 @@
 .sheet svg circle { fill: var(--fg); }
 /* White halo lifts the glyph/keystroke off the trapezoid lines so the rules
    don't read as strike-throughs. paint-order draws the stroke behind the fill. */
-.sheet svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.sheet svg text.v { font-family: "Doulos SIL", "Charis SIL", "Times New Roman", serif; font-size: 17px; fill: var(--fg); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; }
 .sheet svg text.k { font-family: ui-monospace, Menlo, monospace; font-size: 8px; fill: var(--key); }
-.sheet svg .kk rect { fill: #eef0f8; stroke: #c4c9e0; stroke-width: 0.4; }
-.sheet svg text.axis { paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; font-size: 9px; fill: var(--dim); }
+.sheet svg .kk rect { fill: var(--pill); stroke: var(--pill-line); stroke-width: 0.4; }
+.sheet svg text.axis { paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; font-size: 9px; fill: var(--dim); }
 
 .sheet .attrib { font-size: 6.5pt; color: var(--dim); margin-top: 0.14in; text-align: center; }
 .sheet .attrib a { color: var(--dim); }
 .sheet [data-audio] { cursor: pointer; }
 .sheet [data-audio]:hover .ipa, .sheet svg text.v[data-audio]:hover { fill: var(--key); color: var(--key); }
+
+/* The sheet set into a page (/type) rather than printed: the site's colours,
+   dark mode included, its sans-serif type and key pills, and no paper. Only
+   the IPA glyphs keep the chart's serif. */
+.sheet.sheet--page {
+	--fg: inherit; --dim: inherit;
+	--line: color-mix(in srgb, currentColor 38%, transparent);
+	--shade: color-mix(in srgb, currentColor 13%, transparent);
+	--key: var(--accent); --paper: var(--bg);
+	--pill: var(--kbd-bg); --pill-line: var(--kbd-line);
+	font-family: inherit; color: var(--fg);
+	width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none;
+	font-size: 10pt;
+}
+.sheet--page h3 { font-size: 0.72rem; letter-spacing: 0.08em; color: var(--dim); font-weight: 600; margin: 1.6rem 0 0.5rem; }
+.sheet--page .legend { margin: 0 0 0.25rem; text-align: left; }
+.sheet--page i { font-size: 7pt; border-radius: 3pt; }
+.sheet--page .attrib { text-align: left; }
+.sheet--page .attrib a { color: inherit; }
+.sheet--page svg text.axis { font-family: inherit; }

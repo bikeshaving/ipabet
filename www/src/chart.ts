@@ -298,11 +298,12 @@ function Diacritics() {
 
 // --------------------------------------------------------------- sheet
 
-/** The sheet alone, scoped by chart-sheet.css — /chart shows it, /type embeds it. */
-export function ChartSheet() {
+/** The sheet alone, scoped by chart-sheet.css — /chart shows it as paper,
+ *  /type sets it into the page (`page`), where the page's heading replaces its title. */
+export function ChartSheet({page = false}: {page?: boolean}) {
 	return jsx`
-		<div class="sheet">
-			<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>
+		<div class=${page ? "sheet sheet--page" : "sheet"}>
+			${page ? null : jsx`<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>`}
 			<p class="legend">⇧ Shift · <span data-km-mac="⌥ Option" data-km-pc="Alt (right Alt on Windows)">⌥ Option</span> · a space separates keystrokes · a diacritic is typed before its letter</p>
 
 			<h3>CONSONANTS (PULMONIC)</h3>

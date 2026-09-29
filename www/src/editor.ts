@@ -27,7 +27,7 @@ const PadRoot = () => jsx`<div id="pad-root"><${Pad} /></div>`;
 
 // The chart is a letter-size sheet, wider than the reading column, so it breaks
 // out of <main> and scrolls sideways on its own when the window is narrower.
-const ChartEmbed = () => jsx`<div class="chart-embed"><${ChartSheet} /></div>`;
+const ChartEmbed = () => jsx`<div class="chart-embed"><${ChartSheet} page=${true} /></div>`;
 
 // The browser scratchpad is its own thing to a search engine: a tool that runs
 // where you already are, not the download.
