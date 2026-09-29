@@ -25,7 +25,7 @@ A key only ever changes the letter just before it, so what you get never depends
 </Constraint>
 </Constraints>
 
-## Where the rules bend
+## Exceptions
 
 A few sounds are too far from any letter. <Glyph>ʝ</Glyph> is <Combo keys="g ⇧J"/>, which is close but not exact.
 
