@@ -56,8 +56,8 @@ function markRows(rows: MarkE[]) {
 			? " · again → " + m.cycle.map(onCircle).join(" → ")
 			: "";
 		const two = m.double
-			? ` · ⇧ ${m.shiftSense}${m.exclusive ? ", replaces" : ""}` +
-			  (m.doubleCycle?.length ? " · again → " + m.doubleCycle.map(onCircle).join(" → ") : "")
+			? (m.exclusive ? " · ⇧ replaces" : "") +
+			  (m.doubleCycle?.length ? " · ⇧ again → " + m.doubleCycle.map(onCircle).join(" → ") : "")
 			: "";
 		const cps = cp(m.mark) + (m.double ? " · " + cp(m.double) : "");
 		return jsx`<tr><td class="k">⌥${m.opt}</td><td class="g">${g}</td><td class="cp">${cps}</td><td>${(m.name ?? "").toLowerCase()}${cyc}${two}</td></tr>`;
