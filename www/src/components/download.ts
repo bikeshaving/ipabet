@@ -92,7 +92,7 @@ export function* Downloads(this: Context, {target}: DownloadsProps) {
 		const oneBuild = arches.length === 1;
 
 		yield jsx`
-			<div class="doors">
+			<div class="doors" id="download">
 				<div class="download">
 					<a class="download-get" href=${downloadPath(shown)}>
 						<${Icon} platform=${shown.platform} />
