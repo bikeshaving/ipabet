@@ -13,7 +13,7 @@ description: "Type the International Phonetic Alphabet online, free, in your bro
 
 <h2 id="latin">Latin letters</h2>
 
-IPAbet also types the Latin alphabets of most languages.
+Transcription sits next to spelling, as in Polish łódź <span class="ipa">[wut͡ɕ]</span>, so IPAbet types both.
 
 <Alphabets/>
 
