@@ -12,3 +12,26 @@
 .special td.k { font: 0.85rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
 code.k { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
 .alphabets sup, .special sup, #latin ~ p sup { font-size: 0.65em; line-height: 0; vertical-align: super; margin-left: 0.05em; }
+.lang-list { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 1.25rem 0 0; }
+.lang-list button {
+	font: inherit; font-size: 0.9rem; color: var(--fg); background: var(--card);
+	border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.75rem; cursor: pointer;
+}
+.lang-list button:hover { border-color: var(--accent); }
+.lang-list button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.lang-name { margin: 2.25rem 0 0.75rem; }
+.lang-letters { list-style: none; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.lang-letters button {
+	display: inline-flex; flex-direction: column; align-items: center; gap: 0.15rem; min-width: 4.2rem;
+	font: inherit; color: var(--fg); background: var(--card); border: 1px solid var(--line);
+	border-radius: 10px; padding: 0.4rem 0.6rem; cursor: pointer;
+}
+.lang-letters button:hover { border-color: var(--accent); }
+.lang-letters .g { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.4rem; line-height: 1.2; }
+.lang-letters .k { font: 0.72rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
+.lang-note { color: var(--dim); font-size: 0.9rem; margin-top: 0.9rem; }
+#lang-try {
+	display: block; width: 100%; margin-top: 1.1rem; font-size: 1.4rem; padding: 0.6rem 0.8rem;
+	color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+}
+#lang-try:focus { outline: none; border-color: var(--accent); }

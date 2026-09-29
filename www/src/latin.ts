@@ -13,10 +13,6 @@ const dead = raw.deadKeys as DeadKey[];
 const special = raw.special as (LatinLetter & {capital?: string; usedIn: string[]})[];
 const stacked = raw.stacked as {glyph: string; keys: string}[];
 
-export function Languages() {
-	return jsx`<p class="languages">${cover.map((c) => c.name).join(", ")}.</p>`;
-}
-
 export function Diacritics() {
 	return jsx`
 		<div class="tablewrap"><table class="diacritics">

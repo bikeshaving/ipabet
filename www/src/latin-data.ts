@@ -17,6 +17,8 @@ export interface LatinLetter {
 export interface Alphabet {
 	name: string;
 	letters: string;
+	/** BCP 47 primary subtags, to preselect the reader's own language. */
+	codes: string[];
 }
 
 interface Step {
@@ -127,43 +129,43 @@ const VIETNAMESE = (() => {
 
 /** Letters beyond a–z each alphabet needs, lowercase; capitals are checked too. */
 export const ALPHABETS: Alphabet[] = [
-	{name: "Albanian", letters: "çë"},
-	{name: "Azerbaijani", letters: "çəğıöşüİ"},
-	{name: "Catalan", letters: "àçèéíïòóúü"},
-	{name: "Croatian, Bosnian, Serbian (Latin)", letters: "čćđšž"},
-	{name: "Czech", letters: "áčďéěíňóřšťúůýž"},
-	{name: "Danish, Norwegian", letters: "æøå"},
-	{name: "Dutch", letters: "éèëïöü"},
-	{name: "Esperanto", letters: "ĉĝĥĵŝŭ"},
-	{name: "Estonian", letters: "äõöüšž"},
-	{name: "Faroese", letters: "áðíóúýæø"},
-	{name: "Finnish", letters: "äöåšž"},
-	{name: "French", letters: "àâæçéèêëîïôœùûüÿ"},
-	{name: "German", letters: "äöüß"},
-	{name: "Hausa", letters: "ɓɗƙƴ"},
-	{name: "Hungarian", letters: "áéíóöőúüű"},
-	{name: "Icelandic", letters: "áðéíóúýþæö"},
-	{name: "Igbo", letters: "ịọụṅ"},
-	{name: "Irish", letters: "áéíóú"},
-	{name: "Italian", letters: "àèéìíîòóùú"},
-	{name: "Kurdish (Kurmanji)", letters: "çêîşû"},
-	{name: "Latvian", letters: "āčēģīķļņšūž"},
-	{name: "Lithuanian", letters: "ąčęėįšųūž"},
-	{name: "Maltese", letters: "ċġħż"},
-	{name: "Māori", letters: "āēīōū"},
-	{name: "Pinyin", letters: "āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü"},
-	{name: "Polish", letters: "ąćęłńóśźż"},
-	{name: "Portuguese", letters: "áâãàçéêíóôõú"},
-	{name: "Romanian", letters: "ăâîșț"},
-	{name: "Scottish Gaelic", letters: "àèìòù"},
-	{name: "Slovak", letters: "áäčďéíĺľňóôŕšťúýž"},
-	{name: "Slovenian", letters: "čšž"},
-	{name: "Spanish", letters: "áéíñóúü"},
-	{name: "Swedish", letters: "åäö"},
-	{name: "Turkish", letters: "çğıöşüİ"},
-	{name: "Vietnamese", letters: VIETNAMESE},
-	{name: "Welsh", letters: "âêîôûŵŷ"},
-	{name: "Yoruba", letters: "ẹọṣ"},
+	{name: "Albanian", letters: "çë", codes: ["sq"]},
+	{name: "Azerbaijani", letters: "çəğıöşüİ", codes: ["az"]},
+	{name: "Catalan", letters: "àçèéíïòóúü", codes: ["ca"]},
+	{name: "Croatian, Bosnian, Serbian (Latin)", letters: "čćđšž", codes: ["hr", "bs", "sr"]},
+	{name: "Czech", letters: "áčďéěíňóřšťúůýž", codes: ["cs"]},
+	{name: "Danish, Norwegian", letters: "æøå", codes: ["da", "nb", "nn", "no"]},
+	{name: "Dutch", letters: "éèëïöü", codes: ["nl"]},
+	{name: "Esperanto", letters: "ĉĝĥĵŝŭ", codes: ["eo"]},
+	{name: "Estonian", letters: "äõöüšž", codes: ["et"]},
+	{name: "Faroese", letters: "áðíóúýæø", codes: ["fo"]},
+	{name: "Finnish", letters: "äöåšž", codes: ["fi"]},
+	{name: "French", letters: "àâæçéèêëîïôœùûüÿ", codes: ["fr"]},
+	{name: "German", letters: "äöüß", codes: ["de"]},
+	{name: "Hausa", letters: "ɓɗƙƴ", codes: ["ha"]},
+	{name: "Hungarian", letters: "áéíóöőúüű", codes: ["hu"]},
+	{name: "Icelandic", letters: "áðéíóúýþæö", codes: ["is"]},
+	{name: "Igbo", letters: "ịọụṅ", codes: ["ig"]},
+	{name: "Irish", letters: "áéíóú", codes: ["ga"]},
+	{name: "Italian", letters: "àèéìíîòóùú", codes: ["it"]},
+	{name: "Kurdish (Kurmanji)", letters: "çêîşû", codes: ["ku", "kmr"]},
+	{name: "Latvian", letters: "āčēģīķļņšūž", codes: ["lv"]},
+	{name: "Lithuanian", letters: "ąčęėįšųūž", codes: ["lt"]},
+	{name: "Maltese", letters: "ċġħż", codes: ["mt"]},
+	{name: "Māori", letters: "āēīōū", codes: ["mi"]},
+	{name: "Pinyin", letters: "āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü", codes: ["zh"]},
+	{name: "Polish", letters: "ąćęłńóśźż", codes: ["pl"]},
+	{name: "Portuguese", letters: "áâãàçéêíóôõú", codes: ["pt"]},
+	{name: "Romanian", letters: "ăâîșț", codes: ["ro"]},
+	{name: "Scottish Gaelic", letters: "àèìòù", codes: ["gd"]},
+	{name: "Slovak", letters: "áäčďéíĺľňóôŕšťúýž", codes: ["sk"]},
+	{name: "Slovenian", letters: "čšž", codes: ["sl"]},
+	{name: "Spanish", letters: "áéíñóúü", codes: ["es"]},
+	{name: "Swedish", letters: "åäö", codes: ["sv"]},
+	{name: "Turkish", letters: "çğıöşüİ", codes: ["tr"]},
+	{name: "Vietnamese", letters: VIETNAMESE, codes: ["vi"]},
+	{name: "Welsh", letters: "âêîôûŵŷ", codes: ["cy"]},
+	{name: "Yoruba", letters: "ẹọṣ", codes: ["yo"]},
 ];
 
 export interface Coverage {
@@ -241,4 +243,39 @@ export function specialLetters(letters: LatinLetter[]): LatinLetter[] {
 		}
 	}
 	return out;
+}
+
+export interface LanguageLetter {
+	glyph: string;
+	keys: string;
+	capital?: string;
+	capitalDigraphs?: boolean;
+}
+
+export interface Language {
+	name: string;
+	codes: string[];
+	letters: LanguageLetter[];
+}
+
+/** Each alphabet's letters beyond a–z with their keys, lowercase with its
+ *  capital beside it. The capital's keys are the same with Shift on the
+ *  letter, so only the lowercase keys are kept. */
+export function languages(letters: LatinLetter[]): Language[] {
+	const byGlyph = new Map(letters.map((l) => [l.glyph, l]));
+	return ALPHABETS.map((a) => {
+		const out: LanguageLetter[] = [];
+		for (const c of a.letters) {
+			const keys = howToType(c, byGlyph);
+			if (keys === null) continue;
+			const up = c.toUpperCase();
+			const hasCap = [...up].length === 1 && up !== c && !/[A-Z]/.test(up);
+			out.push({
+				glyph: c, keys,
+				...(hasCap ? {capital: up} : {}),
+				...(hasCap && byGlyph.get(up)?.capitalDigraphs ? {capitalDigraphs: true} : {}),
+			});
+		}
+		return {name: a.name, codes: a.codes, letters: out};
+	});
 }

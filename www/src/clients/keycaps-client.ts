@@ -5,7 +5,7 @@
 import {KEY_MODES, KEYMODE_EVENT, keyMode, optLabel, pcKeys, setKeyMode, type KeyMode} from "./keycaps.ts";
 
 const SELECTOR = "kbd, code, .k, .chip, .fine, .cap.ck, .sheet i";
-const ISLANDS = "#drill, #kbd, #demo";
+const ISLANDS = "#drill, #kbd, #demo, #langs";
 
 // Originals live as an expando on each text node (works in SVG too), so
 // toggling is lossless in both directions and re-application is idempotent.
