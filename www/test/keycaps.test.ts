@@ -3,7 +3,7 @@
 // translation, so its edge cases are the whole platform-labels feature.
 
 import {describe, expect, test} from "bun:test";
-import {pcKeys, optLabel} from "../src/clients/keycaps.ts";
+import {pcKeys, pcKeysCompact, optLabel} from "../src/clients/keycaps.ts";
 
 describe("optLabel", () => {
 	test("the ⌥ layer is AltGr on Windows and a plain Alt on Linux", () => {
@@ -44,8 +44,33 @@ describe("pcKeys", () => {
 		expect(pcKeys("⌥\\")).toBe("AltGr+\\");
 	});
 
+	test("a modifier glued to its base gets a space", () => {
+		expect(pcKeys("s⇧H")).toBe("s Shift+H");
+		expect(pcKeys("q⇧C⇧C")).toBe("q Shift+C Shift+C");
+		expect(pcKeys("t ⌥j s⇧H")).toBe("t AltGr+j s Shift+H");
+		expect(pcKeys("(s⇧H)")).toBe("(s Shift+H)");
+	});
+
+	test("⌘ is Ctrl off the Mac", () => {
+		expect(pcKeys("⌘P")).toBe("Ctrl+P");
+	});
+
 	test("surrounding prose survives untouched", () => {
 		expect(pcKeys("…any base + ⌥⇧q")).toBe("…any base + AltGr+Shift+q");
 		expect(pcKeys("no modifiers here")).toBe("no modifiers here");
+	});
+});
+
+describe("pcKeysCompact", () => {
+	test("only the ⌥ key is renamed", () => {
+		expect(pcKeysCompact("⌥⇧k")).toBe("AltGr+⇧k");
+		expect(pcKeysCompact("⌥e")).toBe("AltGr+e");
+		expect(pcKeysCompact("s⇧H")).toBe("s⇧H");
+		expect(pcKeysCompact("t ⌥j s")).toBe("t AltGr+j s");
+		expect(pcKeysCompact("⌥e ⌥⇧e", "Alt")).toBe("Alt+e Alt+⇧e");
+	});
+
+	test("a bare ⌥ is the key's name", () => {
+		expect(pcKeysCompact("⌥")).toBe("AltGr");
 	});
 });

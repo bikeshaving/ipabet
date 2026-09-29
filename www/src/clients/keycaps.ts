@@ -25,7 +25,14 @@ export function detectKeyMode(): KeyMode {
 	return platform === "linux" ? "linux" : "windows";
 }
 
+let override: KeyMode | null = null;
+if (typeof location !== "undefined") {
+	const q = new URLSearchParams(location.search).get("keys");
+	if (q === "mac" || q === "windows" || q === "linux") override = q;
+}
+
 export function keyMode(): KeyMode {
+	if (override) return override;
 	try {
 		const v = localStorage.getItem(STORAGE);
 		if (v === "mac" || v === "windows" || v === "linux") return v;
@@ -36,6 +43,7 @@ export function keyMode(): KeyMode {
 }
 
 export function setKeyMode(m: KeyMode): void {
+	override = null;
 	try {
 		localStorage.setItem(STORAGE, m);
 	} catch {}
@@ -54,14 +62,27 @@ export function optLabel(mode: KeyMode = keyMode()): string {
 }
 
 /** "⌥⇧w" → "AltGr+Shift+w", "s ⇧H" → "s Shift+H", bare "⇧" → "Shift".
- *  Only modifier-led runs are touched, so prose around them survives. */
+ *  Only modifier-led runs are touched, so prose around them survives. A run
+ *  glued to the key before it ("s⇧H") gets a space, or it would read "sShift+H". */
 export function pcKeys(label: string, opt: string = optLabel()): string {
-	return label.replace(/[⌥⇧⌃]+[^\s⌥⇧⌃]*/g, (tok) =>
+	return label.replace(/[⌥⇧⌃⌘]+[^\s⌥⇧⌃⌘]*/g, (tok: string, at: number) =>
+		(at > 0 && !/[\s(\[]/.test(label[at - 1]) ? " " : "") +
 		tok
 			.replace(/⌥/g, opt + "+")
 			.replace(/⇧/g, "Shift+")
-			.replace(/⌃/g, "Ctrl+")
+			.replace(/[⌃⌘]/g, "Ctrl+")
 			.replace(/\+$/, ""),
+	);
+}
+
+/** The chart's tight spelling: only the ⌥ key is renamed, because it is the
+ *  one key whose name differs by platform; ⇧ is printed on Shift keys
+ *  everywhere, and spelled out it overruns the chart's cells. "⌥⇧k" →
+ *  "AltGr+⇧k", "s⇧H" unchanged. */
+export function pcKeysCompact(label: string, opt: string = optLabel()): string {
+	return label.replace(/⌥[^\s⌥]*/g, (tok: string, at: number) =>
+		(at > 0 && !/[\s(\[]/.test(label[at - 1]) ? " " : "") +
+		(tok.length === 1 ? opt : opt + "+" + tok.slice(1)),
 	);
 }
 

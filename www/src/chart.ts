@@ -5,6 +5,12 @@ import {keySpelled, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.
 import chartPdf from "./gen/chart.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
+import chartPdfWindows from "./gen/chart-windows.pdf" with {assetBase: "/assets/"};
+// @ts-ignore
+import chartPdfLinux from "./gen/chart-linux.pdf" with {assetBase: "/assets/"};
+// @ts-ignore
+import chartSheetCss from "./styles/chart-sheet.css" with {assetBase: "/assets/"};
+// @ts-ignore
 import chartCss from "./styles/chart.css" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartAudio from "./clients/chart-audio-client.ts" with {assetBase: "/assets/"};
@@ -294,42 +300,52 @@ function Diacritics() {
 
 // --------------------------------------------------------------- sheet
 
+/** The sheet alone, scoped by chart-sheet.css — /chart shows it, /type embeds it. */
+export function ChartSheet() {
+	return jsx`
+		<div class="sheet">
+			<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>
+			<p class="legend">⇧ Shift · <span data-km-mac="⌥ Option" data-km-windows="AltGr (right Alt)" data-km-linux="Alt">⌥ Option</span> · a space separates keystrokes · a diacritic is typed before its letter</p>
+
+			<h3>CONSONANTS (PULMONIC)</h3>
+			<${PulmonicTable} />
+
+			<div class="row">
+				<div class="lower-left">
+					<h3>CONSONANTS (NON-PULMONIC)</h3>
+					<${NonPulmonic} />
+					<h3>OTHER SYMBOLS</h3>
+					<div class="cols2">${otherSymbols()}</div>
+					<h3>DIACRITICS</h3>
+					<${Diacritics} />
+				</div>
+				<div class="lower-right">
+					<h3>VOWELS</h3>
+					<${VowelChart} />
+					<h3>SUPRASEGMENTALS</h3>
+					<div class="cols2">${list(SUPRASEGMENTALS)}</div>
+					<h3>TONES AND WORD ACCENTS</h3>
+					<${ToneTable} />
+				</div>
+			</div>
+
+			<p class="attrib"><span class="screen-only">Click any symbol to hear it — as data: <a href="/chart.json">chart.json</a> · <a href="/keys">keys</a>; audio from Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses. </span>IPA chart © 2015 International Phonetic Association, CC BY-SA 3.0; this sheet likewise · ipabet.org</p>
+		</div>`;
+}
+
+export const CHART_STYLES = [chartSheetCss];
+export const CHART_CLIENT = chartAudio;
+
 export function Chart() {
 	return jsx`
 		<${Layout}
 			title="The IPA chart, with keystrokes and audio"
 			desc="The IPA chart with IPAbet keystrokes beside every symbol: one printable sheet covering pulmonic and non-pulmonic consonants, vowels, diacritics, suprasegmentals, and tones."
 			path="/chart"
-			styles=${[chartCss]}
+			styles=${[chartSheetCss, chartCss]}
 		>
-			<p class="webnav"><a href="/">← IPAbet</a> · <a href=${chartPdf} download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or ⌘P.</p>
-			<div class="sheet">
-				<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>
-
-				<h3>CONSONANTS (PULMONIC)</h3>
-				<${PulmonicTable} />
-
-				<div class="row">
-					<div class="lower-left">
-						<h3>CONSONANTS (NON-PULMONIC)</h3>
-						<${NonPulmonic} />
-						<h3>OTHER SYMBOLS</h3>
-						<div class="cols2">${otherSymbols()}</div>
-						<h3>DIACRITICS</h3>
-						<${Diacritics} />
-					</div>
-					<div class="lower-right">
-						<h3>VOWELS</h3>
-						<${VowelChart} />
-						<h3>SUPRASEGMENTALS</h3>
-						<div class="cols2">${list(SUPRASEGMENTALS)}</div>
-						<h3>TONES AND WORD ACCENTS</h3>
-						<${ToneTable} />
-					</div>
-				</div>
-
-				<p class="attrib"><span class="screen-only">Click any symbol to hear it — as data: <a href="/chart.json">chart.json</a> · <a href="/keys">keys</a>; audio from Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses. </span>IPA chart © 2015 International Phonetic Association, CC BY-SA 3.0; this sheet likewise · ipabet.org</p>
-			</div>
+			<p class="webnav"><a href="/">← IPAbet</a> · <a href=${chartPdf} data-href-mac=${chartPdf} data-href-windows=${chartPdfWindows} data-href-linux=${chartPdfLinux} download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or <kbd>⌘P</kbd>.</p>
+			<${ChartSheet} />
 			<script type="module" src=${chartAudio}></script>
 		<//>`;
 }

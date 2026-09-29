@@ -2,9 +2,9 @@
 // page. Detects the platform (localStorage override wins) and rewrites keystroke
 // text in the server-rendered HTML.
 
-import {KEY_MODES, KEYMODE_EVENT, keyMode, optLabel, pcKeys, setKeyMode, type KeyMode} from "./keycaps.ts";
+import {KEY_MODES, KEYMODE_EVENT, keyMode, optLabel, pcKeys, pcKeysCompact, setKeyMode, type KeyMode} from "./keycaps.ts";
 
-const SELECTOR = "kbd, code, .k, .chip, .fine, .cap.ck";
+const SELECTOR = "kbd, code, .k, .chip, .fine, .cap.ck, .sheet i";
 const ISLANDS = "#drill, #kbd, #demo";
 
 // Originals live as an expando on each text node (works in SVG too), so
@@ -15,12 +15,21 @@ interface KmText extends Text {
 
 function apply(mode: KeyMode): void {
 	document.documentElement.dataset.keymode = mode;
+	for (const a of document.querySelectorAll<HTMLAnchorElement>("a[data-href-mac]")) {
+		const href = a.dataset[`href${mode[0].toUpperCase()}${mode.slice(1)}`];
+		if (href) a.href = href;
+	}
+	for (const el of document.querySelectorAll<HTMLElement>("[data-km-mac]")) {
+		const text = el.dataset[`km${mode[0].toUpperCase()}${mode.slice(1)}`];
+		if (text !== undefined) el.textContent = text;
+	}
 	for (const el of document.querySelectorAll(SELECTOR)) {
 		if (el.closest(ISLANDS)) continue;
+		const spell = el.closest(".sheet") ? pcKeysCompact : pcKeys;
 		const it = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
 		for (let n = it.nextNode() as KmText | null; n; n = it.nextNode() as KmText | null) {
 			const orig = (n.__km ??= n.data);
-			const next = mode === "mac" ? orig : pcKeys(orig, optLabel(mode));
+			const next = mode === "mac" ? orig : spell(orig, optLabel(mode));
 			if (n.data !== next) n.data = next;
 		}
 	}
