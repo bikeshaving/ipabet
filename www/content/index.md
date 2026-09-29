@@ -19,17 +19,15 @@ Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as
 </Card>
 </Cards>
 
-## The full reference
-
-[The chart](/chart) lists every symbol with its keystrokes and audio, on one printable page. [The keystroke reference](/keys) is the same mapping as plain tables, with the Option layer drawn on a keyboard. [/learn](/learn) is a guided course that drills them, real words from the first lesson. And you can [try the online IPA keyboard](/type) right now — the same engine in your browser, nothing to install.
-
 ## Install
 
-1. [Download IPAbet](/download) — the build for the machine you're on (a .pkg on macOS, .msi on Windows, .deb on Linux).
-2. **Log out and back in.** Input methods register at login.
-3. Pick **IPAbet** from the input menu — on macOS it appears as **IPA** under System Settings → Keyboard → Input Sources → English.
+**macOS:** run [IPAbet.pkg](/download/macos), or `brew install --cask bikeshaving/tap/ipabet`. Then pick **IPA** in the input menu at the top right of the screen. If it isn't there, log out and back in.
 
-Or [build from source](https://github.com/bikeshaving/ipabet). Bug reports and feature requests: [GitHub issues](https://github.com/bikeshaving/ipabet/issues).
+**Windows:** run [IPAbet-x64.msi](/download/windows), or [IPAbet-arm64.msi](/download/windows/arm64) on an ARM PC. Then pick IPAbet in the language bar, or press Win+Space.
+
+**Linux:** download [ipabet-ibus-amd64.deb](/download/linux) ([arm64](/download/linux/arm64)) and run `sudo apt install ./ipabet-ibus-amd64.deb`. Then pick IPAbet in the input menu. If you use fcitx5, get [ipabet-fcitx5](/download/linux/fcitx5) instead.
+
+[Build from source](https://github.com/bikeshaving/ipabet) · [Report a bug](https://github.com/bikeshaving/ipabet/issues)
 
 ## From the blog
 
