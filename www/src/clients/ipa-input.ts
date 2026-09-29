@@ -76,6 +76,24 @@ export function mediatedByIME(e: KeyboardEvent): boolean {
 	return e.keyCode === 229;
 }
 
+/** Every character the macOS US layout types: each key with and without ⇧ and
+ *  ⌥, and each ⌥ dead key composed onto each key (generated from the layout
+ *  itself with UCKeyTranslate). ASCII is added below. The Windows and Linux US
+ *  layouts type a subset. */
+const US_LAYOUT_EXTRA =
+	"¡¢£¥§¨©ª«¬®¯°±´µ¶·¸º»¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜßàáâãäåæçèéêëìíîïñòóôõö÷øùúûüÿıŒœŸƒˆˇ˘˙˚˛˜˝Ωπ–—‘’‚“”„†‡•…‰‹›⁄€™∂∆∏∑√∞∫≈≠≤≥◊ﬁﬂ";
+const US_LAYOUT = new Set<string>([
+	...Array.from({length: 0x7f - 0x20}, (_, i) => String.fromCharCode(0x20 + i)),
+	...US_LAYOUT_EXTRA,
+]);
+
+/** Text only an input method could have typed here: a letter, mark or modifier
+ *  letter the US layout has no key for (ʃ ə ː ˈ ◌̪). Emoji and punctuation don't
+ *  count — the emoji picker inserts those, and it is not a competing engine. */
+export function beyondUSLayout(text: string): boolean {
+	return [...text].some((c) => !US_LAYOUT.has(c) && /[\p{L}\p{M}\p{Sk}]/u.test(c));
+}
+
 // ------------------------------------------------------------------ binding
 
 type Field = HTMLTextAreaElement | HTMLInputElement;
@@ -125,6 +143,7 @@ export function bindIPAInput(
 		if (composedAway === null) return;
 		el.value = composedAway.value;
 		el.selectionStart = el.selectionEnd = composedAway.start;
+		note();
 	};
 	el.addEventListener("compositionstart", () => {
 		if (!stood && optionHeld) {
@@ -142,6 +161,17 @@ export function bindIPAInput(
 	// True when keydown already owned the event, so the beforeinput that follows must
 	// not handle it twice. False for keys keydown couldn't resolve.
 	let consumed = false;
+	// The field as it was before the keystroke keydown handled, so a native
+	// engine's copy of the same keystroke can replace ours instead of joining it.
+	let beforeKey: {value: string; start: number; end: number} | null = null;
+	// The field as this binding last knew it: after its own edits, every input
+	// event, focus, and reset. A keystroke that finds the field different was
+	// preceded by a change nobody announced — another engine rewriting the text
+	// (Safari applies the native IPAbet keyboard's replacements that way). That
+	// engine owns the field; typing over it is how "tH" became "H".
+	let known = el.value;
+	const note = () => { known = el.value; };
+	el.addEventListener("focus", note);
 
 	const caret = () => el.selectionStart ?? el.value.length;
 	const fire = () => onChange(previewString(pending));
@@ -171,6 +201,7 @@ export function bindIPAInput(
 			el.value = el.value.slice(0, from) + text + el.value.slice(to);
 			el.selectionStart = el.selectionEnd = from + text.length;
 		}
+		note();
 	}
 
 	function sendKeystroke(k: Keystroke) {
@@ -207,7 +238,9 @@ export function bindIPAInput(
 		const e = ev as KeyboardEvent; // the union field type widens this to Event
 		consumed = false;
 		optionHeld = e.altKey;
+		beforeKey = {value: el.value, start: el.selectionStart ?? el.value.length, end: el.selectionEnd ?? el.value.length};
 		if (stood) return;
+		if (el.value !== known) { standDown(); return; }
 	// ⌘ and ⌃ chords are the host's — EXCEPT ⌃⇧<letter>, the literal-capital escape.
 		if (e.metaKey) return;
 		// ⌃⌫ is the unconvert chord (the Japanese IMEs' Ctrl+Backspace) — the one
@@ -245,6 +278,24 @@ export function bindIPAInput(
 
 	el.addEventListener("beforeinput", (e) => {
 		const ie = e as InputEvent;
+		// THE NATIVE-ENGINE TEST. Text this binding didn't write, carrying a
+		// letter the US layout can't type, can only come from an input method —
+		// the native IPAbet keyboard. It works whichever engine runs first, and
+		// the US layout's own dead keys can never trip it. If keydown already
+		// applied our copy of this keystroke, put the field back first, so the
+		// native text lands on the text it read and only one copy remains.
+		if (!stood && ie.inputType.startsWith("insert") && ie.inputType !== "insertFromPaste" &&
+			ie.data && beyondUSLayout(ie.data)) {
+			if (consumed && beforeKey !== null) {
+				el.value = beforeKey.value;
+				el.selectionStart = beforeKey.start;
+				el.selectionEnd = beforeKey.end;
+				note();
+			}
+			consumed = false;
+			standDown();
+			return;
+		}
 		// A replacement insertion is the macOS replace-style IME's signature —
 		// the native IPAbet transforming the field. Stand down. NOT
 		// insertCompositionText: the US layout emits that for its own dead keys.
@@ -271,12 +322,6 @@ export function bindIPAInput(
 		// a second copy (a pinyin/romaji ASCII stage duplicating text and
 		// wrecking the session); it belongs to the composition path instead.
 		if (ie.inputType === "insertText" && ie.data) {
-			// Unconsumed non-ASCII arriving means something else is composing
-			// text into the field — an IME. Stand down and let it through.
-			if (!optionHeld && [...ie.data].some((c) => c.codePointAt(0)! > 127)) {
-				standDown();
-				return;
-			}
 			// An Option chord the engine did not claim: the layout's own character
 			// (⌥6 §, ⌥8 •). Native, and NOT evidence of an IME.
 			if (optionHeld) return;
@@ -297,11 +342,11 @@ export function bindIPAInput(
 		if ((ev as KeyboardEvent).key === "Shift") chainBroken = true;
 	});
 
-	el.addEventListener("input", fire); // paste / dictation — keep the host honest
+	el.addEventListener("input", () => { note(); fire(); }); // paste / dictation — keep the host honest
 
 	return {
 		pendingText: () => previewString(pending),
-		reset: () => { pending = []; chainBroken = false; fire(); },
+		reset: () => { pending = []; chainBroken = false; note(); fire(); },
 		/** Inject a keystroke as if typed — the clickable board's path in. */
 		sendKey: (k: Keystroke) => sendKeystroke(k),
 		/** Injected backspace: peel a pending mark, else delete before the caret. */

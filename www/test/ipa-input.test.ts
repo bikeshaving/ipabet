@@ -51,7 +51,7 @@ const KEY: Record<string, {code: string; key: string}> = {
 	p: {code: "KeyP", key: "p"}, h: {code: "KeyH", key: "h"}, t: {code: "KeyT", key: "t"},
 	g: {code: "KeyG", key: "g"}, a: {code: "KeyA", key: "a"}, u: {code: "KeyU", key: "u"},
 	"5": {code: "Digit5", key: "5"}, y: {code: "KeyY", key: "y"},
-	q: {code: "KeyQ", key: "q"},
+	q: {code: "KeyQ", key: "q"}, ";": {code: "Semicolon", key: ";"},
 };
 
 function setup() {
@@ -327,6 +327,8 @@ test("a replacement insertion (macOS IME signature) stands the engine down", () 
 	const {f, press} = setup();
 	press("s");
 	expect(f.value).toBe("s"); // page engine alive until the signature
+	// The native keyboard's own ⇧H: its keydown reports 229, then its replacement.
+	press("h", {shift: true, keyCode: 229});
 	f.dispatch("beforeinput", ev({inputType: "insertReplacementText", data: "ʃ"}));
 	// With s before the caret, a live engine would transform ⇧H → ʃ. It must not.
 	expect(press("h", {shift: true}).defaultPrevented).toBe(false);
@@ -364,4 +366,55 @@ test("a real input method still composes freely — no Option, no interference",
 	field.dispatch("input", ev({inputType: "insertCompositionText", data: "あ"}));
 	field.dispatch("compositionend", ev({data: "あ"}));
 	expect(f.value).toBe("あ");   // untouched: we only take the field back under Option
+});
+
+
+// The double-symbol bug. With the native IPAbet keyboard on, an Option chord
+// reaches both engines: the page can't tell ⌥; from the US layout's own ⌥ keys
+// at keydown, so it types ː, and the native keyboard types ː too. The native
+// text can't be cancelled, so the page takes its own copy back and steps aside.
+test("native IPA text removes the page's copy of the same keystroke and stands down", () => {
+	const {f, press} = setup();
+	press(";", {option: true, keyCode: 229});
+	expect(f.value).toBe("ː"); // the page's copy
+	const e = f.dispatch("beforeinput", ev({inputType: "insertText", data: "ː", cancelable: false}));
+	expect(e.defaultPrevented).toBe(false); // the native text is let through
+	expect(f.value).toBe(""); // and the page's copy is gone, so one remains
+	expect(press("s").defaultPrevented).toBe(false); // the page has stepped aside
+});
+
+test("the US layout's own characters never stand the page down", () => {
+	const {f, press} = setup();
+	f.dispatch("keydown", ev({code: "KeyQ", key: "œ", altKey: true}));
+	f.dispatch("beforeinput", ev({inputType: "insertText", data: "œ"}));
+	expect(press("s").defaultPrevented).toBe(true);
+	expect(f.value.endsWith("s")).toBe(true);
+});
+
+test("an emoji from the picker doesn't stand the page down", () => {
+	const {f, press} = setup();
+	f.dispatch("beforeinput", ev({inputType: "insertText", data: "😀"}));
+	expect(press("s").defaultPrevented).toBe(true);
+});
+
+// "tH shows as H" in Safari: the native keyboard's replacement removes the t
+// before the page sees ⇧H, without an event. Typing ⇧H on the empty field gave
+// H and cancelled the native θ. A keystroke that finds the field changed behind
+// the page's back now leaves it alone.
+test("a field changed without an event means another engine: the page steps aside", () => {
+	const {f, press} = setup();
+	press("t");
+	expect(f.value).toBe("t");
+	f.value = ""; f.selectionStart = f.selectionEnd = 0; // the native keyboard, silently
+	expect(press("h", {shift: true}).defaultPrevented).toBe(false);
+	expect(f.value).toBe("");
+});
+
+test("a host that rewrites the field and resets the binding is not mistaken for an engine", () => {
+	const {f, press, ipa} = setup() as any;
+	press("t");
+	f.value = "";
+	ipa.reset();
+	expect(press("s").defaultPrevented).toBe(true);
+	expect(f.value).toBe("s");
 });
