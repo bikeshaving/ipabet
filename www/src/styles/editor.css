@@ -32,5 +32,5 @@
 	position: relative; left: 50%; transform: translateX(-50%);
 	width: min(75rem, calc(100vw - 2rem));
 	container-type: inline-size;
-	overflow-x: auto; margin-top: 1rem;
+	overflow-x: auto; margin: 1rem 0 3.5rem;
 }
