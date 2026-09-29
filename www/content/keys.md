@@ -50,6 +50,8 @@ A few keys carry their own behavior: the rhotic hook (`⌥r`) is postfix and fus
 
 <OptionBoard/>
 
+<OptionShiftBoard/>
+
 <MarkTable kind="ipa"/>
 
 Each ⌥⇧ form is annotated with what ⌥⇧ _means_ for that mark — `greater` pole, more `extreme` value, `lesser` value, same glyph relocated `below`, an independent `twin`, or an `arbitrary` pick between two unpolarized duals. `replaces` marks the pairs that are values of one dimension, where ⌥⇧ replaces instead of stacking. These are per-mark fields in [`ipabet.json`](/ipabet.json).

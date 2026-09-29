@@ -39,7 +39,7 @@
 .cap.ck[data-chrome="tab"], .cap.ck[data-chrome="caps"], .cap.ck[data-chrome="enter"] { cursor: default; }
 .kbd--ref .cap:not(.ck):active { transform: translateY(1px); }
 .cap.ck:hover { color: var(--fg); }
-.kbd:has(#klayer-optshift:checked) .cap.ck.chord { color: var(--accent); }
+.kbd:has(.kl-optshift:checked) .cap.ck.chord { color: var(--accent); }
 
 /* --- reference: layer toggle, one glyph per cap --------------------------- */
 .kbd--ref .cap { cursor: pointer; }
@@ -48,20 +48,20 @@
 .kcaption { display: flex; align-items: center; gap: .8rem; margin-top: .7rem;
 	color: var(--dim); font-size: .8rem; flex-wrap: wrap; }
 /* the chord caps light only when their layer is engaged; base = nothing lit */
-.kbd:has(#klayer-opt:checked) .cap.ck[data-chrome="option"],
-.kbd:has(#klayer-optshift:checked) .cap.ck.chord,
-.kbd:has(#klayer-shift:checked) .cap.ck[data-chrome="shift"] {
+.kbd:has(.kl-opt:checked) .cap.ck[data-chrome="option"],
+.kbd:has(.kl-optshift:checked) .cap.ck.chord,
+.kbd:has(.kl-shift:checked) .cap.ck[data-chrome="shift"] {
 	color: #fff; background: var(--accent);
 }
 /* base view: the resting board is just a keyboard — bare chars centered */
-.kbd:has(#klayer-base:checked) .cap .b {
+.kbd:has(.kl-base:checked) .cap .b {
 	position: static; grid-area: 1 / 1; font-size: 1rem; color: var(--fg); opacity: .8;
 }
 .kbd--ref .cap .h { display: none; }
-.kbd:has(#klayer-opt:checked) .cap .h.p { display: block; }
-.kbd:has(#klayer-optshift:checked) .cap .h.s { display: block; }
+.kbd:has(.kl-opt:checked) .cap .h.p { display: grid; }
+.kbd:has(.kl-optshift:checked) .cap .h.s { display: grid; }
 /* the ⇧ layer: the emitted character; modifier capitals marked as transforms */
-.kbd:has(#klayer-shift:checked) .cap .h.t { display: block; }
+.kbd:has(.kl-shift:checked) .cap .h.t { display: grid; }
 .cap .h.t { font: 500 1.15rem ui-monospace, Menlo, monospace; color: var(--fg); }
 .cap .h.t.mod { color: var(--accent); font-weight: 700; }
 
@@ -74,9 +74,9 @@
 .kbd--drill .cap.chrome.inert { cursor: default; opacity: .4; }
 /* Keyboard Viewer convention: with ⌥ armed, the board shows the ⌥ layer. */
 .kbd--drill.layer-opt .cap .b { position: absolute; top: .22rem; left: .35rem; font-size: .66rem; color: var(--dim); }
-.kbd--drill.layer-opt .cap .h.p { display: block; font-size: 1.1rem; }
+.kbd--drill.layer-opt .cap .h.p { display: grid; font-size: 1.1rem; }
 .kbd--drill.layer-opt.layer-shift .cap .h.p { display: none; }
-.kbd--drill.layer-opt.layer-shift .cap .h.s { display: block; font-size: 1.1rem; }
+.kbd--drill.layer-opt.layer-shift .cap .h.s { display: grid; font-size: 1.1rem; }
 .kbd--drill .cap.armed { border-color: var(--accent); color: var(--accent); }
 .kbd--drill .cap.armed.chrome { color: var(--accent); }
 .kbd--drill .cap.hot, .kbd--drill .cap.need {

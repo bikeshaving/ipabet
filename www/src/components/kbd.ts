@@ -78,8 +78,14 @@ function shown(glyph: string) {
 	return glyph;
 }
 
+/** A tie: one faint pair of carriers with the tie as its own layer, so both
+ *  circles come from the same font (drawn as one string, the tie drags the first
+ *  circle into whichever fallback font has it, and the two come out unequal). */
+const tie = (mark: string) =>
+	jsx`<span class="ring">◌◌</span><span class="ink">${"\u00A0" + mark + "\u00A0"}</span>`;
+
 const SPECIALS: Record<string, {main: unknown; second: unknown; title: string}> = {
-	j: {main: "◌͡◌", second: "◌͜◌", title: "⌥j tie bar (joins the two segments around it) · ⌥⇧j tie below, for colliding descenders · pressed again on the tie it made → the spacing linker (⁀ over, ‿ under)"},
+	j: {main: tie("\u0361"), second: tie("\u035C"), title: "⌥j tie bar (joins the two segments around it) · ⌥⇧j tie below, for colliding descenders · pressed again on the tie it made → the spacing linker (⁀ over, ‿ under)"},
 	z: {main: "◌ᶻ", second: "◌₂", title: "⌥z raise the next glyph (t ⌥z h → tʰ) · ⌥⇧z lower it"},
 	"[": {main: quad[0], second: quad[1], title: `⌥[ opening primary quote · ⌥⇧[ closing (locale ${quotes.default}; set in the input menu)`},
 	"]": {main: quad[2], second: quad[3], title: `⌥] opening secondary quote · ⌥⇧] closing`},
@@ -128,8 +134,12 @@ const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
 export function KeyboardRef({
 	layer = "base",
 	chart = false,
+	group = "klayer",
 }: {
 	layer?: "base" | "opt" | "optshift" | "shift";
+	/** The layer radios' group, unique per board on a page. /type's board keeps
+	 *  the default, whose ids its client looks up. */
+	group?: string;
 	/** A chart rather than a control: the character caps type nothing on a page
 	 *  with no pad, so they stop inviting a click. The modifier caps stay live,
 	 *  since switching layer is the one thing this board still does. */
@@ -165,7 +175,7 @@ export function KeyboardRef({
 		] as PhysKey[],
 	];
 	return jsx`
-		<div class=${"kbd kbd--ref" + (chart ? " kbd--chart" : "")} id="kbdref">
+		<div class=${"kbd kbd--ref" + (chart ? " kbd--chart" : "")} id=${group === "klayer" ? "kbdref" : undefined}>
 			<div class="plate">
 				${rows.map((row) => jsx`
 					<div class="krow">
@@ -177,7 +187,7 @@ export function KeyboardRef({
 			</div>
 			<div class="layers" hidden>
 				${["base", "opt", "optshift", "shift"].map(
-					(l) => jsx`<input type="radio" name="klayer" id=${"klayer-" + l}
+					(l) => jsx`<input type="radio" name=${group} id=${group + "-" + l} class=${"kl-" + l}
 						checked=${l === layer ? true : undefined} />`,
 				)}
 			</div>

@@ -47,6 +47,7 @@ export const components: Record<string, unknown> = {
 	// The Option layer on a keyboard rather than in a table: which physical key
 	// carries which mark is a spatial fact, and a table cannot show it.
 	OptionBoard: () => jsx`<${KeyboardRef} layer="opt" chart />`,
+	OptionShiftBoard: () => jsx`<${KeyboardRef} layer="optshift" chart group="klayer-optshift-board" />`,
 
 	// A centered call-to-action line under the title; `sub` is the smaller second line.
 	Cta: ({token, children}: any) => jsx`<p class=${"cta" + (token.sub ? " sub" : "")}>${children}</p>`,
