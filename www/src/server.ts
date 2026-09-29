@@ -7,6 +7,7 @@ import {Learn} from "./learn.ts";
 import {Keys, SPEC_JSON, SCHEMA_JSON} from "./keys.ts";
 import {Design} from "./design.ts";
 import {Type} from "./editor.ts";
+import {Languages} from "./languages.ts";
 import {page} from "./layout.ts";
 import {posts} from "./content.ts";
 import {assets} from "@b9g/assets/middleware";
@@ -55,6 +56,8 @@ router.route("/design").get(() => page(jsx`<${Design} />`));
 router.route("/learn").get(() => page(jsx`<${Learn} />`));
 
 router.route("/type").get(() => page(jsx`<${Type} />`));
+
+router.route("/languages").get(() => page(jsx`<${Languages} />`));
 
 router.route("/blog").get(() => page(jsx`<${BlogIndex} />`));
 
@@ -143,7 +146,7 @@ router.route("/download").get((request: Request) => {
 // Nothing here was findable by a crawler that had not already been sent a link:
 // no sitemap, and no robots.txt to point at one.
 const PAGES = [
-	"/", "/chart", "/type", "/learn", "/keys", "/design", "/blog",
+	"/", "/chart", "/type", "/learn", "/keys", "/languages", "/design", "/blog",
 	...posts.filter((p) => p.attributes.draft !== true).map((p) => `/blog/${p.slug}`),
 ];
 

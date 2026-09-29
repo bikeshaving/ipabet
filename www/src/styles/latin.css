@@ -11,5 +11,4 @@
 .special td.letters { font-family: "Charis SIL", "Doulos SIL", "Times New Roman", serif; font-size: 1.25rem; }
 .special td.k { font: 0.85rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
 code.k { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); white-space: nowrap; }
-#latin ~ h3 { font-size: 1.1rem; margin: 2.25rem 0 0.4rem; }
 .alphabets sup, .special sup, #latin ~ p sup { font-size: 0.65em; line-height: 0; vertical-align: super; margin-left: 0.05em; }

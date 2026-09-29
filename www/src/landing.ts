@@ -47,6 +47,7 @@ export function Landing() {
 					<a href="/chart">Chart</a>
 					<a href="/learn">Learn</a>
 					<a href="/type">Type</a>
+					<a href="/languages">Languages</a>
 					<a href="/design">Design</a>
 					<a href="/blog">Blog</a>
 					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
