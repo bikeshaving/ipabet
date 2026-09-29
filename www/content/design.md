@@ -17,11 +17,11 @@ Every symbol is a letter, or a letter and one capital: <Combo keys="t ⇧R" out=
 <Constraint name="Only the last letter changes">
 A key only ever changes the letter just before it, so what you get never depends on anything earlier.
 </Constraint>
-<Constraint name="The capital names the change">
-<kbd>⇧R</kbd> makes a letter retroflex, <kbd>⇧J</kbd> palatal, <kbd>⇧W</kbd> rounded. <kbd>⇧H</kbd> works like the h in English spelling: <Combo keys="t ⇧H" out="θ"/> <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="i ⇧H" out="ɪ"/>. Voicing comes from the letter, as in <kbd>s</kbd> and <kbd>z</kbd>.
+<Constraint name="Each capital means one thing">
+<kbd>⇧R</kbd> makes a sound retroflex, <kbd>⇧J</kbd> palatal, <kbd>⇧L</kbd> lateral: <Combo keys="t ⇧R" out="ʈ"/> <Combo keys="n ⇧J" out="ɲ"/> <Combo keys="s ⇧L" out="ɬ"/>.
 </Constraint>
-<Constraint name="Borrow what people know">
-Spellings people already use: <Combo keys="n ⇧G" out="ŋ"/> from ng, <Combo keys="w ⇧H" out="ʍ"/> from wh, and the digits of Arabic chat, <Combo keys="2 ⇧H" out="ʔ"/> <Combo keys="7 ⇧H" out="ħ"/>.
+<Constraint name="Follow familiar spelling">
+<kbd>⇧H</kbd> is the h in th, sh and wh: <Combo keys="t ⇧H" out="θ"/> <Combo keys="s ⇧H" out="ʃ"/> <Combo keys="w ⇧H" out="ʍ"/>. <kbd>⇧G</kbd> is the g in ng: <Combo keys="n ⇧G" out="ŋ"/>. The digits come from Arabic chat: <Combo keys="2 ⇧H" out="ʔ"/> <Combo keys="7 ⇧H" out="ħ"/>.
 </Constraint>
 </Constraints>
 
