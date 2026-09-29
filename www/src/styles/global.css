@@ -184,11 +184,3 @@ ol.install li { margin-bottom: 0.75rem; }
 }
 .callouts a:hover { border-color: var(--accent); }
 h3.chart-title { margin: 1.5rem 0 0; font-size: 1rem; }
-footer {
-	margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
-	color: var(--dim); font-size: 0.9rem; display: flex; gap: 0.4rem 1.25rem;
-	flex-wrap: wrap; align-items: baseline;
-}
-footer span { margin-right: auto; }
-footer a { color: var(--dim); text-decoration: none; border-bottom: 1px solid var(--line); }
-footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }

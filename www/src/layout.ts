@@ -5,6 +5,8 @@ import {renderer} from "@b9g/crank/html";
 import keycapsClient from "./clients/keycaps-client.ts" with {assetBase: "/assets/"};
 // @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
 import downloadClient from "./clients/download-client.ts" with {assetBase: "/assets/"};
+// @ts-ignore — shovel rewrites this to a hashed asset URL at build time.
+import footerCss from "./styles/footer.css" with {assetBase: "/assets/"};
 
 // The shared server shell — the one place doctype/head/meta/title/styles live. A
 // page renders <${Layout}> around its own <main> and trailing islands.
@@ -13,6 +15,23 @@ export const SITE = "https://ipabet.org";
 
 /** The one description, everywhere. */
 const TAGLINE = "A fast and memorable keyboard for typing the International Phonetic Alphabet.";
+
+const NAV: [string, string][] = [
+	["/type", "Type"], ["/chart", "Chart"], ["/keys", "Keys"], ["/languages", "Languages"],
+	["/learn", "Learn"], ["/blog", "Blog"], ["https://github.com/bikeshaving/ipabet", "GitHub"],
+];
+
+/** The one footer, on every page. The page you're on is text, not a link. */
+function SiteFooter({path}: {path: string}) {
+	return jsx`
+		<footer class="site-footer">
+			<span class="by"><a href="/">IPAbet</a>, a <a href="https://bikeshaving.org">bikeshaving</a> project</span>
+			${NAV.map(([href, text]) =>
+				path === href || (href === "/blog" && path.startsWith("/blog/"))
+					? jsx`<span aria-current="page">${text}</span>`
+					: jsx`<a href=${href}>${text}</a>`)}
+		</footer>`;
+}
 
 export interface LayoutProps {
 	title: string;
@@ -73,9 +92,11 @@ export function Layout({title, desc, styles = [], path = "/", schema, children}:
 				     literal &quot; and the JSON would not parse. -->
 				<script type="application/ld+json"><${Raw} value=${schemaJson} /></script>
 				${styles.map((href) => jsx`<link rel="stylesheet" href=${href} />`)}
+				<link rel="stylesheet" href=${footerCss} />
 			</head>
 			<body>
 				${children}
+				<${SiteFooter} path=${path} />
 				<script type="module" src=${keycapsClient}></script>
 				<script type="module" src=${downloadClient}></script>
 			</body>

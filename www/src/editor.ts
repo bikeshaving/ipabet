@@ -52,13 +52,6 @@ export function Type() {
 					<h1><a href="/" style="color:inherit;text-decoration:none">IPA<span class="ipa">bet</span></a> <span style="font-weight:400">/type</span></h1>
 				</header>
 				<${Marked} markdown=${doc.body} components=${{...components, Pad: PadRoot, Keyboard: KeyboardRef, Chart: ChartEmbed}} />
-				<footer>
-					<a href="/">← IPAbet</a>
-					<a href="/chart">The chart</a>
-					<a href="/languages">Languages</a>
-					<a href="/learn">Learn</a>
-					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
-				</footer>
 			</main>
 			<script type="module" src=${typeClient}></script>
 			<script type="module" src=${CHART_CLIENT}></script>

@@ -42,16 +42,6 @@ export function Landing() {
 
 				<${Marked} markdown=${doc.body} components=${landingComponents} />
 
-				<footer>
-					<span>MIT © 2026 Brian Kim</span>
-					<a href="/chart">Chart</a>
-					<a href="/learn">Learn</a>
-					<a href="/type">Type</a>
-					<a href="/languages">Languages</a>
-					<a href="/design">Design</a>
-					<a href="/blog">Blog</a>
-					<a href="https://github.com/bikeshaving/ipabet">GitHub</a>
-				</footer>
 			</main>
 			<script type="module" src=${typingDemoClient}></script>
 		<//>`;

@@ -1,0 +1,17 @@
+/* The one footer, from <Layout>. Every page links it, including /chart and
+   /keys, which don't load global.css, so each colour has a fallback. */
+.site-footer {
+	max-width: 46rem; margin: 5rem auto 0; padding: 1.5rem 1.25rem 3rem;
+	border-top: 1px solid var(--line, #e4e4e4);
+	font: 0.9rem/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	color: var(--dim, #767676);
+	display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1.25rem;
+}
+.site-footer .by { margin-right: auto; }
+.site-footer a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line, #e4e4e4); }
+.site-footer a:hover { color: var(--accent, #2555c4); border-bottom-color: currentColor; }
+.site-footer [aria-current] { color: var(--fg, #1a1a1a); }
+@media (prefers-color-scheme: dark) {
+	.site-footer { border-top-color: var(--line, #2a2a2e); color: var(--dim, #909090); }
+}
+@media print { .site-footer { display: none; } }

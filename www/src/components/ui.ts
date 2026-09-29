@@ -34,12 +34,3 @@ export function Combo({keys = "", out, plain}: ComboProps) {
 				: jsx`<span class="arrow">→</span>${plain ? jsx`<b>${out}</b>` : jsx`<b class="ipa">${out}</b>`}`
 		}</span>`;
 }
-
-/** Footer nav. Links are [href, text] pairs; a bare string renders as text. */
-export function Footer({links = [], lead}: {links?: Array<[string, string]>; lead?: string}) {
-	return jsx`
-		<footer>
-			${lead ? jsx`<span>${lead}</span>` : null}
-			${links.map(([href, text]) => jsx`<a href=${href}>${text}</a>`)}
-		</footer>`;
-}

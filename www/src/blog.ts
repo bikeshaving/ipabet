@@ -60,11 +60,6 @@ export function BlogPost({post}: {post: Post}) {
 					post.attributes.draft === true ? jsx` · <span class="draft">draft</span>` : null
 				}</p>
 				<${Marked} markdown=${post.body} components=${components} />
-				<footer>
-					<a href="/">IPAbet</a>
-					<a href="/blog">All posts</a>
-					<a href="/feed.xml">Feed</a>
-				</footer>
 			</main>
 			<${SerializeScript} name="__CHART_AUDIO" value=${AUDIO} />
 			<script type="module" src=${chartsClient}></script>
