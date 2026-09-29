@@ -30,6 +30,7 @@
 
 .chart-embed {
 	position: relative; left: 50%; transform: translateX(-50%);
-	width: min(8.5in, calc(100vw - 2rem));
+	width: min(75rem, calc(100vw - 2rem));
+	container-type: inline-size;
 	overflow-x: auto; margin-top: 1rem;
 }
