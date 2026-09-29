@@ -70,8 +70,7 @@ workflow that produced it:
 
 The full official IPA chart is covered and notated at
 [ipabet.org/chart](https://ipabet.org/chart). The complete mapping is at
-[ipabet.org/keys](https://ipabet.org/keys) and in
-[`spec/ipabet.json`](spec/ipabet.json).
+[ipabet.org/keys](https://ipabet.org/keys).
 
 ## Repo
 

@@ -1,7 +1,6 @@
 import {jsx} from "@b9g/crank/jsx-tag";
 import {Marked} from "@b9g/crankdown";
 import spec from "../../spec/ipabet.json";
-import schema from "../../spec/ipabet.schema.json";
 import {Layout} from "./layout.ts";
 import {keySpelled as keystrokes} from "./keystrokes.ts";
 import {components} from "./marked-components.ts";
@@ -14,7 +13,7 @@ import keysCss from "./styles/keys.css" with {assetBase: "/assets/"};
 import kbdCss from "./styles/kbd.css" with {assetBase: "/assets/"};
 
 // /keys — the complete mapping as machine-readable tables, generated from
-// spec/ipabet.json. Prose is content/keys.md.
+// the spec. Prose is content/keys.md.
 
 interface Letter { key: string; glyph: string; cp?: string; name?: string; ipa?: boolean }
 interface MarkE {
@@ -103,5 +102,3 @@ export function Keys() {
 		<//>`;
 }
 
-export const SPEC_JSON = JSON.stringify(spec, null, "\t");
-export const SCHEMA_JSON = JSON.stringify(schema, null, "\t");
