@@ -14,7 +14,7 @@ A letter that is already an IPA symbol types itself: <Combo keys="s" out="s"/> <
 <Constraint name="Two keys at most">
 Every symbol is a letter, or a letter and one capital: <Combo keys="t ⇧R" out="ʈ"/>. Accents are separate keys on <kbd>⌥</kbd>.
 </Constraint>
-<Constraint name="Only the last letter changes">
+<Constraint name="Only the letter before changes">
 A key only ever changes the letter just before it, so what you get never depends on anything earlier.
 </Constraint>
 <Constraint name="Each capital means one thing">
