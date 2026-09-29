@@ -131,6 +131,8 @@ const capStyle = (k: PhysKey) => `grid-column: span ${Math.round(k.w * 4)}`;
  *  reader hold a modifier; the Option-layer chart on /keys opens on ⌥, which is
  *  the whole point of it being there. Either way every layer stays reachable —
  *  it is the same board, not a picture of one. */
+const LAYER_KEYS = {base: "No modifier", opt: "⌥", optshift: "⌥⇧", shift: "⇧"} as const;
+
 export function KeyboardRef({
 	layer = "base",
 	chart = false,
@@ -192,7 +194,9 @@ export function KeyboardRef({
 				)}
 			</div>
 			<div class="kcaption">
-				<span>hold — or click — <kbd>⌥</kbd> / <kbd>⌥⇧</kbd> / <kbd>⇧</kbd> to see each layer · hover for names · <a href="/chart">the chart</a> answers sound → keys</span>
+				<span>${chart
+					? jsx`<kbd>${LAYER_KEYS[layer]}</kbd> layer. Hover a key for its name.`
+					: jsx`Hold or click <kbd>⌥</kbd>, <kbd>⌥⇧</kbd> or <kbd>⇧</kbd> to see that layer. Hover a key for its name.`}</span>
 			</div>
 		</div>`;
 }
