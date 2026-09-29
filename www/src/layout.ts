@@ -18,7 +18,7 @@ const TAGLINE = "A fast and memorable keyboard for typing the International Phon
 
 const NAV: [string, string][] = [
 	["/type", "Type"], ["/chart", "Chart"], ["/keys", "Keys"], ["/languages", "Languages"],
-	["/learn", "Learn"], ["/blog", "Blog"], ["https://github.com/bikeshaving/ipabet", "GitHub"],
+	["/learn", "Learn"], ["/design", "Design"], ["/blog", "Blog"], ["https://github.com/bikeshaving/ipabet", "GitHub"],
 ];
 
 /** The one footer, on every page. The page you're on is text, not a link. */
