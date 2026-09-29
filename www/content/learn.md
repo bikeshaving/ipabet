@@ -1,6 +1,6 @@
 ---
-title: "Learn IPA — a typing tutor for the phonetic alphabet"
-description: "A touch-typing tutor for IPA. Drill the glyphs and a growing bank of real words, stage by stage, in your browser. No theory, no quizzes."
+title: "Learn to type IPA | IPAbet"
+description: "A typing course for IPA in your browser: one new sound at a time, with real words from the first lesson."
 ---
 
 <Scaffold/>

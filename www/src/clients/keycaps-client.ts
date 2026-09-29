@@ -38,7 +38,7 @@ function pill(): void {
 	if (document.getElementById("keymode-pill")) return;
 	const b = document.createElement("button");
 	b.id = "keymode-pill";
-	b.title = "Keystroke labels — Mac (⌥) or Windows and Linux (Alt)";
+	b.title = "Keystroke labels: Mac (⌥), or Windows and Linux (Alt)";
 	const NAMES: Record<KeyMode, string> = {mac: "mac", pc: "pc"};
 	const label = () => {
 		// The pad sets this when a native IME has taken the field; that

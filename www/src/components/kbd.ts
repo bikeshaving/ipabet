@@ -93,12 +93,12 @@ const SPECIALS: Record<string, {main: unknown; second: unknown; title: string}> 
 
 export function capTitle(ch: string): string {
 	const mod = /[a-z]/.test(ch) ? modifiers[ch.toUpperCase()] : undefined;
-	const modTitle = mod === undefined ? "" : ` — ⇧${ch.toUpperCase()} modifier: ${mod}`;
+	const modTitle = mod === undefined ? "" : `. ⇧${ch.toUpperCase()}: ${mod}`;
 	const sp = SPECIALS[ch];
 	if (sp !== undefined) return sp.title + modTitle;
 	const m = marks.get(ch);
 	if (m !== undefined) return `⌥${ch} ${(m.name ?? "").toLowerCase()}` + modTitle;
-	return (ch === "-" ? "⌥- reserved — the host’s dashes pass through" : `⌥${ch} passes to the host`) + modTitle;
+	return (ch === "-" ? "⌥- types the system’s dash" : `⌥${ch} types the system’s character`) + modTitle;
 }
 
 /** A typing cap's body: bare char in the corner, ⌥ and ⌥⇧ glyphs as layers.
@@ -150,10 +150,10 @@ export function KeyboardRef({
 	// Chrome with MEANING renders as real caps (with the meaning in the
 	// tooltip); the rest is bare plate.
 	const CHROME_TITLES: Record<string, string> = {
-		shift: "⇧ — the transforming modifier (⇧letter transforms the glyph before it); with ⌥, the second-form chord",
-		option: "⌥ — the mark chord: hold with a mark key, then type the base",
-		caps: "Caps Lock — a lock, not a modifier: letters type literal capitals and never transform",
-		backspace: "⌫ — peels a pending mark first, then native delete · ⌃⌫ unconverts the transform before the cursor",
+		shift: "⇧: after a letter, changes it (s⇧H → ʃ). With ⌥, a key’s second form.",
+		option: "⌥: hold with a key for an accent, then type the letter",
+		caps: "Caps Lock: capitals, never changed",
+		backspace: "⌫: removes a waiting accent first. ⌃⌫ undoes the last change.",
 		tab: "passes through untouched",
 		enter: "passes through untouched",
 	};

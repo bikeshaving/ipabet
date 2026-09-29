@@ -1,6 +1,6 @@
 ---
 title: "Type IPA Online | Free International Phonetic Alphabet Keyboard"
-description: "Type the International Phonetic Alphabet online, free, in your browser — a freeform IPA scratchpad running the real IPAbet engine, no install. The keyboard reference right below your text."
+description: "Type the International Phonetic Alphabet online, free, in your browser. The same engine as the IPAbet keyboard, with the keyboard and the IPA chart below."
 ---
 
 <Pad/>

@@ -1,6 +1,6 @@
 ---
-title: "IPA keystroke reference — every symbol and the keys that type it"
-description: "The complete IPAbet keystroke-to-IPA mapping as plain-text tables: every base, digraph, diacritic, and rule with explicit keystrokes, glyph, and Unicode codepoint."
+title: "IPA keystroke reference | IPAbet"
+description: "Every IPAbet keystroke as tables: letters, digraphs, diacritics, superscripts and subscripts, with Unicode codepoints."
 ---
 
 Every keystroke, as tables. ⇧ is Shift, ⌥ is Option (Alt on Windows and Linux), and a space separates keys pressed one after another.

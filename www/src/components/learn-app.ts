@@ -197,12 +197,12 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 					<h2>${partIntro}</h2>
 					${les.prose ? jsx`<p class="lore">${les.prose}</p>` : null}
 					${sounds.length ? jsx`<div class="scards">${sounds.map((s) => jsx`
-						<button class="scard" title=${s.title + " — tap to hear"} onclick=${() => play(s.audio)}>
+						<button class="scard" title=${s.title + ". Tap to hear it."} onclick=${() => play(s.audio)}>
 							<span class="g ipa">${s.sound}</span>
 							<span class="k">${s.keys.map((k) => displayKeys(k)).join(" ")}</span>
 						</button>`)}</div>` : null}
 					<button id="begin" onclick=${() => { partIntro = null; goWord(true); }}>${
-						sounds.length > 1 ? `Begin — ${sounds.length} new sounds` : "Begin"
+						sounds.length > 1 ? `Begin: ${sounds.length} new sounds` : "Begin"
 					}</button>
 				</div>`;
 		}
@@ -210,8 +210,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 			return jsx`
 				<div id="finish">
 					<div class="big ipa">/kəmˈpliːt/</div>
-					<p>${lessons.length} lessons — every sound on the chart, under your fingers.
-					The course ends; the keyboard doesn’t.</p>
+					<p>You’ve finished all ${lessons.length} lessons.</p>
 					<div class="acts">
 						<button id="hintbtn" onclick=${() => { finished = false; goWord(true); }}>Practice this lesson again</button>
 						<a href="/type">Open the scratchpad</a>
@@ -228,7 +227,7 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 		return jsx`
 			<div id="bar"><div id="barfill" style=${`width:${pct}%`}></div></div>
 			<div id="stage">
-				Lesson ${li + 1} / ${lessons.length} — ${les.title}${
+				Lesson ${li + 1} of ${lessons.length}: ${les.title}${
 					les.sound
 						? jsx` · new sound <span class="g">/${les.sound}/</span>${
 								les.keys ? jsx`  type ${les.keys.map((k) => jsx`<kbd>${displayKeys(k)}</kbd> `)}` : null
@@ -238,15 +237,15 @@ export function* LearnApp(this: Context, {lessons}: {lessons: Lesson[]}) {
 			</div>
 			<div id="note">${les.intro}</div>
 			${les.prose ? jsx`<details id="prose"><summary>more, if you’re curious</summary><p>${les.prose}</p></details>` : null}
-			<div id="prog">${wi === 0 && les.sound ? jsx`<span class="unlock">new sound</span> on its own first — keys shown` : `${wi + 1} / ${les.words.length}`}</div>
+			<div id="prog">${wi === 0 && les.sound ? jsx`<span class="unlock">new sound</span> keys shown` : `${wi + 1} / ${les.words.length}`}</div>
 			<div id="hero">
 				<div id="target" class=${earHide ? "ipa masked" : "ipa"}
 					style=${`cursor:${w.audio ? "pointer" : "default"}`}
-					title=${earHide ? "listen — type what you hear" : "play the sound"}
+					title=${earHide ? "Type what you hear" : "Play the sound"}
 					onclick=${playWord}>/${w.target}/</div>
 				<button id="say" aria-label="Play the sound" onclick=${playWord}><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.4 4.4 5.3H1.8v5.4h2.6L8 13.6z" fill="currentColor"/><path d="M10.4 5.3a3.4 3.4 0 0 1 0 5.4M12 3.5a5.8 5.8 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
 			</div>
-			<div id="word"><b>${w.word}</b>${w.gloss ? ` — ${w.gloss}` : ""}${w.lang ? jsx` <span class="chip">${w.lang}</span>` : null}</div>
+			<div id="word"><b>${w.word}</b>${w.gloss ? ` ‘${w.gloss}’` : ""}${w.lang ? jsx` <span class="chip">${w.lang}</span>` : null}</div>
 			<div id="typedwrap" class=${flash ?? undefined}><span id="typed">${buffer}</span><span class="caret"></span></div>
 			<div id="hint">${
 				earHide

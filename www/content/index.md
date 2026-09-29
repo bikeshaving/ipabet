@@ -9,13 +9,13 @@ IPAbet is an **extended US keyboard**. Unshifted keys type plain US letters, dig
 
 <Cards>
 <Card title="Works in every app">
-A real input method, not a website or a palette: type IPA directly into Word, Praat, ELAN, LaTeX, Slack, or your browser. Runs offline.
+Type IPA into Word, Praat, ELAN, LaTeX, Slack or your browser. Works offline.
 </Card>
-<Card title="Nothing to memorize">
-Digraphs follow familiar spellings (sh, th, zh). Diacritics are on Option, where the Mac’s accent keys already are. Glyphs with no Latin letter start from the number row (`5` `⇧H` → ə).
+<Card title="Familiar spellings">
+sh, th and ng become ʃ, θ and ŋ. Accents are on Option, like the Mac’s own accent keys. Symbols with no Latin letter start from a digit: `5` `⇧H` → ə.
 </Card>
-<Card title="Your keyboard stays yours">
-Unshifted keys are plain US, and Caps Lock disables transforms, so PATH types as PATH. Every key types something, and everything the IPA layer claims has an escape.
+<Card title="Capitals stay capitals">
+Holding Shift types capitals as usual, so SHIP stays SHIP. Caps Lock turns the changes off, so PATH stays PATH.
 </Card>
 </Cards>
 

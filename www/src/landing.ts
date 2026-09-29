@@ -34,7 +34,7 @@ export function Landing() {
 			<main>
 				<header>
 					<h1>IPA<span class="ipa">bet</span> <span class="beta">beta</span></h1>
-					<p class="tagline">The native IPA keyboard for your OS — fast and memorable.</p>
+					<p class="tagline">An IPA keyboard for macOS, Windows and Linux.</p>
 					<p class="trust">free · open source · offline</p>
 				</header>
 

@@ -176,7 +176,7 @@ export function* TypingDemo(this: Context, {demos, still = false}: {demos: Demo[
 					jsx`<kbd class=${i < hits ? "hit" : undefined}>${displayKeys(k)}</kbd>`) : null}</div>
 				<div class="out">
 					<input id="demoinput" class="ipa" ref=${(el: HTMLInputElement) => (input = el)}
-						aria-label=${still ? "IPA typing demo" : "Type IPA — click and type it yourself"}
+						aria-label=${still ? "IPA typing demo" : "Type IPA: click and type"}
 						readonly=${still} tabindex=${still ? -1 : undefined}
 						spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
 						onfocus=${still ? undefined : onfocus} onblur=${still ? undefined : onblur} />

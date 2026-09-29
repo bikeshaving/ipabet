@@ -80,50 +80,38 @@ const MODS = {
 	base: {
 		label: "bases", color: "#111827", pairs: [],
 		members: ["i","y","e","a","o","u","ə"],
-		desc: "Seven anchors. Six are plain letters on the periphery — i y e a o u — " +
-			"plus 5 ⇧H for ə at dead center. Everything else is base + one trailing capital.",
+		desc: "The plain vowels i y e a o u, and ə, typed 5⇧H. Every other vowel is one of these plus a capital.",
 	},
 	central: {
 		label: "-5", color: "#0d9488",
 		members: ["ə"],
 		pairs: [["e","ɜ"],["o","ɞ"],["a","ɐ"]],
-		desc: "5 is the center. As a base it carries the schwa itself — 5⇧H → ə, the " +
-			"digit’s default like every number root — and as a modifier ⇧5 pulls a " +
-			"cardinal into the ə-neighborhood: e⇧5→ɜ, o⇧5→ɞ, a⇧5→ɐ. Where ⇧Y slides " +
-			"a vowel central at its own height, ⇧5 converges on the center.",
+		desc: "⇧5 moves a vowel toward the center: e⇧5 → ɜ, o⇧5 → ɞ, a⇧5 → ɐ.",
 	},
 	H: {
 		label: "-H", color: "#d97706",
 		pairs: [["i","ɪ"],["y","ʏ"],["u","ʊ"],["e","ɛ"],["o","ɔ"],["a","ɑ"]],
-		desc: "The classic partner one notch toward the interior or the far corner: " +
-			"lax for the close vowels (ɪ ʏ ʊ), lowered for the mids (ɛ ɔ), and for a " +
-			"it slides along the open edge to back ɑ. Mirrors consonantal H (p→ɸ, t→θ): " +
-			"“the other one you learn second.”",
+		desc: "⇧H gives the vowel’s familiar partner: i → ɪ, y → ʏ, u → ʊ, e → ɛ, o → ɔ, a → ɑ.",
 	},
 	W: {
 		label: "-W", color: "#dc2626",
 		pairs: [["u","ɯ"],["e","ø"],["o","ɤ"],["a","ɶ"]],
-		desc: "Flip rounding in place: u→ɯ, e→ø, o→ɤ, a→ɶ. Same logic as " +
-			"consonantal w→ɰ (wW). Note the asymmetry: i’s rounded twin never needs iW " +
-			"because y is already a letter.",
+		desc: "⇧W flips rounding: u → ɯ, e → ø, o → ɤ, a → ɶ.",
 	},
 	A: {
 		label: "-A", color: "#7c3aed",
 		pairs: [["u","ʌ"],["o","ɒ"]],
-		desc: "The open(er) counterpart: u→ʌ, o→ɒ. Rounding follows the target: " +
-			"ʌ drops u’s rounding, ɒ keeps o’s.",
+		desc: "⇧A opens the vowel: u → ʌ, o → ɒ.",
 	},
 	E: {
 		label: "-E", color: "#059669",
 		pairs: [["a","æ"],["o","œ"]],
-		desc: "The ligature key. æ is literally a+e and œ is o+e — the keystroke spells " +
-			"the glyph’s own etymology: aE, oE.",
+		desc: "⇧E joins the letter with e: a → æ, o → œ.",
 	},
 	Y: {
 		label: "-Y", color: "#0284c7",
 		pairs: [["i","ɨ"],["u","ʉ"],["e","ɘ"],["o","ɵ"]],
-		desc: "Centralize: i→ɨ, u→ʉ, e→ɘ, o→ɵ. One uniform rule; the bar in " +
-			"ɨ ʉ ɵ is the mnemonic (ɘ, a reversed e, is the odd one out).",
+		desc: "⇧Y moves a vowel to the center at the same height: i → ɨ, u → ʉ, e → ɘ, o → ɵ.",
 	},
 };
 
@@ -309,7 +297,7 @@ export function *VowelApp({audio}) {
 				<div class="legend">
 					<span><span class="swatch rounded"></span> rounded</span>
 					<span><span class="swatch"></span> unrounded</span>
-					<span class="hint">drag the slider — front↔back becomes F2, close↔open becomes F1</span>
+					<span class="hint">Drag the slider: front to back becomes F2, close to open becomes F1.</span>
 				</div>
 
 				<div class="modbar">
@@ -444,42 +432,42 @@ const OPS = {
 	base: {
 		label:"bases", color:"#111827", pairs:[],
 		members:["p","b","t","d","c","ɟ","k","ɡ","q","m","n","r","f","v","s","z","l","h","j","x"],
-		desc:"The plain-letter keys — no trailing capital. Everything else is one of these plus a single operator letter, so the keyboard covers the whole grid with ~20 roots.",
+		desc:"The plain letters. Every other consonant here is one of these plus a capital.",
 	},
 	H: {
 		label:"-H", color:"#dc2626",
 		pairs:[["p","ɸ"],["b","β"],["t","θ"],["d","ð"],["c","ç"],["ɡ","ɣ"],["q","χ"],["s","ʃ"],["z","ʒ"],["h","ɦ"]],
-		desc:"The frication operator: turn a plosive into its fricative partner — p→ɸ, t→θ, c→ç, ɡ→ɣ, q→χ. Same H that laxes vowels to “the second one you learn.” Two riders: s→ʃ z→ʒ slide one column back (there’s no sibilant plosive to sit under), and h→ɦ just voices.",
+		desc:"⇧H makes a stop a fricative: p → ɸ, t → θ, c → ç, ɡ → ɣ, q → χ. It also turns s → ʃ, z → ʒ and h → ɦ.",
 	},
 	R: {
 		label:"-R", color:"#d97706",
 		pairs:[["t","ʈ"],["d","ɖ"],["n","ɳ"],["ɾ","ɽ"],["s","ʂ"],["z","ʐ"],["l","ɭ"],["ɹ","ɻ"]],
-		desc:"Retroflex: curl the tongue tip back. The cleanest operator in the set — every arrow lands in the retroflex column.",
+		desc:"⇧R makes a sound retroflex: t → ʈ, d → ɖ, n → ɳ, s → ʂ, z → ʐ.",
 	},
 	J: {
 		label:"-J", color:"#7c3aed",
 		pairs:[["d","ɟ"],["n","ɲ"],["l","ʎ"],["ɡ","ʝ"]],
-		desc:"Palatalize — pull the constriction up to the hard palate: d→ɟ, n→ɲ, l→ʎ. ɡ→ʝ overshoots stop to fricative — the system’s documented rough edge. (The alveolo-palatal fricatives ɕ ʑ = sJ zJ live in Other Symbols, off this grid, but share the logic.)",
+		desc:"⇧J makes a sound palatal: d → ɟ, n → ɲ, l → ʎ, ɡ → ʝ.",
 	},
 	Q: {
 		label:"-Q", color:"#0891b2",
 		pairs:[["ɡ","ɢ"],["n","ɴ"],["r","ʁ"]],
-		desc:"Uvular — the back-most stop region: ɡ→ɢ, n→ɴ, r→ʁ. Q is consistently “as far back as an oral consonant goes,” which is why the ⇧-digit pharyngeals take a trailing Q too.",
+		desc:"⇧Q moves a sound to the uvula: ɡ → ɢ, n → ɴ, r → ʁ.",
 	},
 	G: {
 		label:"-G", color:"#059669",
 		pairs:[["n","ŋ"],["l","ʟ"],["r","ʀ"]],
-		desc:"The back-resonant set: n→ŋ (velar nasal), l→ʟ (velar lateral), r→ʀ (uvular trill). G marks “velar-ish back” where Q would over-specify uvular — note ʀ is the one that drifts one notch further than its siblings.",
+		desc:"⇧G moves a sound back: n → ŋ, l → ʟ, r → ʀ.",
 	},
 	V: {
 		label:"-V", color:"#db2777",
 		pairs:[["m","ɱ"],["ɾ","ⱱ"]],
-		desc:"Labiodental: m→ɱ, ɾ→ⱱ. Small set — the V borrows the shape of the base v (itself the labiodental fricative), so the operator names its own home column.",
+		desc:"⇧V makes a sound labiodental: m → ɱ, ɾ → ⱱ.",
 	},
 	L: {
 		label:"-L", color:"#0284c7",
 		pairs:[["s","ɬ"],["z","ɮ"]],
-		desc:"Lateral airflow: s→ɬ, z→ɮ (the lateral fricatives). Same L as the lateral click lC=ǁ and lateral flap 4L=ɺ.",
+		desc:"⇧L makes a sound lateral: s → ɬ, z → ɮ.",
 	},
 };
 
@@ -620,7 +608,7 @@ export function *ConsonantApp({audio}) {
 				<div class="legend">
 					<span><span class="swatch voiced"></span> voiced</span>
 					<span><span class="swatch"></span> voiceless</span>
-					<span class="hint">drag the slider — even columns become anatomical position; the coronal cluster crowds up front</span>
+					<span class="hint">Drag the slider to move each column to where it’s made in the mouth.</span>
 				</div>
 
 				<div class="opbar">

@@ -328,7 +328,7 @@ export function ChartSheet({page = false}: {page?: boolean}) {
 				</div>
 			</div>
 
-			<p class="attrib"><span class="screen-only">Click any symbol to hear it — as data: <a href="/chart.json">chart.json</a> · <a href="/keys">keys</a>; audio from Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses. </span>IPA chart © 2015 International Phonetic Association, CC BY-SA 3.0; this sheet likewise · ipabet.org</p>
+			<p class="attrib"><span class="screen-only">Click any symbol to hear it. As data: <a href="/chart.json">chart.json</a>. Audio from Wikimedia Commons (Peter Isotalo, UCLA Phonetics Lab Archive 2003, et al.), free/copyleft licenses. </span>IPA chart © 2015 International Phonetic Association, CC BY-SA 3.0; this sheet likewise · ipabet.org</p>
 		</div>`;
 }
 

@@ -64,7 +64,7 @@ export function* Pad(
 					// erasing this — the pill is its element, borrowed here.
 					pill.dataset.standdown = "1";
 					pill.textContent = "keys: native IME";
-					pill.title = "The IPAbet input method is active — this page’s own engine is off";
+					pill.title = "The IPAbet keyboard is on, so this page’s own engine is off";
 				}
 			});
 			afterChange(ipa.pendingText());
