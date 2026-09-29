@@ -5,9 +5,7 @@ import {keySpelled, formatCompact as display} from "./keystrokes.ts";
 // @ts-ignore — Shovel rewrites these to hashed asset URLs at build time.
 import chartPdf from "./gen/chart.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
-import chartPdfWindows from "./gen/chart-windows.pdf" with {assetBase: "/assets/"};
-// @ts-ignore
-import chartPdfLinux from "./gen/chart-linux.pdf" with {assetBase: "/assets/"};
+import chartPdfPc from "./gen/chart-pc.pdf" with {assetBase: "/assets/"};
 // @ts-ignore
 import chartSheetCss from "./styles/chart-sheet.css" with {assetBase: "/assets/"};
 // @ts-ignore
@@ -305,7 +303,7 @@ export function ChartSheet() {
 	return jsx`
 		<div class="sheet">
 			<h1>THE INTERNATIONAL PHONETIC ALPHABET <i>in IPAbet keystrokes</i></h1>
-			<p class="legend">⇧ Shift · <span data-km-mac="⌥ Option" data-km-windows="AltGr (right Alt)" data-km-linux="Alt">⌥ Option</span> · a space separates keystrokes · a diacritic is typed before its letter</p>
+			<p class="legend">⇧ Shift · <span data-km-mac="⌥ Option" data-km-pc="Alt (right Alt on Windows)">⌥ Option</span> · a space separates keystrokes · a diacritic is typed before its letter</p>
 
 			<h3>CONSONANTS (PULMONIC)</h3>
 			<${PulmonicTable} />
@@ -344,7 +342,7 @@ export function Chart() {
 			path="/chart"
 			styles=${[chartSheetCss, chartCss]}
 		>
-			<p class="webnav"><a href="/">← IPAbet</a> · <a href=${chartPdf} data-href-mac=${chartPdf} data-href-windows=${chartPdfWindows} data-href-linux=${chartPdfLinux} download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or <kbd>⌘P</kbd>.</p>
+			<p class="webnav"><a href="/">← IPAbet</a> · <a href=${chartPdf} data-href-mac=${chartPdf} data-href-pc=${chartPdfPc} download="ipabet-chart.pdf">Download printable PDF</a> (one page) · or <kbd>⌘P</kbd>.</p>
 			<${ChartSheet} />
 			<script type="module" src=${chartAudio}></script>
 		<//>`;

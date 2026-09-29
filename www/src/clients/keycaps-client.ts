@@ -29,7 +29,7 @@ function apply(mode: KeyMode): void {
 		const it = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
 		for (let n = it.nextNode() as KmText | null; n; n = it.nextNode() as KmText | null) {
 			const orig = (n.__km ??= n.data);
-			const next = mode === "mac" ? orig : spell(orig, optLabel(mode));
+			const next = mode === "mac" ? orig : spell(orig, optLabel());
 			if (n.data !== next) n.data = next;
 		}
 	}
@@ -39,14 +39,14 @@ function pill(): void {
 	if (document.getElementById("keymode-pill")) return;
 	const b = document.createElement("button");
 	b.id = "keymode-pill";
-	b.title = "Keystroke labels — Mac (⌥), Windows (AltGr), Linux (Alt)";
-	const NAMES: Record<KeyMode, string> = {mac: "mac", windows: "windows", linux: "linux"};
+	b.title = "Keystroke labels — Mac (⌥) or Windows and Linux (Alt)";
+	const NAMES: Record<KeyMode, string> = {mac: "mac", pc: "pc"};
 	const label = () => {
 		// The pad sets this when a native IME has taken the field; that
 		// truth-telling outranks the keymode label until the page reloads.
 		if (b.dataset.standdown) return;
 		const mode = keyMode();
-		const key = mode === "mac" ? "⌥" : optLabel(mode);
+		const key = mode === "mac" ? "⌥" : optLabel();
 		b.textContent = `keys: ${key} ${NAMES[mode]}`;
 	};
 	b.addEventListener("click", () => {

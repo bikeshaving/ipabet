@@ -1,7 +1,7 @@
 #!/bin/bash
 # Regenerate the chart PDFs from the live /chart page (one Letter page each), one
-# per keystroke spelling: chart.pdf (Mac, also the macOS app's cheat sheet),
-# chart-windows.pdf, chart-linux.pdf. Run whenever the chart changes; needs
+# per keystroke spelling: chart.pdf (Mac, also the macOS app's cheat sheet) and
+# chart-pc.pdf (Windows and Linux). Run whenever the chart changes; needs
 # Chrome + a free port 7777.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -11,7 +11,7 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # stale orphan into the PDFs with no error.
 trap 'pkill -f "shovel develop" || true' EXIT
 (npx shovel develop src/server.ts --platform cloudflare >/tmp/chartpdf.log 2>&1 &) ; sleep 5
-for mode in mac windows linux; do
+for mode in mac pc; do
   out=src/gen/chart-$mode.pdf
   [ "$mode" = mac ] && out=src/gen/chart.pdf
   "$CHROME" --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=4000 \

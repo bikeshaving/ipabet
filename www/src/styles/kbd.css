@@ -101,6 +101,6 @@
 .kbd--chart .cap:not(.ck):hover { border-color: var(--kbd-line); }
 .kbd--chart .cap:not(.ck):active { transform: none; }
 
-/* A chrome cap holds a symbol on a Mac and a word on a PC — "AltGr" in a 1.25u
+/* A chrome cap holds a symbol on a Mac and a word on a PC — "Shift" in a 1.25u
    key. Shrink the type rather than let it spill. */
 :root:not([data-keymode="mac"]) .cap.ck { font-size: .62em; letter-spacing: -0.01em; }
