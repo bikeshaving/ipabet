@@ -12,7 +12,7 @@ edit it hands back, so the ports cannot drift.
 
 ```sh
 ./build.sh          # build/IPAbet.app
-./build.sh install  # + install to ~/Library/Input Methods/
+./build.sh install  # + install to /Library/Input Methods/ (asks for sudo)
 ```
 
 The app is a **universal binary**: the engine crate builds for both
@@ -26,13 +26,11 @@ if IPA still does not show in the menu, log out and back in. After a rebuild:
 `pkill IPAbet`, then quit and relaunch the app under test — apps hold a
 session to the old process.
 
-**One installed copy at a time.** `build.sh install` writes
-`~/Library/Input Methods/`, the pkg writes `/Library/Input Methods/`, and every
-copy macOS can see registers as its own input source — two copies means IPAbet
-listed twice. So `build.sh install` refuses while the release is installed
-(uninstall it first with `sudo "/Library/Input Methods/IPAbet.app/Contents/Resources/uninstall.sh"`),
-and the pkg's postinstall removes a dev copy it finds. `pgrep -lf IPAbet` says
-which copy is live.
+**One installed copy at a time.** Every copy in an Input Methods folder shows
+up as its own IPAbet in the input menu. `build.sh install` and the pkg both
+write `/Library/Input Methods/IPAbet.app`, so each replaces the other. Both
+also remove an old dev copy from `~/Library/Input Methods/`. If the helper
+still finds two copies, it fails and says so.
 
 ## Composition model
 

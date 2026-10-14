@@ -80,19 +80,23 @@ echo "built $APP"
 LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 "$LSREGISTER" -u "$PWD/$APP" >/dev/null 2>&1 || true
 
+# Dev installs go where the pkg puts the release, so installing either one
+# replaces the other and two copies never reach the input menu.
 if [[ "${1:-}" == "install" ]]; then
-  PROD="/Library/Input Methods/IPAbet.app"
-  if [ -d "$PROD" ]; then
-    echo "a release is installed at $PROD; a dev copy beside it registers a second IPAbet." >&2
-    echo "remove it first:  sudo \"$PROD/Contents/Resources/uninstall.sh\"" >&2
-    exit 1
-  fi
+  DEST="/Library/Input Methods/IPAbet.app"
   OLD=~/Library/Input\ Methods/IPAbet.app
-  [ -x "$OLD/Contents/MacOS/ipabet-register" ] && "$OLD/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
-  "$LSREGISTER" -u "$OLD" >/dev/null 2>&1 || true
-  rm -rf "$OLD"
-  cp -R "$APP" ~/Library/Input\ Methods/
-  ~/Library/Input\ Methods/IPAbet.app/Contents/MacOS/ipabet-register \
-    && echo "installed; registration attempted — if IPA is not in the input menu, log out/in." \
-    || echo "installed; registration failed — log out/in and add it in System Settings."
+  for copy in "$DEST" "$OLD"; do
+    [ -x "$copy/Contents/MacOS/ipabet-register" ] && "$copy/Contents/MacOS/ipabet-register" --disable >/dev/null 2>&1 || true
+  done
+  pkill -x IPAbet 2>/dev/null || true
+  if [ -d "$OLD" ]; then
+    "$LSREGISTER" -u "$OLD" >/dev/null 2>&1 || true
+    rm -rf "$OLD"
+  fi
+  sudo mkdir -p "/Library/Input Methods"
+  sudo rm -rf "$DEST"
+  sudo cp -R "$APP" "$DEST"
+  "$DEST/Contents/MacOS/ipabet-register" \
+    && echo "installed $DEST; if IPA is not in the input menu, log out and back in." \
+    || { echo "installed $DEST; registration failed, see above." >&2; exit 1; }
 fi

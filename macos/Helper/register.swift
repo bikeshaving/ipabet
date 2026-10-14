@@ -72,6 +72,7 @@ if let list = TISCreateInputSourceList(nil, true)?.takeRetainedValue() as? [TISI
     }
 }
 if copies > 1 {
-    FileHandle.standardError.write(Data("warning: \(copies) copies of IPAbet.app are registered and each one appears in the input menu. Remove the others — a dev copy in ~/Library/Input Methods, or a build directory — then log out and back in.\n".utf8))
+    FileHandle.standardError.write(Data("error: \(copies) copies of IPAbet.app are registered and each one appears in the input menu. Keep only /Library/Input Methods/IPAbet.app, then log out and back in.\n".utf8))
+    exit(1)
 }
 print("registered + enabled in the current session")
