@@ -120651,7 +120651,7 @@
    }
   ],
   "initial": "",
-  "expected": "θiŋ",
+  "expected": "ΘIŊ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120774,7 +120774,7 @@
    }
   ],
   "initial": "",
-  "expected": "ʃa",
+  "expected": "ƩA",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120854,7 +120854,7 @@
    }
   ],
   "initial": "",
-  "expected": "ə",
+  "expected": "Ə",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120876,7 +120876,7 @@
    }
   ],
   "initial": "",
-  "expected": "ħ",
+  "expected": "Ħ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120949,7 +120949,7 @@
    }
   ],
   "initial": "",
-  "expected": "θe",
+  "expected": "ΘE",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -121138,7 +121138,7 @@
    }
   ],
   "initial": "",
-  "expected": "$PAθ",
+  "expected": "$PAΘ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127166,7 +127166,7 @@
    }
   ],
   "initial": "",
-  "expected": "æ",
+  "expected": "Æ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127252,7 +127252,7 @@
    }
   ],
   "initial": "",
-  "expected": "The æ",
+  "expected": "The Æ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127352,7 +127352,7 @@
    }
   ],
   "initial": "",
-  "expected": "ɣɣɣ",
+  "expected": "ƔƔƔ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127360,7 +127360,7 @@
   "keys": [
    {
     "key": "g",
-    "shift": true,
+    "shift": false,
     "option": false,
     "shiftBroke": false,
     "control": false
@@ -127369,7 +127369,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": true,
+    "shiftBroke": false,
     "control": false
    },
    {
@@ -127388,7 +127388,7 @@
    }
   ],
   "initial": "",
-  "expected": "Ɣɣ",
+  "expected": "ɣɣ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -130861,6 +130861,57 @@
   "expected": "é",
   "locale": "en",
   "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "θe",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "5",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ə",
+  "locale": "en",
+  "capital_digraphs": false
  },
  {
   "keys": [

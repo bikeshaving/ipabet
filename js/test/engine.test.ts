@@ -73,8 +73,8 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 		expect(chain("s", "+h", "+t", "+r")).toBe("ʃʈ"));
 	test("a whole word held: t ⇧H ⇧I ⇧N ⇧G ⇧K → θiŋk", () =>
 		expect(chain("t", "+h", "+i", "+n", "+g", "+k")).toBe("θiŋk"));
-	test("held from the first key, the pair is IPA: ⇧T⇧H⇧I⇧N⇧G → θiŋ", () =>
-		expect(chain("+t", "+h", "+i", "+n", "+g")).toBe("θiŋ"));
+	test("a capital first letter makes the capital: ⇧T⇧H⇧I⇧N⇧G → ΘIŊ", () =>
+		expect(chain("+t", "+h", "+i", "+n", "+g")).toBe("ΘIŊ"));
 	test("a held digit is the digit's base: ʃ ⇧5 ⇧H → ʃə", () =>
 		expect(chain("s", "+h", "+5", "+h")).toBe("ʃə"));
 
@@ -82,23 +82,22 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	// starts no chain.
 	test("acronym URL stays URL", () => expect(chain("+u", "+r", "+l")).toBe("URL"));
 	test("acronym API stays API", () => expect(chain("+a", "+p", "+i")).toBe("API"));
-	// Held through a pair, an acronym is IPA. Released between the pair it is a
-	// capital digraph; with those off, tapping Shift types the literal.
-	test("held: ⇧S⇧H⇧A → ʃa", () => expect(chain("+s", "+h", "+a")).toBe("ʃa"));
+	// With capital digraphs on, a capital pair is a capital digraph, held or
+	// not; with them off, held Shift types IPA and tapped Shift the literal.
+	test("held: ⇧S⇧H⇧A → ƩA", () => expect(chain("+s", "+h", "+a")).toBe("ƩA"));
 	test("released between the pair: ⇧S ^⇧H ⇧A → ƩA", () =>
 		expect(chain("+s", "^+h", "+a")).toBe("ƩA"));
 	test("held: ⇧P⇧H⇧P → ɸp", () => expect(chain("+p", "+h", "+p")).toBe("ɸp"));
-	// The shifted digit is the digit's base held, its capital plane released —
-	// Azerbaijani's Ə lives here.
-	test("digit bases: held ⇧5⇧H → ə, ⇧7⇧H → ħ", () => {
-		expect(chain("+5", "+h")).toBe("ə");
-		expect(chain("+7", "+h")).toBe("ħ");
+	// The shifted digit is the digit's capital plane — Azerbaijani's Ə lives here.
+	test("digit capitals: held ⇧5⇧H → Ə, ⇧7⇧H → Ħ", () => {
+		expect(chain("+5", "+h")).toBe("Ə");
+		expect(chain("+7", "+h")).toBe("Ħ");
 	});
 	test("digit capitals: ⇧5 ^⇧H → Ə", () => expect(chain("+5", "^+h")).toBe("Ə"));
 	test("digit capital glottal: ⇧2 ^⇧H → Ɂ (U+0241, the Dene capital)", () =>
 		expect(chain("+2", "^+h")).toBe("\u{0241}"));
-	test("held: ⇧T⇧H⇧E → θe; released: ⇧T ^⇧H ⇧E → ΘE", () => {
-		expect(chain("+t", "+h", "+e")).toBe("θe");
+	test("held or released: ⇧T⇧H⇧E → ΘE", () => {
+		expect(chain("+t", "+h", "+e")).toBe("ΘE");
 		expect(chain("+t", "^+h", "+e")).toBe("ΘE");
 	});
 
@@ -115,8 +114,8 @@ describe("shift-chaining (hold shift to continue IPA)", () => {
 	});
 	test("held after an IPA glyph: ɾ ⇧P⇧A⇧T⇧H → ɾpaθ", () =>
 		expect(chain("4", "+h", "+p", "+a", "+t", "+h")).toBe("ɾpaθ"));
-	test("a capital starts no chain: $ ⇧P⇧A⇧T⇧H → $PAθ", () =>
-		expect(chain("+4", "+p", "+a", "+t", "+h")).toBe("$PAθ"));
+	test("a capital starts no chain: $ ⇧P⇧A⇧T⇧H → $PAΘ", () =>
+		expect(chain("+4", "+p", "+a", "+t", "+h")).toBe("$PAΘ"));
 });
 
 describe("clicks (C modifier)", () => {
@@ -727,8 +726,8 @@ describe("shift release ends the chain → next digraph is a fresh capital", () 
 		expect(typed("4", "+h", "^+p", "^+a")).toBe("ɾPA"));
 });
 
-// Capital digraphs: capitalize the base, capitalize the result. A shift release
-// between the pair forms them (⇧A ^⇧E → Æ); held through, the pair is IPA. Every real uppercase is
+// Capital digraphs: capitalize the base, capitalize the result, held or not
+// (⇧A⇧E → Æ). With them off, a held pair is IPA. Every real uppercase is
 // reachable — orthographic (Ŋ Ɛ Ɔ), phantom (Ʃ Ʈ), Greek (Θ Β Χ), and the
 // hand-mapped Dene glottal (Ɂ). Only a plain-ASCII result (tJ→c→C) is excluded,
 // being nonsense as a digraph. The IPA has no capitals, so this is purely an
@@ -766,22 +765,21 @@ describe("capital digraphs (capitalize the base → capitalize the result)", () 
 		])).toBe("TH"));
 	test("ASCII uppercase excluded: ⇧T⇧J → TJ (not C)", () =>
 		expect(typed("+t", "+j")).toBe("TJ"));
-	test("held through the pair it is IPA: ⇧A⇧E → æ", () =>
-		expect(typed("+a", "+e")).toBe("æ"));
+	test("held through the pair: ⇧A⇧E → Æ", () =>
+		expect(typed("+a", "+e")).toBe("Æ"));
 	test("does not disturb a lowercase chain: ə ⇧O⇧H → əɔ", () =>
 		expect(typed("5", "+h", "+o", "+h")).toBe(nfc("əɔ")));
 	// Only a release BETWEEN base and modifier makes the capital; one before the
 	// capital, from typing the previous word, does not.
-	test("held after a release is still IPA: The ⇧A⇧E → The æ", () =>
-		expect(typed("+t", "h", "e", " ", "^+a", "+e")).toBe("The æ"));
+	test("held after a release: The ⇧A⇧E → The Æ", () =>
+		expect(typed("+t", "h", "e", " ", "^+a", "+e")).toBe("The Æ"));
 	test("a release between the pair: The ⇧A ^⇧E → The Æ", () =>
 		expect(typed("+t", "h", "e", " ", "^+a", "^+e")).toBe("The Æ"));
-	// Held, the run stays lowercase IPA; a capital digraph starts no chain, so a
-	// held run after one stays capital.
-	test("held run: ⇧G⇧H⇧G⇧H⇧G⇧H → ɣɣɣ", () =>
-		expect(typed("+g", "+h", "+g", "+h", "+g", "+h")).toBe(nfc("ɣɣɣ")));
-	test("a capital, then a held pair: ⇧G ^⇧H ⇧G⇧H → Ɣɣ", () =>
-		expect(typed("+g", "^+h", "+g", "+h")).toBe(nfc("Ɣɣ")));
+	// A capital digraph starts no chain, so a held run after one stays capital.
+	test("held run: ⇧G⇧H⇧G⇧H⇧G⇧H → ƔƔƔ", () =>
+		expect(typed("+g", "+h", "+g", "+h", "+g", "+h")).toBe(nfc("ƔƔƔ")));
+	test("a lowercase start keeps the run lowercase: g⇧H ⇧G⇧H → ɣɣ", () =>
+		expect(typed("g", "+h", "+g", "+h")).toBe(nfc("ɣɣ")));
 	test("a capital digraph starts no chain: ⇧T ^⇧H ⇧E ⇧K → ΘEK", () =>
 		expect(typed("+t", "^+h", "+e", "+k")).toBe("ΘEK"));
 	test("consecutive capital digraphs: ⇧A ^⇧E ^⇧N ^⇧G → ÆŊ", () =>
@@ -1130,6 +1128,8 @@ describe("capital digraphs are OFF by default — tapping shift yells", () => {
 	/** Shift HELD across a whole word. */
 	const held = (w: string) => typed(...[...w].map((c) => "+" + c.toLowerCase()));
 	test("held across a word, it is IPA", () => {
+		expect(held("THE")).toBe("θe");
+		expect(typed("+5", "+h")).toBe("ə");
 		expect(held("SHIP")).toBe("ʃip");
 		expect(held("THING")).toBe("θiŋ");
 		expect(held("URL")).toBe("URL");

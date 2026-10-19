@@ -590,20 +590,20 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	const p = pending.length === 0 ? lastCluster(textBefore) : undefined;
 	if (p !== undefined) {
 		let {base, marks} = decompose(p);
-		// A shifted pair held through is lowercase IPA (⇧T⇧H → θ); with Shift
-		// released between the two keys it is a capital digraph (⇧T ⟨release⟩ ⇧H
-		// → Θ). The shifted digit is the digit's capital plane (⇧5⇧H → ə, Ə).
+		// With capital digraphs on, a shifted pair is the capital (⇧T⇧H → Θ).
+		// Otherwise, held through it is lowercase IPA (⇧T⇧H → θ). The shifted
+		// digit is the digit's capital plane (⇧5⇧H → Ə, ə).
 		if (shift && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
 			const pairBase = /^[A-Z]$/.test(base) ? base.toLowerCase() : digit;
 			const low = pairBase === undefined ? undefined : transforms.get(pairBase + s);
 			if (low !== undefined) {
-				if (chainLive) return {edit: replaceCluster(p, recompose(low, marks)), pending: []};
 				// See capitalOf.
 				const up = capitalDigraphs ? capitalOf(low) : undefined;
 				if (up !== undefined) {
 					return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
 				}
+				if (chainLive) return {edit: replaceCluster(p, recompose(low, marks)), pending: []};
 			}
 		}
 		const combo = transforms.get(base + s);

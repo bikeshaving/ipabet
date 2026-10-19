@@ -755,10 +755,10 @@ impl Engine {
         if let Some(p) = p {
             let (base, marks) = Self::decompose(p);
 
-            // A shifted pair held through is lowercase IPA (⇧T⇧H → θ); with
-            // Shift released between the two keys it is a capital digraph
-            // (⇧T ⟨release⟩ ⇧H → Θ). The shifted digit is the digit's capital
-            // plane (⇧5⇧H → ə, Ə).
+            // With capital digraphs on, a shifted pair is the capital
+            // (⇧T⇧H → Θ). Otherwise, held through it is lowercase IPA
+            // (⇧T⇧H → θ). The shifted digit is the digit's capital plane
+            // (⇧5⇧H → Ə, ə).
             if shift && !k.caps_lock {
                 let pair_base = if base.len() == 1 && base.as_bytes()[0].is_ascii_uppercase() {
                     Some(base.to_ascii_lowercase())
@@ -768,16 +768,16 @@ impl Engine {
                         .map(|d| d.to_string())
                 };
                 if let Some(low) = pair_base.and_then(|b| self.transforms.get(&format!("{b}{s}"))) {
-                    if chain_live {
-                        let text = Self::recompose(low, &marks);
-                        return Step { edit: Edit::Replace { length: p.chars().count(), text }, pending: vec![], chain_broken: None };
-                    }
                     // See capital_of.
                     if self.capital_digraphs
                         && let Some(up) = Self::capital_of(low.chars().next().unwrap()) {
                             let text = Self::recompose(&up.to_string(), &marks);
                             return Step { edit: Edit::Replace { length: p.chars().count(), text }, pending: vec![], chain_broken: None };
                         }
+                    if chain_live {
+                        let text = Self::recompose(low, &marks);
+                        return Step { edit: Edit::Replace { length: p.chars().count(), text }, pending: vec![], chain_broken: None };
+                    }
                 }
             }
             let combo_key = format!("{base}{s}");

@@ -94,8 +94,8 @@ export function latinLetters(): LatinLetter[] {
 	setCapitalDigraphs(true);
 	for (const d of digraphs) {
 		const up: Step = {
-			strokes: d.step.strokes.map((s, i) => ({...s, shift: true, shiftBroke: i > 0})),
-			label: d.step.strokes.map((s) => "⇧" + s.key.toUpperCase()).join(" "),
+			strokes: d.step.strokes.map((s) => ({...s, shift: true})),
+			label: d.step.strokes.map((s) => "⇧" + s.key.toUpperCase()).join(""),
 		};
 		record(type([up]), [up], d.base, true);
 	}
