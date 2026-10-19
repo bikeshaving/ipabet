@@ -15,7 +15,7 @@ Type IPA into Word, Praat, ELAN, LaTeX, Slack or your browser. Works offline.
 sh, th and ng become ʃ, θ and ŋ. Accents are on Option, like the Mac’s own accent keys. Symbols with no Latin letter start from a digit: `5` `⇧H` → ə.
 </Card>
 <Card title="Capitals stay capitals">
-Holding Shift types capitals as usual, so SHIP stays SHIP. Caps Lock turns the changes off, so PATH stays PATH.
+Tap Shift for each capital, so SHIP stays SHIP. Hold it through a word and it types IPA: `⇧S⇧H⇧I⇧P` → ʃip. Caps Lock turns the changes off, so PATH stays PATH.
 </Card>
 </Cards>
 

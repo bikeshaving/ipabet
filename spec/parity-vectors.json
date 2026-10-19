@@ -120522,7 +120522,7 @@
    }
   ],
   "initial": "",
-  "expected": "ʃT",
+  "expected": "ʃt",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120579,6 +120579,27 @@
     "control": false
    },
    {
+    "key": "i",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
     "key": "k",
     "shift": true,
     "option": false,
@@ -120587,7 +120608,86 @@
    }
   ],
   "initial": "",
-  "expected": "θK",
+  "expected": "θiŋk",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "θiŋ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "5",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ʃə",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120674,7 +120774,7 @@
    }
   ],
   "initial": "",
-  "expected": "ƩA",
+  "expected": "ʃa",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120732,7 +120832,7 @@
    }
   ],
   "initial": "",
-  "expected": "PHP",
+  "expected": "ɸp",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120754,7 +120854,7 @@
    }
   ],
   "initial": "",
-  "expected": "Ə",
+  "expected": "ə",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120776,7 +120876,7 @@
    }
   ],
   "initial": "",
-  "expected": "Ħ",
+  "expected": "ħ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120798,7 +120898,7 @@
    }
   ],
   "initial": "",
-  "expected": "%H",
+  "expected": "Ə",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -120815,7 +120915,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -120838,6 +120938,35 @@
     "shift": true,
     "option": false,
     "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "θe",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
     "control": false
    },
    {
@@ -120966,7 +121095,50 @@
    }
   ],
   "initial": "",
-  "expected": "ɾPAΘ",
+  "expected": "ɾpaθ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "4",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "$PAθ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -124247,7 +124419,7 @@
    }
   ],
   "initial": "",
-  "expected": "ɾPAΘ",
+  "expected": "ɾpaθ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -126062,7 +126234,8 @@
    },
    {
     "key": "h",
-    "shift": true
+    "shift": true,
+    "shiftBroke": true
    },
    {
     "key": "⌫",
@@ -126169,7 +126342,8 @@
    },
    {
     "key": "h",
-    "shift": true
+    "shift": true,
+    "shiftBroke": true
    },
    {
     "key": "⌫",
@@ -126261,14 +126435,7 @@
  {
   "keys": [
    {
-    "key": "t",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
+    "key": "k",
     "shift": true,
     "option": false,
     "shiftBroke": false,
@@ -126276,21 +126443,14 @@
    }
   ],
   "initial": " ",
-  "expected": " Θ",
+  "expected": " K",
   "locale": "en",
   "capital_digraphs": true
  },
  {
   "keys": [
    {
-    "key": "t",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
+    "key": "k",
     "shift": true,
     "option": false,
     "shiftBroke": false,
@@ -126298,21 +126458,14 @@
    }
   ],
   "initial": "“",
-  "expected": "“Θ",
+  "expected": "“K",
   "locale": "en",
   "capital_digraphs": true
  },
  {
   "keys": [
    {
-    "key": "t",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
+    "key": "k",
     "shift": true,
     "option": false,
     "shiftBroke": false,
@@ -126320,7 +126473,7 @@
    }
   ],
   "initial": "—",
-  "expected": "—Θ",
+  "expected": "—K",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -126454,12 +126607,41 @@
     "option": false,
     "shiftBroke": true,
     "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "ʃI",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
    },
    {
     "key": "h",
     "shift": true,
     "option": false,
     "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126531,7 +126713,7 @@
     "key": "r",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126589,33 +126771,19 @@
     "key": "p",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "a",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "t",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
   "initial": "",
-  "expected": "ɾPAΘ",
+  "expected": "ɾPA",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -126632,7 +126800,7 @@
     "key": "e",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126654,7 +126822,7 @@
     "key": "e",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126676,7 +126844,7 @@
     "key": "w",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126698,7 +126866,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126720,7 +126888,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126742,7 +126910,7 @@
     "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126764,7 +126932,7 @@
     "key": "r",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126786,7 +126954,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126808,7 +126976,7 @@
     "key": "r",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126888,7 +127056,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126910,7 +127078,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126932,7 +127100,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -126993,12 +127161,12 @@
     "key": "e",
     "shift": true,
     "option": false,
-    "shiftBroke": true,
+    "shiftBroke": false,
     "control": false
    }
   ],
   "initial": "",
-  "expected": "Æ",
+  "expected": "æ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127084,6 +127252,56 @@
    }
   ],
   "initial": "",
+  "expected": "The æ",
+  "locale": "en",
+  "capital_digraphs": true
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": " ",
+    "shift": false,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "a",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   }
+  ],
+  "initial": "",
   "expected": "The Æ",
   "locale": "en",
   "capital_digraphs": true
@@ -127091,8 +127309,8 @@
  {
   "keys": [
    {
-    "key": "s",
-    "shift": false,
+    "key": "g",
+    "shift": true,
     "option": false,
     "shiftBroke": false,
     "control": false
@@ -127105,10 +127323,24 @@
     "control": false
    },
    {
-    "key": "i",
+    "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": true,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
     "control": false
    },
    {
@@ -127120,7 +127352,7 @@
    }
   ],
   "initial": "",
-  "expected": "ʃꞮ",
+  "expected": "ɣɣɣ",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127137,21 +127369,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "g",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
@@ -127170,14 +127388,14 @@
    }
   ],
   "initial": "",
-  "expected": "Ɣɣɣ",
+  "expected": "Ɣɣ",
   "locale": "en",
   "capital_digraphs": true
  },
  {
   "keys": [
    {
-    "key": "g",
+    "key": "t",
     "shift": true,
     "option": false,
     "shiftBroke": false,
@@ -127185,34 +127403,20 @@
    },
    {
     "key": "h",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "g",
-    "shift": false,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "h",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "g",
     "shift": true,
     "option": false,
     "shiftBroke": true,
     "control": false
    },
    {
-    "key": "h",
+    "key": "e",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "k",
     "shift": true,
     "option": false,
     "shiftBroke": false,
@@ -127220,7 +127424,7 @@
    }
   ],
   "initial": "",
-  "expected": "ƔɣƔ",
+  "expected": "ΘEK",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -127237,7 +127441,7 @@
     "key": "e",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
@@ -127251,43 +127455,7 @@
     "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
-    "control": false
-   }
-  ],
-  "initial": "",
-  "expected": "ÆŊ",
-  "locale": "en",
-  "capital_digraphs": true
- },
- {
-  "keys": [
-   {
-    "key": "a",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "e",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
-    "control": false
-   },
-   {
-    "key": "n",
-    "shift": true,
-    "option": false,
     "shiftBroke": true,
-    "control": false
-   },
-   {
-    "key": "g",
-    "shift": true,
-    "option": false,
-    "shiftBroke": false,
     "control": false
    }
   ],
@@ -128374,7 +128542,7 @@
     "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -128447,7 +128615,7 @@
     "key": "t",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -128491,7 +128659,7 @@
     "key": "i",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130726,7 +130894,7 @@
    }
   ],
   "initial": "",
-  "expected": "SHIP",
+  "expected": "ʃip",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -130747,10 +130915,118 @@
     "control": false
    },
    {
-    "key": "e",
+    "key": "i",
     "shift": true,
     "option": false,
     "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "n",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "g",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "θiŋ",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "u",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "r",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "l",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "URL",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "s",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   },
+   {
+    "key": "i",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   },
+   {
+    "key": "p",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   }
+  ],
+  "initial": "",
+  "expected": "SHIP",
+  "locale": "en",
+  "capital_digraphs": false
+ },
+ {
+  "keys": [
+   {
+    "key": "t",
+    "shift": true,
+    "option": false,
+    "shiftBroke": false,
+    "control": false
+   },
+   {
+    "key": "h",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
+    "control": false
+   },
+   {
+    "key": "e",
+    "shift": true,
+    "option": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130772,28 +131048,28 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "i",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "n",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "k",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130815,21 +131091,21 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "a",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "t",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130851,28 +131127,28 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "o",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "s",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "t",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130894,42 +131170,42 @@
     "key": "o",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "t",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "i",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "n",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130951,28 +131227,28 @@
     "key": "i",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "g",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "t",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -130994,35 +131270,35 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "a",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "n",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "k",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    },
    {
     "key": "s",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -131044,7 +131320,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],
@@ -131124,7 +131400,7 @@
     "key": "h",
     "shift": true,
     "option": false,
-    "shiftBroke": false,
+    "shiftBroke": true,
     "control": false
    }
   ],

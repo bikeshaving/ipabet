@@ -255,9 +255,10 @@ test("REGRESSION: releasing ⇧ breaks the chain — the browser must see the ke
 	const {f, press, shiftUp} = setup();
 	press("s");
 	press("h", {shift: true}); // → ʃ
-	shiftUp();                 // chain broken: what follows is a FRESH capital run
+	shiftUp();                 // chain broken: what follows is a FRESH capital
 	press("a", {shift: true});
-	press("e", {shift: true}); // ⇧A⇧E is the capital digraph, not a chain
+	shiftUp();
+	press("e", {shift: true}); // ⇧A ⟨release⟩ ⇧E is the capital digraph, not a chain
 	expect(f.value).toBe("ʃÆ");
 });
 

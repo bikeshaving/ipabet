@@ -11,6 +11,7 @@ grammatical mnemonic system based on shifted modifiers.
 
 ```
 s ⇧H i ⇧H p    → ʃɪp
+⇧S⇧H⇧I⇧P       → ʃip  (Shift held throughout)
 t ⇧H i ⇧H n ⇧G → θɪŋ
 n ⇧J a         → ɲa
 ⌥e a           → á
@@ -55,6 +56,9 @@ workflow that produced it:
   `s ⇧H` → ʃ
   `t ⇧R` → ʈ
   `n ⇧G` → ŋ
+- **Holding Shift** through a word keeps typing IPA: each shifted key
+  modifies the glyph before it, or types its lowercase letter.
+  `⇧T⇧H⇧I⇧N⇧G` → θiŋ. Tapping Shift for each letter types capitals.
 - **Digits are bases** for the symbols with no Latin letter:
   `2 ⇧H` → ʔ
   `3 ⇧H` → ʕ

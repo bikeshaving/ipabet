@@ -254,6 +254,17 @@ function lastCluster(text: string): string | undefined {
 	return last;
 }
 
+/** Whether a held-Shift chain continues after `text`: behind the letters and
+ *  digits the chain typed sits a lowercase IPA segment. The segment test is a
+ *  non-ASCII LETTER or mark, not merely non-ASCII: terminals report the empty
+ *  start-of-line cell as NBSP, and a bare `> 127` test would chain from it. */
+function chainContinues(text: string): boolean {
+	const seg = lastCluster(text.replace(/[a-z0-9]+$/, ""));
+	if (seg === undefined) return false;
+	if (![...seg].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c))) return false;
+	return !/[\p{Lu}\p{Lt}]/u.test(decompose(seg).base);
+}
+
 function isCombining(cp: string): boolean {
 	return /\p{M}/u.test(cp);
 }
@@ -447,9 +458,10 @@ function pendingOperator(op: string, pending: Pending): Step {
 /**
  * The IPAbet keystroke handler, mirroring the IME's handle().
  *
- * Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ), gated on
- * a *broken* flag the caller threads in. This owns the flag; handleKeyCore only
- * reads it.
+ * Shift-chaining: Shift held through a pair types lowercase IPA (⇧T⇧H → θ), and
+ * while it stays held, shifted keys keep typing lowercase IPA (θ⇧I⇧N⇧G → θiŋ).
+ * It is gated on a *broken* flag the caller threads in. This owns the flag;
+ * handleKeyCore only reads it.
  */
 export function handleKey(
 	textBefore: string,
@@ -460,9 +472,9 @@ export function handleKey(
 	const brokenIn = chainBroken || (k.shiftBroke ?? false);
 	const step = handleKeyCore(textBefore, k, pending, !brokenIn);
 	// A transform or a non-ASCII insert is a fresh IPA glyph and re-arms the chain.
-	const e = step.edit;
-	const seg = e.type === "replace" || (e.type === "insert" && /[^\x00-\x7f]/.test(e.text));
-	return {...step, chainBroken: seg ? false : brokenIn};
+	// Any shifted key keeps it live for the next; an unshifted key or the ⌃⇧
+	// escape ends it.
+	return {...step, chainBroken: k.shift !== true || k.control === true};
 }
 
 function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chainLive: boolean): Step {
@@ -578,38 +590,19 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 	const p = pending.length === 0 ? lastCluster(textBefore) : undefined;
 	if (p !== undefined) {
 		let {base, marks} = decompose(p);
-		// A capital right after an IPA segment with shift still held is a pending
-		// base — lower it so this modifier transforms it (ʃ⇧T⇧R → ʃʈ). Otherwise it
-		// is a fresh capital digraph (⇧A⇧E → Æ). The segment test is a non-ASCII
-		// LETTER or mark, not merely non-ASCII: terminals report the empty
-		// start-of-line cell as NBSP, and a bare `> 127` test rebases it into θ.
-		if (shift && k.capsLock !== true && /^[A-Z]$/.test(base)) {
-			const p2 = lastCluster(textBefore.slice(0, textBefore.length - p.length));
-			const p2Segment =
-				p2 !== undefined && [...p2].some((c) => c.codePointAt(0)! > 127 && /[\p{L}\p{M}]/u.test(c));
-			if (p2Segment && chainLive) {
-				base = base.toLowerCase(); // live chain → lowercase continuation
-			} else if (capitalDigraphs) {
-				const low = transforms.get(base.toLowerCase() + s);
-				if (low !== undefined) {
-					// See capitalOf.
-					const up = capitalOf(low);
-					if (up !== undefined) {
-						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
-					}
-				}
-			}
-		}
-		// The shifted digit is the digit's capital plane (⇧5⇧H → Ə).
-		if (capitalDigraphs && shift && chainLive && k.capsLock !== true) {
+		// A shifted pair held through is lowercase IPA (⇧T⇧H → θ); with Shift
+		// released between the two keys it is a capital digraph (⇧T ⟨release⟩ ⇧H
+		// → Θ). The shifted digit is the digit's capital plane (⇧5⇧H → ə, Ə).
+		if (shift && k.capsLock !== true) {
 			const digit = Object.keys(SHIFTED_DIGITS).find((d) => SHIFTED_DIGITS[d] === base);
-			if (digit !== undefined) {
-				const low = transforms.get(digit + s);
-				if (low !== undefined) {
-					const up = capitalOf(low);
-					if (up !== undefined) {
-						return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
-					}
+			const pairBase = /^[A-Z]$/.test(base) ? base.toLowerCase() : digit;
+			const low = pairBase === undefined ? undefined : transforms.get(pairBase + s);
+			if (low !== undefined) {
+				if (chainLive) return {edit: replaceCluster(p, recompose(low, marks)), pending: []};
+				// See capitalOf.
+				const up = capitalDigraphs ? capitalOf(low) : undefined;
+				if (up !== undefined) {
+					return {edit: replaceCluster(p, recompose(up, marks)), pending: []};
 				}
 			}
 		}
@@ -630,6 +623,13 @@ function handleKeyCore(textBefore: string, k: Keystroke, pending: Pending, chain
 				return {edit: replaceCluster(p, recompose(back, marks)), pending: []};
 			}
 		}
+	}
+
+	// A live chain types the key's unshifted base where no transform applies, so
+	// a capital never lands mid-transcription.
+	if (shift && chainLive && k.capsLock !== true && pending.length === 0 && /^[a-z0-9]$/.test(key)
+		&& chainContinues(textBefore)) {
+		return {edit: {type: "insert", text: key}, pending: []};
 	}
 
 	// letter / click base glyph — committing any pending prefix diacritics

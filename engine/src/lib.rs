@@ -100,6 +100,11 @@ pub struct Engine {
     capital_digraphs: bool,
 }
 
+fn is_upper(c: char) -> bool {
+    use unicode_general_category::{GeneralCategory, get_general_category};
+    matches!(get_general_category(c), GeneralCategory::UppercaseLetter | GeneralCategory::TitlecaseLetter)
+}
+
 fn first_char(s: &str) -> char {
     s.chars().next().unwrap_or('\0')
 }
@@ -543,19 +548,34 @@ impl Engine {
 
     /// The IPAbet keystroke handler, mirroring the IME's handle().
     ///
-    /// Shift-chaining lets a capital continue a transcription (ʃ⇧I⇧H → ʃɪ),
-    /// gated on a *broken* flag the caller threads in. This owns the flag;
-    /// handle_key_core only reads it.
+    /// Shift-chaining: Shift held through a pair types lowercase IPA
+    /// (⇧T⇧H → θ), and while it stays held, shifted keys keep typing lowercase
+    /// IPA (θ⇧I⇧N⇧G → θiŋ). It is gated on a *broken* flag the caller threads
+    /// in. This owns the flag; handle_key_core only reads it.
     pub fn handle_key(&self, text_before: &str, k: &Keystroke, pending: &Pending, chain_broken: bool) -> Step {
         let broken_in = chain_broken || k.shift_broke;
         let mut step = self.handle_key_core(text_before, k, pending, !broken_in);
-        let seg = match &step.edit {
-            Edit::Replace { .. } => true,
-            Edit::Insert { text } => !text.is_ascii(),
-            _ => false,
-        };
-        step.chain_broken = Some(if seg { false } else { broken_in });
+        // Any shifted key keeps it live for the next; an unshifted key or the
+        // ⌃⇧ escape ends it.
+        step.chain_broken = Some(!k.shift || k.control);
         step
+    }
+
+    /// Whether a held-Shift chain continues after `text`: behind the letters
+    /// and digits the chain typed sits a lowercase IPA segment. The segment
+    /// test is a non-ASCII LETTER or mark, not merely non-ASCII: terminals
+    /// report the empty start-of-line cell as NBSP, and a bare `> 127` test
+    /// would chain from it.
+    fn chain_continues(text: &str) -> bool {
+        let rest = text.trim_end_matches(|c: char| c.is_ascii_lowercase() || c.is_ascii_digit());
+        let Some(seg) = Self::last_cluster(rest) else { return false };
+        // index.ts tests /[\p{L}\p{M}]/u — general category L or M exactly.
+        // is_alphabetic() is the wider Alphabetic property (adds Nl and
+        // friends), which made a Roman numeral count as an IPA segment.
+        let is_segment = seg.chars().any(|c| {
+            (c as u32) > 127 && (is_letter(c) || unicode_normalization::char::is_combining_mark(c))
+        });
+        is_segment && !Self::decompose(seg).0.chars().any(is_upper)
     }
 
     fn with_flush(&self, edit: Edit, pending: &Pending, k: &Keystroke, for_pass_use_native: bool) -> Step {
@@ -733,52 +753,33 @@ impl Engine {
 
         let p = if pending.is_empty() { Self::last_cluster(text_before) } else { None };
         if let Some(p) = p {
-            let (mut base, marks) = Self::decompose(p);
+            let (base, marks) = Self::decompose(p);
 
-            if shift && !k.caps_lock && base.chars().count() == 1 && base.chars().next().unwrap().is_ascii_uppercase() {
-                let before_len = text_before.len() - p.len();
-                let before = &text_before[..before_len];
-                let p2 = Self::last_cluster(before);
-                let p2_segment = p2.is_some_and(|seg| {
-                    seg.chars().any(|c| {
-                        // index.ts tests /[\p{L}\p{M}]/u — general category
-                        // L or M exactly. is_alphabetic() is the wider
-                        // Alphabetic property (adds Nl and friends), which
-                        // made a Roman numeral count as an IPA segment.
-                        (c as u32) > 127 && (is_letter(c) || unicode_normalization::char::is_combining_mark(c))
-                    })
-                });
-                if p2_segment && chain_live {
-                    base = base.to_ascii_lowercase();
-                } else if self.capital_digraphs {
-                    let low_key = format!("{}{s}", base.to_ascii_lowercase());
-                    if let Some(low) = self.transforms.get(&low_key)
+            // A shifted pair held through is lowercase IPA (⇧T⇧H → θ); with
+            // Shift released between the two keys it is a capital digraph
+            // (⇧T ⟨release⟩ ⇧H → Θ). The shifted digit is the digit's capital
+            // plane (⇧5⇧H → ə, Ə).
+            if shift && !k.caps_lock {
+                let pair_base = if base.len() == 1 && base.as_bytes()[0].is_ascii_uppercase() {
+                    Some(base.to_ascii_lowercase())
+                } else {
+                    (0u8..10)
+                        .find(|&d| shifted_digit(char::from(b'0' + d)) == Some(base.as_str()))
+                        .map(|d| d.to_string())
+                };
+                if let Some(low) = pair_base.and_then(|b| self.transforms.get(&format!("{b}{s}"))) {
+                    if chain_live {
+                        let text = Self::recompose(low, &marks);
+                        return Step { edit: Edit::Replace { length: p.chars().count(), text }, pending: vec![], chain_broken: None };
+                    }
+                    // See capital_of.
+                    if self.capital_digraphs
                         && let Some(up) = Self::capital_of(low.chars().next().unwrap()) {
                             let text = Self::recompose(&up.to_string(), &marks);
-                            return Step {
-                                edit: Edit::Replace { length: p.chars().count(), text },
-                                pending: vec![],
-                                chain_broken: None,
-                            };
+                            return Step { edit: Edit::Replace { length: p.chars().count(), text }, pending: vec![], chain_broken: None };
                         }
                 }
             }
-            // The shifted digit is the digit's capital plane (⇧5⇧H → Ə).
-            if self.capital_digraphs && shift && chain_live && !k.caps_lock
-                && let Some(digit) = (0u8..10).map(|d| (d, shifted_digit(char::from(b'0' + d))))
-                    .find_map(|(d, sd)| (sd == Some(base.as_str())).then_some(d))
-                {
-                    let digit_key = format!("{digit}{s}");
-                    if let Some(low) = self.transforms.get(&digit_key)
-                        && let Some(up) = Self::capital_of(low.chars().next().unwrap()) {
-                            let text = Self::recompose(&up.to_string(), &marks);
-                            return Step {
-                                edit: Edit::Replace { length: p.chars().count(), text },
-                                pending: vec![],
-                                chain_broken: None,
-                            };
-                        }
-                }
             let combo_key = format!("{base}{s}");
             if let Some(combo) = self.transforms.get(&combo_key) {
                 let text = Self::recompose(combo, &marks);
@@ -811,6 +812,14 @@ impl Engine {
                 }
             }
         }
+
+        // A live chain types the key's unshifted base where no transform
+        // applies, so a capital never lands mid-transcription.
+        if shift && chain_live && !k.caps_lock && pending.is_empty()
+            && (kc.is_ascii_lowercase() || kc.is_ascii_digit())
+            && Self::chain_continues(text_before) {
+                return Step { edit: Edit::Insert { text: kc.to_string() }, pending: vec![], chain_broken: None };
+            }
 
         // letter / click base glyph — committing any pending prefix diacritics
         if let Some(glyph) = self.letters.get(&s) {

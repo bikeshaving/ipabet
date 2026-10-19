@@ -168,7 +168,7 @@
    }
   ],
   "initial": "ət͡sß",
-  "expected": "ət͡sßxyqx81ˌ$",
+  "expected": "ət͡sßxyqx81ˌ4",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -1705,7 +1705,7 @@
    }
   ],
   "initial": "t͡s",
-  "expected": "t͡Imyw.x",
+  "expected": "t͡imyw.x",
   "locale": "fr",
   "capital_digraphs": false
  },
@@ -2144,7 +2144,7 @@
    }
   ],
   "initial": "ə",
-  "expected": "ə^j͈",
+  "expected": "ə6j͈",
   "locale": "de",
   "capital_digraphs": false
  },
@@ -2459,7 +2459,7 @@
    }
   ],
   "initial": "𐞲ɡ˞é̂",
-  "expected": "𐞲ɡ˞é̂V^J",
+  "expected": "𐞲ɡ˞é̂v^J",
   "locale": "de",
   "capital_digraphs": false
  },
@@ -2905,7 +2905,7 @@
    }
   ],
   "initial": "日本",
-  "expected": "日本!",
+  "expected": "日本1",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -4511,7 +4511,7 @@
    }
   ],
   "initial": "",
-  "expected": "Rh̯̻ʺV↑$z ",
+  "expected": "Rh̯̻ʺv↑$z ",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -5639,7 +5639,7 @@
    }
   ],
   "initial": "PATH日本",
-  "expected": "PATH日本GJ̙SꜛA",
+  "expected": "PATH日本gJ̙SꜛA",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -6506,7 +6506,7 @@
    }
   ],
   "initial": "x̣̯́",
-  "expected": "x̣̯́R‘yPl͡ʹ_x˲",
+  "expected": "x̣̯́r‘yPl͡ʹ_x˲",
   "locale": "en",
   "capital_digraphs": true
  },
@@ -7078,7 +7078,7 @@
    }
   ],
   "initial": "𐞀abc",
-  "expected": "𐞀abc$",
+  "expected": "𐞀abc4",
   "locale": "de",
   "capital_digraphs": false
  },
@@ -7557,7 +7557,7 @@
    }
   ],
   "initial": "¿æ̃t͡s",
-  "expected": "¿æ̃t͡sF˓˛",
+  "expected": "¿æ̃t͡sf˓˛",
   "locale": "nosuchlocale",
   "capital_digraphs": true
  },
@@ -7572,7 +7572,7 @@
    }
   ],
   "initial": "abcß",
-  "expected": "abcßDl",
+  "expected": "abcßdl",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -8006,7 +8006,7 @@
    }
   ],
   "initial": "한日本",
-  "expected": "한日本YȔ0tqtg\"N̉",
+  "expected": "한日本yȔ0tqtg\"N̉",
   "locale": "nosuchlocale",
   "capital_digraphs": true
  },
@@ -8399,7 +8399,7 @@
    }
   ],
   "initial": "日本t͡s",
-  "expected": "日本t͡sImUb9̺+:˗",
+  "expected": "日本t͡simUb9̺+:˗",
   "locale": "fr",
   "capital_digraphs": true
  },
@@ -8793,7 +8793,7 @@
    }
   ],
   "initial": "ế한ə",
-  "expected": "ế한ə=b2ꜛ!:}MN",
+  "expected": "ế한ə=b2ꜛ1:}MN",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -8845,7 +8845,7 @@
    }
   ],
   "initial": "¿𐞲",
-  "expected": "¿𐞲RIAgc̱wv↑o7c",
+  "expected": "¿𐞲rIAgc̱wv↑o7c",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -9510,7 +9510,7 @@
    }
   ],
   "initial": "Ⅰß",
-  "expected": "ⅠßZ w",
+  "expected": "Ⅰßz w",
   "locale": "fr",
   "capital_digraphs": true
  },
@@ -9891,7 +9891,7 @@
    }
   ],
   "initial": "θɪŋ한",
-  "expected": "θɪŋ한˩RGy‖“-",
+  "expected": "θɪŋ한˩ʀy‖“-",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -10523,7 +10523,7 @@
    }
   ],
   "initial": "θɪŋθɪŋʃɪp",
-  "expected": "θɪŋθɪŋʃɪpDḏ̆cǐN]",
+  "expected": "θɪŋθɪŋʃɪpdḏ̆cǐN]",
   "locale": "nosuchlocale",
   "capital_digraphs": true
  },
@@ -11376,7 +11376,7 @@
    }
   ],
   "initial": "👍🏽θɪŋ",
-  "expected": "👍🏽θɪŋAC[Ó↘w '‖",
+  "expected": "👍🏽θɪŋaC[Ó↘w '‖",
   "locale": "en",
   "capital_digraphs": false
  },
@@ -11565,7 +11565,7 @@
    }
   ],
   "initial": "¿ʃɪpaː",
-  "expected": "¿ʃɪpaːJqL",
+  "expected": "¿ʃɪpaːjqL",
   "locale": "fr",
   "capital_digraphs": true
  },
@@ -11753,7 +11753,7 @@
    }
   ],
   "initial": "日本",
-  "expected": "日本VdK̝}`q",
+  "expected": "日本vdK̝}`q",
   "locale": "nosuchlocale",
   "capital_digraphs": false
  },
@@ -12486,7 +12486,7 @@
    }
   ],
   "initial": "한ʃɪpt͡s",
-  "expected": "한ʃɪpt͡s%mW6̺0a,&",
+  "expected": "한ʃɪpt͡s5mW6̺0a,&",
   "locale": "de",
   "capital_digraphs": false
  },
@@ -12726,7 +12726,7 @@
    }
   ],
   "initial": "Ⅰß🍕",
-  "expected": "Ⅰß🍕FƦꜜ",
+  "expected": "Ⅰß🍕Fʀꜜ",
   "locale": "de",
   "capital_digraphs": true
  },
@@ -13037,7 +13037,7 @@
    }
   ],
   "initial": "🇺🇸t͡s",
-  "expected": "🇺🇸t͡sxF̝%ˑH~~QP6",
+  "expected": "🇺🇸t͡sxF̝%ˑh~~ʛ6",
   "locale": "en",
   "capital_digraphs": true
  },

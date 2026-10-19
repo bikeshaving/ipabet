@@ -69,6 +69,15 @@ func type(_ c: InputController, _ mock: MockClient, _ label: String, shift: Bool
     }
 }
 
+func releaseShift(_ c: InputController, _ mock: MockClient) {
+    for down in [true, false] {
+        let cg = CGEvent(keyboardEventSource: nil, virtualKey: 56, keyDown: down)!
+        cg.type = .flagsChanged
+        cg.flags = down ? .maskShift : []
+        _ = c.handle(NSEvent(cgEvent: cg)!, client: mock)
+    }
+}
+
 var failures = 0
 func check(_ name: String, _ ok: Bool, _ detail: @autoclosure () -> String = "") {
     if ok { print("ok  \(name)") }
@@ -122,13 +131,15 @@ do {
     let c = InputController(); let mock = MockClient()
     c.activateServer(mock)                                   // engine built with OFF
     type(c, mock, "s", shift: true)                          // ⇧S
+    releaseShift(c, mock)
     type(c, mock, "h", shift: true)                          // ⇧H → "SH" while OFF
     let off = mock.buf
     UserDefaults.standard.set(true, forKey: "capitalDigraphs")
     c.activateServer(mock)                                   // must re-apply ON
     mock.buf = ""
     type(c, mock, "s", shift: true)
-    type(c, mock, "h", shift: true)                          // ⇧S⇧H → Ʃ while ON
+    releaseShift(c, mock)
+    type(c, mock, "h", shift: true)                          // ⇧S ⟨release⟩ ⇧H → Ʃ while ON
     UserDefaults.standard.removeObject(forKey: "capitalDigraphs")
     check("finding-4: capitals plain while OFF", off == "SH", "got [\(off)]")
     check("finding-4: activateServer re-applied the ON setting", mock.buf == "Ʃ", "got [\(mock.buf)]")
